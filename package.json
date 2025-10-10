@@ -44,6 +44,7 @@
     "vite": "^7.1.9"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "electron-squirrel-startup": "^1.0.1",
     "esbuild-register": "^3.6.0",
     "react-router-dom": "^7.9.4"
