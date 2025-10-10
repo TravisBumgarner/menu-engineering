@@ -1,4 +1,4 @@
-/// <reference types="./types/preload.d.ts" />
+/// <reference types="./preload.d.ts" />
 import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CHANNEL } from "../shared/types";
