@@ -13,20 +13,21 @@
       "port": 9222,
       "request": "attach",
       "type": "chrome",
-      "webRoot": "${workspaceFolder}"
+      "webRoot": "${workspaceFolder}/src/renderer",
+      "url": "http://localhost:5173"
     },
     {
       "name": "Main",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-      "windows": {
-        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
-      },
-      "args": [".", "--remote-debugging-port=9222"],
+      "program": "${workspaceFolder}/node_modules/.bin/electron-forge",
+      "args": ["start", "--", "--remote-debugging-port=9222"],
       "outputCapture": "std",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development"
+      }
     }
   ]
 }
