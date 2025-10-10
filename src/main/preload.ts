@@ -1,25 +1,41 @@
-// Disable no-unused-vars, broken for spread args
-/* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
-
-export type Channels = "ipc-example";
+import { FromRenderer, FromMain, Invokes } from "src/shared/types";
 
 const electronHandler = {
   ipcRenderer: {
-    sendMessage(channel: Channels, ...args: unknown[]) {
-      ipcRenderer.send(channel, ...args);
+    // Renderer → Main (fire and forget)
+    send<T extends keyof FromRenderer>(channel: T, params: FromRenderer[T]) {
+      ipcRenderer.send(channel, params);
     },
-    on(channel: Channels, func: (...args: unknown[]) => void) {
-      const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
-        func(...args);
-      ipcRenderer.on(channel, subscription);
 
-      return () => {
-        ipcRenderer.removeListener(channel, subscription);
-      };
+    // Main → Renderer (listen)
+    on<T extends keyof FromMain>(
+      channel: T,
+      listener: (params: FromMain[T]) => void
+    ) {
+      const subscription = (_event: IpcRendererEvent, params: FromMain[T]) =>
+        listener(params);
+
+      ipcRenderer.on(channel, subscription);
+      return () => ipcRenderer.removeListener(channel, subscription);
     },
-    once(channel: Channels, func: (...args: unknown[]) => void) {
-      ipcRenderer.once(channel, (_event, ...args) => func(...args));
+
+    // Main → Renderer (one-time listen)
+    once<T extends keyof FromMain>(
+      channel: T,
+      listener: (params: FromMain[T]) => void
+    ) {
+      ipcRenderer.once(channel, (_event, params: FromMain[T]) =>
+        listener(params)
+      );
+    },
+
+    // Renderer → Main (invoke / handle roundtrip)
+    invoke<T extends keyof Invokes>(
+      channel: T,
+      args: Invokes[T]["args"]
+    ): Promise<Invokes[T]["result"]> {
+      return ipcRenderer.invoke(channel, args);
     },
   },
 };

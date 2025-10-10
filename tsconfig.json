@@ -13,5 +13,6 @@
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
-  }
+  },
+  "exclude": ["src/renderer"]
 }

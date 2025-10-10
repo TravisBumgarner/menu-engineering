@@ -1,17 +1,21 @@
 {
   "name": "my-new-app",
   "productName": "my-new-app",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "publish": "dotenv -e .env -- electron-forge publish",
     "lint": "eslint --ext .ts,.tsx ."
   },
   "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TravisBumgarner/menu-engineering.git"
+  },
   "author": {
     "name": "Travis Bumgarner",
     "email": "11890057+TravisBumgarner@users.noreply.github.com"
@@ -20,6 +24,7 @@
   "devDependencies": {
     "@electron-forge/cli": "^7.8.3",
     "@electron-forge/maker-deb": "^7.10.2",
+    "@electron-forge/maker-dmg": "^7.10.2",
     "@electron-forge/maker-rpm": "^7.10.2",
     "@electron-forge/maker-squirrel": "^7.10.2",
     "@electron-forge/maker-zip": "^7.10.2",
@@ -45,8 +50,10 @@
   },
   "dependencies": {
     "dotenv": "^17.2.3",
+    "electron-log": "^5.4.3",
     "electron-squirrel-startup": "^1.0.1",
     "esbuild-register": "^3.6.0",
-    "react-router-dom": "^7.9.4"
+    "react-router-dom": "^7.9.4",
+    "update-electron-app": "^3.1.1"
   }
 }

@@ -4,11 +4,10 @@ import { MakerZIP } from "@electron-forge/maker-zip";
 import { MakerDeb } from "@electron-forge/maker-deb";
 import { MakerRpm } from "@electron-forge/maker-rpm";
 import { VitePlugin } from "@electron-forge/plugin-vite";
+import { MakerDMG } from "@electron-forge/maker-dmg";
+
 // import { FusesPlugin } from "@electron-forge/plugin-fuses";
 // import { FuseV1Options, FuseVersion } from "@electron/fuses";
-
-import dotenv from "dotenv";
-dotenv.config();
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -24,6 +23,7 @@ const config: ForgeConfig = {
   rebuildConfig: {},
   makers: [
     new MakerSquirrel({}),
+    new MakerDMG({}),
     new MakerZIP({}, ["darwin"]),
     new MakerRpm({}),
     new MakerDeb({}),
@@ -40,7 +40,7 @@ const config: ForgeConfig = {
           target: "main",
         },
         {
-          entry: "src/preload.ts",
+          entry: "src/main/preload.ts",
           config: "vite.preload.config.ts",
           target: "preload",
         },

@@ -15,14 +15,13 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
-    "sourceType": "module",
-    "project": "./tsconfig.json"
+    "sourceType": "module"
   },
   "settings": {
     "import/resolver": {
       "typescript": {
         "alwaysTryTypes": true,
-        "project": "./tsconfig.json"
+        "project": ["./tsconfig.json", "./tsconfig.renderer.json"]
       },
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
@@ -37,5 +36,23 @@
         "ignore": ["^@vitejs/"]
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/renderer/**/*.{ts,tsx}"],
+      "parserOptions": {
+        "project": "./tsconfig.renderer.eslint.json"
+      }
+    },
+    {
+      "files": [
+        "src/main/**/*.{ts,tsx}",
+        "src/preload/**/*.{ts,tsx}",
+        "forge.config.ts"
+      ],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      }
+    }
+  ]
 }
