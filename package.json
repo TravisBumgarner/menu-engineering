@@ -1,6 +1,6 @@
 {
-  "name": "my-new-app",
-  "productName": "my-new-app",
+  "name": "menu-engineering",
+  "productName": "Menu Engineering",
   "version": "1.0.4",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
