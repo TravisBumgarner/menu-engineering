@@ -17,6 +17,3 @@ typedIpcMain.handle(CHANNEL.DB.GET_USERS, async () => {
   };
 });
 
-typedIpcMain.on(CHANNEL.WEE_WOO, (event, params) => {
-  event.reply(CHANNEL.WEE_WOO, { id: params.id, ok: true });
-});
