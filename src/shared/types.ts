@@ -1,25 +1,25 @@
 export const CHANNEL = {
-  WEE_WOO: "wee_woo",
-  GET_STATUS: "get_status",
-  DEBUG_MESSAGE: "debug_message",
+  DB: {
+    ADD_USER: "DB_ADD_USER",
+    GET_USERS: "DB_GET_USERS",
+  },
 } as const;
 
 export type FromRenderer = {
-  [CHANNEL.WEE_WOO]: { id: number }; // fire-and-forget
-  [CHANNEL.GET_STATUS]: { query: string }; // could be used with invoke
+  // [CHANNEL.WEE_WOO]: { id: number };
 };
 
 export type FromMain = {
-  [CHANNEL.WEE_WOO]: { ok: boolean; id: number };
-  [CHANNEL.DEBUG_MESSAGE]: {
-    message: string;
-    level: "info" | "warn" | "error" | "log";
-  };
+  // [CHANNEL.WEE_WOO]: { ok: boolean; id: number };
 };
 
 export type Invokes = {
-  [CHANNEL.GET_STATUS]: {
-    args: { query: string };
-    result: { status: string };
+  [CHANNEL.DB.ADD_USER]: {
+    args: { payload: { name: string } };
+    result: { success: boolean };
+  };
+  [CHANNEL.DB.GET_USERS]: {
+    args: undefined;
+    result: { users: Array<{ id: number; name: string }> };
   };
 };
