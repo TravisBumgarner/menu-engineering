@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
-import { FromRenderer, FromMain, Invokes } from "src/shared/types";
+import { FromRenderer, FromMain, Invokes } from "../shared/types";
 
 const electronHandler = {
   ipcRenderer: {
@@ -33,7 +33,7 @@ const electronHandler = {
     // Renderer → Main (invoke / handle roundtrip)
     invoke<T extends keyof Invokes>(
       channel: T,
-      args: Invokes[T]["args"]
+      args: Invokes[T]["args"] | undefined = undefined
     ): Promise<Invokes[T]["result"]> {
       return ipcRenderer.invoke(channel, args);
     },

@@ -1,10 +1,20 @@
-/// <reference types="./preload.d.ts" />
 import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CHANNEL } from "../shared/types";
+import type { ElectronHandler } from "../main/preload";
+
+declare global {
+  interface Window {
+    electron: ElectronHandler;
+  }
+}
 
 function App() {
   const [response, setResponse] = useState<string>("");
+
+  useEffect(() => {
+    window.electron.ipcRenderer.invoke(CHANNEL.DB.GET_USERS);
+  });
 
   useEffect(() => {
     window.electron?.ipcRenderer.on(CHANNEL.WEE_WOO, (arg) => {
@@ -16,26 +26,19 @@ function App() {
     });
   }, []);
 
-  const handlePing = () => {
-    window.electron?.ipcRenderer.invoke(CHANNEL.GET_STATUS, {
-      query: "example",
-    });
-  };
-
-  const handleGetStatus = async () => {
-    const result = await window.electron?.ipcRenderer.invoke(
-      CHANNEL.GET_STATUS,
+  const handleAddUser = async () => {
+    const response = await window.electron.ipcRenderer.invoke(
+      CHANNEL.DB.ADD_USER,
       {
-        query: "example",
+        payload: { name: "Travis" },
       }
     );
-    setResponse(JSON.stringify(result));
+    alert(response.success);
   };
 
   return (
     <div>
-      <button onClick={handlePing}>Ping</button>
-      <button onClick={handleGetStatus}>Get Status!</button>
+      <button onClick={handleAddUser}>Add User</button>
       {response && <div>Response: {response}</div>}
       <p>Sure hope everything works with auto updating</p>
     </div>
