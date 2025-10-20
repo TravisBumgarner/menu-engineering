@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
-import { FromRenderer, FromMain, Invokes } from "../shared/types";
+import { FromMain, FromRenderer, Invokes } from "../shared/messages.types";
 
 const electronHandler = {
   ipcRenderer: {

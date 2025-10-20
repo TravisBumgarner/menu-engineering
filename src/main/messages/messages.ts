@@ -1,19 +1,18 @@
-import { typedIpcMain } from "./index";
-import { CHANNEL } from "../../shared/types";
+import { CHANNEL } from "../../shared/messages.types";
 import queries from "../database/queries";
+import { typedIpcMain } from "./index";
 
-typedIpcMain.handle(CHANNEL.DB.ADD_USER, async (_event, params) => {
-  const result = await queries.addUser(params.payload);
+typedIpcMain.handle(CHANNEL.DB.ADD_RECIPE, async (_event, params) => {
+  const result = await queries.addRecipe(params.payload);
   return {
-    type: "add_user",
+    type: "add_recipe",
     success: !!result,
   };
 });
 
-typedIpcMain.handle(CHANNEL.DB.GET_USERS, async () => {
+typedIpcMain.handle(CHANNEL.DB.GET_RECIPES, async () => {
   return {
-    type: "get_users",
-    users: await queries.getUsers(),
+    type: "get_recipes",
+    recipes: await queries.getRecipes(),
   };
 });
-

@@ -1,7 +1,8 @@
-import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
-import { CHANNEL } from "../shared/types";
+import { Route, MemoryRouter as Router, Routes } from "react-router-dom";
 import type { ElectronHandler } from "../main/preload";
+import { CHANNEL } from "../shared/messages.types";
+import { RECIPE_STATUS } from "../shared/types";
 
 declare global {
   interface Window {
@@ -11,14 +12,21 @@ declare global {
 
 function App() {
   useEffect(() => {
-    window.electron.ipcRenderer.invoke(CHANNEL.DB.GET_USERS);
+    window.electron.ipcRenderer.invoke(CHANNEL.DB.GET_RECIPES);
   });
 
-  const handleAddUser = async () => {
+  const handleAddRecipe = async () => {
     const response = await window.electron.ipcRenderer.invoke(
-      CHANNEL.DB.ADD_USER,
+      CHANNEL.DB.ADD_RECIPE,
       {
-        payload: { name: "Travis" },
+        payload: {
+          title: "New Recipe",
+          produces: 4,
+          units: "servings",
+          status: RECIPE_STATUS.DRAFT,
+          notes: "",
+          showInMenu: true,
+        },
       }
     );
     alert(response.success);
@@ -26,7 +34,7 @@ function App() {
 
   return (
     <div>
-      <button onClick={handleAddUser}>Add User</button>
+      <button onClick={handleAddRecipe}>Add Recipe</button>
     </div>
   );
 }
