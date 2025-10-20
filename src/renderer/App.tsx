@@ -1,34 +1,24 @@
-import { useEffect } from "react";
-import { CHANNEL } from "../shared/messages.types";
-import { RECIPE_STATUS } from "../shared/types";
+import { MemoryRouter } from "react-router-dom";
+import Navigation from "./components/Navigation";
 import Router from "./components/Router";
-import { invoke } from "./messages";
+import RenderModal from "./sharedComponents/Modal";
 
 function App() {
-  useEffect(() => {
-    invoke(CHANNEL.DB.GET_RECIPES);
-  });
-
-  const handleAddRecipe = async () => {
-    const response = await invoke(CHANNEL.DB.ADD_RECIPE, {
-      payload: {
-        title: "New Recipe",
-        produces: 4,
-        units: "servings",
-        status: RECIPE_STATUS.DRAFT,
-        notes: "",
-        showInMenu: true,
-      },
-    });
-    alert(response.success);
-  };
-
   return (
     <div>
-      <button onClick={handleAddRecipe}>Add Recipe</button>
+      <Navigation />
       <Router />
+      <RenderModal />
     </div>
   );
 }
 
-export default App;
+const WrappedApp = () => {
+  return (
+    <MemoryRouter>
+      <App />
+    </MemoryRouter>
+  );
+};
+
+export default WrappedApp;
