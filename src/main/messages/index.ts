@@ -1,5 +1,5 @@
 import { IpcMainEvent, IpcMainInvokeEvent, ipcMain } from "electron";
-import { FromRenderer, FromMain, Invokes } from "../../shared/types";
+import { FromMain, FromRenderer, Invokes } from "../../shared/messages.types";
 
 // ----- typed IPC main -----
 export const typedIpcMain = {
