@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import Collapse from '@mui/material/Collapse'
@@ -12,6 +13,7 @@ import { IoMdCheckbox } from 'react-icons/io'
 import { MdEdit, MdOutlineCheckBoxOutlineBlank } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { type RecipeDTO } from '../../../../shared/types'
+import { activeModalSignal } from '../../../signals'
 
 function RecipeRow(props: {
   row: RecipeDTO
@@ -22,6 +24,13 @@ function RecipeRow(props: {
   const { row, isItemSelected, labelId, onClick } = props
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
+
+  const handleOpenEditRecipeModal = () => {
+    activeModalSignal.value = {
+      id: 'EDIT_RECIPE_MODAL',
+      recipe: row,
+    }
+  }
 
   return (
     <React.Fragment>
@@ -93,9 +102,16 @@ function RecipeRow(props: {
           )}
         </TableCell>
         <TableCell align="left">
-          <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
-            <MdEdit size={20} />
-          </IconButton>
+          <Tooltip title="Edit Recipe Details">
+            <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
+              <MdEdit size={20} /> Deets
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Edit Recipe">
+            <IconButton onClick={handleOpenEditRecipeModal}>
+              <MdEdit size={20} /> Recipe
+            </IconButton>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow>

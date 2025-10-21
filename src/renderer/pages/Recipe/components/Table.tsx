@@ -7,12 +7,11 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
-import { IngredientDTO } from '../../../../shared/types'
-import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
-import { activeModalSignal } from '../../../signals'
+import { IngredientDTO, RecipeDTO } from '../../../../shared/types'
 import EnhancedTableHead from './Head'
-import IngredientRow from './Row'
+import IngredientRow from './IngredientRow'
 import EnhancedTableToolbar from './Toolbar'
+import Message from '../../../sharedComponents/Message'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -36,19 +35,22 @@ function getComparator<Key extends keyof IngredientDTO>(
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
+const Table = ({
+  ingredients,
+  subRecipes,
+  recipeId,
+  title,
+}: {
+  ingredients: IngredientDTO[]
+  subRecipes: RecipeDTO[]
+  recipeId: string
+  title: string
+}) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO>('title')
   const [selected, setSelected] = React.useState<readonly string[]>([])
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
-
-  const handleOpenAddIngredientModal = () => {
-    activeModalSignal.value = {
-      id: MODAL_ID.ADD_INGREDIENT_MODAL,
-      recipeId: '',
-    }
-  }
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -101,7 +103,7 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0
-
+  console.log(ingredients)
   const visibleRows = React.useMemo(
     () =>
       [...ingredients]
@@ -110,12 +112,15 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
     [ingredients, order, orderBy, page, rowsPerPage],
   )
 
+  console.log('doot', subRecipes)
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar
+          title={title}
           numSelected={selected.length}
-          onAddIngredient={handleOpenAddIngredientModal}
+          recipeId={recipeId}
         />
         <TableContainer>
           <MuiTable
@@ -140,6 +145,7 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
                   <IngredientRow
                     key={row.id}
                     row={row}
+                    recipeId={recipeId}
                     isItemSelected={isItemSelected}
                     labelId={labelId}
                     onClick={handleClick}
@@ -168,6 +174,18 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      {subRecipes.length > 0 ? (
+        <Box>
+          <h2>Sub-Recipes</h2>
+          <ul>
+            {subRecipes.map(subRecipe => (
+              <li key={subRecipe.id}>{subRecipe.title}</li>
+            ))}
+          </ul>
+        </Box>
+      ) : (
+        <Message message="No sub-recipes found." color="info" />
+      )}
     </Box>
   )
 }

@@ -11,12 +11,20 @@ import AddRecipeModal, {
 import ConfirmationModal, {
   type ConfirmationModalProps,
 } from './components/ConfirmationModal'
+import EditIngredientModal, {
+  type EditIngredientModalProps,
+} from './components/EditIngredientModal'
+import EditRecipeModal, {
+  type EditRecipeModalProps,
+} from './components/EditRecipeModal'
 import { MODAL_ID } from './Modal.consts'
 
 export type ActiveModal =
   | ConfirmationModalProps
   | AddRecipeModalProps
   | AddIngredientModalProps
+  | EditRecipeModalProps
+  | EditIngredientModalProps
 
 export type ModalId = (typeof MODAL_ID)[keyof typeof MODAL_ID]
 
@@ -28,10 +36,14 @@ const RenderModal: FC = () => {
   switch (activeModalSignal.value.id) {
     case MODAL_ID.ADD_RECIPE_MODAL:
       return <AddRecipeModal {...activeModalSignal.value} />
+    case MODAL_ID.EDIT_RECIPE_MODAL:
+      return <EditRecipeModal {...activeModalSignal.value} />
     case MODAL_ID.CONFIRMATION_MODAL:
       return <ConfirmationModal {...activeModalSignal.value} />
     case MODAL_ID.ADD_INGREDIENT_MODAL:
       return <AddIngredientModal {...activeModalSignal.value} />
+    case MODAL_ID.EDIT_INGREDIENT_MODAL:
+      return <EditIngredientModal {...activeModalSignal.value} />
     default:
       return null
   }

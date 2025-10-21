@@ -1,69 +1,90 @@
 import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { NewIngredientDTO } from '../../../../shared/types'
+import { IngredientDTO, NewIngredientDTO } from '../../../../shared/types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
-export interface AddIngredientModalProps {
-  id: typeof MODAL_ID.ADD_INGREDIENT_MODAL
+export interface EditIngredientModalProps {
+  id: typeof MODAL_ID.EDIT_INGREDIENT_MODAL
+  ingredient: IngredientDTO
   recipeId?: string
   recipeTitle?: string
 }
 
-const AddIngredientModal = ({
+const EditIngredientModal = ({
+  ingredient,
   recipeId,
   recipeTitle,
-}: AddIngredientModalProps) => {
+}: EditIngredientModalProps) => {
   const queryClient = useQueryClient()
-  const [ingredientFormData, setIngredientFormData] =
-    useState<NewIngredientDTO>({
-      title: '',
-      quantity: 0,
-      units: '',
-      notes: '',
-    })
 
-  const addIngredientMutation = useMutation({
-    mutationFn: ({
-      newIngredient,
-      recipeId,
-    }: {
-      newIngredient: NewIngredientDTO
-      recipeId?: string
-    }) =>
-      ipcMessenger.invoke(CHANNEL.DB.ADD_INGREDIENT, {
-        payload: {
-          newIngredient,
-          recipeId,
-        },
+  const [formData, setFormData] = useState<NewIngredientDTO>({
+    title: ingredient.title,
+    quantity: ingredient.quantity,
+    units: ingredient.units,
+    notes: ingredient.notes,
+  })
+
+  // Update form data when ingredient prop changes
+  useEffect(() => {
+    setFormData({
+      title: ingredient.title,
+      quantity: ingredient.quantity,
+      units: ingredient.units,
+      notes: ingredient.notes,
+    })
+  }, [ingredient])
+
+  const updateIngredientMutation = useMutation({
+    mutationFn: (ingredientData: Partial<NewIngredientDTO>) =>
+      ipcMessenger.invoke(CHANNEL.DB.UPDATE_INGREDIENT, {
+        id: ingredient.id,
+        payload: ingredientData,
       }),
     onSuccess: result => {
       if (result.success) {
         // Invalidate and refetch ingredients query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        alert('Ingredient added successfully!')
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECIPE],
+        })
+        if (recipeId) {
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.RECIPE, recipeId],
+          })
+        }
+        alert('Ingredient updated successfully!')
         activeModalSignal.value = null
       } else {
-        alert('Failed to add ingredient.')
+        alert('Failed to update ingredient.')
       }
     },
     onError: () => {
-      alert('Error adding ingredient.')
+      alert('Error updating ingredient.')
     },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    addIngredientMutation.mutate({
-      newIngredient: ingredientFormData,
-      recipeId,
-    })
+    // Only send changed fields
+    const changes: Partial<NewIngredientDTO> = {}
+    if (formData.title !== ingredient.title) changes.title = formData.title
+    if (formData.quantity !== ingredient.quantity)
+      changes.quantity = formData.quantity
+    if (formData.units !== ingredient.units) changes.units = formData.units
+    if (formData.notes !== ingredient.notes) changes.notes = formData.notes
+
+    if (Object.keys(changes).length === 0) {
+      activeModalSignal.value = null
+      return
+    }
+
+    updateIngredientMutation.mutate(changes)
   }
 
   const handleInputChange =
@@ -71,7 +92,7 @@ const AddIngredientModal = ({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value =
         field === 'quantity' ? Number(e.target.value) : e.target.value
-      setIngredientFormData(prev => ({
+      setFormData(prev => ({
         ...prev,
         [field]: value,
       }))
@@ -80,7 +101,8 @@ const AddIngredientModal = ({
   return (
     <DefaultModal>
       <Typography variant="h5" component="h2" gutterBottom>
-        Add New Ingredient {recipeId ? `to Recipe ${recipeTitle}` : ''}
+        Edit Ingredient: {ingredient.title}
+        {recipeId && ` (in ${recipeTitle})`}
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit}>
@@ -88,7 +110,7 @@ const AddIngredientModal = ({
           <TextField
             size="small"
             label="Ingredient Name"
-            value={ingredientFormData.title}
+            value={formData.title}
             onChange={handleInputChange('title')}
             required
             fullWidth
@@ -99,7 +121,7 @@ const AddIngredientModal = ({
             size="small"
             label="Quantity"
             type="number"
-            value={ingredientFormData.quantity}
+            value={formData.quantity}
             onChange={handleInputChange('quantity')}
             required
             fullWidth
@@ -109,7 +131,7 @@ const AddIngredientModal = ({
           <TextField
             size="small"
             label="Units"
-            value={ingredientFormData.units}
+            value={formData.units}
             onChange={handleInputChange('units')}
             required
             fullWidth
@@ -119,7 +141,7 @@ const AddIngredientModal = ({
           <TextField
             size="small"
             label="Notes"
-            value={ingredientFormData.notes}
+            value={formData.notes}
             onChange={handleInputChange('notes')}
             multiline
             rows={2}
@@ -138,9 +160,11 @@ const AddIngredientModal = ({
             <Button
               variant="contained"
               type="submit"
-              disabled={addIngredientMutation.isPending}
+              disabled={updateIngredientMutation.isPending}
             >
-              {addIngredientMutation.isPending ? 'Adding...' : 'Add Ingredient'}
+              {updateIngredientMutation.isPending
+                ? 'Updating...'
+                : 'Update Ingredient'}
             </Button>
           </Stack>
         </Stack>
@@ -149,4 +173,4 @@ const AddIngredientModal = ({
   )
 }
 
-export default AddIngredientModal
+export default EditIngredientModal

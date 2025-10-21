@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import Collapse from '@mui/material/Collapse'
@@ -7,17 +8,66 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
+import { MdClose, MdEdit } from 'react-icons/md'
+import { CHANNEL } from '../../../../shared/messages.types'
 import { IngredientDTO } from '../../../../shared/types'
+import { QUERY_KEYS } from '../../../consts'
+import ipcMessenger from '../../../ipcMessenger'
+import { activeModalSignal } from '../../../signals'
 
 function IngredientRow(props: {
   row: IngredientDTO
+  recipeId: string
   isItemSelected: boolean
   labelId: string
   onClick: (event: React.MouseEvent<unknown>, id: string) => void
 }) {
-  const { row, isItemSelected, labelId, onClick } = props
+  const { row, recipeId, isItemSelected, labelId, onClick } = props
   const [open, setOpen] = React.useState(false)
+  const queryClient = useQueryClient()
+
+  const removeIngredientMutation = useMutation({
+    mutationFn: () =>
+      ipcMessenger.invoke(CHANNEL.DB.REMOVE_INGREDIENT_FROM_RECIPE, {
+        ingredientId: row.id,
+        recipeId: recipeId,
+      }),
+    onSuccess: result => {
+      if (result.success) {
+        // Invalidate and refetch the recipe query to update the ingredients list
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECIPE, recipeId],
+        })
+        alert('Ingredient removed from recipe successfully!')
+      } else {
+        alert('Failed to remove ingredient from recipe.')
+      }
+    },
+    onError: () => {
+      alert('Error removing ingredient from recipe.')
+    },
+  })
+
+  const handleOpenEditModal = () => {
+    activeModalSignal.value = {
+      id: 'EDIT_INGREDIENT_MODAL',
+      ingredient: row,
+    }
+  }
+
+  const handleOpenRemoveModal = () => {
+    activeModalSignal.value = {
+      id: 'CONFIRMATION_MODAL',
+      title: 'Remove Ingredient',
+      body: `Are you sure you want to remove the ingredient "${row.title}" from this recipe? This action cannot be undone.`,
+      confirmationCallback: () => {
+        removeIngredientMutation.mutate()
+        activeModalSignal.value = null
+      },
+    }
+  }
 
   return (
     <React.Fragment>
@@ -58,12 +108,16 @@ function IngredientRow(props: {
         <TableCell align="right">{row.quantity}</TableCell>
         <TableCell align="left">{row.units}</TableCell>
         <TableCell align="left">
-          <IconButton size="small" title="Edit">
-            ✏️
-          </IconButton>
-          <IconButton size="small" title="Delete">
-            🗑️
-          </IconButton>
+          <Tooltip title="Edit Ingredient">
+            <IconButton onClick={handleOpenEditModal}>
+              <MdEdit size={20} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Remove from Recipe">
+            <IconButton onClick={handleOpenRemoveModal}>
+              <MdClose size={20} />
+            </IconButton>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow>

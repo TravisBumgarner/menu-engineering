@@ -42,3 +42,9 @@ export const recipeIngredientSchema = sqliteTable('recipe_ingredients', {
   parentId: text('recipe_id').notNull(),
   childId: text('ingredient_id').notNull(),
 })
+
+export const recipeSubRecipeSchema = sqliteTable('recipe_sub_recipes', {
+  id: text('id').primaryKey(),
+  parentId: text('recipe_id').notNull(),
+  childId: text('child_recipe_id').notNull(),
+})
