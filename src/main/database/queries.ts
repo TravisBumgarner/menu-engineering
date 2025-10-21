@@ -72,6 +72,11 @@ const getRecipeIngredients = async (recipeId: string) => {
   return ingredients.map(row => row.ingredient)
 }
 
+const getIngredients = async () => {
+  const ingredients = await db.select().from(ingredientSchema).all()
+  return ingredients
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -79,4 +84,5 @@ export default {
   getRecipeIngredients,
   addIngredient,
   addIngredientToRecipe,
+  getIngredients,
 }

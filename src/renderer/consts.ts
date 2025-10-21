@@ -1,7 +1,17 @@
 export const ROUTES = {
-  home: {
+  recipes: {
     href: () => '/',
-    label: 'Home',
+    label: 'Recipes',
+    target: '_self',
+  },
+  recipe: {
+    href: (id?: string) => (id ? `/recipe/${id}` : '/recipe/:id'),
+    label: 'Recipe',
+    target: '_self',
+  },
+  ingredients: {
+    href: () => '/ingredients',
+    label: 'Ingredients',
     target: '_self',
   },
 } as const

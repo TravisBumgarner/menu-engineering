@@ -44,3 +44,10 @@ typedIpcMain.handle(CHANNEL.DB.ADD_INGREDIENT, async (_event, params) => {
     success: !!newIngredientId && (params.payload.recipeId ? !!newLink : true),
   }
 })
+
+typedIpcMain.handle(CHANNEL.DB.GET_INGREDIENTS, async () => {
+  return {
+    type: 'get_ingredients',
+    ingredients: await queries.getIngredients(),
+  }
+})
