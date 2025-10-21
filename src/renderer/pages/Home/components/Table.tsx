@@ -15,8 +15,8 @@ import { QUERY_KEYS } from "../../../consts";
 import ipcMessenger from "../../../ipcMessenger";
 import { MODAL_ID } from "../../../sharedComponents/Modal/Modal.consts";
 import { activeModalSignal } from "../../../signals";
-import RecipeRow from "./RecipeRow";
-import EnhancedTableHead from "./TableHead";
+import EnhancedTableHead from "./Head";
+import RecipeRow from "./Row";
 import EnhancedTableToolbar from "./Toolbar";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -127,7 +127,7 @@ const Table = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar 
+        <EnhancedTableToolbar
           numSelected={selected.length}
           onAddRecipe={handleOpenAddRecipeModal}
         />
