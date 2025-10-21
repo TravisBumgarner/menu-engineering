@@ -52,8 +52,9 @@ const Message = ({
   return (
     <Box
       sx={{
-        padding: SPACING.MEDIUM.PX,
-        margin: includeVerticalMargin ? `${SPACING.MEDIUM.PX} 0` : 0,
+        padding: SPACING.LARGE.PX,
+        backgroundColor: '#EEE',
+        margin: includeVerticalMargin ? `${SPACING.LARGE.PX} 0` : 0,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

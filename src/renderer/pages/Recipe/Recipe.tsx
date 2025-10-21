@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { CHANNEL } from '../../../shared/messages.types'
@@ -14,7 +15,7 @@ const Recipe = () => {
     return <div>No recipe ID provided.</div>
   }
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.RECIPE, id],
     queryFn: async () => {
       const response = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE, {
@@ -36,7 +37,7 @@ const Recipe = () => {
     return <div>Loading...</div>
   }
 
-  if (error) {
+  if (isError) {
     return <div>Error loading recipe.</div>
   }
 
@@ -48,11 +49,12 @@ const Recipe = () => {
 
   return (
     <div>
-      Recipe Page: {id} {data.recipe.produces}
+      <Typography variant="h1">{data.recipe.title}</Typography>
       {data.ingredients.length ? (
         <Table ingredients={data.ingredients || []} />
       ) : (
         <Message
+          includeVerticalMargin
           message="No ingredients found."
           color="info"
           callback={handleAddIngredient}

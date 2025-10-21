@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import Collapse from '@mui/material/Collapse'
@@ -93,9 +94,11 @@ function RecipeRow(props: {
           )}
         </TableCell>
         <TableCell align="left">
-          <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
-            <MdEdit size={20} />
-          </IconButton>
+          <Tooltip title="Edit Recipe">
+            <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
+              <MdEdit size={20} />
+            </IconButton>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow>
