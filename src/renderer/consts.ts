@@ -1,11 +1,12 @@
 export const ROUTES = {
   home: {
-    href: () => "/",
-    label: "Home",
-    target: "_self",
+    href: () => '/',
+    label: 'Home',
+    target: '_self',
   },
-} as const;
+} as const
 
 export const QUERY_KEYS = {
-  RECIPES: "recipes",
-};
+  RECIPES: 'recipes',
+  RECIPE: 'recipe',
+}
