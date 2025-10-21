@@ -18,11 +18,11 @@ import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
-import { CHANNEL } from "../../shared/messages.types";
-import { QUERY_KEYS } from "../consts";
-import ipcMessenger from "../ipcMessenger";
-import { MODAL_ID } from "../sharedComponents/Modal/Modal.consts";
-import { activeModalSignal } from "../signals";
+import { CHANNEL } from "../../../shared/messages.types";
+import { QUERY_KEYS } from "../../consts";
+import ipcMessenger from "../../ipcMessenger";
+import { MODAL_ID } from "../../sharedComponents/Modal/Modal.consts";
+import { activeModalSignal } from "../../signals";
 
 interface Recipe {
   id: string;
