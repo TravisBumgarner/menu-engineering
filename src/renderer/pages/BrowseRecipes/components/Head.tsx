@@ -1,63 +1,69 @@
-import Box from "@mui/material/Box";
-import Checkbox from "@mui/material/Checkbox";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import { visuallyHidden } from "@mui/utils";
-import * as React from "react";
-import { RecipeDTO } from "../../../../shared/types";
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TableSortLabel from '@mui/material/TableSortLabel'
+import { visuallyHidden } from '@mui/utils'
+import * as React from 'react'
+import { RecipeDTO } from '../../../../shared/types'
 
 interface HeadCell {
-  disablePadding: boolean;
-  id: keyof RecipeDTO;
-  label: string;
-  numeric: boolean;
+  disablePadding: boolean
+  id: keyof RecipeDTO | 'actions'
+  label: string
+  numeric: boolean
 }
 
 const headCells: readonly HeadCell[] = [
   {
-    id: "title",
+    id: 'title',
     numeric: false,
     disablePadding: true,
-    label: "Recipe Name",
+    label: 'Recipe Name',
   },
   {
-    id: "produces",
+    id: 'produces',
     numeric: true,
     disablePadding: false,
-    label: "Produces",
+    label: 'Produces',
   },
   {
-    id: "units",
+    id: 'units',
     numeric: false,
     disablePadding: false,
-    label: "Units",
+    label: 'Units',
   },
   {
-    id: "status",
+    id: 'status',
     numeric: false,
     disablePadding: false,
-    label: "Status",
+    label: 'Status',
   },
   {
-    id: "showInMenu",
+    id: 'showInMenu',
     numeric: false,
     disablePadding: false,
-    label: "Show in Menu",
+    label: 'Show in Menu',
   },
-];
+  {
+    id: 'actions',
+    numeric: false,
+    disablePadding: false,
+    label: 'Actions',
+  },
+]
 
 interface EnhancedTableProps {
-  numSelected: number;
+  numSelected: number
   onRequestSort: (
     event: React.MouseEvent<unknown>,
-    property: keyof RecipeDTO
-  ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: "asc" | "desc";
-  orderBy: string;
-  rowCount: number;
+    property: keyof RecipeDTO,
+  ) => void
+  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
+  order: 'asc' | 'desc'
+  orderBy: string
+  rowCount: number
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
@@ -68,11 +74,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     numSelected,
     rowCount,
     onRequestSort,
-  } = props;
+  } = props
   const createSortHandler =
     (property: keyof RecipeDTO) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+      onRequestSort(event, property)
+    }
 
   return (
     <TableHead>
@@ -86,35 +92,41 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             onChange={onSelectAllClick}
             slotProps={{
               input: {
-                "aria-label": "select all recipes",
+                'aria-label': 'select all recipes',
               },
             }}
           />
         </TableCell>
-        {headCells.map((headCell) => (
+        {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+            {headCell.id === 'actions' ? (
+              headCell.label
+            ) : (
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc'
+                      ? 'sorted descending'
+                      : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            )}
           </TableCell>
         ))}
       </TableRow>
     </TableHead>
-  );
+  )
 }
 
-export default EnhancedTableHead;
+export default EnhancedTableHead

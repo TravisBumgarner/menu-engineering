@@ -1,7 +1,7 @@
-import Table from "./components/Table";
+import Table from './components/Table'
 
 const BrowseRecipes = () => {
-  return <Table />;
-};
+  return <Table />
+}
 
-export default BrowseRecipes;
+export default BrowseRecipes

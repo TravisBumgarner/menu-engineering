@@ -1,23 +1,27 @@
-import Box from "@mui/material/Box";
-import Checkbox from "@mui/material/Checkbox";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import MuiTable from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import * as React from "react";
-import { type RecipeDTO } from "../../../../shared/types";
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import Collapse from '@mui/material/Collapse'
+import IconButton from '@mui/material/IconButton'
+import MuiTable from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
+import * as React from 'react'
+import { IoMdCheckbox } from 'react-icons/io'
+import { MdEdit, MdOutlineCheckBoxOutlineBlank } from 'react-icons/md'
+import { useNavigate } from 'react-router-dom'
+import { type RecipeDTO } from '../../../../shared/types'
 
 function RecipeRow(props: {
-  row: RecipeDTO;
-  isItemSelected: boolean;
-  labelId: string;
-  onClick: (event: React.MouseEvent<unknown>, id: string) => void;
+  row: RecipeDTO
+  isItemSelected: boolean
+  labelId: string
+  onClick: (event: React.MouseEvent<unknown>, id: string) => void
 }) {
-  const { row, isItemSelected, labelId, onClick } = props;
-  const [open, setOpen] = React.useState(false);
+  const { row, isItemSelected, labelId, onClick } = props
+  const [open, setOpen] = React.useState(false)
+  const navigate = useNavigate()
 
   return (
     <React.Fragment>
@@ -28,27 +32,27 @@ function RecipeRow(props: {
         tabIndex={-1}
         key={row.id}
         selected={isItemSelected}
-        sx={{ "& > *": { borderBottom: "unset" } }}
+        sx={{ '& > *': { borderBottom: 'unset' } }}
       >
         <TableCell>
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={(event) => {
-              event.stopPropagation();
-              setOpen(!open);
+            onClick={event => {
+              event.stopPropagation()
+              setOpen(!open)
             }}
           >
-            {open ? "🔼" : "🔽"}
+            {open ? '🔼' : '🔽'}
           </IconButton>
         </TableCell>
         <TableCell padding="checkbox">
           <Checkbox
             color="primary"
             checked={isItemSelected}
-            onClick={(event) => onClick(event, row.id)}
+            onClick={event => onClick(event, row.id)}
             inputProps={{
-              "aria-labelledby": labelId,
+              'aria-labelledby': labelId,
             }}
           />
         </TableCell>
@@ -65,23 +69,34 @@ function RecipeRow(props: {
               py: 0.5,
               borderRadius: 1,
               bgcolor:
-                row.status === "PUBLISHED"
-                  ? "success.light"
-                  : row.status === "DRAFT"
-                    ? "warning.light"
-                    : "error.light",
+                row.status === 'PUBLISHED'
+                  ? 'success.light'
+                  : row.status === 'DRAFT'
+                    ? 'warning.light'
+                    : 'error.light',
               color:
-                row.status === "PUBLISHED"
-                  ? "success.contrastText"
-                  : row.status === "DRAFT"
-                    ? "warning.contrastText"
-                    : "error.contrastText",
+                row.status === 'PUBLISHED'
+                  ? 'success.contrastText'
+                  : row.status === 'DRAFT'
+                    ? 'warning.contrastText'
+                    : 'error.contrastText',
             }}
           >
             {row.status.toUpperCase()}
           </Typography>
         </TableCell>
-        <TableCell align="left">{row.showInMenu ? "✓" : "✗"}</TableCell>
+        <TableCell align="left">
+          {row.showInMenu ? (
+            <IoMdCheckbox size={20} />
+          ) : (
+            <MdOutlineCheckBoxOutlineBlank size={20} />
+          )}
+        </TableCell>
+        <TableCell align="left">
+          <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
+            <MdEdit size={20} />
+          </IconButton>
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
@@ -96,7 +111,7 @@ function RecipeRow(props: {
                     <TableCell
                       component="th"
                       scope="row"
-                      sx={{ fontWeight: "bold" }}
+                      sx={{ fontWeight: 'bold' }}
                     >
                       ID
                     </TableCell>
@@ -106,7 +121,7 @@ function RecipeRow(props: {
                     <TableCell
                       component="th"
                       scope="row"
-                      sx={{ fontWeight: "bold" }}
+                      sx={{ fontWeight: 'bold' }}
                     >
                       Created
                     </TableCell>
@@ -118,7 +133,7 @@ function RecipeRow(props: {
                     <TableCell
                       component="th"
                       scope="row"
-                      sx={{ fontWeight: "bold" }}
+                      sx={{ fontWeight: 'bold' }}
                     >
                       Updated
                     </TableCell>
@@ -130,7 +145,7 @@ function RecipeRow(props: {
                     <TableCell
                       component="th"
                       scope="row"
-                      sx={{ fontWeight: "bold" }}
+                      sx={{ fontWeight: 'bold' }}
                     >
                       Notes
                     </TableCell>
@@ -143,7 +158,7 @@ function RecipeRow(props: {
         </TableCell>
       </TableRow>
     </React.Fragment>
-  );
+  )
 }
 
-export default RecipeRow;
+export default RecipeRow

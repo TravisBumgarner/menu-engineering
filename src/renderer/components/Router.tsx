@@ -1,10 +1,12 @@
-import { Route, Routes } from "react-router-dom";
-import Home from "../pages/BrowseRecipes/BrowseRecipes";
+import { Route, Routes } from 'react-router-dom'
+import BrowseRecipes from '../pages/BrowseRecipes/BrowseRecipes'
+import Recipe from '../pages/Recipe'
 
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<BrowseRecipes />} />
+      <Route path="/recipe/:id" element={<Recipe />} />
     </Routes>
-  );
+  )
 }
