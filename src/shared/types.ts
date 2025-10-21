@@ -1,22 +1,41 @@
 export const RECIPE_STATUS = {
-  DRAFT: "DRAFT",
-  PUBLISHED: "PUBLISHED",
-  ARCHIVED: "ARCHIVED",
-} as const;
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED',
+} as const
 
-export type RecipeStatus = keyof typeof RECIPE_STATUS;
+export type RecipeStatus = keyof typeof RECIPE_STATUS
 
 export type NewRecipeDTO = {
-  title: string;
-  produces: number;
-  units: string;
-  status: RecipeStatus;
-  notes: string;
-  showInMenu: boolean;
-};
+  title: string
+  produces: number
+  units: string
+  status: RecipeStatus
+  notes: string
+  showInMenu: boolean
+}
 
 export type RecipeDTO = NewRecipeDTO & {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-};
+  id: string
+  createdAt: string
+  updatedAt: string
+}
+
+// This would be nice but for some reason on the frontend, types eventually just become [x:string]: any
+// export type IngredientDTO = InferSelectModel<typeof ingredientSchema>
+// export type NewIngredientDTO = Omit<
+//   IngredientDTO,
+//   'createdAt' | 'updatedAt' | 'id'
+// >
+
+export type NewIngredientDTO = {
+  title: string
+  quantity: number
+  units: string
+  notes: string
+}
+export type IngredientDTO = NewIngredientDTO & {
+  id: string
+  createdAt: string
+  updatedAt: string
+}

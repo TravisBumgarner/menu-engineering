@@ -1,11 +1,23 @@
 export const ROUTES = {
-  home: {
-    href: () => "/",
-    label: "Home",
-    target: "_self",
+  recipes: {
+    href: () => '/',
+    label: 'Recipes',
+    target: '_self',
   },
-} as const;
+  recipe: {
+    href: (id?: string) => (id ? `/recipe/${id}` : '/recipe/:id'),
+    label: 'Recipe',
+    target: '_self',
+  },
+  ingredients: {
+    href: () => '/ingredients',
+    label: 'Ingredients',
+    target: '_self',
+  },
+} as const
 
 export const QUERY_KEYS = {
-  RECIPES: "recipes",
-};
+  RECIPES: 'recipes',
+  RECIPE: 'recipe',
+  INGREDIENTS: 'ingredients',
+}
