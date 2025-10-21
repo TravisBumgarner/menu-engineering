@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import Collapse from '@mui/material/Collapse'
@@ -8,7 +9,9 @@ import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
+import { MdEdit } from 'react-icons/md'
 import { IngredientDTO } from '../../../../shared/types'
+import { activeModalSignal } from '../../../signals'
 
 function IngredientRow(props: {
   row: IngredientDTO
@@ -18,6 +21,13 @@ function IngredientRow(props: {
 }) {
   const { row, isItemSelected, labelId, onClick } = props
   const [open, setOpen] = React.useState(false)
+
+  const handleOpenEditModal = () => {
+    activeModalSignal.value = {
+      id: 'EDIT_INGREDIENT_MODAL',
+      ingredient: row,
+    }
+  }
 
   return (
     <React.Fragment>
@@ -58,12 +68,11 @@ function IngredientRow(props: {
         <TableCell align="right">{row.quantity}</TableCell>
         <TableCell align="left">{row.units}</TableCell>
         <TableCell align="left">
-          <IconButton size="small" title="Edit">
-            ✏️
-          </IconButton>
-          <IconButton size="small" title="Delete">
-            🗑️
-          </IconButton>
+          <Tooltip title="Edit Ingredient">
+            <IconButton size="small" title="Edit" onClick={handleOpenEditModal}>
+              <MdEdit size={20} />
+            </IconButton>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow>

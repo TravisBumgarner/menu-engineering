@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
@@ -28,7 +20,6 @@ const AddIngredientModal = ({
   recipeTitle,
 }: AddIngredientModalProps) => {
   const queryClient = useQueryClient()
-  const [isIngredientARecipe, setIsIngredientARecipe] = useState(false)
   const [ingredientFormData, setIngredientFormData] =
     useState<NewIngredientDTO>({
       title: '',
@@ -54,6 +45,7 @@ const AddIngredientModal = ({
     onSuccess: result => {
       if (result.success) {
         // Invalidate and refetch ingredients query
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
         alert('Ingredient added successfully!')
         activeModalSignal.value = null
@@ -133,16 +125,6 @@ const AddIngredientModal = ({
             rows={2}
             fullWidth
             placeholder="Optional notes about this ingredient"
-          />
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isIngredientARecipe}
-                onChange={() => setIsIngredientARecipe(!isIngredientARecipe)}
-              />
-            }
-            label="Is this ingredient a recipe?"
           />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
