@@ -1,7 +1,7 @@
 # Setup
 
 1. `npm install` dependencies
-1. `npm run start` local run
+1. `npm run dev` local run
 1. `npm run db:studio` to browse SQL lite 
 
 # Gotchas

@@ -1,25 +1,22 @@
-export const CHANNEL = {
-  DB: {
-    ADD_USER: "DB_ADD_USER",
-    GET_USERS: "DB_GET_USERS",
-  },
+export const RECIPE_STATUS = {
+  DRAFT: "DRAFT",
+  PUBLISHED: "PUBLISHED",
+  ARCHIVED: "ARCHIVED",
 } as const;
 
-export type FromRenderer = {
-  // [CHANNEL.WEE_WOO]: { id: number };
+export type RecipeStatus = keyof typeof RECIPE_STATUS;
+
+export type NewRecipeDTO = {
+  title: string;
+  produces: number;
+  units: string;
+  status: RecipeStatus;
+  notes: string;
+  showInMenu: boolean;
 };
 
-export type FromMain = {
-  // [CHANNEL.WEE_WOO]: { ok: boolean; id: number };
-};
-
-export type Invokes = {
-  [CHANNEL.DB.ADD_USER]: {
-    args: { payload: { name: string } };
-    result: { success: boolean };
-  };
-  [CHANNEL.DB.GET_USERS]: {
-    args: undefined;
-    result: { users: Array<{ id: number; name: string }> };
-  };
+export type RecipeDTO = NewRecipeDTO & {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
 };

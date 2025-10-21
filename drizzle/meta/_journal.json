@@ -8,6 +8,20 @@
       "when": 1760144849422,
       "tag": "0000_fresh_sprite",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1761001540558,
+      "tag": "0001_tricky_satana",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1761001687844,
+      "tag": "0002_vengeful_silver_samurai",
+      "breakpoints": true
     }
   ]
 }
