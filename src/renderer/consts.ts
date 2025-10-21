@@ -5,3 +5,7 @@ export const ROUTES = {
     target: "_self",
   },
 } as const;
+
+export const QUERY_KEYS = {
+  RECIPES: "recipes",
+};

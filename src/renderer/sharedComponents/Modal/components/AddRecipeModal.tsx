@@ -11,9 +11,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { CHANNEL } from "../../../../shared/messages.types";
 import { NewRecipeDTO, RECIPE_STATUS } from "../../../../shared/types";
+import { QUERY_KEYS } from "../../../consts";
 import ipcMessenger from "../../../ipcMessenger";
 import { activeModalSignal } from "../../../signals";
 import { MODAL_ID } from "../Modal.consts";
@@ -24,6 +26,8 @@ export interface AddRecipeModalProps {
 }
 
 const AddRecipeModal = ({ id }: AddRecipeModalProps) => {
+  const queryClient = useQueryClient();
+
   const [formData, setFormData] = useState<NewRecipeDTO>({
     title: "",
     produces: 1,
@@ -33,18 +37,29 @@ const AddRecipeModal = ({ id }: AddRecipeModalProps) => {
     showInMenu: false,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = await ipcMessenger.invoke(CHANNEL.DB.ADD_RECIPE, {
-      payload: formData,
-    });
+  const addRecipeMutation = useMutation({
+    mutationFn: (recipeData: NewRecipeDTO) =>
+      ipcMessenger.invoke(CHANNEL.DB.ADD_RECIPE, {
+        payload: recipeData,
+      }),
+    onSuccess: (result) => {
+      if (result.success) {
+        // Invalidate and refetch recipes query
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] });
+        alert("Recipe added successfully!");
+        activeModalSignal.value = null;
+      } else {
+        alert("Failed to add recipe.");
+      }
+    },
+    onError: () => {
+      alert("Error adding recipe.");
+    },
+  });
 
-    if (result.success) {
-      alert("Recipe added successfully!");
-      activeModalSignal.value = null;
-    } else {
-      alert("Failed to add recipe.");
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addRecipeMutation.mutate(formData);
   };
 
   const handleInputChange =
@@ -140,8 +155,12 @@ const AddRecipeModal = ({ id }: AddRecipeModalProps) => {
             <Button variant="outlined" type="button">
               Cancel
             </Button>
-            <Button variant="contained" type="submit">
-              Add Recipe
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={addRecipeMutation.isPending}
+            >
+              {addRecipeMutation.isPending ? "Adding..." : "Add Recipe"}
             </Button>
           </Stack>
         </Stack>
