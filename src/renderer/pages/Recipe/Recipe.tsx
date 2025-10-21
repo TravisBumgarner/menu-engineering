@@ -45,13 +45,16 @@ const Recipe = () => {
     return <div>Recipe not found.</div>
   }
 
-  console.log
-
   return (
     <div>
       <Typography variant="h1">{data.recipe.title}</Typography>
-      {data.ingredients.length ? (
-        <Table ingredients={data.ingredients || []} />
+      {data.ingredients.length || data.subRecipes.length ? (
+        <Table
+          ingredients={data.ingredients}
+          recipeId={id}
+          subRecipes={data.subRecipes}
+          title={data.recipe.title}
+        />
       ) : (
         <Message
           includeVerticalMargin

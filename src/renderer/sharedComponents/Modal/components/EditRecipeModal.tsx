@@ -12,92 +12,91 @@ import {
   Typography,
 } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { NewRecipeDTO, RECIPE_STATUS } from '../../../../shared/types'
+import {
+  NewRecipeDTO,
+  RECIPE_STATUS,
+  RecipeDTO,
+} from '../../../../shared/types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
-export interface AddRecipeModalProps {
-  id: typeof MODAL_ID.ADD_RECIPE_MODAL
-  parentRecipe?: {
-    recipeId: string
-    title: string
-  }
+export interface EditRecipeModalProps {
+  id: typeof MODAL_ID.EDIT_RECIPE_MODAL
+  recipe: RecipeDTO
 }
 
-const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
+const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
   const queryClient = useQueryClient()
 
   const [formData, setFormData] = useState<NewRecipeDTO>({
-    title: '',
-    produces: 1,
-    units: '',
-    status: RECIPE_STATUS.DRAFT,
-    notes: '',
-    showInMenu: false,
+    title: recipe.title,
+    produces: recipe.produces,
+    units: recipe.units,
+    status: recipe.status,
+    notes: recipe.notes,
+    showInMenu: recipe.showInMenu,
   })
 
-  const handleCancel = () => {
-    activeModalSignal.value = null
-  }
+  // Update form data when recipe prop changes
+  useEffect(() => {
+    setFormData({
+      title: recipe.title,
+      produces: recipe.produces,
+      units: recipe.units,
+      status: recipe.status,
+      notes: recipe.notes,
+      showInMenu: recipe.showInMenu,
+    })
+  }, [recipe])
 
-  const addRecipeMutation = useMutation({
-    mutationFn: (recipeData: NewRecipeDTO) =>
-      ipcMessenger.invoke(CHANNEL.DB.ADD_RECIPE, {
+  const updateRecipeMutation = useMutation({
+    mutationFn: (recipeData: Partial<NewRecipeDTO>) =>
+      ipcMessenger.invoke(CHANNEL.DB.UPDATE_RECIPE, {
+        id: recipe.id,
         payload: recipeData,
       }),
     onSuccess: result => {
       if (result.success) {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
-        alert('Recipe added successfully!')
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECIPE, recipe.id],
+        })
+        alert('Recipe updated successfully!')
         activeModalSignal.value = null
       } else {
-        alert('Failed to add recipe.')
+        alert('Failed to update recipe.')
       }
     },
     onError: () => {
-      alert('Error adding recipe.')
-    },
-  })
-
-  const addSubRecipeMutation = useMutation({
-    mutationFn: (args: { newRecipe: NewRecipeDTO; parentRecipeId: string }) =>
-      ipcMessenger.invoke(CHANNEL.DB.ADD_SUB_RECIPE, {
-        payload: {
-          newRecipe: args.newRecipe,
-          parentRecipeId: args.parentRecipeId,
-        },
-      }),
-    onSuccess: result => {
-      if (result.success) {
-        // Invalidate and refetch recipes query
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
-        alert('Sub-recipe added successfully!')
-        activeModalSignal.value = null
-      } else {
-        alert('Failed to add sub-recipe.')
-      }
-    },
-    onError: () => {
-      alert('Error adding sub-recipe.')
+      alert('Error updating recipe.')
     },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (parentRecipe) {
-      addSubRecipeMutation.mutate({
-        newRecipe: formData,
-        parentRecipeId: parentRecipe.recipeId,
-      })
-    } else {
-      addRecipeMutation.mutate(formData)
+    // Only send changed fields
+    const changes: Partial<NewRecipeDTO> = {}
+    if (formData.title !== recipe.title) changes.title = formData.title
+    if (formData.produces !== recipe.produces)
+      changes.produces = formData.produces
+    if (formData.units !== recipe.units) changes.units = formData.units
+    if (formData.status !== recipe.status) changes.status = formData.status
+    if (formData.notes !== recipe.notes) changes.notes = formData.notes
+    if (formData.showInMenu !== recipe.showInMenu)
+      changes.showInMenu = formData.showInMenu
+
+    if (Object.keys(changes).length === 0) {
+      activeModalSignal.value = null
+      return
     }
+
+    updateRecipeMutation.mutate(changes)
   }
 
   const handleInputChange =
@@ -122,9 +121,7 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
   return (
     <DefaultModal>
       <Typography variant="h5" component="h2" gutterBottom>
-        {parentRecipe
-          ? `Add New Sub-Recipe to ${parentRecipe.title}`
-          : 'Add New Recipe'}
+        Edit Recipe: {recipe.title}
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit}>
@@ -192,15 +189,19 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
           />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button onClick={handleCancel} variant="outlined" type="button">
+            <Button
+              variant="outlined"
+              type="button"
+              onClick={() => (activeModalSignal.value = null)}
+            >
               Cancel
             </Button>
             <Button
               variant="contained"
               type="submit"
-              disabled={addRecipeMutation.isPending}
+              disabled={updateRecipeMutation.isPending}
             >
-              {addRecipeMutation.isPending ? 'Adding...' : 'Add Recipe'}
+              {updateRecipeMutation.isPending ? 'Updating...' : 'Update Recipe'}
             </Button>
           </Stack>
         </Stack>
@@ -209,4 +210,4 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
   )
 }
 
-export default AddRecipeModal
+export default EditRecipeModal
