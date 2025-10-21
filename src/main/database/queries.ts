@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import { NewRecipeDTO } from 'src/shared/types'
+import { NewIngredientDTO, NewRecipeDTO } from 'src/shared/types'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from './client'
 import {
@@ -33,6 +33,33 @@ const getRecipe = async (id: string) => {
   return recipes[0]
 }
 
+const addIngredient = async (ingredientData: NewIngredientDTO) => {
+  const newId = uuidv4()
+
+  await db
+    .insert(ingredientSchema)
+    .values({ id: newId, ...ingredientData })
+    .run()
+
+  return newId
+}
+
+const addIngredientToRecipe = async ({
+  ingredientId,
+  recipeId,
+}: {
+  ingredientId: string
+  recipeId: string
+}) => {
+  const newId = uuidv4()
+  await db
+    .insert(recipeIngredientSchema)
+    .values({ id: newId, parentId: recipeId, childId: ingredientId })
+    .run()
+
+  return newId
+}
+
 const getRecipeIngredients = async (recipeId: string) => {
   const ingredients = await db
     .select({ ingredient: ingredientSchema })
@@ -45,4 +72,11 @@ const getRecipeIngredients = async (recipeId: string) => {
   return ingredients.map(row => row.ingredient)
 }
 
-export default { addRecipe, getRecipes, getRecipe, getRecipeIngredients }
+export default {
+  addRecipe,
+  getRecipes,
+  getRecipe,
+  getRecipeIngredients,
+  addIngredient,
+  addIngredientToRecipe,
+}

@@ -1,32 +1,40 @@
-import { type FC } from "react";
+import { type FC } from 'react'
 
-import { useSignals } from "@preact/signals-react/runtime";
-import { activeModalSignal } from "../../signals";
+import { useSignals } from '@preact/signals-react/runtime'
+import { activeModalSignal } from '../../signals'
+import AddIngredientModal, {
+  type AddIngredientModalProps,
+} from './components/AddIngredientModal'
 import AddRecipeModal, {
   type AddRecipeModalProps,
-} from "./components/AddRecipeModal";
+} from './components/AddRecipeModal'
 import ConfirmationModal, {
   type ConfirmationModalProps,
-} from "./components/ConfirmationModal";
-import { MODAL_ID } from "./Modal.consts";
+} from './components/ConfirmationModal'
+import { MODAL_ID } from './Modal.consts'
 
-export type ActiveModal = ConfirmationModalProps | AddRecipeModalProps;
+export type ActiveModal =
+  | ConfirmationModalProps
+  | AddRecipeModalProps
+  | AddIngredientModalProps
 
-export type ModalId = (typeof MODAL_ID)[keyof typeof MODAL_ID];
+export type ModalId = (typeof MODAL_ID)[keyof typeof MODAL_ID]
 
 const RenderModal: FC = () => {
-  useSignals();
+  useSignals()
 
-  if (!activeModalSignal.value?.id) return null;
+  if (!activeModalSignal.value?.id) return null
 
   switch (activeModalSignal.value.id) {
     case MODAL_ID.ADD_RECIPE_MODAL:
-      return <AddRecipeModal {...activeModalSignal.value} />;
+      return <AddRecipeModal {...activeModalSignal.value} />
     case MODAL_ID.CONFIRMATION_MODAL:
-      return <ConfirmationModal {...activeModalSignal.value} />;
+      return <ConfirmationModal {...activeModalSignal.value} />
+    case MODAL_ID.ADD_INGREDIENT_MODAL:
+      return <AddIngredientModal {...activeModalSignal.value} />
     default:
-      return null;
+      return null
   }
-};
+}
 
-export default RenderModal;
+export default RenderModal

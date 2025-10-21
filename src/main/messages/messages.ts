@@ -26,3 +26,21 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPE, async (_event, params) => {
     ingredients: ingredients || [],
   }
 })
+
+typedIpcMain.handle(CHANNEL.DB.ADD_INGREDIENT, async (_event, params) => {
+  const newIngredientId = await queries.addIngredient(params.payload)
+  let newLink: string | undefined
+  console.log('params.payload.recipeId', params.payload.recipeId)
+
+  if (params.payload.recipeId && newIngredientId) {
+    console.log('inserting ingredeint to recipe')
+    newLink = await queries.addIngredientToRecipe({
+      ingredientId: newIngredientId,
+      recipeId: params.payload.recipeId,
+    })
+  }
+  return {
+    type: 'add_ingredient',
+    success: !!newIngredientId && (params.payload.recipeId ? !!newLink : true),
+  }
+})
