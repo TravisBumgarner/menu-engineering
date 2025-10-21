@@ -1,7 +1,7 @@
 import Table from "./components/Table";
 
-const Home = () => {
+const BrowseRecipes = () => {
   return <Table />;
 };
 
-export default Home;
+export default BrowseRecipes;
