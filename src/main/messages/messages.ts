@@ -95,3 +95,11 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_INGREDIENT, async (_event, params) => {
     success: !!result,
   }
 })
+
+typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE, async (_event, params) => {
+  const result = await queries.updateRecipe(params.id, params.payload)
+  return {
+    type: 'update_recipe',
+    success: !!result,
+  }
+})

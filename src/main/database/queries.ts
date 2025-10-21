@@ -134,6 +134,16 @@ const updateIngredient = async (
   return result
 }
 
+const updateRecipe = async (id: string, recipeData: Partial<NewRecipeDTO>) => {
+  const result = await db
+    .update(recipeSchema)
+    .set(recipeData)
+    .where(eq(recipeSchema.id, id))
+    .run()
+
+  return result
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -146,4 +156,5 @@ export default {
   addSubRecipeToRecipe,
   getRecipeSubRecipes,
   updateIngredient,
+  updateRecipe,
 }
