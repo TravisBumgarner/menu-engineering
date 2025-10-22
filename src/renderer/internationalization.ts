@@ -129,7 +129,27 @@ export type TranslationKeys =
   | 'kilograms'
   | 'ounces'
   | 'pounds'
-  | 'units'
+  | 'pieces'
+
+  // Missing translations
+  | 'noNotes'
+  | 'language'
+  | 'english'
+  | 'spanish'
+  | 'addExistingIngredientOrRecipe'
+  | 'recipeAddedSuccessfully'
+  | 'failedToAddRecipe'
+  | 'errorAddingRecipe'
+  | 'subRecipeAddedSuccessfully'
+  | 'failedToAddSubRecipe'
+  | 'errorAddingSubRecipe'
+  | 'recipeUpdatedSuccessfully'
+  | 'failedToUpdateRecipe'
+  | 'errorUpdatingRecipe'
+  | 'ingredientUpdatedSuccessfully'
+  | 'failedToUpdateIngredient'
+  | 'errorUpdatingIngredient'
+  | 'ingredientAddedSuccessfully'
   | 'weightConversions'
   | 'volumeConversions'
   | 'unitConversions'
@@ -262,11 +282,32 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   kilograms: 'Kilograms',
   ounces: 'Ounces',
   pounds: 'Pounds',
+  pieces: 'Pieces',
   weightConversions: 'Weight Conversion Table',
   volumeConversions: 'Volume Conversion Table',
   unitConversions: 'Unit Conversion Tables',
   conversionDisclaimer:
     'Conversions are approximate and based on US standard measurements',
+
+  // Missing translations
+  noNotes: 'No notes',
+  language: 'Language',
+  english: 'English',
+  spanish: 'Spanish',
+  addExistingIngredientOrRecipe: 'Add existing ingredient or recipe',
+  recipeAddedSuccessfully: 'Recipe added successfully!',
+  failedToAddRecipe: 'Failed to add recipe.',
+  errorAddingRecipe: 'Error adding recipe.',
+  subRecipeAddedSuccessfully: 'Sub-recipe added successfully!',
+  failedToAddSubRecipe: 'Failed to add sub-recipe.',
+  errorAddingSubRecipe: 'Error adding sub-recipe.',
+  recipeUpdatedSuccessfully: 'Recipe updated successfully!',
+  failedToUpdateRecipe: 'Failed to update recipe.',
+  errorUpdatingRecipe: 'Error updating recipe.',
+  ingredientUpdatedSuccessfully: 'Ingredient updated successfully!',
+  failedToUpdateIngredient: 'Failed to update ingredient.',
+  errorUpdatingIngredient: 'Error updating ingredient.',
+  ingredientAddedSuccessfully: 'Ingredient added successfully!',
 }
 
 const SpanishTranslations: Record<TranslationKeys, string> = {
@@ -397,11 +438,32 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   kilograms: 'Kilogramos',
   ounces: 'Onzas',
   pounds: 'Libras',
+  pieces: 'Piezas',
   weightConversions: 'Tabla de Conversión de Peso',
   volumeConversions: 'Tabla de Conversión de Volumen',
   unitConversions: 'Conversión de Unidades',
   conversionDisclaimer:
     'Las conversiones son aproximadas y se basan en medidas estándar de EE.UU.',
+
+  // Missing translations
+  noNotes: 'Sin notas',
+  language: 'Idioma',
+  english: 'Inglés',
+  spanish: 'Español',
+  addExistingIngredientOrRecipe: 'Agregar ingrediente o receta existente',
+  recipeAddedSuccessfully: '¡Receta agregada exitosamente!',
+  failedToAddRecipe: 'Falló al agregar receta.',
+  errorAddingRecipe: 'Error agregando receta.',
+  subRecipeAddedSuccessfully: '¡Sub-receta agregada exitosamente!',
+  failedToAddSubRecipe: 'Falló al agregar sub-receta.',
+  errorAddingSubRecipe: 'Error agregando sub-receta.',
+  recipeUpdatedSuccessfully: '¡Receta actualizada exitosamente!',
+  failedToUpdateRecipe: 'Falló al actualizar receta.',
+  errorUpdatingRecipe: 'Error actualizando receta.',
+  ingredientUpdatedSuccessfully: '¡Ingrediente actualizado exitosamente!',
+  failedToUpdateIngredient: 'Falló al actualizar ingrediente.',
+  errorUpdatingIngredient: 'Error actualizando ingrediente.',
+  ingredientAddedSuccessfully: '¡Ingrediente agregado exitosamente!',
 }
 
 i18n.use(initReactI18next).init({

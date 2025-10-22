@@ -21,6 +21,7 @@ import {
 } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { MODAL_ID } from '../Modal.consts'
@@ -32,6 +33,7 @@ export interface EditRecipeModalProps {
 }
 
 const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
+  const { t } = useAppTranslation()
   const queryClient = useQueryClient()
 
   const [formData, setFormData] = useState<NewRecipeDTO>({
@@ -68,14 +70,14 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPE, recipe.id],
         })
-        alert('Recipe updated successfully!')
+        alert(t('recipeUpdatedSuccessfully'))
         activeModalSignal.value = null
       } else {
-        alert('Failed to update recipe.')
+        alert(t('failedToUpdateRecipe'))
       }
     },
     onError: () => {
-      alert('Error updating recipe.')
+      alert(t('errorUpdatingRecipe'))
     },
   })
 
@@ -129,7 +131,7 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
         <Stack spacing={3}>
           <TextField
             size="small"
-            label="Title"
+            label={t('title')}
             value={formData.title}
             onChange={handleInputChange('title')}
             required
@@ -138,7 +140,7 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
 
           <TextField
             size="small"
-            label="Produces"
+            label={t('produces')}
             type="number"
             value={formData.produces}
             onChange={handleInputChange('produces')}
@@ -147,7 +149,7 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
           />
 
           <FormControl size="small" fullWidth required>
-            <InputLabel>Units</InputLabel>
+            <InputLabel>{t('units')}</InputLabel>
             <Select
               value={formData.units}
               onChange={e =>
@@ -155,7 +157,7 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
                   e as React.ChangeEvent<HTMLInputElement>,
                 )
               }
-              label="Units"
+              label={t('units')}
             >
               {Object.entries(ALL_UNITS).map(([key, value]) => (
                 <MenuItem key={key} value={value}>
@@ -166,21 +168,21 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
           </FormControl>
 
           <FormControl size="small" fullWidth required>
-            <InputLabel>Status</InputLabel>
+            <InputLabel>{t('status')}</InputLabel>
             <Select
               value={formData.status}
               onChange={handleInputChange('status')}
-              label="Status"
+              label={t('status')}
             >
-              <MenuItem value={RECIPE_STATUS.draft}>Draft</MenuItem>
-              <MenuItem value={RECIPE_STATUS.published}>Published</MenuItem>
-              <MenuItem value={RECIPE_STATUS.archived}>Archived</MenuItem>
+              <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
+              <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
+              <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
             </Select>
           </FormControl>
 
           <TextField
             size="small"
-            label="Notes"
+            label={t('notes')}
             value={formData.notes}
             onChange={handleInputChange('notes')}
             multiline
@@ -195,7 +197,7 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
                 onChange={handleCheckboxChange('showInMenu')}
               />
             }
-            label="Show in Menu"
+            label={t('showInMenu')}
           />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
@@ -204,14 +206,14 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
               type="button"
               onClick={() => (activeModalSignal.value = null)}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               variant="contained"
               type="submit"
               disabled={updateRecipeMutation.isPending}
             >
-              {updateRecipeMutation.isPending ? 'Updating...' : 'Update Recipe'}
+              {updateRecipeMutation.isPending ? t('updating') : t('updateRecipe')}
             </Button>
           </Stack>
         </Stack>
