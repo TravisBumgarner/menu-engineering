@@ -21,18 +21,12 @@ export type RecipeDTO = NewRecipeDTO & {
   updatedAt: string
 }
 
-// This would be nice but for some reason on the frontend, types eventually just become [x:string]: any
-// export type IngredientDTO = InferSelectModel<typeof ingredientSchema>
-// export type NewIngredientDTO = Omit<
-//   IngredientDTO,
-//   'createdAt' | 'updatedAt' | 'id'
-// >
-
 export type NewIngredientDTO = {
   title: string
   quantity: number
   units: string
   notes: string
+  cost: number
 }
 export type IngredientDTO = NewIngredientDTO & {
   id: string

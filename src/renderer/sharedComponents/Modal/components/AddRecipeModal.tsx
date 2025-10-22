@@ -14,12 +14,13 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { NewRecipeDTO, RECIPE_STATUS } from '../../../../shared/types'
+import { NewRecipeDTO, RECIPE_STATUS } from '../../../../shared/recipe.types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
+import { ALL_UNITS } from '../../../../shared/units.types'
 
 export interface AddRecipeModalProps {
   id: typeof MODAL_ID.ADD_RECIPE_MODAL
@@ -119,6 +120,12 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
       }))
     }
 
+  const preventSubmit =
+    addRecipeMutation.isPending ||
+    !formData.title.trim() ||
+    !formData.units.trim() ||
+    formData.produces <= 0
+
   return (
     <DefaultModal>
       <Typography variant="h5" component="h2" gutterBottom>
@@ -148,15 +155,24 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
             fullWidth
           />
 
-          <TextField
-            size="small"
-            label="Units"
-            value={formData.units}
-            onChange={handleInputChange('units')}
-            required
-            fullWidth
-            placeholder="e.g. servings, portions, pieces"
-          />
+          <FormControl size="small" fullWidth required>
+            <InputLabel>Units</InputLabel>
+            <Select
+              value={formData.units}
+              onChange={e =>
+                handleInputChange('units')(
+                  e as React.ChangeEvent<HTMLInputElement>,
+                )
+              }
+              label="Units"
+            >
+              {Object.entries(ALL_UNITS).map(([key, value]) => (
+                <MenuItem key={key} value={value}>
+                  {value.toLowerCase().replace('_', ' ')}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           <FormControl size="small" fullWidth required>
             <InputLabel>Status</InputLabel>
@@ -195,11 +211,7 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
             <Button onClick={handleCancel} variant="outlined" type="button">
               Cancel
             </Button>
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={addRecipeMutation.isPending}
-            >
+            <Button variant="contained" type="submit" disabled={preventSubmit}>
               {addRecipeMutation.isPending ? 'Adding...' : 'Add Recipe'}
             </Button>
           </Stack>

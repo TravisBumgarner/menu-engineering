@@ -1,8 +1,22 @@
-import { Box, Button, Stack, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { IngredientDTO, NewIngredientDTO } from '../../../../shared/types'
+import {
+  IngredientDTO,
+  NewIngredientDTO,
+} from '../../../../shared/recipe.types'
+import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
@@ -28,6 +42,7 @@ const EditIngredientModal = ({
     quantity: ingredient.quantity,
     units: ingredient.units,
     notes: ingredient.notes,
+    cost: ingredient.cost,
   })
 
   // Update form data when ingredient prop changes
@@ -37,6 +52,7 @@ const EditIngredientModal = ({
       quantity: ingredient.quantity,
       units: ingredient.units,
       notes: ingredient.notes,
+      cost: ingredient.cost,
     })
   }, [ingredient])
 
@@ -78,6 +94,7 @@ const EditIngredientModal = ({
       changes.quantity = formData.quantity
     if (formData.units !== ingredient.units) changes.units = formData.units
     if (formData.notes !== ingredient.notes) changes.notes = formData.notes
+    if (formData.cost !== ingredient.cost) changes.cost = formData.cost
 
     if (Object.keys(changes).length === 0) {
       activeModalSignal.value = null
@@ -91,7 +108,9 @@ const EditIngredientModal = ({
     (field: keyof NewIngredientDTO) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value =
-        field === 'quantity' ? Number(e.target.value) : e.target.value
+        field === 'quantity' || field === 'cost'
+          ? Number(e.target.value)
+          : e.target.value
       setFormData(prev => ({
         ...prev,
         [field]: value,
@@ -125,17 +144,36 @@ const EditIngredientModal = ({
             onChange={handleInputChange('quantity')}
             required
             fullWidth
-            inputProps={{ min: 0, step: 'any' }}
+            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
           />
 
+          <FormControl size="small" fullWidth required>
+            <InputLabel>Units</InputLabel>
+            <Select
+              value={formData.units}
+              onChange={e =>
+                handleInputChange('units')(
+                  e as React.ChangeEvent<HTMLInputElement>,
+                )
+              }
+              label="Units"
+            >
+              {Object.entries(ALL_UNITS).map(([key, value]) => (
+                <MenuItem key={key} value={value}>
+                  {value.toLowerCase().replace('_', ' ')}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
             size="small"
-            label="Units"
-            value={formData.units}
-            onChange={handleInputChange('units')}
+            label="Cost"
+            type="number"
+            value={formData.cost}
+            onChange={handleInputChange('cost')}
             required
             fullWidth
-            placeholder="e.g. cups, grams, tablespoons, pieces"
+            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
           />
 
           <TextField

@@ -1,11 +1,13 @@
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { RECIPE_STATUS } from '../../shared/types'
+import { RECIPE_STATUS } from '../../shared/recipe.types'
+import { ALL_UNITS } from '../../shared/units.types'
 
 export const recipeSchema = sqliteTable('recipes', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
   produces: real('produces').notNull(),
   units: text('units').notNull(),
+
   status: text('status', {
     enum: [
       RECIPE_STATUS.ARCHIVED,
@@ -26,8 +28,11 @@ export const recipeSchema = sqliteTable('recipes', {
 export const ingredientSchema = sqliteTable('ingredients', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
+  cost: real('cost').notNull(),
   quantity: real('quantity').notNull(),
-  units: text('units').notNull(),
+  units: text('units', {
+    enum: Object.values({ ...ALL_UNITS }) as [string, ...string[]],
+  }).notNull(),
   createdAt: text('created_at')
     .notNull()
     .$defaultFn(() => new Date().toISOString()),

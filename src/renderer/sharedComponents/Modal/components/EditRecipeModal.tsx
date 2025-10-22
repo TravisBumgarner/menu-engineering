@@ -18,7 +18,8 @@ import {
   NewRecipeDTO,
   RECIPE_STATUS,
   RecipeDTO,
-} from '../../../../shared/types'
+} from '../../../../shared/recipe.types'
+import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
@@ -145,15 +146,24 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
             fullWidth
           />
 
-          <TextField
-            size="small"
-            label="Units"
-            value={formData.units}
-            onChange={handleInputChange('units')}
-            required
-            fullWidth
-            placeholder="e.g. servings, portions, pieces"
-          />
+          <FormControl size="small" fullWidth required>
+            <InputLabel>Units</InputLabel>
+            <Select
+              value={formData.units}
+              onChange={e =>
+                handleInputChange('units')(
+                  e as React.ChangeEvent<HTMLInputElement>,
+                )
+              }
+              label="Units"
+            >
+              {Object.entries(ALL_UNITS).map(([key, value]) => (
+                <MenuItem key={key} value={value}>
+                  {value.toLowerCase().replace('_', ' ')}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           <FormControl size="small" fullWidth required>
             <InputLabel>Status</InputLabel>

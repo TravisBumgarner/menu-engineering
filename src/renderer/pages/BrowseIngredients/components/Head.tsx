@@ -6,7 +6,7 @@ import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
-import { IngredientDTO } from '../../../../shared/types'
+import { IngredientDTO } from '../../../../shared/recipe.types'
 
 interface HeadCell {
   disablePadding: boolean
@@ -35,6 +35,12 @@ const headCells: readonly HeadCell[] = [
     label: 'Units',
   },
   {
+    id: 'cost',
+    numeric: true,
+    disablePadding: false,
+    label: 'Cost',
+  },
+  {
     id: 'actions',
     numeric: false,
     disablePadding: false,
@@ -50,7 +56,7 @@ interface EnhancedTableProps {
   ) => void
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
   order: 'asc' | 'desc'
-  orderBy: string
+  orderBy: string | number | symbol
   rowCount: number
 }
 

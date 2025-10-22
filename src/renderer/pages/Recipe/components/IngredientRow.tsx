@@ -97,8 +97,10 @@ function IngredientRow(props: {
             color="primary"
             checked={isItemSelected}
             onClick={event => onClick(event, row.id)}
-            inputProps={{
-              'aria-labelledby': labelId,
+            slotProps={{
+              input: {
+                'aria-labelledby': labelId,
+              },
             }}
           />
         </TableCell>

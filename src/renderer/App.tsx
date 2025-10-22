@@ -1,29 +1,41 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MemoryRouter } from "react-router-dom";
-import Navigation from "./components/Navigation";
-import Router from "./components/Router";
-import RenderModal from "./sharedComponents/Modal";
+import { Box } from '@mui/material'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MemoryRouter } from 'react-router-dom'
+import Navigation from './components/Navigation'
+import Router from './components/Router'
+import RenderModal from './sharedComponents/Modal'
+import AppThemeProvider from './styles/Theme'
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 function App() {
   return (
-    <div>
+    <>
       <Navigation />
       <Router />
       <RenderModal />
-    </div>
-  );
+    </>
+  )
 }
 
 const WrappedApp = () => {
   return (
-    <MemoryRouter>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </MemoryRouter>
-  );
-};
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+      }}
+    >
+      <MemoryRouter>
+        <AppThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
+        </AppThemeProvider>
+      </MemoryRouter>
+    </Box>
+  )
+}
 
-export default WrappedApp;
+export default WrappedApp
