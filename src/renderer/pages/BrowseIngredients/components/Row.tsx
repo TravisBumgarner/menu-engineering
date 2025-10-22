@@ -67,6 +67,7 @@ function IngredientRow(props: {
         </TableCell>
         <TableCell align="right">{row.quantity}</TableCell>
         <TableCell align="left">{row.units}</TableCell>
+        <TableCell align="right">{row.cost}</TableCell>
         <TableCell align="left">
           <Tooltip title="Edit Ingredient">
             <IconButton size="small" title="Edit" onClick={handleOpenEditModal}>

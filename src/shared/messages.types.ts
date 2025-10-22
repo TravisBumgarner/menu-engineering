@@ -3,7 +3,7 @@ import {
   NewIngredientDTO,
   NewRecipeDTO,
   RecipeDTO,
-} from './types'
+} from './recipe.types'
 
 export const CHANNEL = {
   DB: {

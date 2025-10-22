@@ -1,5 +1,5 @@
 import { and, eq } from 'drizzle-orm'
-import { NewIngredientDTO, NewRecipeDTO } from 'src/shared/types'
+import { NewIngredientDTO, NewRecipeDTO } from 'src/shared/recipe.types'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from './client'
 import {

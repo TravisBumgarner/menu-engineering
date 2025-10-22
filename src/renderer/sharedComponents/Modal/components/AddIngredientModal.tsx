@@ -1,8 +1,19 @@
-import { Box, Button, Stack, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { NewIngredientDTO } from '../../../../shared/types'
+import { NewIngredientDTO } from '../../../../shared/recipe.types'
+import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
@@ -26,29 +37,46 @@ const AddIngredientModal = ({
       quantity: 0,
       units: '',
       notes: '',
+      cost: 0,
     })
 
   const addIngredientMutation = useMutation({
     mutationFn: ({
       newIngredient,
       recipeId,
+      shouldClose,
     }: {
       newIngredient: NewIngredientDTO
       recipeId?: string
+      shouldClose: boolean
     }) =>
-      ipcMessenger.invoke(CHANNEL.DB.ADD_INGREDIENT, {
-        payload: {
-          newIngredient,
-          recipeId,
-        },
-      }),
+      ipcMessenger
+        .invoke(CHANNEL.DB.ADD_INGREDIENT, {
+          payload: {
+            newIngredient,
+            recipeId,
+          },
+        })
+        .then(result => ({ ...result, shouldClose })),
     onSuccess: result => {
       if (result.success) {
         // Invalidate and refetch ingredients query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
         alert('Ingredient added successfully!')
-        activeModalSignal.value = null
+
+        if (result.shouldClose) {
+          activeModalSignal.value = null
+        } else {
+          // Reset form for "Save & Add another"
+          setIngredientFormData({
+            title: '',
+            quantity: 0,
+            units: '',
+            notes: '',
+            cost: 0,
+          })
+        }
       } else {
         alert('Failed to add ingredient.')
       }
@@ -58,24 +86,35 @@ const AddIngredientModal = ({
     },
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (shouldClose: boolean) => (e: React.FormEvent) => {
     e.preventDefault()
     addIngredientMutation.mutate({
       newIngredient: ingredientFormData,
       recipeId,
+      shouldClose,
     })
   }
 
   const handleInputChange =
     (field: keyof NewIngredientDTO) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (
+      e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } },
+    ) => {
       const value =
-        field === 'quantity' ? Number(e.target.value) : e.target.value
+        field === 'quantity' || field === 'cost'
+          ? Number(e.target.value)
+          : e.target.value
       setIngredientFormData(prev => ({
         ...prev,
         [field]: value,
       }))
     }
+
+  const preventSubmit =
+    addIngredientMutation.isPending ||
+    !ingredientFormData.title.trim() ||
+    ingredientFormData.quantity <= 0 ||
+    !ingredientFormData.units.trim()
 
   return (
     <DefaultModal>
@@ -83,7 +122,7 @@ const AddIngredientModal = ({
         Add New Ingredient {recipeId ? `to Recipe ${recipeTitle}` : ''}
       </Typography>
 
-      <Box component="form" onSubmit={handleSubmit}>
+      <Box component="form">
         <Stack spacing={3}>
           <TextField
             size="small"
@@ -103,17 +142,37 @@ const AddIngredientModal = ({
             onChange={handleInputChange('quantity')}
             required
             fullWidth
-            inputProps={{ min: 0, step: 'any' }}
+            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
           />
+
+          <FormControl size="small" fullWidth required>
+            <InputLabel>Units</InputLabel>
+            <Select
+              value={ingredientFormData.units}
+              onChange={e =>
+                handleInputChange('units')(
+                  e as React.ChangeEvent<HTMLInputElement>,
+                )
+              }
+              label="Units"
+            >
+              {Object.entries(ALL_UNITS).map(([key, value]) => (
+                <MenuItem key={key} value={value}>
+                  {value.toLowerCase().replace('_', ' ')}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           <TextField
             size="small"
-            label="Units"
-            value={ingredientFormData.units}
-            onChange={handleInputChange('units')}
+            label="Cost"
+            type="number"
+            value={ingredientFormData.cost}
+            onChange={handleInputChange('cost')}
             required
             fullWidth
-            placeholder="e.g. cups, grams, tablespoons, pieces"
+            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
           />
 
           <TextField
@@ -136,11 +195,22 @@ const AddIngredientModal = ({
               Cancel
             </Button>
             <Button
-              variant="contained"
-              type="submit"
-              disabled={addIngredientMutation.isPending}
+              variant="outlined"
+              type="button"
+              onClick={handleSubmit(true)}
+              disabled={preventSubmit}
             >
-              {addIngredientMutation.isPending ? 'Adding...' : 'Add Ingredient'}
+              {addIngredientMutation.isPending ? 'Saving...' : 'Save'}
+            </Button>
+            <Button
+              variant="contained"
+              type="button"
+              onClick={handleSubmit(false)}
+              disabled={preventSubmit}
+            >
+              {addIngredientMutation.isPending
+                ? 'Saving...'
+                : 'Save & Add another'}
             </Button>
           </Stack>
         </Stack>

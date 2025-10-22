@@ -12,25 +12,25 @@ interface HeadCell {
   disablePadding: boolean
   id: 'title' | 'cost' | 'actions'
   label: string
-  numeric: boolean
+  align: 'left' | 'right' | 'center'
 }
 
 const headCells: readonly HeadCell[] = [
   {
     id: 'title',
-    numeric: false,
+    align: 'left',
     disablePadding: true,
     label: 'Ingredient Name',
   },
   {
     id: 'cost',
-    numeric: true,
+    align: 'right',
     disablePadding: true,
     label: 'Cost',
   },
   {
     id: 'actions',
-    numeric: false,
+    align: 'center',
     disablePadding: false,
     label: 'Actions',
   },
@@ -63,7 +63,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell />
+        <TableCell width={20} />
         <TableCell padding="checkbox">
           <Checkbox
             color="primary"
@@ -80,7 +80,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
+            align={headCell.align}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >

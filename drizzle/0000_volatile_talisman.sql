@@ -1,6 +1,7 @@
 CREATE TABLE `ingredients` (
 	`id` text PRIMARY KEY NOT NULL,
 	`title` text NOT NULL,
+	`cost` real NOT NULL,
 	`quantity` real NOT NULL,
 	`units` text NOT NULL,
 	`created_at` text NOT NULL,
@@ -24,4 +25,10 @@ CREATE TABLE `recipes` (
 	`updated_at` text NOT NULL,
 	`notes` text DEFAULT '' NOT NULL,
 	`show_in_menu` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `recipe_sub_recipes` (
+	`id` text PRIMARY KEY NOT NULL,
+	`recipe_id` text NOT NULL,
+	`child_recipe_id` text NOT NULL
 );

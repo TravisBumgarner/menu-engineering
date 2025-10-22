@@ -12,7 +12,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { MdClose, MdEdit } from 'react-icons/md'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { RecipeDTO } from '../../../../shared/types'
+import { RecipeDTO } from '../../../../shared/recipe.types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
@@ -105,10 +105,16 @@ function SubRecipeRow(props: {
         <TableCell component="th" id={labelId} scope="row" padding="none">
           Recipe: {row.title}
         </TableCell>
-        <TableCell component="th" id={labelId} scope="row" padding="none">
-          $0.00
+        <TableCell
+          align="right"
+          component="th"
+          id={labelId}
+          scope="row"
+          padding="none"
+        >
+          0.00
         </TableCell>
-        <TableCell align="left">
+        <TableCell align="center">
           <Tooltip title="Edit Ingredient">
             <IconButton onClick={handleOpenEditModal}>
               <MdEdit size={20} />

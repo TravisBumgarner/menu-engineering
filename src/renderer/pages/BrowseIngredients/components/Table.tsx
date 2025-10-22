@@ -6,13 +6,8 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
-import Typography from '@mui/material/Typography'
-import { useQuery } from '@tanstack/react-query'
 import * as React from 'react'
-import { CHANNEL } from '../../../../shared/messages.types'
-import { IngredientDTO } from '../../../../shared/types'
-import { QUERY_KEYS } from '../../../consts'
-import ipcMessenger from '../../../ipcMessenger'
+import { IngredientDTO } from '../../../../shared/recipe.types'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
 import EnhancedTableHead from './Head'
@@ -41,14 +36,7 @@ function getComparator<Key extends keyof IngredientDTO>(
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-const Table = () => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: [QUERY_KEYS.INGREDIENTS],
-    queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_INGREDIENTS),
-  })
-
-  const ingredients: IngredientDTO[] = data?.ingredients || []
-
+const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO>('title')
   const [selected, setSelected] = React.useState<readonly string[]>([])
@@ -120,9 +108,6 @@ const Table = () => {
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [ingredients, order, orderBy, page, rowsPerPage],
   )
-
-  if (isLoading) return <Typography>Loading ingredients...</Typography>
-  if (isError) return <Typography>Error loading ingredients</Typography>
 
   return (
     <Box sx={{ width: '100%' }}>
