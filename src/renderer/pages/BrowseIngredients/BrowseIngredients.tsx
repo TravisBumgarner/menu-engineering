@@ -47,9 +47,7 @@ const BrowseRecipes = () => {
       }}
     >
       <Typography variant="h1">{t('welcome')}</Typography>
-      <Typography>
-        {t('noIngredientsFound')}
-      </Typography>
+      <Typography>{t('noIngredientsFound')}</Typography>
       <Box sx={{ display: 'flex', gap: SPACING.MEDIUM.PX }}>
         <Button variant="contained" onClick={handleAddIngredient}>
           {t('addIngredient')}

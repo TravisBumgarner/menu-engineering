@@ -175,8 +175,12 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
               label={t('status')}
             >
               <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
-              <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
-              <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
+              <MenuItem value={RECIPE_STATUS.published}>
+                {t('published')}
+              </MenuItem>
+              <MenuItem value={RECIPE_STATUS.archived}>
+                {t('archived')}
+              </MenuItem>
             </Select>
           </FormControl>
 
@@ -213,7 +217,9 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
               type="submit"
               disabled={updateRecipeMutation.isPending}
             >
-              {updateRecipeMutation.isPending ? t('updating') : t('updateRecipe')}
+              {updateRecipeMutation.isPending
+                ? t('updating')
+                : t('updateRecipe')}
             </Button>
           </Stack>
         </Stack>
