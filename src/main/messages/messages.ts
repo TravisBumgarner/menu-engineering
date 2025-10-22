@@ -103,3 +103,29 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE, async (_event, params) => {
     success: !!result,
   }
 })
+
+typedIpcMain.handle(
+  CHANNEL.DB.ADD_EXISTING_TO_RECIPE,
+  async (_event, params) => {
+    if (params.type === 'ingredient') {
+      const result = await queries.addIngredientToRecipe({
+        ingredientId: params.childId,
+        recipeId: params.parentId,
+      })
+      return {
+        type: 'add_existing_to_recipe',
+        success: !!result,
+      }
+    }
+    if (params.type === 'recipe') {
+      const result = await queries.addSubRecipeToRecipe({
+        parentRecipeId: params.parentId,
+        childRecipeId: params.childId,
+      })
+      return {
+        type: 'add_existing_to_recipe',
+        success: !!result,
+      }
+    }
+  },
+)

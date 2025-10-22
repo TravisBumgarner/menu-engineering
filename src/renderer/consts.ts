@@ -20,4 +20,5 @@ export const QUERY_KEYS = {
   RECIPES: 'recipes',
   RECIPE: 'recipe',
   INGREDIENTS: 'ingredients',
+  AUTOCOMPLETE: 'autocomplete',
 }

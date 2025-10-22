@@ -7,17 +7,18 @@ import {
 
 export const CHANNEL = {
   DB: {
+    ADD_INGREDIENT: 'db:add-ingredient',
     ADD_RECIPE: 'db:add-recipe',
     ADD_SUB_RECIPE: 'db:add-sub-recipe',
     UPDATE_RECIPE: 'db:update-recipe',
-    DELETE_RECIPE: 'db:delete-recipe',
+    UPDATE_INGREDIENT: 'db:update-ingredient',
+    GET_INGREDIENTS: 'db:get-ingredients',
     GET_RECIPES: 'db:get-recipes',
     GET_RECIPE: 'db:get-recipe',
-    ADD_INGREDIENT: 'db:add-ingredient',
-    UPDATE_INGREDIENT: 'db:update-ingredient',
+    ADD_EXISTING_TO_RECIPE: 'db:add-existing-to-recipe',
     REMOVE_INGREDIENT_FROM_RECIPE: 'db:remove-ingredient-from-recipe',
     DELETE_INGREDIENT: 'db:delete-ingredient',
-    GET_INGREDIENTS: 'db:get-ingredients',
+    DELETE_RECIPE: 'db:delete-recipe',
   },
 } as const
 
@@ -87,5 +88,13 @@ export type Invokes = {
   [CHANNEL.DB.GET_INGREDIENTS]: {
     args: undefined
     result: { ingredients: Array<IngredientDTO> }
+  }
+  [CHANNEL.DB.ADD_EXISTING_TO_RECIPE]: {
+    args: {
+      childId: string
+      parentId: string
+      type: 'ingredient' | 'recipe'
+    }
+    result: { success: boolean }
   }
 }

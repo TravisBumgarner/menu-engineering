@@ -38,7 +38,7 @@ function IngredientRow(props: {
       if (result.success) {
         // Invalidate and refetch the recipe query to update the ingredients list
         queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.RECIPE, recipeId],
+          queryKey: [QUERY_KEYS.RECIPE],
         })
         alert('Ingredient removed from recipe successfully!')
       } else {
