@@ -3,7 +3,7 @@ import IconButton from '@mui/material/IconButton'
 import MUIModal from '@mui/material/Modal'
 import type { SxProps } from '@mui/material/styles'
 import { useCallback, type FC } from 'react'
-import { IoMdClose } from 'react-icons/io'
+import Icon from '../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../signals'
 import { SPACING, Z_INDICES } from '../../../styles/consts'
 interface ActiveModal {
@@ -58,7 +58,7 @@ const Modal: FC<ActiveModal> = ({ children, closeCallback, sx }) => {
           }}
         >
           <IconButton component="button" onClick={handleClose}>
-            <IoMdClose size={24} />
+            <Icon name="close" size={24} />
           </IconButton>
         </Box>
         {children}

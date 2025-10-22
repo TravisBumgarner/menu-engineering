@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box'
-import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
@@ -17,34 +16,25 @@ interface HeadCell {
 }
 
 interface EnhancedTableProps {
-  numSelected: number
   onRequestSort: (
     event: React.MouseEvent<unknown>,
     property: keyof IngredientDTO,
   ) => void
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
+
   order: 'asc' | 'desc'
   orderBy: string | number | symbol
-  rowCount: number
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { t } = useAppTranslation()
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props
+  const { order, orderBy, onRequestSort } = props
 
   const headCells: readonly HeadCell[] = [
     {
       id: 'title',
       numeric: false,
       disablePadding: true,
-      label: t('ingredient'),
+      label: t('title'),
     },
     {
       id: 'quantity',
@@ -81,19 +71,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     <TableHead>
       <TableRow>
         <TableCell />
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            slotProps={{
-              input: {
-                'aria-label': 'select all ingredients',
-              },
-            }}
-          />
-        </TableCell>
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}

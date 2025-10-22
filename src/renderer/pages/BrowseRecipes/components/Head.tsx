@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box'
-import Checkbox from '@mui/material/Checkbox'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
@@ -16,67 +15,58 @@ interface HeadCell {
   align: 'left' | 'right' | 'center'
 }
 
-const headCells: readonly HeadCell[] = [
-  {
-    id: 'title',
-    align: 'left',
-    disablePadding: true,
-    label: 'Recipe Name',
-  },
-  {
-    id: 'produces',
-    align: 'right',
-    disablePadding: false,
-    label: 'Produces',
-  },
-  {
-    id: 'units',
-    align: 'left',
-    disablePadding: false,
-    label: 'Units',
-  },
-  {
-    id: 'status',
-    align: 'center',
-    disablePadding: false,
-    label: 'Status',
-  },
-  {
-    id: 'showInMenu',
-    align: 'left',
-    disablePadding: false,
-    label: 'Show in Menu',
-  },
-  {
-    id: 'actions',
-    align: 'center',
-    disablePadding: false,
-    label: 'Actions',
-  },
-]
-
 interface EnhancedTableProps {
-  numSelected: number
   onRequestSort: (
     event: React.MouseEvent<unknown>,
     property: keyof RecipeDTO,
   ) => void
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
   order: 'asc' | 'desc'
   orderBy: string | number | symbol
-  rowCount: number
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { t } = useAppTranslation()
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props
+  const { order, orderBy, onRequestSort } = props
+
+  const headCells: readonly HeadCell[] = [
+    {
+      id: 'title',
+      align: 'left',
+      disablePadding: true,
+      label: t('recipeName'),
+    },
+    {
+      id: 'produces',
+      align: 'right',
+      disablePadding: false,
+      label: t('produces'),
+    },
+    {
+      id: 'units',
+      align: 'left',
+      disablePadding: false,
+      label: t('units'),
+    },
+    {
+      id: 'status',
+      align: 'center',
+      disablePadding: false,
+      label: t('status'),
+    },
+    {
+      id: 'showInMenu',
+      align: 'left',
+      disablePadding: false,
+      label: t('showInMenu'),
+    },
+    {
+      id: 'actions',
+      align: 'center',
+      disablePadding: false,
+      label: t('actions'),
+    },
+  ]
+
   const createSortHandler =
     (property: keyof RecipeDTO) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property)
@@ -105,19 +95,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     <TableHead>
       <TableRow>
         <TableCell />
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            slotProps={{
-              input: {
-                'aria-label': t('selectAllRecipes'),
-              },
-            }}
-          />
-        </TableCell>
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}

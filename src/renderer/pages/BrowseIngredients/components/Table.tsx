@@ -41,7 +41,6 @@ function getComparator<Key extends keyof IngredientDTO>(
 const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO>('title')
-  const [selected, setSelected] = React.useState<readonly string[]>([])
   const [page, setPage] = React.useState(0)
   const { t } = useAppTranslation()
 
@@ -58,34 +57,6 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
-  }
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = ingredients.map(n => n.id)
-      setSelected(newSelected)
-      return
-    }
-    setSelected([])
-  }
-
-  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    const selectedIndex = selected.indexOf(id)
-    let newSelected: readonly string[] = []
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id)
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1))
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1))
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      )
-    }
-    setSelected(newSelected)
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -107,10 +78,7 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          onAddIngredient={handleOpenAddIngredientModal}
-        />
+        <EnhancedTableToolbar onAddIngredient={handleOpenAddIngredientModal} />
         <TableContainer>
           <MuiTable
             sx={{ minWidth: 750 }}
@@ -118,26 +86,16 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
             size="medium"
           >
             <EnhancedTableHead
-              numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={ingredients.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = selected.includes(row.id)
                 const labelId = `enhanced-table-checkbox-${index}`
 
                 return (
-                  <IngredientRow
-                    key={row.id}
-                    row={row}
-                    isItemSelected={isItemSelected}
-                    labelId={labelId}
-                    onClick={handleClick}
-                  />
+                  <IngredientRow key={row.id} row={row} labelId={labelId} />
                 )
               })}
               {emptyRows > 0 && (

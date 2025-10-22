@@ -1,6 +1,5 @@
 import { Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
-import Checkbox from '@mui/material/Checkbox'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import MuiTable from '@mui/material/Table'
@@ -9,21 +8,15 @@ import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
-import { IoMdCheckbox } from 'react-icons/io'
-import { MdEdit, MdOutlineCheckBoxOutlineBlank } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import Icon from '../../../sharedComponents/Icon'
 import { SPACING } from '../../../styles/consts'
 
-function RecipeRow(props: {
-  row: RecipeDTO
-  isItemSelected: boolean
-  labelId: string
-  onClick: (event: React.MouseEvent<unknown>, id: string) => void
-}) {
-  const { row, isItemSelected, labelId, onClick } = props
+function RecipeRow(props: { row: RecipeDTO; labelId: string }) {
+  const { row, labelId } = props
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
   const { t } = useAppTranslation()
@@ -32,11 +25,8 @@ function RecipeRow(props: {
     <React.Fragment>
       <TableRow
         hover
-        role="checkbox"
-        aria-checked={isItemSelected}
         tabIndex={-1}
         key={row.id}
-        selected={isItemSelected}
         sx={{ '& > *': { borderBottom: 'unset' } }}
       >
         <TableCell>
@@ -50,16 +40,6 @@ function RecipeRow(props: {
           >
             {open ? '🔼' : '🔽'}
           </IconButton>
-        </TableCell>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            checked={isItemSelected}
-            onClick={event => onClick(event, row.id)}
-            inputProps={{
-              'aria-labelledby': labelId,
-            }}
-          />
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
           {row.title}
@@ -95,15 +75,15 @@ function RecipeRow(props: {
         </TableCell>
         <TableCell align="left">
           {row.showInMenu ? (
-            <IoMdCheckbox size={20} />
+            <Icon name="checkbox" />
           ) : (
-            <MdOutlineCheckBoxOutlineBlank size={20} />
+            <Icon name="checkboxOutline" />
           )}
         </TableCell>
         <TableCell align="left">
           <Tooltip title={t('editRecipeDetails')}>
             <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
-              <MdEdit size={20} />
+              <Icon name="edit" />
             </IconButton>
           </Tooltip>
         </TableCell>
