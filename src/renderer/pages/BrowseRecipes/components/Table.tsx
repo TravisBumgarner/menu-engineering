@@ -7,12 +7,14 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
-import { RecipeDTO } from '../../../../shared/types'
+import { RecipeDTO } from '../../../../shared/recipe.types'
+import { ROWS_PER_PAGE } from '../../../consts'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
 import EnhancedTableHead from './Head'
 import RecipeRow from './Row'
 import EnhancedTableToolbar from './Toolbar'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -37,11 +39,11 @@ function getComparator<Key extends keyof RecipeDTO>(
 }
 
 const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
+  const { t } = useAppTranslation()
   const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('title')
   const [selected, setSelected] = React.useState<readonly string[]>([])
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
   const handleOpenAddRecipeModal = () => {
     activeModalSignal.value = {
@@ -90,23 +92,16 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
     setPage(newPage)
   }
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - recipes.length) : 0
+    page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - recipes.length) : 0
 
   const visibleRows = React.useMemo(
     () =>
       [...recipes]
         .sort(getComparator(order, orderBy))
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [recipes, order, orderBy, page, rowsPerPage],
+        .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
+    [recipes, order, orderBy, page, ROWS_PER_PAGE],
   )
 
   return (
@@ -158,13 +153,15 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
           </MuiTable>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={recipes.length}
-          rowsPerPage={rowsPerPage}
+          rowsPerPage={15}
+          rowsPerPageOptions={[]}
           page={page}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+           labelDisplayedRows={({ from, to, count }) =>
+            `${from}–${to} ${t('outOf')} ${count}`
+          }
         />
       </Paper>
     </Box>

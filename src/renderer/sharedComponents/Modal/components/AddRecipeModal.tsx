@@ -21,6 +21,7 @@ import {
 } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { MODAL_ID } from '../Modal.consts'
@@ -32,13 +33,14 @@ export interface AddRecipeModalProps {
 }
 
 const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
+  const { t } = useAppTranslation()
   const queryClient = useQueryClient()
 
   const [formData, setFormData] = useState<NewRecipeDTO>({
     title: '',
     produces: 1,
     units: '',
-    status: RECIPE_STATUS.DRAFT,
+    status: RECIPE_STATUS.draft,
     notes: '',
     showInMenu: false,
   })
@@ -57,14 +59,14 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        alert('Recipe added successfully!')
+        alert(t('recipeAddedSuccessfully'))
         activeModalSignal.value = null
       } else {
-        alert('Failed to add recipe.')
+        alert(t('failedToAddRecipe'))
       }
     },
     onError: () => {
-      alert('Error adding recipe.')
+      alert(t('errorAddingRecipe'))
     },
   })
 
@@ -131,16 +133,15 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
   return (
     <DefaultModal>
       <Typography variant="h5" component="h2" gutterBottom>
-        {parentRecipe
-          ? `Add New Sub-Recipe to ${parentRecipe.title}`
-          : 'Add New Recipe'}
+        {t('addNewRecipe')}
+        {parentRecipe ? `to ${parentRecipe.title}` : ''}
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={3}>
           <TextField
             size="small"
-            label="Title"
+            label={t('title')}
             value={formData.title}
             onChange={handleInputChange('title')}
             required
@@ -149,7 +150,7 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
 
           <TextField
             size="small"
-            label="Produces"
+            label={t('produces')}
             type="number"
             value={formData.produces}
             onChange={handleInputChange('produces')}
@@ -158,7 +159,7 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
           />
 
           <FormControl size="small" fullWidth required>
-            <InputLabel>Units</InputLabel>
+            <InputLabel>{t('units')}</InputLabel>
             <Select
               value={formData.units}
               onChange={e =>
@@ -166,32 +167,36 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
                   e as React.ChangeEvent<HTMLInputElement>,
                 )
               }
-              label="Units"
+              label={t('units')}
             >
               {Object.entries(ALL_UNITS).map(([key, value]) => (
                 <MenuItem key={key} value={value}>
-                  {value.toLowerCase().replace('_', ' ')}
+                  {t(value as keyof typeof ALL_UNITS)}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
 
           <FormControl size="small" fullWidth required>
-            <InputLabel>Status</InputLabel>
+            <InputLabel>{t('status')}</InputLabel>
             <Select
               value={formData.status}
               onChange={handleInputChange('status')}
-              label="Status"
+              label={t('status')}
             >
-              <MenuItem value={RECIPE_STATUS.DRAFT}>Draft</MenuItem>
-              <MenuItem value={RECIPE_STATUS.PUBLISHED}>Published</MenuItem>
-              <MenuItem value={RECIPE_STATUS.ARCHIVED}>Archived</MenuItem>
+              <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
+              <MenuItem value={RECIPE_STATUS.published}>
+                {t('published')}
+              </MenuItem>
+              <MenuItem value={RECIPE_STATUS.archived}>
+                {t('archived')}
+              </MenuItem>
             </Select>
           </FormControl>
 
           <TextField
             size="small"
-            label="Notes"
+            label={t('notes')}
             value={formData.notes}
             onChange={handleInputChange('notes')}
             multiline
@@ -206,15 +211,15 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
                 onChange={handleCheckboxChange('showInMenu')}
               />
             }
-            label="Show in Menu"
+            label={t('showInMenu')}
           />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button onClick={handleCancel} variant="outlined" type="button">
-              Cancel
+              {t('cancel')}
             </Button>
             <Button variant="contained" type="submit" disabled={preventSubmit}>
-              {addRecipeMutation.isPending ? 'Adding...' : 'Add Recipe'}
+              {addRecipeMutation.isPending ? t('adding') : t('addRecipe')}
             </Button>
           </Stack>
         </Stack>

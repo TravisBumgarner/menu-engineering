@@ -3,6 +3,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface EnhancedTableToolbarProps {
   numSelected: number
@@ -11,6 +12,7 @@ interface EnhancedTableToolbarProps {
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected, onAddIngredient } = props
+  const { t } = useAppTranslation()
 
   return (
     <Toolbar
@@ -35,7 +37,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          {numSelected} {t('selected')}
         </Typography>
       ) : (
         <Typography
@@ -44,16 +46,16 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="tableTitle"
           component="div"
         >
-          Ingredients
+          {t('ingredients')}
         </Typography>
       )}
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
+        <Tooltip title={t('delete')}>
           <IconButton>🗑️</IconButton>
         </Tooltip>
       ) : (
         <>
-          <Tooltip title="Add Ingredient">
+          <Tooltip title={t('addIngredient')}>
             <IconButton onClick={onAddIngredient}>➕</IconButton>
           </Tooltip>
         </>

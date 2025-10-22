@@ -15,6 +15,7 @@ import { CHANNEL } from '../../../../shared/messages.types'
 import { NewIngredientDTO, RecipeDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { MODAL_ID } from '../Modal.consts'
@@ -26,6 +27,7 @@ export interface AddIngredientModalProps {
 }
 
 const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
+  const { t } = useAppTranslation()
   const queryClient = useQueryClient()
   const [ingredientFormData, setIngredientFormData] =
     useState<NewIngredientDTO>({
@@ -59,7 +61,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
         // Invalidate and refetch ingredients query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        alert('Ingredient added successfully!')
+        alert(t('ingredientAddedSuccessfully'))
 
         if (result.shouldClose) {
           activeModalSignal.value = null
@@ -74,11 +76,11 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           })
         }
       } else {
-        alert('Failed to add ingredient.')
+        alert(t('failedToAddIngredient'))
       }
     },
     onError: () => {
-      alert('Error adding ingredient.')
+      alert(t('errorAddingIngredient'))
     },
   })
 
@@ -115,24 +117,26 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
   return (
     <DefaultModal>
       <Typography variant="h5" component="h2" gutterBottom>
-        Add New Ingredient {recipe ? `to ${recipe.title}` : ''}
+        {recipe
+          ? `${t('addNewIngredient')} to ${recipe.title}`
+          : t('addNewIngredient')}
       </Typography>
 
       <Box component="form">
         <Stack spacing={3}>
           <TextField
             size="small"
-            label="Ingredient Name"
+            label={t('ingredientName')}
             value={ingredientFormData.title}
             onChange={handleInputChange('title')}
             required
             fullWidth
-            placeholder="e.g. Flour, Salt, Olive Oil"
+            placeholder={t('ingredientNamePlaceholder')}
           />
 
           <TextField
             size="small"
-            label="Quantity"
+            label={t('quantity')}
             type="number"
             value={ingredientFormData.quantity}
             onChange={handleInputChange('quantity')}
@@ -142,7 +146,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           />
 
           <FormControl size="small" fullWidth required>
-            <InputLabel>Units</InputLabel>
+            <InputLabel>{t('units')}</InputLabel>
             <Select
               value={ingredientFormData.units}
               onChange={e =>
@@ -150,11 +154,11 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
                   e as React.ChangeEvent<HTMLInputElement>,
                 )
               }
-              label="Units"
+              label={t('units')}
             >
               {Object.entries(ALL_UNITS).map(([key, value]) => (
                 <MenuItem key={key} value={value}>
-                  {value.toLowerCase().replace('_', ' ')}
+                  {t(value as keyof typeof ALL_UNITS)}
                 </MenuItem>
               ))}
             </Select>
@@ -162,7 +166,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
 
           <TextField
             size="small"
-            label="Cost"
+            label={t('cost')}
             type="number"
             value={ingredientFormData.cost}
             onChange={handleInputChange('cost')}
@@ -173,13 +177,13 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
 
           <TextField
             size="small"
-            label="Notes"
+            label={t('notes')}
             value={ingredientFormData.notes}
             onChange={handleInputChange('notes')}
             multiline
             rows={2}
             fullWidth
-            placeholder="Optional notes about this ingredient"
+            placeholder={t('optionalNotesPlaceholder')}
           />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
@@ -188,7 +192,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               type="button"
               onClick={() => (activeModalSignal.value = null)}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               variant="outlined"
@@ -196,7 +200,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               onClick={handleSubmit(true)}
               disabled={preventSubmit}
             >
-              {addIngredientMutation.isPending ? 'Saving...' : 'Save'}
+              {addIngredientMutation.isPending ? t('saving') : t('save')}
             </Button>
             <Button
               variant="contained"
@@ -205,8 +209,8 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               disabled={preventSubmit}
             >
               {addIngredientMutation.isPending
-                ? 'Saving...'
-                : 'Save & Add another'}
+                ? t('saving')
+                : t('saveAndAddAnother')}
             </Button>
           </Stack>
         </Stack>

@@ -8,6 +8,8 @@ import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
 import { IngredientDTO } from '../../../../shared/recipe.types'
+import { ROWS_PER_PAGE } from '../../../consts'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
 import EnhancedTableHead from './Head'
@@ -41,7 +43,7 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
   const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO>('title')
   const [selected, setSelected] = React.useState<readonly string[]>([])
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const { t } = useAppTranslation()
 
   const handleOpenAddIngredientModal = () => {
     activeModalSignal.value = {
@@ -90,23 +92,16 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
     setPage(newPage)
   }
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0
+    page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
 
   const visibleRows = React.useMemo(
     () =>
       [...ingredients]
         .sort(getComparator(order, orderBy))
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [ingredients, order, orderBy, page, rowsPerPage],
+        .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
+    [ingredients, order, orderBy, page, ROWS_PER_PAGE],
   )
 
   return (
@@ -158,13 +153,15 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
           </MuiTable>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPage={15}
+          rowsPerPageOptions={[]}
           component="div"
           count={ingredients.length}
-          rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          labelDisplayedRows={({ from, to, count }) =>
+            `${from}–${to} ${t('outOf')} ${count}`
+          }
         />
       </Paper>
     </Box>

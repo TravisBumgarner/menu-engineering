@@ -10,7 +10,9 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import { MdEdit } from 'react-icons/md'
-import { IngredientDTO } from '../../../../shared/types'
+import { IngredientDTO } from '../../../../shared/recipe.types'
+import { ALL_UNITS } from '../../../../shared/units.types'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import { activeModalSignal } from '../../../signals'
 
 function IngredientRow(props: {
@@ -21,6 +23,7 @@ function IngredientRow(props: {
 }) {
   const { row, isItemSelected, labelId, onClick } = props
   const [open, setOpen] = React.useState(false)
+  const { t } = useAppTranslation()
 
   const handleOpenEditModal = () => {
     activeModalSignal.value = {
@@ -66,11 +69,17 @@ function IngredientRow(props: {
           {row.title}
         </TableCell>
         <TableCell align="right">{row.quantity}</TableCell>
-        <TableCell align="left">{row.units}</TableCell>
+        <TableCell align="left">
+          {t(row.units as keyof typeof ALL_UNITS)}
+        </TableCell>
         <TableCell align="right">{row.cost}</TableCell>
         <TableCell align="left">
-          <Tooltip title="Edit Ingredient">
-            <IconButton size="small" title="Edit" onClick={handleOpenEditModal}>
+          <Tooltip title={t('editIngredient')}>
+            <IconButton
+              size="small"
+              title={t('edit')}
+              onClick={handleOpenEditModal}
+            >
               <MdEdit size={20} />
             </IconButton>
           </Tooltip>
@@ -91,7 +100,7 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      ID
+                      {t('id')}
                     </TableCell>
                     <TableCell>{row.id}</TableCell>
                   </TableRow>
@@ -101,7 +110,7 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Created
+                      {t('created')}
                     </TableCell>
                     <TableCell>
                       {new Date(row.createdAt).toLocaleDateString()}
@@ -113,7 +122,7 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Updated
+                      {t('updated')}
                     </TableCell>
                     <TableCell>
                       {new Date(row.updatedAt).toLocaleDateString()}
@@ -125,9 +134,11 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Notes
+                      {t('notes')}
                     </TableCell>
-                    <TableCell>{row.notes || <em>No notes</em>}</TableCell>
+                    <TableCell>
+                      {row.notes || <em>{t('noNotes')}</em>}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

@@ -13,6 +13,9 @@ import { IoMdCheckbox } from 'react-icons/io'
 import { MdEdit, MdOutlineCheckBoxOutlineBlank } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
+import { ALL_UNITS } from '../../../../shared/units.types'
+import { useAppTranslation } from '../../../hooks/useTranslation'
+import { SPACING } from '../../../styles/consts'
 
 function RecipeRow(props: {
   row: RecipeDTO
@@ -23,6 +26,7 @@ function RecipeRow(props: {
   const { row, isItemSelected, labelId, onClick } = props
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
+  const { t } = useAppTranslation()
 
   return (
     <React.Fragment>
@@ -61,29 +65,32 @@ function RecipeRow(props: {
           {row.title}
         </TableCell>
         <TableCell align="right">{row.produces}</TableCell>
-        <TableCell align="left">{row.units}</TableCell>
+        <TableCell align="left">
+          {t(row.units as keyof typeof ALL_UNITS)}
+        </TableCell>
         <TableCell align="left">
           <Typography
-            variant="caption"
+            variant="body2"
             sx={{
-              px: 1,
-              py: 0.5,
+              width: '100%',
+              textAlign: 'center',
+              padding: `${SPACING.TINY.PX} ${SPACING.SMALL.PX}`,
               borderRadius: 1,
               bgcolor:
-                row.status === 'PUBLISHED'
+                row.status === 'published'
                   ? 'success.light'
-                  : row.status === 'DRAFT'
+                  : row.status === 'draft'
                     ? 'warning.light'
                     : 'error.light',
               color:
-                row.status === 'PUBLISHED'
+                row.status === 'published'
                   ? 'success.contrastText'
-                  : row.status === 'DRAFT'
+                  : row.status === 'draft'
                     ? 'warning.contrastText'
                     : 'error.contrastText',
             }}
           >
-            {row.status.toUpperCase()}
+            {t(row.status)}
           </Typography>
         </TableCell>
         <TableCell align="left">
@@ -94,7 +101,7 @@ function RecipeRow(props: {
           )}
         </TableCell>
         <TableCell align="left">
-          <Tooltip title="Edit Recipe Details">
+          <Tooltip title={t('editRecipeDetails')}>
             <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
               <MdEdit size={20} />
             </IconButton>
@@ -106,7 +113,7 @@ function RecipeRow(props: {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                Recipe Details
+                {t('recipeDetails')}
               </Typography>
               <MuiTable size="small" aria-label="recipe details">
                 <TableBody>
@@ -116,7 +123,7 @@ function RecipeRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      ID
+                      {t('id')}
                     </TableCell>
                     <TableCell>{row.id}</TableCell>
                   </TableRow>
@@ -126,7 +133,7 @@ function RecipeRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Created
+                      {t('created')}
                     </TableCell>
                     <TableCell>
                       {new Date(row.createdAt).toLocaleDateString()}
@@ -138,7 +145,7 @@ function RecipeRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Updated
+                      {t('updated')}
                     </TableCell>
                     <TableCell>
                       {new Date(row.updatedAt).toLocaleDateString()}
@@ -150,7 +157,7 @@ function RecipeRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Notes
+                      {t('notes')}
                     </TableCell>
                     <TableCell>{row.notes || <em>No notes</em>}</TableCell>
                   </TableRow>

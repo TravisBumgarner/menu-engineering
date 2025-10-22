@@ -1,7 +1,7 @@
 export const RECIPE_STATUS = {
-  DRAFT: 'DRAFT',
-  PUBLISHED: 'PUBLISHED',
-  ARCHIVED: 'ARCHIVED',
+  draft: 'draft',
+  published: 'published',
+  archived: 'archived',
 } as const
 
 export type RecipeStatus = keyof typeof RECIPE_STATUS

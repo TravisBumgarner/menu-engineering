@@ -4,6 +4,7 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import { RecipeDTO } from '../../../../shared/recipe.types'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import { activeModalSignal } from '../../../signals'
 
 interface EnhancedTableToolbarProps {
@@ -15,6 +16,8 @@ function EnhancedTableToolbar({
   numSelected,
   recipe,
 }: EnhancedTableToolbarProps) {
+  const { t } = useAppTranslation()
+
   const handleOpenEditRecipeModal = () => {
     activeModalSignal.value = {
       id: 'EDIT_RECIPE_MODAL',
@@ -58,13 +61,15 @@ function EnhancedTableToolbar({
         </Typography>
       )}
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
+        <Tooltip title={t('delete')}>
           <IconButton>🗑️</IconButton>
         </Tooltip>
       ) : (
         <>
-          <Tooltip title="Edit Recipe">
-            <IconButton onClick={handleOpenEditRecipeModal}>✏️ Edit</IconButton>
+          <Tooltip title={t('editRecipe')}>
+            <IconButton onClick={handleOpenEditRecipeModal}>
+              ✏️ {t('edit')}
+            </IconButton>
           </Tooltip>
         </>
       )}
