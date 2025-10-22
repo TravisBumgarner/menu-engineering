@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import { TranslationKeys, STORAGE_KEY } from '../internationalization'
-
+import { STORAGE_KEY } from '../internationalization'
+import { TranslationKeys } from '../internationalization/types'
 
 const setStoredLanguage = (language: string): void => {
   try {
