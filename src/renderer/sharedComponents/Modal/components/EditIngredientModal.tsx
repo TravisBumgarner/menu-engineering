@@ -185,7 +185,6 @@ const EditIngredientModal = ({
             multiline
             rows={2}
             fullWidth
-            placeholder="Optional notes about this ingredient"
           />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">

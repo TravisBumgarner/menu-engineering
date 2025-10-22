@@ -40,7 +40,7 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
     title: '',
     produces: 1,
     units: '',
-    status: RECIPE_STATUS.DRAFT,
+    status: RECIPE_STATUS.draft,
     notes: '',
     showInMenu: false,
   })
@@ -184,11 +184,11 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
               onChange={handleInputChange('status')}
               label={t('status')}
             >
-              <MenuItem value={RECIPE_STATUS.DRAFT}>{t('draft')}</MenuItem>
-              <MenuItem value={RECIPE_STATUS.PUBLISHED}>
+              <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
+              <MenuItem value={RECIPE_STATUS.published}>
                 {t('published')}
               </MenuItem>
-              <MenuItem value={RECIPE_STATUS.ARCHIVED}>
+              <MenuItem value={RECIPE_STATUS.archived}>
                 {t('archived')}
               </MenuItem>
             </Select>

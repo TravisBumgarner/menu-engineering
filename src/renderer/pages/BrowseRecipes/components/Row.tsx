@@ -72,20 +72,20 @@ function RecipeRow(props: {
               py: 0.5,
               borderRadius: 1,
               bgcolor:
-                row.status === 'PUBLISHED'
+                row.status === 'published'
                   ? 'success.light'
-                  : row.status === 'DRAFT'
+                  : row.status === 'draft'
                     ? 'warning.light'
                     : 'error.light',
               color:
-                row.status === 'PUBLISHED'
+                row.status === 'published'
                   ? 'success.contrastText'
-                  : row.status === 'DRAFT'
+                  : row.status === 'draft'
                     ? 'warning.contrastText'
                     : 'error.contrastText',
             }}
           >
-            {row.status.toUpperCase()}
+            {t(row.status)}
           </Typography>
         </TableCell>
         <TableCell align="left">

@@ -172,9 +172,9 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
               onChange={handleInputChange('status')}
               label="Status"
             >
-              <MenuItem value={RECIPE_STATUS.DRAFT}>Draft</MenuItem>
-              <MenuItem value={RECIPE_STATUS.PUBLISHED}>Published</MenuItem>
-              <MenuItem value={RECIPE_STATUS.ARCHIVED}>Archived</MenuItem>
+              <MenuItem value={RECIPE_STATUS.draft}>Draft</MenuItem>
+              <MenuItem value={RECIPE_STATUS.published}>Published</MenuItem>
+              <MenuItem value={RECIPE_STATUS.archived}>Archived</MenuItem>
             </Select>
           </FormControl>
 
