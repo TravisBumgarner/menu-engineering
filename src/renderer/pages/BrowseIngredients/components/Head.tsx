@@ -7,6 +7,7 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
 import { IngredientDTO } from '../../../../shared/recipe.types'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
   disablePadding: boolean
@@ -14,39 +15,6 @@ interface HeadCell {
   label: string
   numeric: boolean
 }
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: 'title',
-    numeric: false,
-    disablePadding: true,
-    label: 'Ingredient Name',
-  },
-  {
-    id: 'quantity',
-    numeric: true,
-    disablePadding: false,
-    label: 'Quantity',
-  },
-  {
-    id: 'units',
-    numeric: false,
-    disablePadding: false,
-    label: 'Units',
-  },
-  {
-    id: 'cost',
-    numeric: true,
-    disablePadding: false,
-    label: 'Cost',
-  },
-  {
-    id: 'actions',
-    numeric: false,
-    disablePadding: false,
-    label: 'Actions',
-  },
-]
 
 interface EnhancedTableProps {
   numSelected: number
@@ -61,6 +29,7 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
+  const { t } = useAppTranslation()
   const {
     onSelectAllClick,
     order,
@@ -69,6 +38,40 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     rowCount,
     onRequestSort,
   } = props
+
+  const headCells: readonly HeadCell[] = [
+    {
+      id: 'title',
+      numeric: false,
+      disablePadding: true,
+      label: t('ingredient'),
+    },
+    {
+      id: 'quantity',
+      numeric: true,
+      disablePadding: false,
+      label: t('quantity'),
+    },
+    {
+      id: 'units',
+      numeric: false,
+      disablePadding: false,
+      label: t('units'),
+    },
+    {
+      id: 'cost',
+      numeric: true,
+      disablePadding: false,
+      label: t('cost'),
+    },
+    {
+      id: 'actions',
+      numeric: false,
+      disablePadding: false,
+      label: t('actions'),
+    },
+  ]
+
   const createSortHandler =
     (property: keyof IngredientDTO) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property)

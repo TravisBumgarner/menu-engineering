@@ -2,12 +2,14 @@ import { Box, Button, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { CHANNEL } from '../../../shared/messages.types'
 import { QUERY_KEYS } from '../../consts'
+import { useAppTranslation } from '../../hooks/useTranslation'
 import ipcMessenger from '../../ipcMessenger'
 import { activeModalSignal } from '../../signals'
 import { SPACING } from '../../styles/consts'
 import Table from './components/Table'
 
 const BrowseRecipes = () => {
+  const { t } = useAppTranslation()
   const { data, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.RECIPES],
     queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_RECIPES),
@@ -20,15 +22,15 @@ const BrowseRecipes = () => {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div>{t('loading')}</div>
   }
 
   if (isError) {
-    return <div>Error loading recipes.</div>
+    return <div>{t('errorLoadingRecipes')}</div>
   }
 
   if (!data) {
-    return <div>No data available.</div>
+    return <div>{t('noDataAvailable')}</div>
   }
 
   return data.recipes.length ? (
@@ -44,13 +46,11 @@ const BrowseRecipes = () => {
         height: '100%',
       }}
     >
-      <Typography variant="h1">Welcome!</Typography>
-      <Typography>
-        No recipes found. Click below to add your first recipe.
-      </Typography>
+      <Typography variant="h1">{t('welcome')}</Typography>
+      <Typography>{t('noRecipesFound')}</Typography>
       <Box sx={{ display: 'flex', gap: SPACING.MEDIUM.PX }}>
         <Button variant="contained" onClick={handleAddRecipe}>
-          Add Recipe
+          {t('addRecipe')}
         </Button>
       </Box>
     </Box>

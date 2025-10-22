@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { CHANNEL } from '../../../shared/messages.types'
 import { QUERY_KEYS } from '../../consts'
+import { useAppTranslation } from '../../hooks/useTranslation'
 import ipcMessenger from '../../ipcMessenger'
 import Message from '../../sharedComponents/Message'
 import { activeModalSignal } from '../../signals'
@@ -10,9 +11,10 @@ import Table from './components/Table'
 
 const Recipe = () => {
   const { id } = useParams<{ id: string }>()
+  const { t } = useAppTranslation()
 
   if (!id) {
-    return <div>No recipe ID provided.</div>
+    return <div>{t('recipeNotFound')}</div>
   }
 
   const { data, isLoading, isError } = useQuery({
@@ -33,15 +35,15 @@ const Recipe = () => {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div>{t('loading')}</div>
   }
 
   if (isError) {
-    return <div>Error loading recipe.</div>
+    return <div>{t('errorLoadingRecipe')}</div>
   }
 
   if (!data || !data.recipe) {
-    return <div>Recipe not found.</div>
+    return <div>{t('recipeNotFound')}</div>
   }
 
   return (
@@ -56,10 +58,10 @@ const Recipe = () => {
       ) : (
         <Message
           includeVerticalMargin
-          message="No ingredients found."
+          message={t('noIngredientsFound')}
           color="info"
           callback={handleAddIngredient}
-          callbackText="Add Ingredient"
+          callbackText={t('addIngredient')}
         />
       )}
     </div>

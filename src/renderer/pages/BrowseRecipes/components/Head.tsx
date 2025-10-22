@@ -7,6 +7,7 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
 import { RecipeDTO } from '../../../../shared/recipe.types'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
   disablePadding: boolean
@@ -62,11 +63,12 @@ interface EnhancedTableProps {
   ) => void
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
   order: 'asc' | 'desc'
-  orderBy: string
+  orderBy: string | number | symbol
   rowCount: number
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
+  const { t } = useAppTranslation()
   const {
     onSelectAllClick,
     order,
@@ -80,6 +82,25 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       onRequestSort(event, property)
     }
 
+  const getHeaderLabel = (id: string): string => {
+    switch (id) {
+      case 'title':
+        return t('title')
+      case 'produces':
+        return t('produces')
+      case 'units':
+        return t('units')
+      case 'status':
+        return t('status')
+      case 'showInMenu':
+        return t('showInMenu')
+      case 'actions':
+        return t('actions')
+      default:
+        return id
+    }
+  }
+
   return (
     <TableHead>
       <TableRow>
@@ -92,7 +113,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             onChange={onSelectAllClick}
             slotProps={{
               input: {
-                'aria-label': 'select all recipes',
+                'aria-label': t('selectAllRecipes'),
               },
             }}
           />
@@ -105,14 +126,14 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             sortDirection={orderBy === headCell.id ? order : false}
           >
             {headCell.id === 'actions' ? (
-              headCell.label
+              getHeaderLabel(headCell.id)
             ) : (
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={createSortHandler(headCell.id)}
               >
-                {headCell.label}
+                {getHeaderLabel(headCell.id)}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
                     {order === 'desc'

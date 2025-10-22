@@ -14,6 +14,7 @@ import { MdClose, MdEdit } from 'react-icons/md'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { IngredientDTO } from '../../../../shared/recipe.types'
 import { QUERY_KEYS } from '../../../consts'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 
@@ -27,6 +28,7 @@ function IngredientRow(props: {
   const { row, recipeId, isItemSelected, labelId, onClick } = props
   const [open, setOpen] = React.useState(false)
   const queryClient = useQueryClient()
+  const { t } = useAppTranslation()
 
   const removeIngredientMutation = useMutation({
     mutationFn: () =>
@@ -117,12 +119,12 @@ function IngredientRow(props: {
           {row.cost}
         </TableCell>
         <TableCell align="center">
-          <Tooltip title="Edit Ingredient">
+          <Tooltip title={t('editIngredient')}>
             <IconButton onClick={handleOpenEditModal}>
               <MdEdit size={20} />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Remove from Recipe">
+          <Tooltip title={t('removeIngredientFromRecipe')}>
             <IconButton onClick={handleOpenRemoveModal}>
               <MdClose size={20} />
             </IconButton>

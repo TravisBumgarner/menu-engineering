@@ -6,6 +6,7 @@ import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import { isSortable, SORTABLE_OPTIONS } from './consts'
 
 interface HeadCell {
@@ -14,27 +15,6 @@ interface HeadCell {
   label: string
   align: 'left' | 'right' | 'center'
 }
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: 'title',
-    align: 'left',
-    disablePadding: true,
-    label: 'Ingredient Name',
-  },
-  {
-    id: 'cost',
-    align: 'right',
-    disablePadding: true,
-    label: 'Cost',
-  },
-  {
-    id: 'actions',
-    align: 'center',
-    disablePadding: false,
-    label: 'Actions',
-  },
-]
 
 interface EnhancedTableProps {
   numSelected: number
@@ -46,6 +26,7 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
+  const { t } = useAppTranslation()
   const {
     onSelectAllClick,
     order,
@@ -54,6 +35,28 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     rowCount,
     onRequestSort,
   } = props
+
+  const headCells: readonly HeadCell[] = [
+    {
+      id: 'title',
+      align: 'left',
+      disablePadding: true,
+      label: t('title'),
+    },
+    {
+      id: 'cost',
+      align: 'right',
+      disablePadding: true,
+      label: t('cost'),
+    },
+    {
+      id: 'actions',
+      align: 'center',
+      disablePadding: false,
+      label: t('actions'),
+    },
+  ]
+
   const createSortHandler =
     (property: keyof typeof SORTABLE_OPTIONS) =>
     (event: React.MouseEvent<unknown>) => {

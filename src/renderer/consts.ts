@@ -1,3 +1,5 @@
+import { t } from 'i18next'
+
 export const ROUTES = {
   recipes: {
     href: () => '/',
@@ -6,17 +8,22 @@ export const ROUTES = {
   },
   recipe: {
     href: (id?: string) => (id ? `/recipe/${id}` : '/recipe/:id'),
-    label: 'Recipe',
+    label: t('recipe'),
     target: '_self',
   },
   ingredients: {
     href: () => '/ingredients',
-    label: 'Ingredients',
+    label: t('ingredients'),
     target: '_self',
   },
   settings: {
     href: () => '/settings',
-    label: 'Settings',
+    label: t('settings'),
+    target: '_self',
+  },
+  unitConversions: {
+    href: () => '/unit-conversions',
+    label: t('unitConversions'),
     target: '_self',
   },
 } as const
@@ -27,3 +34,5 @@ export const QUERY_KEYS = {
   INGREDIENTS: 'ingredients',
   AUTOCOMPLETE: 'autocomplete',
 }
+
+export const ROWS_PER_PAGE = 15

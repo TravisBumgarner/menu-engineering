@@ -13,6 +13,7 @@ import { IoMdCheckbox } from 'react-icons/io'
 import { MdEdit, MdOutlineCheckBoxOutlineBlank } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 
 function RecipeRow(props: {
   row: RecipeDTO
@@ -23,6 +24,7 @@ function RecipeRow(props: {
   const { row, isItemSelected, labelId, onClick } = props
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
+  const { t } = useAppTranslation()
 
   return (
     <React.Fragment>
@@ -94,7 +96,7 @@ function RecipeRow(props: {
           )}
         </TableCell>
         <TableCell align="left">
-          <Tooltip title="Edit Recipe Details">
+          <Tooltip title={t('editRecipeDetails')}>
             <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
               <MdEdit size={20} />
             </IconButton>
@@ -106,7 +108,7 @@ function RecipeRow(props: {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                Recipe Details
+                {t('recipeDetails')}
               </Typography>
               <MuiTable size="small" aria-label="recipe details">
                 <TableBody>
@@ -116,7 +118,7 @@ function RecipeRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      ID
+                      {t('id')}
                     </TableCell>
                     <TableCell>{row.id}</TableCell>
                   </TableRow>
@@ -126,7 +128,7 @@ function RecipeRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Created
+                      {t('created')}
                     </TableCell>
                     <TableCell>
                       {new Date(row.createdAt).toLocaleDateString()}
@@ -138,7 +140,7 @@ function RecipeRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Updated
+                      {t('updated')}
                     </TableCell>
                     <TableCell>
                       {new Date(row.updatedAt).toLocaleDateString()}
@@ -150,7 +152,7 @@ function RecipeRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Notes
+                      {t('notes')}
                     </TableCell>
                     <TableCell>{row.notes || <em>No notes</em>}</TableCell>
                   </TableRow>

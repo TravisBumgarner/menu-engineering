@@ -18,6 +18,7 @@ import {
 } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { MODAL_ID } from '../Modal.consts'
@@ -36,7 +37,7 @@ const EditIngredientModal = ({
   recipeTitle,
 }: EditIngredientModalProps) => {
   const queryClient = useQueryClient()
-
+  const { t } = useAppTranslation()
   const [formData, setFormData] = useState<NewIngredientDTO>({
     title: ingredient.title,
     quantity: ingredient.quantity,
@@ -120,7 +121,7 @@ const EditIngredientModal = ({
   return (
     <DefaultModal>
       <Typography variant="h5" component="h2" gutterBottom>
-        Edit Ingredient: {ingredient.title}
+        {t('editIngredient')}: {ingredient.title}
         {recipeId && ` (in ${recipeTitle})`}
       </Typography>
 
@@ -128,7 +129,7 @@ const EditIngredientModal = ({
         <Stack spacing={3}>
           <TextField
             size="small"
-            label="Ingredient Name"
+            label={t('ingredientName')}
             value={formData.title}
             onChange={handleInputChange('title')}
             required
@@ -138,7 +139,7 @@ const EditIngredientModal = ({
 
           <TextField
             size="small"
-            label="Quantity"
+            label={t('quantity')}
             type="number"
             value={formData.quantity}
             onChange={handleInputChange('quantity')}
@@ -148,7 +149,7 @@ const EditIngredientModal = ({
           />
 
           <FormControl size="small" fullWidth required>
-            <InputLabel>Units</InputLabel>
+            <InputLabel>{t('units')}</InputLabel>
             <Select
               value={formData.units}
               onChange={e =>
@@ -167,7 +168,7 @@ const EditIngredientModal = ({
           </FormControl>
           <TextField
             size="small"
-            label="Cost"
+            label={t('cost')}
             type="number"
             value={formData.cost}
             onChange={handleInputChange('cost')}
@@ -178,7 +179,7 @@ const EditIngredientModal = ({
 
           <TextField
             size="small"
-            label="Notes"
+            label={t('notes')}
             value={formData.notes}
             onChange={handleInputChange('notes')}
             multiline
@@ -193,7 +194,7 @@ const EditIngredientModal = ({
               type="button"
               onClick={() => (activeModalSignal.value = null)}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               variant="contained"
@@ -201,8 +202,8 @@ const EditIngredientModal = ({
               disabled={updateIngredientMutation.isPending}
             >
               {updateIngredientMutation.isPending
-                ? 'Updating...'
-                : 'Update Ingredient'}
+                ? t('updating')
+                : t('updateIngredient')}
             </Button>
           </Stack>
         </Stack>

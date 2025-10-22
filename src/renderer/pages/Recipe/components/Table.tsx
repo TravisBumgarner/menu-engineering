@@ -11,7 +11,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { IngredientDTO, RecipeDTO } from '../../../../shared/recipe.types'
-import { QUERY_KEYS } from '../../../consts'
+import { QUERY_KEYS, ROWS_PER_PAGE } from '../../../consts'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
@@ -58,7 +59,8 @@ const Table = ({
   const [orderBy, setOrderBy] = React.useState<'title'>('title')
   const [selected, setSelected] = React.useState<readonly string[]>([])
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const { t } = useAppTranslation()
+
   const [selectedAutocomplete, setSelectedAutocomplete] = React.useState<{
     label: string
     id: string
@@ -126,16 +128,6 @@ const Table = ({
     }
   }
 
-  // const handleAddExistingItem = () => {
-  //   if (!selectedAutocomplete) return
-
-  //   ipcMessenger.invoke(CHANNEL.DB.ADD_EXISTING_TO_RECIPE, {
-  //     childId: selectedAutocomplete.id,
-  //     parentId: recipe.id,
-  //     type: selectedAutocomplete.type,
-  //   })
-  // }
-
   const handleOpenAddRecipeModal = () => {
     activeModalSignal.value = {
       id: MODAL_ID.ADD_RECIPE_MODAL,
@@ -157,16 +149,9 @@ const Table = ({
     setPage(newPage)
   }
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0
+    page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
 
   const visibleRows = React.useMemo(
     () =>
@@ -175,8 +160,8 @@ const Table = ({
         ...subRecipes.map(s => ({ ...s, type: 'sub-recipe' as const })),
       ]
         .sort(getComparator(order, orderBy))
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [ingredients, order, orderBy, page, rowsPerPage],
+        .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
+    [ingredients, order, orderBy, page, ROWS_PER_PAGE],
   )
 
   return (
@@ -257,12 +242,12 @@ const Table = ({
                         ? 'Adding...'
                         : 'Add Existing'}
                     </Button>
-                    <Tooltip title="Add Ingredient">
+                    <Tooltip title={t('addIngredient')}>
                       <IconButton onClick={handleOpenAddIngredientModal}>
                         ➕ Ingredient
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Add Recipe">
+                    <Tooltip title={t('addRecipe')}>
                       <IconButton onClick={handleOpenAddRecipeModal}>
                         ➕ Recipe
                       </IconButton>
@@ -274,13 +259,15 @@ const Table = ({
           </MuiTable>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={ingredients.length}
-          rowsPerPage={rowsPerPage}
           page={page}
+          rowsPerPage={ROWS_PER_PAGE}
+          rowsPerPageOptions={[]}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          labelDisplayedRows={({ from, to, count }) =>
+            `${from}–${to} ${t('outOf')} ${count}`
+          }
         />
       </Paper>
     </Box>

@@ -1,9 +1,9 @@
 import { Box } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useTranslation } from 'react-i18next'
 import { MemoryRouter } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import Router from './components/Router'
+import './internationalization' // Initialize i18n
 import RenderModal from './sharedComponents/Modal'
 import AppThemeProvider from './styles/Theme'
 
@@ -20,8 +20,6 @@ function App() {
 }
 
 const WrappedApp = () => {
-  const { t, i18n } = useTranslation()
-
   return (
     <Box
       sx={{
@@ -33,9 +31,6 @@ const WrappedApp = () => {
       <MemoryRouter>
         <AppThemeProvider>
           <QueryClientProvider client={queryClient}>
-            <Box>
-              <p>{t('welcome')}</p>
-            </Box>
             <App />
           </QueryClientProvider>
         </AppThemeProvider>
