@@ -14,6 +14,11 @@ export const ROUTES = {
     label: 'Ingredients',
     target: '_self',
   },
+  settings: {
+    href: () => '/settings',
+    label: 'Settings',
+    target: '_self',
+  },
 } as const
 
 export const QUERY_KEYS = {

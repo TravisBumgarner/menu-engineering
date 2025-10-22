@@ -70,7 +70,6 @@ const getRecipeIngredients = async (recipeId: string) => {
       ingredientSchema,
       eq(recipeIngredientSchema.childId, ingredientSchema.id),
     )
-  console.log('ruda', ingredients)
   return ingredients.map(row => row.ingredient)
 }
 

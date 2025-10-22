@@ -6,7 +6,11 @@ import Typography from '@mui/material/Typography'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { ROUTES } from '../consts'
 
-const NAV_ROUTES: Array<keyof typeof ROUTES> = ['recipes', 'ingredients']
+const NAV_ROUTES: Array<keyof typeof ROUTES> = [
+  'recipes',
+  'ingredients',
+  'settings',
+]
 
 const Navigation = () => {
   const location = useLocation()
