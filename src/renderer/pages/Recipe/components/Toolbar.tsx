@@ -3,9 +3,9 @@ import Toolbar from '@mui/material/Toolbar'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
+import { RecipeDTO } from '../../../../shared/recipe.types'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
-import { RecipeDTO } from '../../../../shared/recipe.types'
 
 interface EnhancedTableToolbarProps {
   numSelected: number
@@ -19,7 +19,7 @@ function EnhancedTableToolbar({
   const handleOpenAddIngredientModal = () => {
     activeModalSignal.value = {
       id: MODAL_ID.ADD_INGREDIENT_MODAL,
-      recipeId: recipe.id,
+      recipe: recipe,
     }
   }
 

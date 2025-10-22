@@ -12,7 +12,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { NewIngredientDTO } from '../../../../shared/recipe.types'
+import { NewIngredientDTO, RecipeDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
@@ -22,14 +22,10 @@ import DefaultModal from './DefaultModal'
 
 export interface AddIngredientModalProps {
   id: typeof MODAL_ID.ADD_INGREDIENT_MODAL
-  recipeId?: string
-  recipeTitle?: string
+  recipe?: RecipeDTO
 }
 
-const AddIngredientModal = ({
-  recipeId,
-  recipeTitle,
-}: AddIngredientModalProps) => {
+const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
   const queryClient = useQueryClient()
   const [ingredientFormData, setIngredientFormData] =
     useState<NewIngredientDTO>({
@@ -90,7 +86,7 @@ const AddIngredientModal = ({
     e.preventDefault()
     addIngredientMutation.mutate({
       newIngredient: ingredientFormData,
-      recipeId,
+      recipeId: recipe?.id,
       shouldClose,
     })
   }
@@ -119,7 +115,7 @@ const AddIngredientModal = ({
   return (
     <DefaultModal>
       <Typography variant="h5" component="h2" gutterBottom>
-        Add New Ingredient {recipeId ? `to Recipe ${recipeTitle}` : ''}
+        Add New Ingredient {recipe ? `to ${recipe.title}` : ''}
       </Typography>
 
       <Box component="form">
