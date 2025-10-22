@@ -63,7 +63,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell width={20} />
+        <TableCell width={30} />
         <TableCell padding="checkbox">
           <Checkbox
             color="primary"

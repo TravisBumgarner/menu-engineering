@@ -14,7 +14,11 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { NewRecipeDTO, RECIPE_STATUS } from '../../../../shared/recipe.types'
+import {
+  NewRecipeDTO,
+  RECIPE_STATUS,
+  RecipeDTO,
+} from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
@@ -24,10 +28,7 @@ import DefaultModal from './DefaultModal'
 
 export interface AddRecipeModalProps {
   id: typeof MODAL_ID.ADD_RECIPE_MODAL
-  parentRecipe?: {
-    recipeId: string
-    title: string
-  }
+  parentRecipe?: RecipeDTO
 }
 
 const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
@@ -95,7 +96,7 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
     if (parentRecipe) {
       addSubRecipeMutation.mutate({
         newRecipe: formData,
-        parentRecipeId: parentRecipe.recipeId,
+        parentRecipeId: parentRecipe.id,
       })
     } else {
       addRecipeMutation.mutate(formData)

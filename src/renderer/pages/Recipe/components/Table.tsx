@@ -1,3 +1,4 @@
+import { IconButton, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import MuiTable from '@mui/material/Table'
@@ -7,7 +8,12 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
+import { CHANNEL } from '../../../../shared/messages.types'
 import { IngredientDTO, RecipeDTO } from '../../../../shared/recipe.types'
+import ipcMessenger from '../../../ipcMessenger'
+import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
+import { activeModalSignal } from '../../../signals'
+import Autocomplete from './Autocomplete'
 import { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
 import IngredientRow from './IngredientRow'
@@ -86,6 +92,35 @@ const Table = ({
       )
     }
     setSelected(newSelected)
+  }
+  const handleOpenAddIngredientModal = () => {
+    activeModalSignal.value = {
+      id: MODAL_ID.ADD_INGREDIENT_MODAL,
+      recipe,
+    }
+  }
+
+  const handleOpenAddRecipeModal = () => {
+    activeModalSignal.value = {
+      id: MODAL_ID.ADD_RECIPE_MODAL,
+      parentRecipe: recipe,
+    }
+  }
+
+  const handleAutocompleteSelect = (
+    value: {
+      label: string
+      id: string
+      type: 'ingredient' | 'recipe'
+    } | null,
+  ) => {
+    if (!value) return
+
+    ipcMessenger.invoke(CHANNEL.DB.ADD_EXISTING_TO_RECIPE, {
+      childId: value.id,
+      parentId: recipe.id,
+      type: value.type,
+    })
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -170,6 +205,30 @@ const Table = ({
                   <TableCell colSpan={7} />
                 </TableRow>
               )}
+
+              <TableRow>
+                <TableCell colSpan={6} sx={{ backgroundColor: '#f9f9f9' }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      gap: 2,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Autocomplete handleOnChange={handleAutocompleteSelect} />
+                    <Tooltip title="Add Ingredient">
+                      <IconButton onClick={handleOpenAddIngredientModal}>
+                        ➕ Ingredient
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Add Recipe">
+                      <IconButton onClick={handleOpenAddRecipeModal}>
+                        ➕ Recipe
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </TableCell>
+              </TableRow>
             </TableBody>
           </MuiTable>
         </TableContainer>

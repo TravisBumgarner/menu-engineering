@@ -28,8 +28,7 @@ const Recipe = () => {
   const handleAddIngredient = () => {
     activeModalSignal.value = {
       id: 'ADD_INGREDIENT_MODAL',
-      recipeId: id,
-      recipeTitle: data?.recipe?.title || '',
+      recipe: data?.recipe || undefined,
     }
   }
 
