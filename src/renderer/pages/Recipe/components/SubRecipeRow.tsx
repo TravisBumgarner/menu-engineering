@@ -12,13 +12,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { MdClose, MdEdit } from 'react-icons/md'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { IngredientDTO } from '../../../../shared/types'
+import { RecipeDTO } from '../../../../shared/types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 
-function IngredientRow(props: {
-  row: IngredientDTO
+function SubRecipeRow(props: {
+  row: RecipeDTO
   recipeId: string
   isItemSelected: boolean
   labelId: string
@@ -52,8 +52,8 @@ function IngredientRow(props: {
 
   const handleOpenEditModal = () => {
     activeModalSignal.value = {
-      id: 'EDIT_INGREDIENT_MODAL',
-      ingredient: row,
+      id: 'EDIT_RECIPE_MODAL',
+      recipe: row,
     }
   }
 
@@ -61,7 +61,7 @@ function IngredientRow(props: {
     activeModalSignal.value = {
       id: 'CONFIRMATION_MODAL',
       title: 'Remove Ingredient',
-      body: `Are you sure you want to remove the ingredient "${row.title}" from this recipe? This action cannot be undone.`,
+      body: `Are you sure you want to remove the sub recipe "${row.title}" from this recipe? This action cannot be undone.`,
       confirmationCallback: () => {
         removeIngredientMutation.mutate()
         activeModalSignal.value = null
@@ -103,7 +103,7 @@ function IngredientRow(props: {
           />
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
-          Ingredient: {row.title}
+          Recipe: {row.title}
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
           $0.00
@@ -140,29 +140,6 @@ function IngredientRow(props: {
                     </TableCell>
                     <TableCell>{row.id}</TableCell>
                   </TableRow>
-
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
-                      Quantity
-                    </TableCell>
-                    <TableCell>{row.quantity}</TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
-                      Units
-                    </TableCell>
-                    <TableCell>{row.units}</TableCell>
-                  </TableRow>
-
                   <TableRow>
                     <TableCell
                       component="th"
@@ -187,6 +164,20 @@ function IngredientRow(props: {
                       {new Date(row.updatedAt).toLocaleDateString()}
                     </TableCell>
                   </TableRow>
+
+                  <TableRow>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ fontWeight: 'bold' }}
+                    >
+                      Produces
+                    </TableCell>
+                    <TableCell>
+                      {row.produces} - {row.units}
+                    </TableCell>
+                  </TableRow>
+
                   <TableRow>
                     <TableCell
                       component="th"
@@ -207,4 +198,4 @@ function IngredientRow(props: {
   )
 }
 
-export default IngredientRow
+export default SubRecipeRow

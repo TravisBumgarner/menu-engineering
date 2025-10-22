@@ -8,10 +8,11 @@ import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
 import { IngredientDTO, RecipeDTO } from '../../../../shared/types'
+import { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
 import IngredientRow from './IngredientRow'
+import SubRecipeRow from './SubRecipeRow'
 import EnhancedTableToolbar from './Toolbar'
-import Message from '../../../sharedComponents/Message'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -47,14 +48,14 @@ const Table = ({
   title: string
 }) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
-  const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO>('title')
+  const [orderBy, setOrderBy] = React.useState<'title'>('title')
   const [selected, setSelected] = React.useState<readonly string[]>([])
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof IngredientDTO,
+    property: keyof typeof SORTABLE_OPTIONS,
   ) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
@@ -103,16 +104,17 @@ const Table = ({
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0
-  console.log(ingredients)
+
   const visibleRows = React.useMemo(
     () =>
-      [...ingredients]
+      [
+        ...ingredients.map(i => ({ ...i, type: 'ingredient' as const })),
+        ...subRecipes.map(s => ({ ...s, type: 'sub-recipe' as const })),
+      ]
         .sort(getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [ingredients, order, orderBy, page, rowsPerPage],
   )
-
-  console.log('doot', subRecipes)
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -140,6 +142,19 @@ const Table = ({
               {visibleRows.map((row, index) => {
                 const isItemSelected = selected.includes(row.id)
                 const labelId = `enhanced-table-checkbox-${index}`
+
+                if (row.type === 'sub-recipe') {
+                  return (
+                    <SubRecipeRow
+                      key={row.id}
+                      row={row}
+                      recipeId={recipeId}
+                      isItemSelected={isItemSelected}
+                      labelId={labelId}
+                      onClick={handleClick}
+                    />
+                  )
+                }
 
                 return (
                   <IngredientRow
@@ -174,18 +189,6 @@ const Table = ({
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      {subRecipes.length > 0 ? (
-        <Box>
-          <h2>Sub-Recipes</h2>
-          <ul>
-            {subRecipes.map(subRecipe => (
-              <li key={subRecipe.id}>{subRecipe.title}</li>
-            ))}
-          </ul>
-        </Box>
-      ) : (
-        <Message message="No sub-recipes found." color="info" />
-      )}
     </Box>
   )
 }

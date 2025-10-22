@@ -6,11 +6,11 @@ import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
-import { IngredientDTO } from '../../../../shared/types'
+import { isSortable, SORTABLE_OPTIONS } from './consts'
 
 interface HeadCell {
   disablePadding: boolean
-  id: keyof IngredientDTO | 'actions'
+  id: 'title' | 'cost' | 'actions'
   label: string
   numeric: boolean
 }
@@ -23,16 +23,10 @@ const headCells: readonly HeadCell[] = [
     label: 'Ingredient Name',
   },
   {
-    id: 'quantity',
+    id: 'cost',
     numeric: true,
-    disablePadding: false,
-    label: 'Quantity',
-  },
-  {
-    id: 'units',
-    numeric: false,
-    disablePadding: false,
-    label: 'Units',
+    disablePadding: true,
+    label: 'Cost',
   },
   {
     id: 'actions',
@@ -44,10 +38,7 @@ const headCells: readonly HeadCell[] = [
 
 interface EnhancedTableProps {
   numSelected: number
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof IngredientDTO,
-  ) => void
+  onRequestSort: (event: React.MouseEvent<unknown>, property: 'title') => void
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void
   order: 'asc' | 'desc'
   orderBy: string | number
@@ -64,7 +55,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     onRequestSort,
   } = props
   const createSortHandler =
-    (property: keyof IngredientDTO) => (event: React.MouseEvent<unknown>) => {
+    (property: keyof typeof SORTABLE_OPTIONS) =>
+    (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property)
     }
 
@@ -92,9 +84,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            {headCell.id === 'actions' ? (
-              headCell.label
-            ) : (
+            {isSortable(headCell.id) ? (
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
@@ -109,6 +99,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                   </Box>
                 ) : null}
               </TableSortLabel>
+            ) : (
+              headCell.label
             )}
           </TableCell>
         ))}
