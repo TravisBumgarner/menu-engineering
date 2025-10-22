@@ -12,8 +12,7 @@ import * as React from 'react'
 import { IoMdCheckbox } from 'react-icons/io'
 import { MdEdit, MdOutlineCheckBoxOutlineBlank } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
-import { type RecipeDTO } from '../../../../shared/types'
-import { activeModalSignal } from '../../../signals'
+import { type RecipeDTO } from '../../../../shared/recipe.types'
 
 function RecipeRow(props: {
   row: RecipeDTO
@@ -24,13 +23,6 @@ function RecipeRow(props: {
   const { row, isItemSelected, labelId, onClick } = props
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
-
-  const handleOpenEditRecipeModal = () => {
-    activeModalSignal.value = {
-      id: 'EDIT_RECIPE_MODAL',
-      recipe: row,
-    }
-  }
 
   return (
     <React.Fragment>
@@ -104,12 +96,7 @@ function RecipeRow(props: {
         <TableCell align="left">
           <Tooltip title="Edit Recipe Details">
             <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
-              <MdEdit size={20} /> Deets
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Edit Recipe">
-            <IconButton onClick={handleOpenEditRecipeModal}>
-              <MdEdit size={20} /> Recipe
+              <MdEdit size={20} />
             </IconButton>
           </Tooltip>
         </TableCell>

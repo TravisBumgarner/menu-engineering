@@ -15,12 +15,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { NewRecipeDTO, RECIPE_STATUS } from '../../../../shared/recipe.types'
+import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
-import { ALL_UNITS } from '../../../../shared/units.types'
 
 export interface AddRecipeModalProps {
   id: typeof MODAL_ID.ADD_RECIPE_MODAL
@@ -55,6 +55,7 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
       if (result.success) {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
         alert('Recipe added successfully!')
         activeModalSignal.value = null
       } else {

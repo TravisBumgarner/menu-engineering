@@ -6,49 +6,49 @@ import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
-import { RecipeDTO } from '../../../../shared/types'
+import { RecipeDTO } from '../../../../shared/recipe.types'
 
 interface HeadCell {
   disablePadding: boolean
   id: keyof RecipeDTO | 'actions'
   label: string
-  numeric: boolean
+  align: 'left' | 'right' | 'center'
 }
 
 const headCells: readonly HeadCell[] = [
   {
     id: 'title',
-    numeric: false,
+    align: 'left',
     disablePadding: true,
     label: 'Recipe Name',
   },
   {
     id: 'produces',
-    numeric: true,
+    align: 'right',
     disablePadding: false,
     label: 'Produces',
   },
   {
     id: 'units',
-    numeric: false,
+    align: 'left',
     disablePadding: false,
     label: 'Units',
   },
   {
     id: 'status',
-    numeric: false,
+    align: 'left',
     disablePadding: false,
     label: 'Status',
   },
   {
     id: 'showInMenu',
-    numeric: false,
+    align: 'left',
     disablePadding: false,
     label: 'Show in Menu',
   },
   {
     id: 'actions',
-    numeric: false,
+    align: 'center',
     disablePadding: false,
     label: 'Actions',
   },
@@ -100,7 +100,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
+            align={headCell.align}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >

@@ -39,13 +39,11 @@ function getComparator<Key extends keyof IngredientDTO>(
 const Table = ({
   ingredients,
   subRecipes,
-  recipeId,
-  title,
+  recipe,
 }: {
   ingredients: IngredientDTO[]
   subRecipes: RecipeDTO[]
-  recipeId: string
-  title: string
+  recipe: RecipeDTO
 }) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy, setOrderBy] = React.useState<'title'>('title')
@@ -119,11 +117,7 @@ const Table = ({
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar
-          title={title}
-          numSelected={selected.length}
-          recipeId={recipeId}
-        />
+        <EnhancedTableToolbar recipe={recipe} numSelected={selected.length} />
         <TableContainer>
           <MuiTable
             sx={{ minWidth: 750 }}
@@ -148,7 +142,7 @@ const Table = ({
                     <SubRecipeRow
                       key={row.id}
                       row={row}
-                      recipeId={recipeId}
+                      recipeId={row.id}
                       isItemSelected={isItemSelected}
                       labelId={labelId}
                       onClick={handleClick}
@@ -160,7 +154,7 @@ const Table = ({
                   <IngredientRow
                     key={row.id}
                     row={row}
-                    recipeId={recipeId}
+                    recipeId={row.id}
                     isItemSelected={isItemSelected}
                     labelId={labelId}
                     onClick={handleClick}

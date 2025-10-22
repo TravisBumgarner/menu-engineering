@@ -51,9 +51,8 @@ const Recipe = () => {
       {data.ingredients.length || data.subRecipes.length ? (
         <Table
           ingredients={data.ingredients}
-          recipeId={id}
+          recipe={data.recipe}
           subRecipes={data.subRecipes}
-          title={data.recipe.title}
         />
       ) : (
         <Message

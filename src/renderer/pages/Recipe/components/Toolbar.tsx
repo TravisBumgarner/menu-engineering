@@ -5,29 +5,35 @@ import Typography from '@mui/material/Typography'
 import { alpha } from '@mui/material/styles'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
+import { RecipeDTO } from '../../../../shared/recipe.types'
 
 interface EnhancedTableToolbarProps {
   numSelected: number
-  recipeId: string
-  title: string
+  recipe: RecipeDTO
 }
 
 function EnhancedTableToolbar({
   numSelected,
-  recipeId,
-  title,
+  recipe,
 }: EnhancedTableToolbarProps) {
   const handleOpenAddIngredientModal = () => {
     activeModalSignal.value = {
       id: MODAL_ID.ADD_INGREDIENT_MODAL,
-      recipeId: '',
+      recipeId: recipe.id,
     }
   }
 
   const handleOpenAddRecipeModal = () => {
     activeModalSignal.value = {
       id: MODAL_ID.ADD_RECIPE_MODAL,
-      parentRecipe: { recipeId, title },
+      parentRecipe: { recipeId: recipe.id, title: recipe.title },
+    }
+  }
+
+  const handleOpenEditRecipeModal = () => {
+    activeModalSignal.value = {
+      id: 'EDIT_RECIPE_MODAL',
+      recipe,
     }
   }
 
@@ -72,6 +78,9 @@ function EnhancedTableToolbar({
         </Tooltip>
       ) : (
         <>
+          <Tooltip title="Edit Recipe">
+            <IconButton onClick={handleOpenEditRecipeModal}>✏️ Edit</IconButton>
+          </Tooltip>
           <Tooltip title="Add Ingredient">
             <IconButton onClick={handleOpenAddIngredientModal}>
               ➕ Ingredient
