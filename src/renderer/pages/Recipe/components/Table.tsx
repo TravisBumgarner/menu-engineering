@@ -219,7 +219,7 @@ const Table = ({
                   <IngredientRow
                     key={row.id}
                     row={row}
-                    recipeId={row.id}
+                    recipeId={recipe.id}
                     isItemSelected={isItemSelected}
                     labelId={labelId}
                     onClick={handleClick}

@@ -83,6 +83,7 @@ const removeIngredientFromRecipe = async (
   ingredientId: string,
   recipeId: string,
 ) => {
+  console.log('removing ingredient from recipe', { ingredientId, recipeId })
   const result = await db
     .delete(recipeIngredientSchema)
     .where(
