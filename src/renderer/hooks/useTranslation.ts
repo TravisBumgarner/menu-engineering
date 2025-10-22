@@ -1,5 +1,14 @@
 import { useTranslation } from 'react-i18next'
-import { TranslationKeys } from '../internationalization'
+import { TranslationKeys, STORAGE_KEY } from '../internationalization'
+
+
+const setStoredLanguage = (language: string): void => {
+  try {
+    localStorage.setItem(STORAGE_KEY, language)
+  } catch (error) {
+    console.warn('Could not write to localStorage:', error)
+  }
+}
 
 export const useAppTranslation = () => {
   const { t, i18n } = useTranslation()
@@ -10,6 +19,7 @@ export const useAppTranslation = () => {
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng)
+    setStoredLanguage(lng)
   }
 
   const currentLanguage = i18n.language
