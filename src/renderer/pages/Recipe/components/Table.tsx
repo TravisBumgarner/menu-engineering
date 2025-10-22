@@ -238,18 +238,16 @@ const Table = ({
                       }
                       onClick={() => addExistingToRecipe()}
                     >
-                      {addExistingToRecipeIsLoading
-                        ? 'Adding...'
-                        : 'Add Existing'}
+                      {addExistingToRecipeIsLoading ? t('adding') : t('add')}
                     </Button>
                     <Tooltip title={t('addIngredient')}>
                       <IconButton onClick={handleOpenAddIngredientModal}>
-                        ➕ Ingredient
+                        ➕ {t('ingredient')}
                       </IconButton>
                     </Tooltip>
                     <Tooltip title={t('addRecipe')}>
                       <IconButton onClick={handleOpenAddRecipeModal}>
-                        ➕ Recipe
+                        ➕ {t('recipe')}
                       </IconButton>
                     </Tooltip>
                   </Box>

@@ -37,7 +37,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           variant="subtitle1"
           component="div"
         >
-          {numSelected} selected
+          {numSelected} {t('selected')}
         </Typography>
       ) : (
         <Typography
@@ -46,7 +46,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="tableTitle"
           component="div"
         >
-          Ingredients
+          {t('ingredients')}
         </Typography>
       )}
       {numSelected > 0 ? (

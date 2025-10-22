@@ -13,6 +13,7 @@ import * as React from 'react'
 import { MdClose, MdEdit } from 'react-icons/md'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { IngredientDTO } from '../../../../shared/recipe.types'
+import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
@@ -136,7 +137,7 @@ function IngredientRow(props: {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                Ingredient Details
+                {t('ingredientDetails')}
               </Typography>
               <Table size="small" aria-label="ingredient details">
                 <TableBody>
@@ -146,7 +147,7 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      ID
+                      {t('id')}
                     </TableCell>
                     <TableCell>{row.id}</TableCell>
                   </TableRow>
@@ -157,7 +158,7 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Quantity
+                      {t('quantity')}
                     </TableCell>
                     <TableCell>{row.quantity}</TableCell>
                   </TableRow>
@@ -168,9 +169,11 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Units
+                      {t('units')}
                     </TableCell>
-                    <TableCell>{row.units}</TableCell>
+                    <TableCell>
+                      {t(row.units as keyof typeof ALL_UNITS)}
+                    </TableCell>
                   </TableRow>
 
                   <TableRow>
@@ -179,7 +182,7 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Created
+                      {t('created')}
                     </TableCell>
                     <TableCell>
                       {new Date(row.createdAt).toLocaleDateString()}
@@ -191,7 +194,7 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Updated
+                      {t('updated')}
                     </TableCell>
                     <TableCell>
                       {new Date(row.updatedAt).toLocaleDateString()}
@@ -203,7 +206,7 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      Notes
+                      {t('notes')}
                     </TableCell>
                     <TableCell>{row.notes || <em>No notes</em>}</TableCell>
                   </TableRow>

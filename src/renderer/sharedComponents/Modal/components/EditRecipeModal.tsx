@@ -124,7 +124,7 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
   return (
     <DefaultModal>
       <Typography variant="h5" component="h2" gutterBottom>
-        Edit Recipe: {recipe.title}
+        {t('editRecipe')}: {recipe.title}
       </Typography>
 
       <Box component="form" onSubmit={handleSubmit}>

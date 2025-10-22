@@ -13,7 +13,9 @@ import { IoMdCheckbox } from 'react-icons/io'
 import { MdEdit, MdOutlineCheckBoxOutlineBlank } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
+import { ALL_UNITS } from '../../../../shared/units.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import { SPACING } from '../../../styles/consts'
 
 function RecipeRow(props: {
   row: RecipeDTO
@@ -63,13 +65,16 @@ function RecipeRow(props: {
           {row.title}
         </TableCell>
         <TableCell align="right">{row.produces}</TableCell>
-        <TableCell align="left">{row.units}</TableCell>
+        <TableCell align="left">
+          {t(row.units as keyof typeof ALL_UNITS)}
+        </TableCell>
         <TableCell align="left">
           <Typography
-            variant="caption"
+            variant="body2"
             sx={{
-              px: 1,
-              py: 0.5,
+              width: '100%',
+              textAlign: 'center',
+              padding: `${SPACING.TINY.PX} ${SPACING.SMALL.PX}`,
               borderRadius: 1,
               bgcolor:
                 row.status === 'published'

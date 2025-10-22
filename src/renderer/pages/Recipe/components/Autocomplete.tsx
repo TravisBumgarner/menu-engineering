@@ -12,6 +12,7 @@ import { FaBottleWater } from 'react-icons/fa6'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { RecipeDTO } from '../../../../shared/recipe.types'
 import { QUERY_KEYS } from '../../../consts'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 
@@ -28,6 +29,7 @@ const Autocomplete = ({
   recipe?: RecipeDTO
   handleOnChange: (value: Value | null) => void
 }) => {
+  const { t } = useAppTranslation()
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.AUTOCOMPLETE],
     queryFn: async (): Promise<Value[]> => {
@@ -105,7 +107,7 @@ const Autocomplete = ({
         )
       }}
       renderInput={params => (
-        <TextField {...params} label="Add existing ingredient or recipe" />
+        <TextField {...params} label={t('addExistingIngredientOrRecipe')} />
       )}
     />
   )

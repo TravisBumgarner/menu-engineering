@@ -75,7 +75,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             onChange={onSelectAllClick}
             slotProps={{
               input: {
-                'aria-label': 'select all ingredients',
+                'aria-label': t('selectAllRecipes'),
               },
             }}
           />

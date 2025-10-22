@@ -46,7 +46,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="tableTitle"
           component="div"
         >
-          Recipes
+          {t('recipes')}
         </Typography>
       )}
       {numSelected > 0 ? (

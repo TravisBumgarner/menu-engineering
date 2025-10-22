@@ -37,7 +37,7 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: 'status',
-    align: 'left',
+    align: 'center',
     disablePadding: false,
     label: 'Status',
   },

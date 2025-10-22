@@ -59,14 +59,14 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        alert('Recipe added successfully!')
+        alert(t('recipeAddedSuccessfully'))
         activeModalSignal.value = null
       } else {
-        alert('Failed to add recipe.')
+        alert(t('failedToAddRecipe'))
       }
     },
     onError: () => {
-      alert('Error adding recipe.')
+      alert(t('errorAddingRecipe'))
     },
   })
 
@@ -171,7 +171,7 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
             >
               {Object.entries(ALL_UNITS).map(([key, value]) => (
                 <MenuItem key={key} value={value}>
-                  {value.toLowerCase().replace('_', ' ')}
+                  {t(value as keyof typeof ALL_UNITS)}
                 </MenuItem>
               ))}
             </Select>

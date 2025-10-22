@@ -33,6 +33,7 @@ export type TranslationKeys =
   | 'created'
   | 'updated'
   | 'outOf'
+  | 'selected'
 
   // Navigation
   | 'appTitle'
@@ -62,6 +63,7 @@ export type TranslationKeys =
   | 'showInMenu'
   | 'selectAllRecipes'
   | 'recipeDetails'
+  | 'ingredientDetails'
 
   // Form Labels and Placeholders
   | 'ingredientNamePlaceholder'
@@ -186,6 +188,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   created: 'Created',
   updated: 'Updated',
   outOf: 'of',
+  selected: 'selected',
 
   // Navigation
   appTitle: 'Menu Engineering',
@@ -215,6 +218,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   showInMenu: 'Show in Menu',
   selectAllRecipes: 'Select All Recipes',
   recipeDetails: 'Recipe Details',
+  ingredientDetails: 'Ingredient Details',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'e.g. Flour, Salt, Olive Oil',
@@ -233,7 +237,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   archived: 'Archived',
 
   // Messages
-  noRecipesFound: 'No recipes found. Click below to add your first recipe.',
+  noRecipesFound: 'No recipes found.',
   noIngredientsFound: 'No ingredients found.',
   noDataAvailable: 'No data available.',
   recipeNotFound: 'Recipe not found.',
@@ -341,6 +345,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   created: 'Creado',
   updated: 'Actualizado',
   outOf: 'de',
+  selected: 'seleccionado',
 
   // Navigation
   appTitle: 'Ingeniería de Menú',
@@ -370,6 +375,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   showInMenu: 'Mostrar en Menú',
   selectAllRecipes: 'Seleccionar Todas las Recetas',
   recipeDetails: 'Detalles de Receta',
+  ingredientDetails: 'Detalles de Ingrediente',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'ej. Harina, Sal, Aceite de Oliva',
@@ -388,8 +394,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   archived: 'Archivado',
 
   // Messages
-  noRecipesFound:
-    'No se encontraron recetas. Haz clic abajo para agregar tu primera receta.',
+  noRecipesFound: 'No se encontraron recetas.',
   noIngredientsFound: 'No se encontraron ingredientes.',
   noDataAvailable: 'No hay datos disponibles.',
   recipeNotFound: 'Receta no encontrada.',
