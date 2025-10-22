@@ -1,4 +1,4 @@
-import { IconButton, Tooltip } from '@mui/material'
+import { Button, IconButton, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import MuiTable from '@mui/material/Table'
@@ -7,9 +7,11 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { IngredientDTO, RecipeDTO } from '../../../../shared/recipe.types'
+import { QUERY_KEYS } from '../../../consts'
 import ipcMessenger from '../../../ipcMessenger'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
@@ -51,11 +53,35 @@ const Table = ({
   subRecipes: RecipeDTO[]
   recipe: RecipeDTO
 }) => {
+  const queryClient = useQueryClient()
   const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy, setOrderBy] = React.useState<'title'>('title')
   const [selected, setSelected] = React.useState<readonly string[]>([])
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [selectedAutocomplete, setSelectedAutocomplete] = React.useState<{
+    label: string
+    id: string
+    type: 'ingredient' | 'recipe'
+  } | null>(null)
+
+  const {
+    isPending: addExistingToRecipeIsLoading,
+    mutate: addExistingToRecipe,
+  } = useMutation({
+    mutationFn: async () => {
+      if (!selectedAutocomplete) return
+      await ipcMessenger.invoke(CHANNEL.DB.ADD_EXISTING_TO_RECIPE, {
+        childId: selectedAutocomplete.id,
+        parentId: recipe.id,
+        type: selectedAutocomplete.type,
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+      setSelectedAutocomplete(null)
+    },
+  })
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -100,6 +126,16 @@ const Table = ({
     }
   }
 
+  // const handleAddExistingItem = () => {
+  //   if (!selectedAutocomplete) return
+
+  //   ipcMessenger.invoke(CHANNEL.DB.ADD_EXISTING_TO_RECIPE, {
+  //     childId: selectedAutocomplete.id,
+  //     parentId: recipe.id,
+  //     type: selectedAutocomplete.type,
+  //   })
+  // }
+
   const handleOpenAddRecipeModal = () => {
     activeModalSignal.value = {
       id: MODAL_ID.ADD_RECIPE_MODAL,
@@ -114,13 +150,7 @@ const Table = ({
       type: 'ingredient' | 'recipe'
     } | null,
   ) => {
-    if (!value) return
-
-    ipcMessenger.invoke(CHANNEL.DB.ADD_EXISTING_TO_RECIPE, {
-      childId: value.id,
-      parentId: recipe.id,
-      type: value.type,
-    })
+    setSelectedAutocomplete(value)
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -216,6 +246,17 @@ const Table = ({
                     }}
                   >
                     <Autocomplete handleOnChange={handleAutocompleteSelect} />
+                    <Button
+                      variant="outlined"
+                      disabled={
+                        !selectedAutocomplete || addExistingToRecipeIsLoading
+                      }
+                      onClick={() => addExistingToRecipe()}
+                    >
+                      {addExistingToRecipeIsLoading
+                        ? 'Adding...'
+                        : 'Add Existing'}
+                    </Button>
                     <Tooltip title="Add Ingredient">
                       <IconButton onClick={handleOpenAddIngredientModal}>
                         ➕ Ingredient
