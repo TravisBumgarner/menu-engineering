@@ -38,7 +38,11 @@ function RecipeRow(props: { row: RecipeDTO; labelId: string }) {
               setOpen(!open)
             }}
           >
-            {open ? '🔼' : '🔽'}
+            {open ? (
+              <Icon name="collapseVertical" />
+            ) : (
+              <Icon name="expandVertical" />
+            )}
           </IconButton>
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">

@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import {
   IngredientDTO,
@@ -46,16 +46,16 @@ const EditIngredientModal = ({
     cost: ingredient.cost,
   })
 
-  // Update form data when ingredient prop changes
-  useEffect(() => {
-    setFormData({
-      title: ingredient.title,
-      quantity: ingredient.quantity,
-      units: ingredient.units,
-      notes: ingredient.notes,
-      cost: ingredient.cost,
-    })
-  }, [ingredient])
+  // // Update form data when ingredient prop changes
+  // useEffect(() => {
+  //   setFormData({
+  //     title: ingredient.title,
+  //     quantity: ingredient.quantity,
+  //     units: ingredient.units,
+  //     notes: ingredient.notes,
+  //     cost: ingredient.cost,
+  //   })
+  // }, [ingredient])
 
   const updateIngredientMutation = useMutation({
     mutationFn: (ingredientData: Partial<NewIngredientDTO>) =>

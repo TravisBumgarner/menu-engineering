@@ -98,8 +98,8 @@ const Autocomplete = ({
         const { key, ...optionProps } = props
         return (
           <Box key={key} component="li" {...optionProps}>
-            {option.type === 'ingredient' && <Icon name="water" />}
-            {option.type === 'recipe' && <Icon name="list" />}
+            {option.type === 'ingredient' && <Icon name="ingredient" />}
+            {option.type === 'recipe' && <Icon name="recipe" />}
             &nbsp; {option.label}
           </Box>
         )

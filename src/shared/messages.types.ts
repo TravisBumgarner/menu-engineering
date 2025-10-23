@@ -23,11 +23,11 @@ export const CHANNEL = {
 } as const
 
 export type FromRenderer = {
-  // [CHANNEL.WEE_WOO]: { id: number };
+  ['does-not-exist']: { id: number }
 }
 
 export type FromMain = {
-  // [CHANNEL.WEE_WOO]: { ok: boolean; id: number };
+  ['does-not-exist']: { ok: boolean; id: number }
 }
 
 export type Invokes = {

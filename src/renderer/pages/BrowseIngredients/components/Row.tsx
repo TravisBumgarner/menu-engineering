@@ -43,7 +43,11 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
               setOpen(!open)
             }}
           >
-            {open ? '🔼' : '🔽'}
+            {open ? (
+              <Icon name="collapseVertical" />
+            ) : (
+              <Icon name="expandVertical" />
+            )}
           </IconButton>
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
@@ -61,7 +65,7 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
               title={t('edit')}
               onClick={handleOpenEditModal}
             >
-              <Icon name="edit"/>
+              <Icon name="edit" />
             </IconButton>
           </Tooltip>
         </TableCell>

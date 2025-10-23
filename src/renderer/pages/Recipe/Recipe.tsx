@@ -13,19 +13,22 @@ const Recipe = () => {
   const { id } = useParams<{ id: string }>()
   const { t } = useAppTranslation()
 
-  if (!id) {
-    return <div>{t('recipeNotFound')}</div>
-  }
-
   const { data, isLoading, isError } = useQuery({
-    queryKey: [QUERY_KEYS.RECIPE, id],
+    queryKey: [QUERY_KEYS.RECIPE],
     queryFn: async () => {
+      if (!id) throw new Error(t('recipeNotFound'))
+
       const response = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE, {
         id,
       })
+      console.log('fetching recipe with id', response.subRecipes)
       return response
     },
   })
+
+  if (!id) {
+    return <div>{t('recipeNotFound')}</div>
+  }
 
   const handleAddIngredient = () => {
     activeModalSignal.value = {

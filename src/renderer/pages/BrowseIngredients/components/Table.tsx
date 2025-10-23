@@ -72,7 +72,7 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
       [...ingredients]
         .sort(getComparator(order, orderBy))
         .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
-    [ingredients, order, orderBy, page, ROWS_PER_PAGE],
+    [ingredients, order, orderBy, page],
   )
 
   return (

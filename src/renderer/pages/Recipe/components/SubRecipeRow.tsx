@@ -12,9 +12,11 @@ import * as React from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { RecipeDTO } from '../../../../shared/recipe.types'
 import { QUERY_KEYS } from '../../../consts'
+import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../signals'
+import { ICON_SIZE } from './consts'
 
 function SubRecipeRow(props: {
   row: RecipeDTO
@@ -24,6 +26,7 @@ function SubRecipeRow(props: {
   const { row, recipeId, labelId } = props
   const [open, setOpen] = React.useState(false)
   const queryClient = useQueryClient()
+  const { t } = useAppTranslation()
 
   const removeIngredientMutation = useMutation({
     mutationFn: () =>
@@ -83,11 +86,17 @@ function SubRecipeRow(props: {
               setOpen(!open)
             }}
           >
-            {open ? '🔼' : '🔽'}
+            {open ? (
+              <Icon name="collapseVertical" />
+            ) : (
+              <Icon name="expandVertical" />
+            )}
           </IconButton>
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
-          Recipe: {row.title}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Icon name="recipe" size={ICON_SIZE} /> {row.title}
+          </Box>
         </TableCell>
         <TableCell
           align="right"
@@ -116,7 +125,7 @@ function SubRecipeRow(props: {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                Ingredient Details
+                {t('recipeDetails')}
               </Typography>
               <Table size="small" aria-label="ingredient details">
                 <TableBody>

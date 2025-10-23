@@ -1,12 +1,14 @@
+import { BiCollapseVertical, BiExpandVertical } from 'react-icons/bi'
 import { FaThList } from 'react-icons/fa'
 import { FaBottleWater } from 'react-icons/fa6'
-import { GiPartyPopper } from 'react-icons/gi'
 import { IoMdCheckbox, IoMdWarning } from 'react-icons/io'
 import { IoInformationCircleOutline } from 'react-icons/io5'
+import { LuPartyPopper } from 'react-icons/lu'
 import {
   MdAdd,
   MdClose,
   MdEdit,
+  MdError,
   MdOutlineCheckBoxOutlineBlank,
 } from 'react-icons/md'
 
@@ -15,12 +17,15 @@ export const iconMap = {
   add: MdAdd,
   checkbox: IoMdCheckbox,
   checkboxOutline: MdOutlineCheckBoxOutlineBlank,
-  list: FaThList,
-  water: FaBottleWater,
+  recipe: FaThList,
+  ingredient: FaBottleWater,
   close: MdClose,
-  partyPopper: GiPartyPopper,
   warning: IoMdWarning,
-  infoCircle: IoInformationCircleOutline,
+  info: IoInformationCircleOutline,
+  error: MdError,
+  success: LuPartyPopper,
+  expandVertical: BiExpandVertical,
+  collapseVertical: BiCollapseVertical,
 }
 
 const Icon = ({

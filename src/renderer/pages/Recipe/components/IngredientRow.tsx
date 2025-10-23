@@ -17,6 +17,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../signals'
+import { ICON_SIZE } from './consts'
 
 function IngredientRow(props: {
   row: IngredientDTO
@@ -86,11 +87,17 @@ function IngredientRow(props: {
               setOpen(!open)
             }}
           >
-            {open ? '🔼' : '🔽'}
+            {open ? (
+              <Icon name="collapseVertical" />
+            ) : (
+              <Icon name="expandVertical" />
+            )}
           </IconButton>
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
-          Ingredient: {row.title}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Icon name="ingredient" size={ICON_SIZE} /> {row.title}
+          </Box>{' '}
         </TableCell>
         <TableCell
           align="right"

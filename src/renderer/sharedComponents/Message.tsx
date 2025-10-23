@@ -4,8 +4,8 @@ import Typography from '@mui/material/Typography'
 
 import { useTheme } from '@mui/material/styles'
 import { useMemo } from 'react'
-import Icon from '../../../sharedComponents/Icon'
-import { FONT_SIZES, SPACING } from '../styles/consts'
+import { SPACING } from '../styles/consts'
+import Icon from './Icon'
 
 const Message = ({
   message,
@@ -24,30 +24,12 @@ const Message = ({
 
   const icon = useMemo(() => {
     if (color === 'error') {
-      return (
-        <Icon
-          name="error"
-          size={FONT_SIZES.LARGE.PX}
-          color={theme.palette.info.main}
-        />
-      )
+      return <Icon name="error" color={theme.palette.info.main} />
     }
     if (color === 'success') {
-      return (
-        <Icon
-          name="success"
-          size={FONT_SIZES.LARGE.PX}
-          color={theme.palette.info.main}
-        />
-      )
+      return <Icon name="success" color={theme.palette.info.main} />
     }
-    return (
-      <Icon
-        name="info"
-        size={FONT_SIZES.LARGE.PX}
-        color={theme.palette.info.main}
-      />
-    )
+    return <Icon name="info" color={theme.palette.info.main} />
   }, [color, theme])
 
   return (
