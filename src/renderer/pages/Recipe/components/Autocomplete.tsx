@@ -5,9 +5,7 @@ import {
   TextField,
 } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
-import { FaThList } from 'react-icons/fa'
-
-import { FaBottleWater } from 'react-icons/fa6'
+import Icon from '../../../sharedComponents/Icon'
 
 import { CHANNEL } from '../../../../shared/messages.types'
 import { RecipeDTO } from '../../../../shared/recipe.types'
@@ -100,8 +98,8 @@ const Autocomplete = ({
         const { key, ...optionProps } = props
         return (
           <Box key={key} component="li" {...optionProps}>
-            {option.type === 'ingredient' && <FaBottleWater />}
-            {option.type === 'recipe' && <FaThList />}
+            {option.type === 'ingredient' && <Icon name="ingredient" />}
+            {option.type === 'recipe' && <Icon name="recipe" />}
             &nbsp; {option.label}
           </Box>
         )

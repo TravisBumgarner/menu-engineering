@@ -13,8 +13,8 @@ const setStoredLanguage = (language: string): void => {
 export const useAppTranslation = () => {
   const { t, i18n } = useTranslation()
 
-  const translate = (key: TranslationKeys, options?: any): string => {
-    return t(key, options) as string
+  const translate = (key: TranslationKeys): string => {
+    return t(key) as string
   }
 
   const changeLanguage = (lng: string) => {

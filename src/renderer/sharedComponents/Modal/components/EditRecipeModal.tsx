@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import {
   NewRecipeDTO,
@@ -32,7 +32,7 @@ export interface EditRecipeModalProps {
   recipe: RecipeDTO
 }
 
-const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
+const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
 
@@ -45,17 +45,17 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
     showInMenu: recipe.showInMenu,
   })
 
-  // Update form data when recipe prop changes
-  useEffect(() => {
-    setFormData({
-      title: recipe.title,
-      produces: recipe.produces,
-      units: recipe.units,
-      status: recipe.status,
-      notes: recipe.notes,
-      showInMenu: recipe.showInMenu,
-    })
-  }, [recipe])
+  // // Update form data when recipe prop changes
+  // useEffect(() => {
+  //   setFormData({
+  //     title: recipe.title,
+  //     produces: recipe.produces,
+  //     units: recipe.units,
+  //     status: recipe.status,
+  //     notes: recipe.notes,
+  //     showInMenu: recipe.showInMenu,
+  //   })
+  // }, [recipe])
 
   const updateRecipeMutation = useMutation({
     mutationFn: (recipeData: Partial<NewRecipeDTO>) =>
@@ -67,9 +67,7 @@ const EditRecipeModal = ({ id, recipe }: EditRecipeModalProps) => {
       if (result.success) {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.RECIPE, recipe.id],
-        })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
         alert(t('recipeUpdatedSuccessfully'))
         activeModalSignal.value = null
       } else {

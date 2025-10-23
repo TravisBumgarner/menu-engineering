@@ -4,10 +4,8 @@ import Typography from '@mui/material/Typography'
 
 import { useTheme } from '@mui/material/styles'
 import { useMemo } from 'react'
-import { GiPartyPopper } from 'react-icons/gi'
-import { IoMdWarning } from 'react-icons/io'
-import { IoInformationCircleOutline } from 'react-icons/io5'
-import { FONT_SIZES, SPACING } from '../styles/consts'
+import { SPACING } from '../styles/consts'
+import Icon from './Icon'
 
 const Message = ({
   message,
@@ -26,27 +24,12 @@ const Message = ({
 
   const icon = useMemo(() => {
     if (color === 'error') {
-      return (
-        <IoMdWarning
-          size={FONT_SIZES.LARGE.PX}
-          color={theme.palette.info.main}
-        />
-      )
+      return <Icon name="error" color={theme.palette.info.main} />
     }
     if (color === 'success') {
-      return (
-        <GiPartyPopper
-          size={FONT_SIZES.LARGE.PX}
-          color={theme.palette.info.main}
-        />
-      )
+      return <Icon name="success" color={theme.palette.info.main} />
     }
-    return (
-      <IoInformationCircleOutline
-        size={FONT_SIZES.LARGE.PX}
-        color={theme.palette.info.main}
-      />
-    )
+    return <Icon name="info" color={theme.palette.info.main} />
   }, [color, theme])
 
   return (

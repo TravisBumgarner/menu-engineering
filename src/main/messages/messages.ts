@@ -30,14 +30,11 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPE, async (_event, params) => {
 })
 
 typedIpcMain.handle(CHANNEL.DB.ADD_SUB_RECIPE, async (_event, params) => {
-  console.log('a)')
   const newRecipeId = await queries.addRecipe(params.payload.newRecipe)
-  console.log('b)', newRecipeId)
   const newSubRecipeRecipeLink = await queries.addSubRecipeToRecipe({
     parentRecipeId: params.payload.parentRecipeId,
     childRecipeId: newRecipeId,
   })
-  console.log('c)', newSubRecipeRecipeLink)
   return {
     type: 'add_sub_recipe_to_recipe',
     success: !!newRecipeId && !!newSubRecipeRecipeLink,

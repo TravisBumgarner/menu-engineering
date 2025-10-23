@@ -1,6 +1,5 @@
 import { Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
-import Checkbox from '@mui/material/Checkbox'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import Table from '@mui/material/Table'
@@ -9,19 +8,14 @@ import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
-import { MdEdit } from 'react-icons/md'
 import { IngredientDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import Icon from '../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../signals'
 
-function IngredientRow(props: {
-  row: IngredientDTO
-  isItemSelected: boolean
-  labelId: string
-  onClick: (event: React.MouseEvent<unknown>, id: string) => void
-}) {
-  const { row, isItemSelected, labelId, onClick } = props
+function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
+  const { row, labelId } = props
   const [open, setOpen] = React.useState(false)
   const { t } = useAppTranslation()
 
@@ -36,11 +30,8 @@ function IngredientRow(props: {
     <React.Fragment>
       <TableRow
         hover
-        role="checkbox"
-        aria-checked={isItemSelected}
         tabIndex={-1}
         key={row.id}
-        selected={isItemSelected}
         sx={{ '& > *': { borderBottom: 'unset' } }}
       >
         <TableCell>
@@ -52,18 +43,12 @@ function IngredientRow(props: {
               setOpen(!open)
             }}
           >
-            {open ? '🔼' : '🔽'}
+            {open ? (
+              <Icon name="collapseVertical" />
+            ) : (
+              <Icon name="expandVertical" />
+            )}
           </IconButton>
-        </TableCell>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            checked={isItemSelected}
-            onClick={event => onClick(event, row.id)}
-            inputProps={{
-              'aria-labelledby': labelId,
-            }}
-          />
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
           {row.title}
@@ -80,7 +65,7 @@ function IngredientRow(props: {
               title={t('edit')}
               onClick={handleOpenEditModal}
             >
-              <MdEdit size={20} />
+              <Icon name="edit" />
             </IconButton>
           </Tooltip>
         </TableCell>
@@ -90,7 +75,7 @@ function IngredientRow(props: {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                Ingredient Details
+                {t('ingredientDetails')}
               </Typography>
               <Table size="small" aria-label="ingredient details">
                 <TableBody>

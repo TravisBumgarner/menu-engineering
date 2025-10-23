@@ -1,21 +1,21 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { useCallback } from "react";
-import { activeModalSignal } from "../../../signals";
-import { MODAL_ID } from "../Modal.consts";
-import DefaultModal from "./DefaultModal";
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import { useCallback } from 'react'
+import { activeModalSignal } from '../../../signals'
+import { MODAL_ID } from '../Modal.consts'
+import DefaultModal from './DefaultModal'
 
 export interface ConfirmationModalProps {
-  id: typeof MODAL_ID.CONFIRMATION_MODAL;
-  title: string;
-  body: string;
-  confirmationCallback?: () => void;
-  cancelCallback?: () => void;
-  isConfirmDestructive?: boolean;
-  isCancelDestructive?: boolean;
-  showCancel?: boolean;
-  overrideConfirmation?: boolean;
+  id: typeof MODAL_ID.CONFIRMATION_MODAL
+  title: string
+  body: string
+  confirmationCallback?: () => void
+  cancelCallback?: () => void
+  isConfirmDestructive?: boolean
+  isCancelDestructive?: boolean
+  showCancel?: boolean
+  overrideConfirmation?: boolean
 }
 
 const ConfirmationModal = ({
@@ -27,28 +27,28 @@ const ConfirmationModal = ({
   showCancel,
 }: ConfirmationModalProps) => {
   const handleCancel = useCallback(() => {
-    cancelCallback?.();
-    activeModalSignal.value = null;
-  }, [cancelCallback]);
+    cancelCallback?.()
+    activeModalSignal.value = null
+  }, [cancelCallback])
 
   const handleConfirm = useCallback(() => {
-    confirmationCallback?.();
+    confirmationCallback?.()
     if (!overrideConfirmation) {
-      activeModalSignal.value = null;
+      activeModalSignal.value = null
     }
-  }, [confirmationCallback, overrideConfirmation]);
+  }, [confirmationCallback, overrideConfirmation])
 
   return (
     <DefaultModal>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <Typography variant="h6">{title}</Typography>
         <Typography variant="body1">{body}</Typography>
         <Box
           sx={{
-            display: "flex",
-            gap: "10px",
-            flexDirection: "row",
-            justifyContent: "flex-end",
+            display: 'flex',
+            gap: '10px',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
           }}
         >
           {showCancel && (
@@ -62,7 +62,7 @@ const ConfirmationModal = ({
         </Box>
       </Box>
     </DefaultModal>
-  );
-};
+  )
+}
 
-export default ConfirmationModal;
+export default ConfirmationModal

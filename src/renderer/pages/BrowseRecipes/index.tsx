@@ -1,3 +1,3 @@
-import Home from "./Home";
+import BrowseRecipes from './BrowseRecipes'
 
-export default Home;
+export default BrowseRecipes

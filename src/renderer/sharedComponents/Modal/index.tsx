@@ -1,4 +1,4 @@
-import RenderModal from "./RenderModal";
+import RenderModal from './RenderModal'
 
-export type { ActiveModal } from "./RenderModal";
-export default RenderModal;
+export type { ActiveModal } from './RenderModal'
+export default RenderModal

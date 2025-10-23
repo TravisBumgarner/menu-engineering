@@ -32,13 +32,13 @@ export interface AddRecipeModalProps {
   parentRecipe?: RecipeDTO
 }
 
-const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
+const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
 
   const [formData, setFormData] = useState<NewRecipeDTO>({
     title: '',
-    produces: 1,
+    produces: 0,
     units: '',
     status: RECIPE_STATUS.draft,
     notes: '',
@@ -78,25 +78,27 @@ const AddRecipeModal = ({ id, parentRecipe }: AddRecipeModalProps) => {
           parentRecipeId: args.parentRecipeId,
         },
       }),
-    onSuccess: result => {
+    onSuccess: async result => {
       if (result.success) {
-        // Invalidate and refetch recipes query
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
-        alert('Sub-recipe added successfully!')
+        // Invalidate and refetch queries
+        await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
+        await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+        alert(t('subRecipeAddedSuccessfully'))
         activeModalSignal.value = null
       } else {
-        alert('Failed to add sub-recipe.')
+        alert(t('failedToAddSubRecipe'))
       }
     },
     onError: () => {
-      alert('Error adding sub-recipe.')
+      alert(t('errorAddingSubRecipe'))
     },
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    console.log('yyy', parentRecipe)
     e.preventDefault()
     if (parentRecipe) {
-      addSubRecipeMutation.mutate({
+      await addSubRecipeMutation.mutate({
         newRecipe: formData,
         parentRecipeId: parentRecipe.id,
       })
