@@ -67,9 +67,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
       if (result.success) {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.RECIPE, recipe.id],
-        })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
         alert(t('recipeUpdatedSuccessfully'))
         activeModalSignal.value = null
       } else {
