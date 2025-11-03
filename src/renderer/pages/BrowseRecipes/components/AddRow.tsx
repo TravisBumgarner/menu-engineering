@@ -22,9 +22,9 @@ import Icon from '../../../sharedComponents/Icon'
 import { SPACING } from '../../../styles/consts'
 
 const AddRow = ({
-  setLastCreatedId,
+  setFocusedRecipeId,
 }: {
-  setLastCreatedId: (id: string) => void
+  setFocusedRecipeId: (id: string) => void
 }) => {
   const [isCreating, setIsCreating] = useState(false)
   const { t } = useAppTranslation()
@@ -59,7 +59,7 @@ const AddRow = ({
     onSuccess: result => {
       if (result.recipeId) {
         alert(t('recipeAddedSuccessfully'))
-        setLastCreatedId(result.recipeId)
+        setFocusedRecipeId(result.recipeId)
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
         handleCancel()

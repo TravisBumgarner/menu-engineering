@@ -42,7 +42,7 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('createdAt')
   const [page, setPage] = React.useState(0)
-  const [lastCreatedId, setLastCreatedId] = React.useState<string>('')
+  const [focusedRecipeId, setFocusedRecipeId] = React.useState<string>('')
 
   // Default filters: show draft and published, hide archived, show both in menu and not in menu
   const [filters, setFilters] = React.useState<FilterOptions>({
@@ -122,7 +122,8 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
 
                 return (
                   <RecipeRow
-                    lastCreatedId={lastCreatedId}
+                    setFocusedRecipeId={setFocusedRecipeId}
+                    focusedRecipeId={focusedRecipeId}
                     key={row.id}
                     row={row}
                     labelId={labelId}
@@ -138,7 +139,7 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
                   <TableCell colSpan={8} />
                 </TableRow>
               )}
-              <AddRow setLastCreatedId={setLastCreatedId} />
+              <AddRow setFocusedRecipeId={setFocusedRecipeId} />
             </TableBody>
           </MuiTable>
         </TableContainer>
