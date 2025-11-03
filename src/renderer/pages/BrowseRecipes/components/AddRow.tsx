@@ -23,8 +23,10 @@ import { SPACING } from '../../../styles/consts'
 
 const AddRow = ({
   setFocusedRecipeId,
+  focusedRecipeId,
 }: {
   setFocusedRecipeId: (id: string) => void
+  focusedRecipeId: string
 }) => {
   const [isCreating, setIsCreating] = useState(false)
   const { t } = useAppTranslation()
@@ -214,7 +216,7 @@ const AddRow = ({
   }
 
   return (
-    <TableRow>
+    <TableRow sx={{ opacity: focusedRecipeId ? 0.1 : 1 }}>
       <TableCell colSpan={8}>
         <Button
           variant="outlined"

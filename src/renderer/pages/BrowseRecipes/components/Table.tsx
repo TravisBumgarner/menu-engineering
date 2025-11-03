@@ -139,11 +139,15 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
                   <TableCell colSpan={8} />
                 </TableRow>
               )}
-              <AddRow setFocusedRecipeId={setFocusedRecipeId} />
+              <AddRow
+                setFocusedRecipeId={setFocusedRecipeId}
+                focusedRecipeId={focusedRecipeId}
+              />
             </TableBody>
           </MuiTable>
         </TableContainer>
         <TablePagination
+          sx={focusedRecipeId ? { opacity: 0.1 } : {}}
           component="div"
           count={filteredRecipes.length}
           rowsPerPage={ROWS_PER_PAGE}

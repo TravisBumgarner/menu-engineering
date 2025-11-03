@@ -23,9 +23,11 @@ type Value = {
 const Autocomplete = ({
   recipe,
   handleOnChange,
+  sx,
 }: {
   recipe?: RecipeDTO
   handleOnChange: (value: Value | null) => void
+  sx?: object
 }) => {
   const { t } = useAppTranslation()
   const { data } = useQuery({
@@ -71,7 +73,7 @@ const Autocomplete = ({
       size="small"
       disablePortal
       options={data || []}
-      sx={{ width: 300 }}
+      sx={{ ...sx }}
       onChange={handleChange}
       noOptionsText={
         <Box sx={{ p: 2, color: 'text.secondary', fontStyle: 'italic' }}>

@@ -1,4 +1,3 @@
-import { Button, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import MuiTable from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -6,17 +5,11 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
-import { CHANNEL } from '../../../../../../shared/messages.types'
 import { IngredientDTO, RecipeDTO } from '../../../../../../shared/recipe.types'
-import { QUERY_KEYS, ROWS_PER_PAGE } from '../../../../../consts'
+import { ROWS_PER_PAGE } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
-import ipcMessenger from '../../../../../ipcMessenger'
-import Icon from '../../../../../sharedComponents/Icon'
-import { MODAL_ID } from '../../../../../sharedComponents/Modal/Modal.consts'
-import { activeModalSignal } from '../../../../../signals'
-import Autocomplete from './Autocomplete'
+import AddRow from './AddRow'
 import { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
 import IngredientRow from './IngredientRow'
@@ -53,35 +46,10 @@ const Table = ({
   subRecipes: RecipeDTO[]
   recipe: RecipeDTO
 }) => {
-  const queryClient = useQueryClient()
   const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
   const [orderBy, setOrderBy] = React.useState<'title'>('title')
   const [page, setPage] = React.useState(0)
   const { t } = useAppTranslation()
-
-  const [selectedAutocomplete, setSelectedAutocomplete] = React.useState<{
-    label: string
-    id: string
-    type: 'ingredient' | 'recipe'
-  } | null>(null)
-
-  const {
-    isPending: addExistingToRecipeIsLoading,
-    mutate: addExistingToRecipe,
-  } = useMutation({
-    mutationFn: async () => {
-      if (!selectedAutocomplete) return
-      await ipcMessenger.invoke(CHANNEL.DB.ADD_EXISTING_TO_RECIPE, {
-        childId: selectedAutocomplete.id,
-        parentId: recipe.id,
-        type: selectedAutocomplete.type,
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-      setSelectedAutocomplete(null)
-    },
-  })
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -90,30 +58,6 @@ const Table = ({
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
-  }
-
-  const handleOpenAddIngredientModal = () => {
-    activeModalSignal.value = {
-      id: MODAL_ID.ADD_INGREDIENT_MODAL,
-      recipe,
-    }
-  }
-
-  const handleOpenAddRecipeModal = () => {
-    activeModalSignal.value = {
-      id: MODAL_ID.ADD_RECIPE_MODAL,
-      parentRecipe: recipe,
-    }
-  }
-
-  const handleAutocompleteSelect = (
-    value: {
-      label: string
-      id: string
-      type: 'ingredient' | 'recipe'
-    } | null,
-  ) => {
-    setSelectedAutocomplete(value)
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -182,38 +126,7 @@ const Table = ({
               </TableRow>
             )}
 
-            <TableRow>
-              <TableCell colSpan={6}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: 2,
-                    alignItems: 'center',
-                  }}
-                >
-                  <Autocomplete handleOnChange={handleAutocompleteSelect} />
-                  <Button
-                    variant="outlined"
-                    disabled={
-                      !selectedAutocomplete || addExistingToRecipeIsLoading
-                    }
-                    onClick={() => addExistingToRecipe()}
-                  >
-                    {addExistingToRecipeIsLoading ? t('adding') : t('add')}
-                  </Button>
-                  <Tooltip title={t('addIngredient')}>
-                    <Button onClick={handleOpenAddIngredientModal}>
-                      <Icon name="add" /> {t('ingredient')}
-                    </Button>
-                  </Tooltip>
-                  <Tooltip title={t('addRecipe')}>
-                    <Button onClick={handleOpenAddRecipeModal}>
-                      <Icon name="add" /> {t('recipe')}
-                    </Button>
-                  </Tooltip>
-                </Box>
-              </TableCell>
-            </TableRow>
+            <AddRow recipe={recipe} />
           </TableBody>
         </MuiTable>
       </TableContainer>
