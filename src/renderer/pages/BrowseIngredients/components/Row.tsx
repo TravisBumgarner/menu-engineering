@@ -13,6 +13,7 @@ import { ALL_UNITS } from '../../../../shared/units.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../signals'
+import { formatDisplayDate } from '../../../utilities'
 
 function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
   const { row, labelId } = props
@@ -97,9 +98,7 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
                     >
                       {t('created')}
                     </TableCell>
-                    <TableCell>
-                      {new Date(row.createdAt).toLocaleDateString()}
-                    </TableCell>
+                    <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell

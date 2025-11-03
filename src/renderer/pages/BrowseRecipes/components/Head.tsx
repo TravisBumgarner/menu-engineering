@@ -67,7 +67,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     },
     {
       id: 'showInMenu',
-      align: 'left',
+      align: 'center',
       disablePadding: false,
       label: t('showInMenu'),
       width: '15%',

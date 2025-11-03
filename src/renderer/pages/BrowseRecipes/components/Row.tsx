@@ -5,7 +5,6 @@ import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
-import { useNavigate } from 'react-router-dom'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
@@ -13,6 +12,7 @@ import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
+import { formatDisplayDate } from '../../../utilities'
 import Recipe from './Recipe'
 
 function RecipeRow({
@@ -26,15 +26,16 @@ function RecipeRow({
   focusedRecipeId: string
   setFocusedRecipeId: (id: string) => void
 }) {
-  const navigate = useNavigate()
   const { t } = useAppTranslation()
+
+  const isOpen = focusedRecipeId === row.id
 
   const opacity = React.useMemo(() => {
     if (focusedRecipeId === '') {
       return 1
     }
-    return row.id === focusedRecipeId ? 1 : 0.1
-  }, [focusedRecipeId, row.id])
+    return isOpen ? 1 : 0.1
+  }, [isOpen, focusedRecipeId])
 
   return (
     <React.Fragment>
@@ -55,10 +56,10 @@ function RecipeRow({
             size="small"
             onClick={event => {
               event.stopPropagation()
-              setFocusedRecipeId(row.id === focusedRecipeId ? '' : row.id)
+              setFocusedRecipeId(isOpen ? '' : row.id)
             }}
           >
-            {focusedRecipeId === row.id ? (
+            {isOpen ? (
               <Icon name="collapseVertical" />
             ) : (
               <Icon name="expandVertical" />
@@ -66,7 +67,7 @@ function RecipeRow({
           </IconButton>
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
-          {row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'N/A'}
+          {formatDisplayDate(row.createdAt)}
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
           {row.title}
@@ -100,19 +101,14 @@ function RecipeRow({
             {t(row.status)}
           </Typography>
         </TableCell>
-        <TableCell align="left">
+        <TableCell align="center">
           {row.showInMenu ? (
             <Icon name="checkbox" />
           ) : (
             <Icon name="checkboxOutline" />
           )}
         </TableCell>
-        <TableCell align="left">
-          <Tooltip title={t('editRecipeDetails')}>
-            <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
-              <Icon name="details" />
-            </IconButton>
-          </Tooltip>
+        <TableCell align="center">
           <Tooltip title={t('editRecipe')}>
             <IconButton
               onClick={() =>
@@ -128,12 +124,8 @@ function RecipeRow({
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell colSpan={8}>
-          <Collapse
-            in={focusedRecipeId === row.id}
-            timeout="auto"
-            unmountOnExit
-          >
+        <TableCell style={{ padding: 0, border: 0 }} colSpan={8}>
+          <Collapse in={isOpen} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>
         </TableCell>

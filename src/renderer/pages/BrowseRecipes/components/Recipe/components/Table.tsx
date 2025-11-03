@@ -1,6 +1,5 @@
 import { Button, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
 import MuiTable from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -22,7 +21,6 @@ import { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
 import IngredientRow from './IngredientRow'
 import SubRecipeRow from './SubRecipeRow'
-import EnhancedTableToolbar from './Toolbar'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -138,101 +136,98 @@ const Table = ({
   )
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar recipe={recipe} />
-        <TableContainer>
-          <MuiTable
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size="medium"
-          >
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`
+    <Box sx={{ width: '100%', tableLayout: 'fixed' }}>
+      <TableContainer>
+        <MuiTable
+          sx={{ minWidth: 750 }}
+          aria-labelledby="tableTitle"
+          size="medium"
+        >
+          <EnhancedTableHead
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+          />
+          <TableBody>
+            {visibleRows.map((row, index) => {
+              const labelId = `enhanced-table-checkbox-${index}`
 
-                if (row.type === 'sub-recipe') {
-                  return (
-                    <SubRecipeRow
-                      key={row.id}
-                      row={row}
-                      recipeId={row.id}
-                      labelId={labelId}
-                    />
-                  )
-                }
-
+              if (row.type === 'sub-recipe') {
                 return (
-                  <IngredientRow
+                  <SubRecipeRow
                     key={row.id}
                     row={row}
-                    recipeId={recipe.id}
+                    recipeId={row.id}
                     labelId={labelId}
                   />
                 )
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
+              }
+
+              return (
+                <IngredientRow
+                  key={row.id}
+                  row={row}
+                  recipeId={recipe.id}
+                  labelId={labelId}
+                />
+              )
+            })}
+            {emptyRows > 0 && (
+              <TableRow
+                style={{
+                  height: 53 * emptyRows,
+                }}
+              >
+                <TableCell colSpan={7} />
+              </TableRow>
+            )}
+
+            <TableRow>
+              <TableCell colSpan={6}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 2,
+                    alignItems: 'center',
                   }}
                 >
-                  <TableCell colSpan={7} />
-                </TableRow>
-              )}
-
-              <TableRow>
-                <TableCell colSpan={6} sx={{ backgroundColor: '#f9f9f9' }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      gap: 2,
-                      alignItems: 'center',
-                    }}
+                  <Autocomplete handleOnChange={handleAutocompleteSelect} />
+                  <Button
+                    variant="outlined"
+                    disabled={
+                      !selectedAutocomplete || addExistingToRecipeIsLoading
+                    }
+                    onClick={() => addExistingToRecipe()}
                   >
-                    <Autocomplete handleOnChange={handleAutocompleteSelect} />
-                    <Button
-                      variant="outlined"
-                      disabled={
-                        !selectedAutocomplete || addExistingToRecipeIsLoading
-                      }
-                      onClick={() => addExistingToRecipe()}
-                    >
-                      {addExistingToRecipeIsLoading ? t('adding') : t('add')}
+                    {addExistingToRecipeIsLoading ? t('adding') : t('add')}
+                  </Button>
+                  <Tooltip title={t('addIngredient')}>
+                    <Button onClick={handleOpenAddIngredientModal}>
+                      <Icon name="add" /> {t('ingredient')}
                     </Button>
-                    <Tooltip title={t('addIngredient')}>
-                      <Button onClick={handleOpenAddIngredientModal}>
-                        <Icon name="add" /> {t('ingredient')}
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title={t('addRecipe')}>
-                      <Button onClick={handleOpenAddRecipeModal}>
-                        <Icon name="add" /> {t('recipe')}
-                      </Button>
-                    </Tooltip>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </MuiTable>
-        </TableContainer>
-        <TablePagination
-          component="div"
-          count={ingredients.length}
-          page={page}
-          rowsPerPage={ROWS_PER_PAGE}
-          rowsPerPageOptions={[]}
-          onPageChange={handleChangePage}
-          labelDisplayedRows={({ from, to, count }) =>
-            `${from}–${to} ${t('outOf')} ${count}`
-          }
-        />
-      </Paper>
+                  </Tooltip>
+                  <Tooltip title={t('addRecipe')}>
+                    <Button onClick={handleOpenAddRecipeModal}>
+                      <Icon name="add" /> {t('recipe')}
+                    </Button>
+                  </Tooltip>
+                </Box>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </MuiTable>
+      </TableContainer>
+      <TablePagination
+        component="div"
+        count={ingredients.length}
+        page={page}
+        rowsPerPage={ROWS_PER_PAGE}
+        rowsPerPageOptions={[]}
+        onPageChange={handleChangePage}
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}–${to} ${t('outOf')} ${count}`
+        }
+      />
     </Box>
   )
 }

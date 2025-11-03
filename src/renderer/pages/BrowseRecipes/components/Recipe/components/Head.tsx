@@ -10,9 +10,10 @@ import { isSortable, SORTABLE_OPTIONS } from './consts'
 
 interface HeadCell {
   disablePadding: boolean
-  id: 'title' | 'cost' | 'actions'
+  id: 'title' | 'cost' | 'actions' | 'createdAt'
   label: string
   align: 'left' | 'right' | 'center'
+  width: string
 }
 
 interface EnhancedTableProps {
@@ -27,22 +28,32 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
   const headCells: readonly HeadCell[] = [
     {
+      id: 'createdAt',
+      align: 'left',
+      disablePadding: true,
+      label: t('created'),
+      width: '20%',
+    },
+    {
       id: 'title',
       align: 'left',
       disablePadding: true,
       label: t('title'),
+      width: '50%',
     },
     {
       id: 'cost',
       align: 'right',
       disablePadding: true,
       label: t('cost'),
+      width: '20%',
     },
     {
       id: 'actions',
       align: 'center',
       disablePadding: false,
       label: t('actions'),
+      width: '10%',
     },
   ]
 
@@ -55,9 +66,10 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell width={30} />
+        <TableCell width={60} />
         {headCells.map(headCell => (
           <TableCell
+            sx={{ width: headCell.width }}
             key={headCell.id}
             align={headCell.align}
             padding={headCell.disablePadding ? 'none' : 'normal'}

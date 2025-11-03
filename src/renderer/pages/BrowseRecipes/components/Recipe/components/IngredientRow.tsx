@@ -17,6 +17,7 @@ import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../../../signals'
+import { formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
 function IngredientRow(props: {
@@ -94,6 +95,7 @@ function IngredientRow(props: {
             )}
           </IconButton>
         </TableCell>
+        <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Icon name="ingredient" size={ICON_SIZE} /> {row.title}
@@ -173,9 +175,7 @@ function IngredientRow(props: {
                     >
                       {t('created')}
                     </TableCell>
-                    <TableCell>
-                      {new Date(row.createdAt).toLocaleDateString()}
-                    </TableCell>
+                    <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell

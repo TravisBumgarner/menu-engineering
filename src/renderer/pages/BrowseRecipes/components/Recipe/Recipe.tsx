@@ -1,10 +1,10 @@
+import { Box } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { CHANNEL } from '../../../../../shared/messages.types'
 import { QUERY_KEYS } from '../../../../consts'
 import { useAppTranslation } from '../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../ipcMessenger'
-import Message from '../../../../sharedComponents/Message'
-import { activeModalSignal } from '../../../../signals'
+import { PALETTE, SPACING } from '../../../../styles/consts'
 import Table from './components/Table'
 
 const Recipe = ({ id }: { id: string }) => {
@@ -27,13 +27,6 @@ const Recipe = ({ id }: { id: string }) => {
     return <div>{t('recipeNotFound')}</div>
   }
 
-  const handleAddIngredient = () => {
-    activeModalSignal.value = {
-      id: 'ADD_INGREDIENT_MODAL',
-      recipe: data?.recipe || undefined,
-    }
-  }
-
   if (isLoading) {
     return <div>{t('loading')}</div>
   }
@@ -47,23 +40,34 @@ const Recipe = ({ id }: { id: string }) => {
   }
 
   return (
-    <>
-      {data.ingredients.length || data.subRecipes.length ? (
-        <Table
-          ingredients={data.ingredients}
-          recipe={data.recipe}
-          subRecipes={data.subRecipes}
-        />
-      ) : (
-        <Message
-          message={t('noIngredientsFound')}
-          color="info"
-          callback={handleAddIngredient}
-          callbackText={t('addIngredient')}
-        />
-      )}
-    </>
+    <Box
+      sx={{
+        padding: SPACING.MEDIUM.PX,
+        backgroundColor: PALETTE.grayscale[50],
+      }}
+    >
+      <Table
+        ingredients={data.ingredients}
+        recipe={data.recipe}
+        subRecipes={data.subRecipes}
+      />
+    </Box>
   )
+
+  // return (
+  //   <>
+  //     {data.ingredients.length || data.subRecipes.length ? (
+
+  //     ) : (
+  //       <Message
+  //         message={t('noIngredientsFound')}
+  //         color="info"
+  //         callback={handleAddIngredient}
+  //         callbackText={t('addIngredient')}
+  //       />
+  //     )}
+  //   </>
+  // )
 }
 
 export default Recipe
