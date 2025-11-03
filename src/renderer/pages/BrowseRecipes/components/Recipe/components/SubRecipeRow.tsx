@@ -9,18 +9,18 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
-import { CHANNEL } from '../../../../shared/messages.types'
-import { IngredientDTO } from '../../../../shared/recipe.types'
-import { ALL_UNITS } from '../../../../shared/units.types'
-import { QUERY_KEYS } from '../../../consts'
-import { useAppTranslation } from '../../../hooks/useTranslation'
-import ipcMessenger from '../../../ipcMessenger'
-import Icon from '../../../sharedComponents/Icon'
-import { activeModalSignal } from '../../../signals'
+import { CHANNEL } from '../../../../../../shared/messages.types'
+import { RecipeDTO } from '../../../../../../shared/recipe.types'
+import { QUERY_KEYS } from '../../../../../consts'
+import { useAppTranslation } from '../../../../../hooks/useTranslation'
+import ipcMessenger from '../../../../../ipcMessenger'
+import Icon from '../../../../../sharedComponents/Icon'
+import { activeModalSignal } from '../../../../../signals'
+import { formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
-function IngredientRow(props: {
-  row: IngredientDTO
+function SubRecipeRow(props: {
+  row: RecipeDTO
   recipeId: string
   labelId: string
 }) {
@@ -39,9 +39,8 @@ function IngredientRow(props: {
       if (result.success) {
         // Invalidate and refetch the recipe query to update the ingredients list
         queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.RECIPE],
+          queryKey: [QUERY_KEYS.RECIPE, recipeId],
         })
-        alert('Ingredient removed from recipe successfully!')
       } else {
         alert('Failed to remove ingredient from recipe.')
       }
@@ -53,8 +52,8 @@ function IngredientRow(props: {
 
   const handleOpenEditModal = () => {
     activeModalSignal.value = {
-      id: 'EDIT_INGREDIENT_MODAL',
-      ingredient: row,
+      id: 'EDIT_RECIPE_MODAL',
+      recipe: row,
     }
   }
 
@@ -62,7 +61,7 @@ function IngredientRow(props: {
     activeModalSignal.value = {
       id: 'CONFIRMATION_MODAL',
       title: 'Remove Ingredient',
-      body: `Are you sure you want to remove the ingredient "${row.title}" from this recipe? This action cannot be undone.`,
+      body: `Are you sure you want to remove the sub recipe "${row.title}" from this recipe? This action cannot be undone.`,
       confirmationCallback: () => {
         removeIngredientMutation.mutate()
         activeModalSignal.value = null
@@ -94,10 +93,12 @@ function IngredientRow(props: {
             )}
           </IconButton>
         </TableCell>
+        <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
+
         <TableCell component="th" id={labelId} scope="row" padding="none">
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Icon name="ingredient" size={ICON_SIZE} /> {row.title}
-          </Box>{' '}
+            <Icon name="recipe" size={ICON_SIZE} /> {row.title}
+          </Box>
         </TableCell>
         <TableCell
           align="right"
@@ -106,15 +107,15 @@ function IngredientRow(props: {
           scope="row"
           padding="none"
         >
-          {row.cost}
+          0.00
         </TableCell>
         <TableCell align="center">
-          <Tooltip title={t('editIngredient')}>
+          <Tooltip title="Edit Ingredient">
             <IconButton onClick={handleOpenEditModal}>
               <Icon name="edit" />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t('removeIngredientFromRecipe')}>
+          <Tooltip title="Remove from Recipe">
             <IconButton onClick={handleOpenRemoveModal}>
               <Icon name="close" />
             </IconButton>
@@ -126,7 +127,7 @@ function IngredientRow(props: {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                {t('ingredientDetails')}
+                {t('recipeDetails')}
               </Typography>
               <Table size="small" aria-label="ingredient details">
                 <TableBody>
@@ -136,46 +137,19 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      {t('id')}
+                      ID
                     </TableCell>
                     <TableCell>{row.id}</TableCell>
                   </TableRow>
-
                   <TableRow>
                     <TableCell
                       component="th"
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      {t('quantity')}
+                      Created
                     </TableCell>
-                    <TableCell>{row.quantity}</TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
-                      {t('units')}
-                    </TableCell>
-                    <TableCell>
-                      {t(row.units as keyof typeof ALL_UNITS)}
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
-                      {t('created')}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(row.createdAt).toLocaleDateString()}
-                    </TableCell>
+                    <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell
@@ -183,19 +157,33 @@ function IngredientRow(props: {
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      {t('updated')}
+                      Updated
                     </TableCell>
                     <TableCell>
                       {new Date(row.updatedAt).toLocaleDateString()}
                     </TableCell>
                   </TableRow>
+
                   <TableRow>
                     <TableCell
                       component="th"
                       scope="row"
                       sx={{ fontWeight: 'bold' }}
                     >
-                      {t('notes')}
+                      Produces
+                    </TableCell>
+                    <TableCell>
+                      {row.produces} - {row.units}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow>
+                    <TableCell
+                      component="th"
+                      scope="row"
+                      sx={{ fontWeight: 'bold' }}
+                    >
+                      Notes
                     </TableCell>
                     <TableCell>{row.notes || <em>No notes</em>}</TableCell>
                   </TableRow>
@@ -209,4 +197,4 @@ function IngredientRow(props: {
   )
 }
 
-export default IngredientRow
+export default SubRecipeRow

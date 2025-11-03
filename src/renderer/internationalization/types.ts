@@ -39,6 +39,7 @@ export type TranslationKeys =
   | 'ingredient'
 
   // Recipe Management
+  | 'noDetails'
   | 'recipeName'
   | 'ingredientName'
   | 'addNewRecipe'
@@ -87,7 +88,6 @@ export type TranslationKeys =
   | 'errorLoadingIngredients'
   | 'addFirstRecipe'
   | 'addFirstIngredient'
-  | 'ingredientRemovedSuccess'
   | 'failedToRemoveIngredient'
   | 'errorRemovingIngredient'
   | 'failedToAddIngredient'
@@ -134,7 +134,6 @@ export type TranslationKeys =
   | 'language'
   | 'english'
   | 'spanish'
-  | 'addExistingIngredientOrRecipe'
   | 'recipeAddedSuccessfully'
   | 'failedToAddRecipe'
   | 'errorAddingRecipe'
@@ -152,3 +151,5 @@ export type TranslationKeys =
   | 'volumeConversions'
   | 'unitConversions'
   | 'conversionDisclaimer'
+  | 'filters'
+  | 'all'

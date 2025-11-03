@@ -1,25 +1,41 @@
 import { Tooltip } from '@mui/material'
-import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
-import MuiTable from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
-import { useNavigate } from 'react-router-dom'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
-import { SPACING } from '../../../styles/consts'
+import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
+import { activeModalSignal } from '../../../signals'
+import { PALETTE, SPACING } from '../../../styles/consts'
+import { formatDisplayDate } from '../../../utilities'
+import Recipe from './Recipe'
 
-function RecipeRow(props: { row: RecipeDTO; labelId: string }) {
-  const { row, labelId } = props
-  const [open, setOpen] = React.useState(false)
-  const navigate = useNavigate()
+function RecipeRow({
+  row,
+  labelId,
+  focusedRecipeId,
+  setFocusedRecipeId,
+}: {
+  row: RecipeDTO
+  labelId: string
+  focusedRecipeId: string
+  setFocusedRecipeId: (id: string) => void
+}) {
   const { t } = useAppTranslation()
+
+  const isOpen = focusedRecipeId === row.id
+
+  const opacity = React.useMemo(() => {
+    if (focusedRecipeId === '') {
+      return 1
+    }
+    return isOpen ? 1 : 0.1
+  }, [isOpen, focusedRecipeId])
 
   return (
     <React.Fragment>
@@ -27,7 +43,13 @@ function RecipeRow(props: { row: RecipeDTO; labelId: string }) {
         hover
         tabIndex={-1}
         key={row.id}
-        sx={{ '& > *': { borderBottom: 'unset' } }}
+        sx={{
+          backgroundColor: isOpen ? PALETTE.grayscale[100] : 'inherit',
+          '& > *': {
+            borderBottom: 'unset',
+            opacity,
+          },
+        }}
       >
         <TableCell>
           <IconButton
@@ -35,15 +57,18 @@ function RecipeRow(props: { row: RecipeDTO; labelId: string }) {
             size="small"
             onClick={event => {
               event.stopPropagation()
-              setOpen(!open)
+              setFocusedRecipeId(isOpen ? '' : row.id)
             }}
           >
-            {open ? (
+            {isOpen ? (
               <Icon name="collapseVertical" />
             ) : (
               <Icon name="expandVertical" />
             )}
           </IconButton>
+        </TableCell>
+        <TableCell component="th" id={labelId} scope="row" padding="none">
+          {formatDisplayDate(row.createdAt)}
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
           {row.title}
@@ -77,77 +102,32 @@ function RecipeRow(props: { row: RecipeDTO; labelId: string }) {
             {t(row.status)}
           </Typography>
         </TableCell>
-        <TableCell align="left">
+        <TableCell align="center">
           {row.showInMenu ? (
             <Icon name="checkbox" />
           ) : (
             <Icon name="checkboxOutline" />
           )}
         </TableCell>
-        <TableCell align="left">
-          <Tooltip title={t('editRecipeDetails')}>
-            <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
+        <TableCell align="center">
+          <Tooltip title={t('editRecipe')}>
+            <IconButton
+              onClick={() =>
+                (activeModalSignal.value = {
+                  id: MODAL_ID.EDIT_RECIPE_MODAL,
+                  recipe: row,
+                })
+              }
+            >
               <Icon name="edit" />
             </IconButton>
           </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                {t('recipeDetails')}
-              </Typography>
-              <MuiTable size="small" aria-label="recipe details">
-                <TableBody>
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
-                      {t('id')}
-                    </TableCell>
-                    <TableCell>{row.id}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
-                      {t('created')}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(row.createdAt).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
-                      {t('updated')}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(row.updatedAt).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
-                      {t('notes')}
-                    </TableCell>
-                    <TableCell>{row.notes || <em>No notes</em>}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </MuiTable>
-            </Box>
+        <TableCell style={{ padding: 0, border: 0 }} colSpan={8}>
+          <Collapse in={isOpen} timeout="auto" unmountOnExit>
+            <Recipe id={row.id} />
           </Collapse>
         </TableCell>
       </TableRow>

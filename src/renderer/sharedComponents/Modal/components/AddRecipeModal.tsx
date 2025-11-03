@@ -55,11 +55,10 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
         payload: recipeData,
       }),
     onSuccess: result => {
-      if (result.success) {
+      if (result.recipeId) {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        alert(t('recipeAddedSuccessfully'))
         activeModalSignal.value = null
       } else {
         alert(t('failedToAddRecipe'))

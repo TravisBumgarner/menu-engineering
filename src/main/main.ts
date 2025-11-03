@@ -1,4 +1,9 @@
-import { app, BrowserWindow } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  BrowserWindowConstructorOptions,
+  screen,
+} from 'electron'
 import log from 'electron-log/main'
 import started from 'electron-squirrel-startup'
 import path from 'node:path'
@@ -22,13 +27,26 @@ if (started) {
 }
 
 const createWindow = () => {
-  const mainWindow = new BrowserWindow({
-    width: 800,
+  const displays = screen.getAllDisplays()
+
+  const externalDisplay = displays.length > 1 ? displays[1] : null
+
+  const windowOptions: BrowserWindowConstructorOptions = {
+    width: 1200,
     height: 800,
+    x: 0,
+    y: 0,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
-  })
+  }
+
+  if (externalDisplay) {
+    windowOptions.x = externalDisplay.bounds.x + 50
+    windowOptions.y = externalDisplay.bounds.y + 50
+  }
+
+  const mainWindow = new BrowserWindow(windowOptions)
 
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)

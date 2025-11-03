@@ -111,7 +111,7 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
           </MuiTable>
         </TableContainer>
         <TablePagination
-          rowsPerPage={15}
+          rowsPerPage={ROWS_PER_PAGE}
           rowsPerPageOptions={[]}
           component="div"
           count={ingredients.length}

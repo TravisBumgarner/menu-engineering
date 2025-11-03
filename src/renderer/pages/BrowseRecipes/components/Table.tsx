@@ -7,14 +7,13 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
-import { RecipeDTO } from '../../../../shared/recipe.types'
+import { RECIPE_STATUS, RecipeDTO } from '../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
-import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
-import { activeModalSignal } from '../../../signals'
-import EnhancedTableHead from './Head'
+import AddRow from './AddRow'
+import Filters, { FilterOptions } from './Filters'
+import Head from './Head'
 import RecipeRow from './Row'
-import EnhancedTableToolbar from './Toolbar'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -40,15 +39,16 @@ function getComparator<Key extends keyof RecipeDTO>(
 
 const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
   const { t } = useAppTranslation()
-  const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
-  const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('title')
+  const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
+  const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('createdAt')
   const [page, setPage] = React.useState(0)
+  const [focusedRecipeId, setFocusedRecipeId] = React.useState<string>('')
 
-  const handleOpenAddRecipeModal = () => {
-    activeModalSignal.value = {
-      id: MODAL_ID.ADD_RECIPE_MODAL,
-    }
-  }
+  // Default filters: show draft and published, hide archived, show both in menu and not in menu
+  const [filters, setFilters] = React.useState<FilterOptions>({
+    status: [RECIPE_STATUS.draft, RECIPE_STATUS.published],
+    showInMenu: 'all',
+  })
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -63,29 +63,55 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
     setPage(newPage)
   }
 
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters)
+    setPage(0) // Reset to first page when filters change
+  }
+
+  // Apply filters to recipes
+  const filteredRecipes = React.useMemo(() => {
+    return recipes.filter(recipe => {
+      // Filter by status
+      const statusMatch = filters.status.includes(recipe.status)
+
+      // Filter by showInMenu
+      let showInMenuMatch = true
+      if (filters.showInMenu === 'yes') {
+        showInMenuMatch = recipe.showInMenu === true
+      } else if (filters.showInMenu === 'no') {
+        showInMenuMatch = recipe.showInMenu === false
+      }
+      // If 'all', showInMenuMatch remains true
+
+      return statusMatch && showInMenuMatch
+    })
+  }, [recipes, filters])
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - recipes.length) : 0
+    page > 0
+      ? Math.max(0, (1 + page) * ROWS_PER_PAGE - filteredRecipes.length)
+      : 0
 
   const visibleRows = React.useMemo(
     () =>
-      [...recipes]
+      [...filteredRecipes]
         .sort(getComparator(order, orderBy))
         .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
-    [recipes, order, orderBy, page],
+    [filteredRecipes, order, orderBy, page],
   )
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <Filters filters={filters} onFiltersChange={handleFiltersChange} />
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar onAddRecipe={handleOpenAddRecipeModal} />
         <TableContainer>
           <MuiTable
-            sx={{ minWidth: 750 }}
+            sx={{ minWidth: 750, tableLayout: 'fixed' }}
             aria-labelledby="tableTitle"
             size="medium"
           >
-            <EnhancedTableHead
+            <Head
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
@@ -94,7 +120,15 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`
 
-                return <RecipeRow key={row.id} row={row} labelId={labelId} />
+                return (
+                  <RecipeRow
+                    setFocusedRecipeId={setFocusedRecipeId}
+                    focusedRecipeId={focusedRecipeId}
+                    key={row.id}
+                    row={row}
+                    labelId={labelId}
+                  />
+                )
               })}
               {emptyRows > 0 && (
                 <TableRow
@@ -102,16 +136,21 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
                     height: 53 * emptyRows,
                   }}
                 >
-                  <TableCell colSpan={7} />
+                  <TableCell colSpan={8} />
                 </TableRow>
               )}
+              <AddRow
+                setFocusedRecipeId={setFocusedRecipeId}
+                focusedRecipeId={focusedRecipeId}
+              />
             </TableBody>
           </MuiTable>
         </TableContainer>
         <TablePagination
+          sx={focusedRecipeId ? { opacity: 0.1 } : {}}
           component="div"
-          count={recipes.length}
-          rowsPerPage={15}
+          count={filteredRecipes.length}
+          rowsPerPage={ROWS_PER_PAGE}
           rowsPerPageOptions={[]}
           page={page}
           onPageChange={handleChangePage}

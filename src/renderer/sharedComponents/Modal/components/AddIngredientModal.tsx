@@ -61,7 +61,6 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
         // Invalidate and refetch ingredients query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        alert(t('ingredientAddedSuccessfully'))
 
         if (result.shouldClose) {
           activeModalSignal.value = null

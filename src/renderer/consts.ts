@@ -6,11 +6,6 @@ export const ROUTES = {
     label: 'Recipes',
     target: '_self',
   },
-  recipe: {
-    href: (id?: string) => (id ? `/recipe/${id}` : '/recipe/:id'),
-    label: t('recipe'),
-    target: '_self',
-  },
   ingredients: {
     href: () => '/ingredients',
     label: t('ingredients'),
@@ -35,4 +30,4 @@ export const QUERY_KEYS = {
   AUTOCOMPLETE: 'autocomplete',
 }
 
-export const ROWS_PER_PAGE = 15
+export const ROWS_PER_PAGE = 5

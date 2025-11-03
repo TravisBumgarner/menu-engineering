@@ -13,9 +13,10 @@ interface HeadCell {
   id: keyof RecipeDTO | 'actions'
   label: string
   align: 'left' | 'right' | 'center'
+  width: string
 }
 
-interface EnhancedTableProps {
+interface Props {
   onRequestSort: (
     event: React.MouseEvent<unknown>,
     property: keyof RecipeDTO,
@@ -24,46 +25,58 @@ interface EnhancedTableProps {
   orderBy: string | number | symbol
 }
 
-function EnhancedTableHead(props: EnhancedTableProps) {
+function Head({ onRequestSort, order, orderBy }: Props) {
   const { t } = useAppTranslation()
-  const { order, orderBy, onRequestSort } = props
 
   const headCells: readonly HeadCell[] = [
+    {
+      id: 'createdAt',
+      align: 'left',
+      disablePadding: true,
+      label: t('created'),
+      width: '10%',
+    },
     {
       id: 'title',
       align: 'left',
       disablePadding: true,
       label: t('recipeName'),
+      width: '20%',
     },
     {
       id: 'produces',
       align: 'right',
       disablePadding: false,
       label: t('produces'),
+      width: '10%',
     },
     {
       id: 'units',
       align: 'left',
       disablePadding: false,
       label: t('units'),
+      width: '10%',
     },
     {
       id: 'status',
       align: 'center',
       disablePadding: false,
       label: t('status'),
+      width: '10%',
     },
     {
       id: 'showInMenu',
-      align: 'left',
+      align: 'center',
       disablePadding: false,
       label: t('showInMenu'),
+      width: '15%',
     },
     {
       id: 'actions',
       align: 'center',
       disablePadding: false,
       label: t('actions'),
+      width: '10%',
     },
   ]
 
@@ -72,45 +85,27 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       onRequestSort(event, property)
     }
 
-  const getHeaderLabel = (id: string): string => {
-    switch (id) {
-      case 'title':
-        return t('title')
-      case 'produces':
-        return t('produces')
-      case 'units':
-        return t('units')
-      case 'status':
-        return t('status')
-      case 'showInMenu':
-        return t('showInMenu')
-      case 'actions':
-        return t('actions')
-      default:
-        return id
-    }
-  }
-
   return (
     <TableHead>
       <TableRow>
-        <TableCell />
+        <TableCell sx={{ width: '7%' }} />
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
             align={headCell.align}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
+            sx={{ width: headCell.width }}
           >
             {headCell.id === 'actions' ? (
-              getHeaderLabel(headCell.id)
+              headCell.label
             ) : (
               <TableSortLabel
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
                 onClick={createSortHandler(headCell.id)}
               >
-                {getHeaderLabel(headCell.id)}
+                {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
                     {order === 'desc'
@@ -127,4 +122,4 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   )
 }
 
-export default EnhancedTableHead
+export default Head
