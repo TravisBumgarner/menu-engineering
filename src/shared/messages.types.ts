@@ -33,7 +33,7 @@ export type FromMain = {
 export type Invokes = {
   [CHANNEL.DB.ADD_RECIPE]: {
     args: { payload: NewRecipeDTO }
-    result: { success: boolean }
+    result: { recipeId: string | null }
   }
   [CHANNEL.DB.ADD_SUB_RECIPE]: {
     args: {

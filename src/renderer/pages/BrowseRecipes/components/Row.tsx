@@ -13,11 +13,20 @@ import { type RecipeDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
+import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
+import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 
-function RecipeRow(props: { row: RecipeDTO; labelId: string }) {
-  const { row, labelId } = props
-  const [open, setOpen] = React.useState(false)
+function RecipeRow({
+  row,
+  labelId,
+  lastCreatedId,
+}: {
+  row: RecipeDTO
+  labelId: string
+  lastCreatedId: string
+}) {
+  const [open, setOpen] = React.useState(row.id === lastCreatedId)
   const navigate = useNavigate()
   const { t } = useAppTranslation()
 
@@ -44,6 +53,9 @@ function RecipeRow(props: { row: RecipeDTO; labelId: string }) {
               <Icon name="expandVertical" />
             )}
           </IconButton>
+        </TableCell>
+        <TableCell component="th" id={labelId} scope="row" padding="none">
+          {row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'N/A'}
         </TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
           {row.title}
@@ -87,6 +99,18 @@ function RecipeRow(props: { row: RecipeDTO; labelId: string }) {
         <TableCell align="left">
           <Tooltip title={t('editRecipeDetails')}>
             <IconButton onClick={() => navigate(`/recipe/${row.id}`)}>
+              <Icon name="details" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={t('editRecipe')}>
+            <IconButton
+              onClick={() =>
+                (activeModalSignal.value = {
+                  id: MODAL_ID.EDIT_RECIPE_MODAL,
+                  recipe: row,
+                })
+              }
+            >
               <Icon name="edit" />
             </IconButton>
           </Tooltip>

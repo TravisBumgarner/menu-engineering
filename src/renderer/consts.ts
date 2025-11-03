@@ -35,4 +35,4 @@ export const QUERY_KEYS = {
   AUTOCOMPLETE: 'autocomplete',
 }
 
-export const ROWS_PER_PAGE = 15
+export const ROWS_PER_PAGE = 5

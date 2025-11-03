@@ -3,10 +3,10 @@ import queries from '../database/queries'
 import { typedIpcMain } from './index'
 
 typedIpcMain.handle(CHANNEL.DB.ADD_RECIPE, async (_event, params) => {
-  const result = await queries.addRecipe(params.payload)
+  const recipeId = await queries.addRecipe(params.payload)
   return {
     type: 'add_recipe',
-    success: !!result,
+    recipeId,
   }
 })
 

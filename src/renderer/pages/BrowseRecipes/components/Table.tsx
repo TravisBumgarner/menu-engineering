@@ -10,11 +10,9 @@ import * as React from 'react'
 import { RecipeDTO } from '../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
-import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
-import { activeModalSignal } from '../../../signals'
+import AddRow from './AddRow'
 import EnhancedTableHead from './Head'
 import RecipeRow from './Row'
-import EnhancedTableToolbar from './Toolbar'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -41,14 +39,9 @@ function getComparator<Key extends keyof RecipeDTO>(
 const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
   const { t } = useAppTranslation()
   const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
-  const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('title')
+  const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('createdAt')
   const [page, setPage] = React.useState(0)
-
-  const handleOpenAddRecipeModal = () => {
-    activeModalSignal.value = {
-      id: MODAL_ID.ADD_RECIPE_MODAL,
-    }
-  }
+  const [lastCreatedId, setLastCreatedId] = React.useState<string>('')
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -76,12 +69,11 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
   )
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar onAddRecipe={handleOpenAddRecipeModal} />
         <TableContainer>
           <MuiTable
-            sx={{ minWidth: 750 }}
+            sx={{ minWidth: 750, tableLayout: 'fixed' }}
             aria-labelledby="tableTitle"
             size="medium"
           >
@@ -94,7 +86,14 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`
 
-                return <RecipeRow key={row.id} row={row} labelId={labelId} />
+                return (
+                  <RecipeRow
+                    lastCreatedId={lastCreatedId}
+                    key={row.id}
+                    row={row}
+                    labelId={labelId}
+                  />
+                )
               })}
               {emptyRows > 0 && (
                 <TableRow
@@ -102,16 +101,17 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
                     height: 53 * emptyRows,
                   }}
                 >
-                  <TableCell colSpan={7} />
+                  <TableCell colSpan={8} />
                 </TableRow>
               )}
+              <AddRow setLastCreatedId={setLastCreatedId} />
             </TableBody>
           </MuiTable>
         </TableContainer>
         <TablePagination
           component="div"
           count={recipes.length}
-          rowsPerPage={15}
+          rowsPerPage={ROWS_PER_PAGE}
           rowsPerPageOptions={[]}
           page={page}
           onPageChange={handleChangePage}

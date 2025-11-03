@@ -1,4 +1,5 @@
 import { BiCollapseVertical, BiExpandVertical } from 'react-icons/bi'
+import { CgDetailsMore } from 'react-icons/cg'
 import { FaThList } from 'react-icons/fa'
 import { FaBottleWater } from 'react-icons/fa6'
 import { IoMdCheckbox, IoMdWarning } from 'react-icons/io'
@@ -26,6 +27,7 @@ export const iconMap = {
   success: LuPartyPopper,
   expandVertical: BiExpandVertical,
   collapseVertical: BiCollapseVertical,
+  details: CgDetailsMore,
 }
 
 const Icon = ({
