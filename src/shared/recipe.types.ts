@@ -1,3 +1,5 @@
+import { AllUnits } from './units.types'
+
 export const RECIPE_STATUS = {
   draft: 'draft',
   published: 'published',
@@ -9,7 +11,7 @@ export type RecipeStatus = keyof typeof RECIPE_STATUS
 export type NewRecipeDTO = {
   title: string
   produces: number
-  units: string
+  units: AllUnits
   status: RecipeStatus
   notes: string
   showInMenu: boolean
@@ -24,14 +26,14 @@ export type RecipeDTO = NewRecipeDTO & {
 export type NewIngredientDTO = {
   title: string
   quantity: number
-  units: string
+  units: AllUnits
   notes: string
   cost: number
 }
 
 export type RelationDTO = {
   quantity: number
-  units: string
+  units: AllUnits
 }
 
 export type IngredientDTO = NewIngredientDTO & {
@@ -44,7 +46,7 @@ export type NewSubRecipeInRecipeDTO = {
   parentId: string
   childId: string
   quantity: number
-  units: string
+  units: AllUnits
 }
 
 export type SubRecipeInRecipeDTO = NewSubRecipeInRecipeDTO & {
@@ -57,7 +59,7 @@ export type NewIngredientInRecipeDTO = {
   parentId: string
   childId: string
   quantity: number
-  units: string
+  units: AllUnits
 }
 
 export type IngredientInRecipeDTO = NewIngredientInRecipeDTO & {

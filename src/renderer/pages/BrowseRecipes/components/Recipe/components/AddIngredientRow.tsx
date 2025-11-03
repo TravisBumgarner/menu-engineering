@@ -15,7 +15,7 @@ import {
   NewIngredientDTO,
   RecipeDTO,
 } from '../../../../../../shared/recipe.types'
-import { ALL_UNITS } from '../../../../../../shared/units.types'
+import { ALL_UNITS, WEIGHT_UNIT } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
@@ -37,7 +37,7 @@ const AddIngredientRow: React.FC<AddIngredientRowProps> = ({
   const [formData, setFormData] = useState<NewIngredientDTO>({
     title: '',
     quantity: 0,
-    units: '',
+    units: WEIGHT_UNIT.grams,
     notes: '',
     cost: 0,
   })
@@ -48,6 +48,7 @@ const AddIngredientRow: React.FC<AddIngredientRowProps> = ({
         payload: {
           newIngredient: ingredientData,
           recipeId: recipe.id,
+          units: recipe.units, // TOdo - this doesn't have to be linked to parent.
         },
       }),
     onSuccess: result => {
@@ -91,7 +92,7 @@ const AddIngredientRow: React.FC<AddIngredientRowProps> = ({
 
   return (
     <TableRow sx={{ height: ADD_ROW_HEIGHT }}>
-      <TableCell colSpan={6}>
+      <TableCell colSpan={8}>
         <Box
           sx={{
             display: 'flex',

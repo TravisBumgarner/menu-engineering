@@ -5,6 +5,7 @@ import {
   NewRecipeDTO,
   NewSubRecipeInRecipeDTO,
 } from 'src/shared/recipe.types'
+import { AllUnits } from 'src/shared/units.types'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from './client'
 import {
@@ -154,6 +155,53 @@ const updateRecipe = async (id: string, recipeData: Partial<NewRecipeDTO>) => {
   return result
 }
 
+const updateRecipeRelation = async (
+  parentId: string,
+  childId: string,
+  type: 'ingredient' | 'sub-recipe',
+  quantity?: number,
+  units?: AllUnits,
+) => {
+  const updateData: { quantity?: number; units?: AllUnits; updatedAt: string } =
+    {
+      updatedAt: new Date().toISOString(),
+    }
+
+  if (quantity !== undefined) {
+    updateData.quantity = quantity
+  }
+
+  if (units !== undefined) {
+    updateData.units = units
+  }
+
+  if (type === 'ingredient') {
+    const result = await db
+      .update(recipeIngredientSchema)
+      .set(updateData)
+      .where(
+        and(
+          eq(recipeIngredientSchema.parentId, parentId),
+          eq(recipeIngredientSchema.childId, childId),
+        ),
+      )
+      .run()
+    return result
+  } else {
+    const result = await db
+      .update(recipeSubRecipeSchema)
+      .set(updateData)
+      .where(
+        and(
+          eq(recipeSubRecipeSchema.parentId, parentId),
+          eq(recipeSubRecipeSchema.childId, childId),
+        ),
+      )
+      .run()
+    return result
+  }
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -167,4 +215,5 @@ export default {
   getRecipeSubRecipes,
   updateIngredient,
   updateRecipe,
+  updateRecipeRelation,
 }

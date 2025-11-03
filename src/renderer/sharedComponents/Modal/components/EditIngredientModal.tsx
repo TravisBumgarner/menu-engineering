@@ -75,14 +75,13 @@ const EditIngredientModal = ({
             queryKey: [QUERY_KEYS.RECIPE, recipeId],
           })
         }
-        alert('Ingredient updated successfully!')
         activeModalSignal.value = null
       } else {
-        alert('Failed to update ingredient.')
+        t('failedToUpdateIngredient')
       }
     },
     onError: () => {
-      alert('Error updating ingredient.')
+      t('errorUpdatingIngredient')
     },
   })
 

@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material'
+import { TextField, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
@@ -10,7 +10,8 @@ import Typography from '@mui/material/Typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
-import { RecipeDTO } from '../../../../../../shared/recipe.types'
+import { RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
+import { AllUnits } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
@@ -20,7 +21,7 @@ import { formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
 function SubRecipeRow(props: {
-  row: RecipeDTO
+  row: RecipeDTO & { relation: RelationDTO }
   recipeId: string
   labelId: string
 }) {
@@ -28,6 +29,29 @@ function SubRecipeRow(props: {
   const [open, setOpen] = React.useState(false)
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
+
+  const updateSubRecipeRelationMutation = useMutation({
+    mutationFn: (updateData: { quantity?: number; units?: AllUnits }) =>
+      ipcMessenger.invoke(CHANNEL.DB.UPDATE_RECIPE_RELATION, {
+        parentId: recipeId,
+        childId: row.id,
+        type: 'sub-recipe' as const,
+        quantity: updateData.quantity,
+        units: updateData.units,
+      }),
+    onSuccess: result => {
+      if (result.success) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECIPE, recipeId],
+        })
+      } else {
+        alert('Failed to update sub-recipe relation.')
+      }
+    },
+    onError: () => {
+      alert('Error updating sub-recipe relation.')
+    },
+  })
 
   const removeIngredientMutation = useMutation({
     mutationFn: () =>
@@ -57,10 +81,22 @@ function SubRecipeRow(props: {
     }
   }
 
+  // const handleUnitsChange = (event: { target: { value: string } }) => {
+  //   const newUnits = event.target.value
+  //   updateSubRecipeRelationMutation.mutate({ units: newUnits })
+  // }
+
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = parseFloat(event.target.value)
+    if (!isNaN(newQuantity)) {
+      updateSubRecipeRelationMutation.mutate({ quantity: newQuantity })
+    }
+  }
+
   const handleOpenRemoveModal = () => {
     activeModalSignal.value = {
       id: 'CONFIRMATION_MODAL',
-      title: 'Remove Ingredient',
+      title: 'Remove Sub Recipe',
       body: `Are you sure you want to remove the sub recipe "${row.title}" from this recipe? This action cannot be undone.`,
       confirmationCallback: () => {
         removeIngredientMutation.mutate()
@@ -107,15 +143,57 @@ function SubRecipeRow(props: {
           scope="row"
           padding="none"
         >
-          0.00
+          <TextField
+            size="small"
+            type="number"
+            value={row.relation?.quantity || 0}
+            onChange={handleQuantityChange}
+            variant="outlined"
+          />
+        </TableCell>
+        <TableCell
+          align="left"
+          component="th"
+          id={labelId}
+          scope="row"
+          padding="none"
+        >
+          {row.units}
+          {/* <FormControl size="small" sx={{ width: 120 }} required>
+            <Select
+              value={row.relation?.units || ''}
+              onChange={e => handleUnitsChange(e)}
+              displayEmpty
+              variant="outlined"
+            >
+              <MenuItem value="" disabled>
+                {t('units')}
+              </MenuItem>
+              {Object.entries(ALL_UNITS).map(([key, value]) => (
+                <MenuItem key={key} value={value}>
+                  {t(value as keyof typeof ALL_UNITS)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl> */}
+        </TableCell>
+        <TableCell
+          align="right"
+          component="th"
+          id={labelId}
+          scope="row"
+          padding="none"
+        >
+          {/* Cost calculation could go here */}
+          N/A
         </TableCell>
         <TableCell align="center">
-          <Tooltip title="Edit Ingredient">
+          <Tooltip title={t('editRecipe')}>
             <IconButton onClick={handleOpenEditModal}>
               <Icon name="edit" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Remove from Recipe">
+          <Tooltip title={t('remove')}>
             <IconButton onClick={handleOpenRemoveModal}>
               <Icon name="close" />
             </IconButton>

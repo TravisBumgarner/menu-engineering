@@ -23,4 +23,5 @@ export const ALL_UNITS = {
   ...VOLUME_UNIT,
   ...WEIGHT_UNIT,
   ...GENERIC_UNIT,
-}
+} as const
+export type AllUnits = keyof typeof ALL_UNITS

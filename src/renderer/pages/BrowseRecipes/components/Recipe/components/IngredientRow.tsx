@@ -1,10 +1,4 @@
-import {
-  FormControl,
-  MenuItem,
-  Select,
-  TextField,
-  Tooltip,
-} from '@mui/material'
+import { TextField, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
@@ -16,8 +10,11 @@ import Typography from '@mui/material/Typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
-import { IngredientDTO } from '../../../../../../shared/recipe.types'
-import { ALL_UNITS } from '../../../../../../shared/units.types'
+import {
+  IngredientDTO,
+  RelationDTO,
+} from '../../../../../../shared/recipe.types'
+import { ALL_UNITS, AllUnits } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
@@ -28,7 +25,7 @@ import { formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
 function IngredientRow(props: {
-  row: IngredientDTO
+  row: IngredientDTO & { relation: RelationDTO }
   recipeId: string
   labelId: string
 }) {
@@ -65,6 +62,29 @@ function IngredientRow(props: {
     }
   }
 
+  const updateIngredientRelationMutation = useMutation({
+    mutationFn: (updateData: { quantity?: number; units?: AllUnits }) =>
+      ipcMessenger.invoke(CHANNEL.DB.UPDATE_RECIPE_RELATION, {
+        parentId: recipeId,
+        childId: row.id,
+        type: 'ingredient' as const,
+        quantity: updateData.quantity,
+        units: updateData.units,
+      }),
+    onSuccess: result => {
+      if (result.success) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECIPE],
+        })
+      } else {
+        alert('Failed to update ingredient relation.')
+      }
+    },
+    onError: () => {
+      alert('Error updating ingredient relation.')
+    },
+  })
+
   const handleOpenRemoveModal = () => {
     activeModalSignal.value = {
       id: 'CONFIRMATION_MODAL',
@@ -77,17 +97,29 @@ function IngredientRow(props: {
     }
   }
 
-  const handleUnitsChange = (event: React.ChangeEvent<{ value: string }>) => {
-    // This function is just a placeholder since units are not editable in this view
-    event.preventDefault()
-    console.log('Units change attempted:', event.target.value)
-  }
+  const relationCost = React.useMemo(() => {
+    // Function currently assumes row units are the same.
 
-  const handleQuantityChange = (
-    event: React.ChangeEvent<{ value: string }>,
-  ) => {
-    event.preventDefault()
-    console.log('Quantity change attempted:', parseFloat(event.target.value))
+    // row.cost
+    // row.units
+    // row.quantity
+
+    // row.relation.quantity
+    // row.relation.units
+
+    return row.relation.quantity * (row.cost / row.quantity)
+  }, [row.cost, row.quantity, row.relation.quantity])
+
+  // const handleUnitsChange = (event: { target: { value: string } }) => {
+  //   const newUnits = event.target.value
+  //   updateIngredientRelationMutation.mutate({ units: newUnits })
+  // }
+
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = parseFloat(event.target.value)
+    if (!isNaN(newQuantity)) {
+      updateIngredientRelationMutation.mutate({ quantity: newQuantity })
+    }
   }
 
   return (
@@ -130,7 +162,7 @@ function IngredientRow(props: {
           <TextField
             size="small"
             type="number"
-            value={row.quantity}
+            value={row.relation.quantity}
             onChange={handleQuantityChange}
             variant="outlined"
           />
@@ -142,9 +174,10 @@ function IngredientRow(props: {
           scope="row"
           padding="none"
         >
-          <FormControl size="small" sx={{ width: 120 }} required>
+          {row.units}
+          {/* <FormControl size="small" sx={{ width: 120 }} required>
             <Select
-              value={row.units}
+              value={row.relation.units}
               onChange={e => handleUnitsChange(e)}
               displayEmpty
               variant="outlined"
@@ -158,7 +191,7 @@ function IngredientRow(props: {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl>
+          </FormControl> */}
         </TableCell>
         <TableCell
           align="right"
@@ -167,7 +200,20 @@ function IngredientRow(props: {
           scope="row"
           padding="none"
         >
-          {row.cost}
+          {relationCost}
+          <Tooltip
+            title={
+              <Typography>
+                {row.quantity} {row.units} = ${row.cost}
+                <br />
+                {row.relation.quantity} {row.relation.units} = ${relationCost}
+              </Typography>
+            }
+          >
+            <span>
+              <Icon name="info" />
+            </span>
+          </Tooltip>
         </TableCell>
         <TableCell align="center">
           <Box

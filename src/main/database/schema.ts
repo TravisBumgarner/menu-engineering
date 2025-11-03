@@ -1,6 +1,6 @@
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { RECIPE_STATUS } from '../../shared/recipe.types'
-import { ALL_UNITS } from '../../shared/units.types'
+import { ALL_UNITS, AllUnits } from '../../shared/units.types'
 
 export const recipeSchema = sqliteTable('recipes', {
   id: text('id').primaryKey(),
@@ -31,7 +31,7 @@ export const ingredientSchema = sqliteTable('ingredients', {
   cost: real('cost').notNull(),
   quantity: real('quantity').notNull(),
   units: text('units', {
-    enum: Object.values({ ...ALL_UNITS }) as [string, ...string[]],
+    enum: Object.values(ALL_UNITS) as [AllUnits, ...AllUnits[]],
   }).notNull(),
   createdAt: text('created_at')
     .notNull()
@@ -54,7 +54,7 @@ export const recipeIngredientSchema = sqliteTable('recipe_ingredients', {
   childId: text('ingredient_id').notNull(),
   quantity: real('quantity').notNull(),
   units: text('units', {
-    enum: Object.values({ ...ALL_UNITS }) as [string, ...string[]],
+    enum: Object.values(ALL_UNITS) as [AllUnits, ...AllUnits[]],
   }).notNull(),
 })
 
@@ -70,6 +70,6 @@ export const recipeSubRecipeSchema = sqliteTable('recipe_sub_recipes', {
   childId: text('child_recipe_id').notNull(),
   quantity: real('quantity').notNull(),
   units: text('units', {
-    enum: Object.values({ ...ALL_UNITS }) as [string, ...string[]],
+    enum: Object.values(ALL_UNITS) as [AllUnits, ...AllUnits[]],
   }).notNull(),
 })

@@ -34,7 +34,7 @@ typedIpcMain.handle(CHANNEL.DB.ADD_SUB_RECIPE, async (_event, params) => {
   const newSubRecipeRecipeLink = await queries.addSubRecipeToRecipe({
     parentId: params.payload.parentRecipeId,
     childId: newRecipeId,
-    units: 'units', // Todo replace
+    units: params.payload.units,
     quantity: 1, // Todo replace
   })
   return {
@@ -53,7 +53,7 @@ typedIpcMain.handle(CHANNEL.DB.ADD_INGREDIENT, async (_event, params) => {
     const newIngredientRecipeLink = await queries.addIngredientToRecipe({
       childId: newIngredientId,
       parentId: params.payload.recipeId,
-      units: 'units', // Todo replace
+      units: params.payload.units,
       quantity: 1, // Todo replace
     })
     return {
@@ -121,6 +121,23 @@ typedIpcMain.handle(
         type: 'add_existing_to_recipe',
         success: !!result,
       }
+    }
+  },
+)
+
+typedIpcMain.handle(
+  CHANNEL.DB.UPDATE_RECIPE_RELATION,
+  async (_event, params) => {
+    const result = await queries.updateRecipeRelation(
+      params.parentId,
+      params.childId,
+      params.type,
+      params.quantity,
+      params.units,
+    )
+    return {
+      type: 'update_recipe_relation',
+      success: !!result,
     }
   },
 )

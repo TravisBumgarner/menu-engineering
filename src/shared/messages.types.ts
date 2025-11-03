@@ -7,6 +7,7 @@ import {
   RecipeDTO,
   RelationDTO,
 } from './recipe.types'
+import { AllUnits } from './units.types'
 
 export const CHANNEL = {
   DB: {
@@ -19,6 +20,7 @@ export const CHANNEL = {
     GET_RECIPES: 'db:get-recipes',
     GET_RECIPE: 'db:get-recipe',
     ADD_EXISTING_TO_RECIPE: 'db:add-existing-to-recipe',
+    UPDATE_RECIPE_RELATION: 'db:update-recipe-relation',
     REMOVE_INGREDIENT_FROM_RECIPE: 'db:remove-ingredient-from-recipe',
     DELETE_INGREDIENT: 'db:delete-ingredient',
     DELETE_RECIPE: 'db:delete-recipe',
@@ -43,6 +45,7 @@ export type Invokes = {
       payload: {
         newRecipe: NewRecipeDTO
         parentRecipeId: string
+        units: AllUnits
       }
     }
     result: { success: boolean }
@@ -72,6 +75,7 @@ export type Invokes = {
       payload: {
         newIngredient: NewIngredientDTO
         recipeId?: string
+        units: AllUnits
       }
     }
     result: { success: boolean }
@@ -96,6 +100,16 @@ export type Invokes = {
     args:
       | (NewIngredientInRecipeDTO & { type: 'ingredient' })
       | (NewSubRecipeInRecipeDTO & { type: 'sub-recipe' })
+    result: { success: boolean }
+  }
+  [CHANNEL.DB.UPDATE_RECIPE_RELATION]: {
+    args: {
+      parentId: string
+      childId: string
+      type: 'ingredient' | 'sub-recipe'
+      quantity?: number
+      units?: AllUnits
+    }
     result: { success: boolean }
   }
 }

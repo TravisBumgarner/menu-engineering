@@ -16,22 +16,7 @@ import {
   WeightUnit,
 } from '../../shared/units.types'
 import { useAppTranslation } from '../hooks/useTranslation'
-
-// Volume conversion factors (to milliliters)
-const VOLUME_TO_ML = {
-  milliliters: 1,
-  liters: 1000,
-  cups: 236.588, // US cup
-  gallons: 3785.41, // US gallon
-}
-
-// Weight conversion factors (to grams)
-const WEIGHT_TO_GRAMS = {
-  grams: 1,
-  kilograms: 1000,
-  ounces: 28.3495,
-  pounds: 453.592,
-}
+import { convertUnits } from '../utilities'
 
 const VolumeConversionTable = () => {
   const { t } = useAppTranslation()
@@ -62,13 +47,17 @@ const VolumeConversionTable = () => {
                   <strong>1 {t(fromUnit)}</strong>
                 </TableCell>
                 {volumeUnits.map(toUnit => {
-                  const fromML = VOLUME_TO_ML[fromUnit]
-                  const toML = VOLUME_TO_ML[toUnit]
-                  const conversion = fromML / toML
+                  const conversion = convertUnits({
+                    from: fromUnit,
+                    to: toUnit,
+                    value: 1,
+                  })
 
                   return (
                     <TableCell key={toUnit} align="right">
-                      {fromUnit === toUnit ? '1' : conversion.toFixed(4)}
+                      {fromUnit === toUnit
+                        ? '1'
+                        : (conversion?.toFixed(4) ?? 'N/A')}
                     </TableCell>
                   )
                 })}
@@ -110,13 +99,17 @@ const WeightConversionTable = () => {
                   <strong>1 {t(fromUnit)}</strong>
                 </TableCell>
                 {weightUnits.map(toUnit => {
-                  const fromGrams = WEIGHT_TO_GRAMS[fromUnit]
-                  const toGrams = WEIGHT_TO_GRAMS[toUnit]
-                  const conversion = fromGrams / toGrams
+                  const conversion = convertUnits({
+                    from: fromUnit,
+                    to: toUnit,
+                    value: 1,
+                  })
 
                   return (
                     <TableCell key={toUnit} align="right">
-                      {fromUnit === toUnit ? '1' : conversion.toFixed(4)}
+                      {fromUnit === toUnit
+                        ? '1'
+                        : (conversion?.toFixed(4) ?? 'N/A')}
                     </TableCell>
                   )
                 })}
