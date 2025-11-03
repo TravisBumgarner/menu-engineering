@@ -7,12 +7,12 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
-import { RecipeDTO, RECIPE_STATUS } from '../../../../shared/recipe.types'
+import { RECIPE_STATUS, RecipeDTO } from '../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import AddRow from './AddRow'
-import EnhancedTableHead from './Head'
 import Filters, { FilterOptions } from './Filters'
+import EnhancedTableHead from './Head'
 import RecipeRow from './Row'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -43,7 +43,7 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
   const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('createdAt')
   const [page, setPage] = React.useState(0)
   const [lastCreatedId, setLastCreatedId] = React.useState<string>('')
-  
+
   // Default filters: show draft and published, hide archived, show both in menu and not in menu
   const [filters, setFilters] = React.useState<FilterOptions>({
     status: [RECIPE_STATUS.draft, RECIPE_STATUS.published],
@@ -73,7 +73,7 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
     return recipes.filter(recipe => {
       // Filter by status
       const statusMatch = filters.status.includes(recipe.status)
-      
+
       // Filter by showInMenu
       let showInMenuMatch = true
       if (filters.showInMenu === 'yes') {
@@ -82,14 +82,16 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
         showInMenuMatch = recipe.showInMenu === false
       }
       // If 'all', showInMenuMatch remains true
-      
+
       return statusMatch && showInMenuMatch
     })
   }, [recipes, filters])
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - filteredRecipes.length) : 0
+    page > 0
+      ? Math.max(0, (1 + page) * ROWS_PER_PAGE - filteredRecipes.length)
+      : 0
 
   const visibleRows = React.useMemo(
     () =>
