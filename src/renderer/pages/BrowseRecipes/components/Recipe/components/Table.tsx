@@ -119,7 +119,7 @@ const Table = ({
                   <SubRecipeRow
                     key={row.id}
                     row={row}
-                    recipeId={row.id}
+                    recipeId={recipe.id}
                     labelId={labelId}
                   />
                 )

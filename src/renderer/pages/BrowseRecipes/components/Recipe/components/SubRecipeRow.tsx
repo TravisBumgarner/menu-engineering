@@ -7,7 +7,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import { RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
@@ -30,17 +30,32 @@ function SubRecipeRow(props: {
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
 
+  const subRecipeCostQuery = useQuery({
+    queryKey: [QUERY_KEYS.RECIPE_COST],
+    queryFn: async () => {
+      console.log('calcin new cost')
+      const result = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE_COST, {
+        id: row.id,
+      })
+      return result
+    },
+  })
+
   const updateSubRecipeRelationMutation = useMutation({
-    mutationFn: (updateData: { quantity?: number; units?: AllUnits }) =>
-      ipcMessenger.invoke(CHANNEL.DB.UPDATE_RECIPE_RELATION, {
+    mutationFn: (updateData: { quantity?: number; units?: AllUnits }) => {
+      return ipcMessenger.invoke(CHANNEL.DB.UPDATE_RECIPE_RELATION, {
         parentId: recipeId,
         childId: row.id,
         type: 'sub-recipe' as const,
         quantity: updateData.quantity,
         units: updateData.units,
-      }),
+      })
+    },
     onSuccess: result => {
       if (result.success) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECIPE_COST],
+        })
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPE, recipeId],
         })
@@ -53,7 +68,7 @@ function SubRecipeRow(props: {
     },
   })
 
-  const removeIngredientMutation = useMutation({
+  const removeSubRecipeMutation = useMutation({
     mutationFn: () =>
       ipcMessenger.invoke(CHANNEL.DB.REMOVE_INGREDIENT_FROM_RECIPE, {
         ingredientId: row.id,
@@ -61,16 +76,16 @@ function SubRecipeRow(props: {
       }),
     onSuccess: result => {
       if (result.success) {
-        // Invalidate and refetch the recipe query to update the ingredients list
+        // Invalidate and refetch the recipe query to update the sub-recipes list
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPE, recipeId],
         })
       } else {
-        alert('Failed to remove ingredient from recipe.')
+        alert('Failed to remove sub-recipe from recipe.')
       }
     },
     onError: () => {
-      alert('Error removing ingredient from recipe.')
+      alert('Error removing sub-recipe from recipe.')
     },
   })
 
@@ -99,7 +114,7 @@ function SubRecipeRow(props: {
       title: 'Remove Sub Recipe',
       body: `Are you sure you want to remove the sub recipe "${row.title}" from this recipe? This action cannot be undone.`,
       confirmationCallback: () => {
-        removeIngredientMutation.mutate()
+        removeSubRecipeMutation.mutate()
         activeModalSignal.value = null
       },
     }
@@ -185,7 +200,9 @@ function SubRecipeRow(props: {
           padding="none"
         >
           {/* Cost calculation could go here */}
-          N/A
+          {subRecipeCostQuery.data?.success
+            ? `$${subRecipeCostQuery.data.cost.toFixed(2)}`
+            : 'N/A'}
         </TableCell>
         <TableCell align="center">
           <Tooltip title={t('editRecipe')}>

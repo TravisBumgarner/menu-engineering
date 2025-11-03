@@ -104,6 +104,23 @@ const removeIngredientFromRecipe = async (
   return result
 }
 
+const removeSubRecipeFromRecipe = async (
+  subRecipeId: string,
+  recipeId: string,
+) => {
+  const result = await db
+    .delete(recipeSubRecipeSchema)
+    .where(
+      and(
+        eq(recipeSubRecipeSchema.childId, subRecipeId),
+        eq(recipeSubRecipeSchema.parentId, recipeId),
+      ),
+    )
+    .run()
+
+  return result
+}
+
 const addSubRecipeToRecipe = async (
   newSubRecipeInRecipeDTO: NewSubRecipeInRecipeDTO,
 ) => {
@@ -202,6 +219,79 @@ const updateRecipeRelation = async (
   }
 }
 
+const getRecipeCost = async (
+  recipeId: string,
+): Promise<
+  { success: true; cost: number } | { success: false; error: string }
+> => {
+  // Helper function to recursively calculate cost with circular dependency detection
+  const calculateCostRecursive = async (
+    currentRecipeId: string,
+    ancestorPath: string[] = [],
+  ): Promise<
+    { success: true; cost: number } | { success: false; error: string }
+  > => {
+    // Check for circular dependency
+    if (ancestorPath.includes(currentRecipeId)) {
+      const parentId = ancestorPath[ancestorPath.length - 1]
+      return {
+        success: false,
+        error: `Found ${currentRecipeId} as child of ${parentId} and can't continue`,
+      }
+    }
+
+    let totalCost = 0
+    const newPath = [...ancestorPath, currentRecipeId]
+
+    // Get direct ingredients for this recipe
+    const ingredients = await getRecipeIngredients(currentRecipeId)
+
+    // Calculate cost from direct ingredients
+    for (const ingredient of ingredients) {
+      if (ingredient) {
+        // Convert ingredient quantity to recipe units if needed
+        const ingredientCost = ingredient.cost || 0
+        const ingredientQuantity = ingredient.quantity || 0
+        const relationQuantity = ingredient.relation?.quantity || 0
+
+        // Cost per unit of ingredient * quantity used in recipe
+        const ingredientTotalCost =
+          (ingredientCost / ingredientQuantity) * relationQuantity
+        totalCost += ingredientTotalCost
+      }
+    }
+
+    // Get sub-recipes for this recipe
+    const subRecipes = await getRecipeSubRecipes(currentRecipeId)
+
+    // Recursively calculate cost from sub-recipes
+    for (const subRecipe of subRecipes) {
+      if (subRecipe) {
+        const subRecipeResult = await calculateCostRecursive(
+          subRecipe.id,
+          newPath,
+        )
+
+        if (!subRecipeResult.success) {
+          return subRecipeResult // Propagate error up the chain
+        }
+
+        const relationQuantity = subRecipe.relation?.quantity || 0
+        const subRecipeProduces = subRecipe.produces || 1
+
+        // Cost of sub-recipe * (quantity needed / quantity it produces)
+        const subRecipeCostContribution =
+          subRecipeResult.cost * (relationQuantity / subRecipeProduces)
+        totalCost += subRecipeCostContribution
+      }
+    }
+
+    return { success: true, cost: totalCost }
+  }
+
+  return await calculateCostRecursive(recipeId)
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -211,9 +301,11 @@ export default {
   addIngredientToRecipe,
   getIngredients,
   removeIngredientFromRecipe,
+  removeSubRecipeFromRecipe,
   addSubRecipeToRecipe,
   getRecipeSubRecipes,
   updateIngredient,
   updateRecipe,
   updateRecipeRelation,
+  getRecipeCost,
 }

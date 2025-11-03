@@ -24,6 +24,7 @@ export const CHANNEL = {
     REMOVE_INGREDIENT_FROM_RECIPE: 'db:remove-ingredient-from-recipe',
     DELETE_INGREDIENT: 'db:delete-ingredient',
     DELETE_RECIPE: 'db:delete-recipe',
+    GET_RECIPE_COST: 'db:get-recipe-cost',
   },
 } as const
 
@@ -69,6 +70,10 @@ export type Invokes = {
       ingredients: Array<IngredientDTO & { relation: RelationDTO }>
       subRecipes: Array<RecipeDTO & { relation: RelationDTO }>
     }
+  }
+  [CHANNEL.DB.GET_RECIPE_COST]: {
+    args: { id: string }
+    result: { success: true; cost: number } | { success: false; error: string }
   }
   [CHANNEL.DB.ADD_INGREDIENT]: {
     args: {

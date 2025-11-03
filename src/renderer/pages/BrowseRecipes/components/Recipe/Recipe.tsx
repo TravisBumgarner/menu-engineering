@@ -11,7 +11,7 @@ const Recipe = ({ id }: { id: string }) => {
   const { t } = useAppTranslation()
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: [QUERY_KEYS.RECIPE],
+    queryKey: [QUERY_KEYS.RECIPE, id],
     queryFn: async () => {
       if (!id) throw new Error(t('recipeNotFound'))
       console.log('fetching recipe with id', id)

@@ -24,6 +24,7 @@ export const ROUTES = {
 } as const
 
 export const QUERY_KEYS = {
+  RECIPE_COST: 'recipe_cost',
   RECIPES: 'recipes',
   RECIPE: 'recipe',
   INGREDIENTS: 'ingredients',
