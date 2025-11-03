@@ -6,9 +6,11 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
+import { useMemo } from 'react'
 import { IngredientDTO, RecipeDTO } from '../../../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
+import Message from '../../../../../sharedComponents/Message'
 import AddRow from './AddRow'
 import { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
@@ -70,6 +72,15 @@ const Table = ({
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
 
+  const hasRows = ingredients.length + subRecipes.length > 0
+  const selectedIds = useMemo(
+    () =>
+      ingredients
+        .map(i => i.id)
+        .concat(subRecipes.map(s => s.id))
+        .concat([recipe.id]),
+    [ingredients, subRecipes, recipe],
+  )
   const visibleRows = React.useMemo(
     () =>
       [
@@ -95,6 +106,11 @@ const Table = ({
             onRequestSort={handleRequestSort}
           />
           <TableBody>
+            {!hasRows && (
+              <TableCell colSpan={8} sx={{ border: 0, paddingBottom: 0 }}>
+                <Message color="info" message={t('noDetails')} />
+              </TableCell>
+            )}
             {visibleRows.map((row, index) => {
               const labelId = `enhanced-table-checkbox-${index}`
 
@@ -128,7 +144,7 @@ const Table = ({
               </TableRow>
             )}
 
-            <AddRow recipe={recipe} />
+            <AddRow recipe={recipe} selectedIds={selectedIds} />
           </TableBody>
         </MuiTable>
       </TableContainer>

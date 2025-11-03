@@ -16,7 +16,7 @@ interface HeadCell {
   width: string
 }
 
-interface EnhancedTableProps {
+interface Props {
   onRequestSort: (
     event: React.MouseEvent<unknown>,
     property: keyof RecipeDTO,
@@ -25,9 +25,8 @@ interface EnhancedTableProps {
   orderBy: string | number | symbol
 }
 
-function EnhancedTableHead(props: EnhancedTableProps) {
+function Head({ onRequestSort, order, orderBy }: Props) {
   const { t } = useAppTranslation()
-  const { order, orderBy, onRequestSort } = props
 
   const headCells: readonly HeadCell[] = [
     {
@@ -123,4 +122,4 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   )
 }
 
-export default EnhancedTableHead
+export default Head

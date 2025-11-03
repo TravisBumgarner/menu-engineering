@@ -14,11 +14,11 @@ const Recipe = ({ id }: { id: string }) => {
     queryKey: [QUERY_KEYS.RECIPE],
     queryFn: async () => {
       if (!id) throw new Error(t('recipeNotFound'))
+      console.log('fetching recipe with id', id)
 
       const response = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE, {
         id,
       })
-      console.log('fetching recipe with id', response.subRecipes)
       return response
     },
   })
@@ -53,21 +53,6 @@ const Recipe = ({ id }: { id: string }) => {
       />
     </Box>
   )
-
-  // return (
-  //   <>
-  //     {data.ingredients.length || data.subRecipes.length ? (
-
-  //     ) : (
-  //       <Message
-  //         message={t('noIngredientsFound')}
-  //         color="info"
-  //         callback={handleAddIngredient}
-  //         callbackText={t('addIngredient')}
-  //       />
-  //     )}
-  //   </>
-  // )
 }
 
 export default Recipe

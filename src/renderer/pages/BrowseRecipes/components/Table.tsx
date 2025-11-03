@@ -12,7 +12,7 @@ import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import AddRow from './AddRow'
 import Filters, { FilterOptions } from './Filters'
-import EnhancedTableHead from './Head'
+import Head from './Head'
 import RecipeRow from './Row'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -111,7 +111,7 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
             aria-labelledby="tableTitle"
             size="medium"
           >
-            <EnhancedTableHead
+            <Head
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}

@@ -62,6 +62,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   selectAllRecipes: 'Seleccionar Todas las Recetas',
   recipeDetails: 'Detalles de Receta',
   ingredientDetails: 'Detalles de Ingrediente',
+  noDetails: 'Sin detalles',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'ej. Harina, Sal, Aceite de Oliva',
@@ -89,7 +90,6 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   errorLoadingIngredients: 'Error cargando ingredientes.',
   addFirstRecipe: 'Agrega tu primera receta',
   addFirstIngredient: 'Agrega tu primer ingrediente',
-  ingredientRemovedSuccess: '¡Ingrediente quitado de la receta exitosamente!',
   failedToRemoveIngredient: 'Falló al quitar ingrediente de la receta.',
   errorRemovingIngredient: 'Error quitando ingrediente de la receta.',
   failedToAddIngredient: 'Falló al agregar ingrediente.',
@@ -141,7 +141,6 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   language: 'Idioma',
   english: 'Inglés',
   spanish: 'Español',
-  addExistingIngredientOrRecipe: 'Agregar ingrediente o receta existente',
   recipeAddedSuccessfully: '¡Receta agregada exitosamente!',
   failedToAddRecipe: 'Falló al agregar receta.',
   errorAddingRecipe: 'Error agregando receta.',

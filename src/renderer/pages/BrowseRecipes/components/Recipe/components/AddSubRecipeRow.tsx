@@ -20,6 +20,8 @@ import { ALL_UNITS } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
+import { SPACING } from '../../../../../styles/consts'
+import { ADD_ROW_HEIGHT } from './consts'
 
 interface AddSubRecipeRowProps {
   parentRecipe: RecipeDTO
@@ -86,18 +88,14 @@ const AddSubRecipeRow: React.FC<AddSubRecipeRowProps> = ({
     formData.produces <= 0
 
   return (
-    <TableRow>
+    <TableRow sx={{ height: ADD_ROW_HEIGHT }}>
       <TableCell colSpan={6}>
         <Box
           sx={{
             display: 'flex',
-            gap: 2,
+            gap: SPACING.MEDIUM.PX,
             alignItems: 'center',
             width: '100%',
-            border: 1,
-            borderColor: 'divider',
-            borderRadius: 1,
-            padding: 2,
           }}
         >
           <TextField

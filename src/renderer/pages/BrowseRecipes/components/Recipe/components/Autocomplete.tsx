@@ -3,16 +3,18 @@ import {
   Button,
   Autocomplete as MUIAutocomplete,
   TextField,
+  Typography,
 } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Icon from '../../../../../sharedComponents/Icon'
 
+import { useState } from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import { RecipeDTO } from '../../../../../../shared/recipe.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
-import { activeModalSignal } from '../../../../../signals'
+import { SPACING } from '../../../../../styles/consts'
 
 type Value = {
   label: string
@@ -22,13 +24,16 @@ type Value = {
 
 const Autocomplete = ({
   recipe,
-  handleOnChange,
-  sx,
+  handleAddSubRecipe,
+  handleAddIngredient,
+  selectedIds,
 }: {
-  recipe?: RecipeDTO
-  handleOnChange: (value: Value | null) => void
-  sx?: object
+  recipe: RecipeDTO
+  handleAddSubRecipe: () => void
+  handleAddIngredient: () => void
+  selectedIds: string[]
 }) => {
+  const queryClient = useQueryClient()
   const { t } = useAppTranslation()
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.AUTOCOMPLETE],
@@ -50,66 +55,104 @@ const Autocomplete = ({
     },
   })
 
+  const [selectedAutocomplete, setSelectedAutocomplete] = useState<{
+    label: string
+    id: string
+    type: 'ingredient' | 'recipe'
+  } | null>(null)
+
+  const {
+    isPending: addExistingToRecipeIsLoading,
+    mutate: addExistingToRecipe,
+  } = useMutation({
+    mutationFn: async () => {
+      if (!selectedAutocomplete) return
+      await ipcMessenger.invoke(CHANNEL.DB.ADD_EXISTING_TO_RECIPE, {
+        childId: selectedAutocomplete.id,
+        parentId: recipe.id,
+        type: selectedAutocomplete.type,
+      })
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+      setSelectedAutocomplete(null)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+      setSelectedAutocomplete(null)
+    },
+  })
+
   const handleChange = (event: unknown, value: Value | null) => {
-    handleOnChange(value)
+    handleAutocompleteSelect(value)
   }
 
-  const handleAddIngredient = () => {
-    activeModalSignal.value = {
-      id: 'ADD_INGREDIENT_MODAL',
-      recipe: recipe,
-    }
-  }
-
-  const handleAddRecipe = () => {
-    activeModalSignal.value = {
-      id: 'ADD_RECIPE_MODAL',
-      parentRecipe: recipe,
-    }
+  const handleAutocompleteSelect = (
+    value: {
+      label: string
+      id: string
+      type: 'ingredient' | 'recipe'
+    } | null,
+  ) => {
+    setSelectedAutocomplete(value)
   }
 
   return (
-    <MUIAutocomplete
-      size="small"
-      disablePortal
-      options={data || []}
-      sx={{ ...sx }}
-      onChange={handleChange}
-      noOptionsText={
-        <Box sx={{ p: 2, color: 'text.secondary', fontStyle: 'italic' }}>
-          No ingredients or recipes found
-          <Button
-            onClick={handleAddIngredient}
-            sx={{ ml: 2 }}
-            variant="outlined"
-            size="small"
+    <>
+      <MUIAutocomplete
+        size="small"
+        disablePortal
+        options={data || []}
+        sx={{ flexGrow: 1 }}
+        onChange={handleChange}
+        noOptionsText={
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: SPACING.TINY.PX,
+            }}
           >
-            + Ingredient
-          </Button>
-          <Button
-            onClick={handleAddRecipe}
-            sx={{ ml: 2 }}
-            variant="outlined"
-            size="small"
-          >
-            + Recipe
-          </Button>
-        </Box>
-      }
-      renderOption={(props, option) => {
-        const { key, ...optionProps } = props
-        return (
-          <Box key={key} component="li" {...optionProps}>
-            {option.type === 'ingredient' && <Icon name="ingredient" />}
-            {option.type === 'recipe' && <Icon name="recipe" />}
-            &nbsp; {option.label}
+            <Typography>No ingredients or recipes found</Typography>
+            <Button
+              fullWidth
+              onClick={handleAddIngredient}
+              variant="outlined"
+              size="small"
+            >
+              {t('addIngredient')}
+            </Button>
+            <Button
+              fullWidth
+              onClick={handleAddSubRecipe}
+              variant="outlined"
+              size="small"
+            >
+              {t('addSubRecipe')}
+            </Button>
           </Box>
-        )
-      }}
-      renderInput={params => (
-        <TextField {...params} label={t('addExistingIngredientOrRecipe')} />
-      )}
-    />
+        }
+        getOptionDisabled={option => selectedIds.includes(option.id)}
+        renderOption={(props, option) => {
+          const { key, ...optionProps } = props
+          return (
+            <Box key={key} component="li" {...optionProps}>
+              {option.type === 'ingredient' && <Icon name="ingredient" />}
+              {option.type === 'recipe' && <Icon name="recipe" />}
+              &nbsp; {option.label}
+            </Box>
+          )
+        }}
+        renderInput={params => (
+          <TextField {...params} label={t('addExisting')} />
+        )}
+      />
+      <Button
+        variant="outlined"
+        disabled={!selectedAutocomplete || addExistingToRecipeIsLoading}
+        onClick={() => addExistingToRecipe()}
+      >
+        {addExistingToRecipeIsLoading ? t('adding') : t('add')}
+      </Button>
+    </>
   )
 }
 

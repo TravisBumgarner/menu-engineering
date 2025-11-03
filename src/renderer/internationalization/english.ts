@@ -62,6 +62,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   selectAllRecipes: 'Select All Recipes',
   recipeDetails: 'Recipe Details',
   ingredientDetails: 'Ingredient Details',
+  noDetails: 'No Details',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'e.g. Flour, Salt, Olive Oil',
@@ -89,7 +90,6 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   errorLoadingIngredients: 'Error loading ingredients.',
   addFirstRecipe: 'Add your first recipe',
   addFirstIngredient: 'Add your first ingredient',
-  ingredientRemovedSuccess: 'Ingredient removed from recipe successfully!',
   failedToRemoveIngredient: 'Failed to remove ingredient from recipe.',
   errorRemovingIngredient: 'Error removing ingredient from recipe.',
   failedToAddIngredient: 'Failed to add ingredient.',
@@ -141,7 +141,6 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   language: 'Language',
   english: 'English',
   spanish: 'Spanish',
-  addExistingIngredientOrRecipe: 'Add existing ingredient or recipe',
   recipeAddedSuccessfully: 'Recipe added successfully!',
   failedToAddRecipe: 'Failed to add recipe.',
   errorAddingRecipe: 'Error adding recipe.',

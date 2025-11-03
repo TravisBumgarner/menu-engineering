@@ -41,7 +41,6 @@ function SubRecipeRow(props: {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPE, recipeId],
         })
-        alert('Ingredient removed from recipe successfully!')
       } else {
         alert('Failed to remove ingredient from recipe.')
       }
