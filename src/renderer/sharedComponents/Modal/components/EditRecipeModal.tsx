@@ -68,7 +68,6 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        alert(t('recipeUpdatedSuccessfully'))
         activeModalSignal.value = null
       } else {
         alert(t('failedToUpdateRecipe'))

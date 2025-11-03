@@ -155,6 +155,8 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   failedToUpdateIngredient: 'Falló al actualizar ingrediente.',
   errorUpdatingIngredient: 'Error actualizando ingrediente.',
   ingredientAddedSuccessfully: '¡Ingrediente agregado exitosamente!',
+  filters: 'Filtros',
+  all: 'Todos',
 }
 
 export default SpanishTranslations

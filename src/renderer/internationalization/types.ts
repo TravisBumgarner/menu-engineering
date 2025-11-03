@@ -152,3 +152,5 @@ export type TranslationKeys =
   | 'volumeConversions'
   | 'unitConversions'
   | 'conversionDisclaimer'
+  | 'filters'
+  | 'all'

@@ -155,6 +155,8 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   failedToUpdateIngredient: 'Failed to update ingredient.',
   errorUpdatingIngredient: 'Error updating ingredient.',
   ingredientAddedSuccessfully: 'Ingredient added successfully!',
+  filters: 'Filters',
+  all: 'All',
 }
 
 export default EnglishTranslations

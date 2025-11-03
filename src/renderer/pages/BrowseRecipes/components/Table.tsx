@@ -7,11 +7,12 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
-import { RecipeDTO } from '../../../../shared/recipe.types'
+import { RecipeDTO, RECIPE_STATUS } from '../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import AddRow from './AddRow'
 import EnhancedTableHead from './Head'
+import Filters, { FilterOptions } from './Filters'
 import RecipeRow from './Row'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -38,10 +39,16 @@ function getComparator<Key extends keyof RecipeDTO>(
 
 const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
   const { t } = useAppTranslation()
-  const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
+  const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('createdAt')
   const [page, setPage] = React.useState(0)
   const [lastCreatedId, setLastCreatedId] = React.useState<string>('')
+  
+  // Default filters: show draft and published, hide archived, show both in menu and not in menu
+  const [filters, setFilters] = React.useState<FilterOptions>({
+    status: [RECIPE_STATUS.draft, RECIPE_STATUS.published],
+    showInMenu: 'all',
+  })
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -56,20 +63,45 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
     setPage(newPage)
   }
 
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters)
+    setPage(0) // Reset to first page when filters change
+  }
+
+  // Apply filters to recipes
+  const filteredRecipes = React.useMemo(() => {
+    return recipes.filter(recipe => {
+      // Filter by status
+      const statusMatch = filters.status.includes(recipe.status)
+      
+      // Filter by showInMenu
+      let showInMenuMatch = true
+      if (filters.showInMenu === 'yes') {
+        showInMenuMatch = recipe.showInMenu === true
+      } else if (filters.showInMenu === 'no') {
+        showInMenuMatch = recipe.showInMenu === false
+      }
+      // If 'all', showInMenuMatch remains true
+      
+      return statusMatch && showInMenuMatch
+    })
+  }, [recipes, filters])
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - recipes.length) : 0
+    page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - filteredRecipes.length) : 0
 
   const visibleRows = React.useMemo(
     () =>
-      [...recipes]
+      [...filteredRecipes]
         .sort(getComparator(order, orderBy))
         .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
-    [recipes, order, orderBy, page],
+    [filteredRecipes, order, orderBy, page],
   )
 
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <Filters filters={filters} onFiltersChange={handleFiltersChange} />
       <Paper sx={{ width: '100%', mb: 2 }}>
         <TableContainer>
           <MuiTable
@@ -110,7 +142,7 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
         </TableContainer>
         <TablePagination
           component="div"
-          count={recipes.length}
+          count={filteredRecipes.length}
           rowsPerPage={ROWS_PER_PAGE}
           rowsPerPageOptions={[]}
           page={page}
