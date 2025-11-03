@@ -46,8 +46,10 @@ const Table = ({
   subRecipes: RecipeDTO[]
   recipe: RecipeDTO
 }) => {
-  const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
-  const [orderBy, setOrderBy] = React.useState<'title'>('title')
+  const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
+  const [orderBy, setOrderBy] = React.useState<'title' | 'createdAt'>(
+    'createdAt',
+  )
   const [page, setPage] = React.useState(0)
   const { t } = useAppTranslation()
 

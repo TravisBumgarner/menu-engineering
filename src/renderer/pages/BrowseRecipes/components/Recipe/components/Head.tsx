@@ -17,7 +17,10 @@ interface HeadCell {
 }
 
 interface EnhancedTableProps {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: 'title') => void
+  onRequestSort: (
+    event: React.MouseEvent<unknown>,
+    property: 'title' | 'createdAt',
+  ) => void
   order: 'asc' | 'desc'
   orderBy: string | number
 }

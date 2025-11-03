@@ -19,7 +19,6 @@ import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
-import { SPACING } from '../../../styles/consts'
 
 const AddRow = ({
   setFocusedRecipeId,
@@ -60,7 +59,6 @@ const AddRow = ({
       }),
     onSuccess: result => {
       if (result.recipeId) {
-        alert(t('recipeAddedSuccessfully'))
         setFocusedRecipeId(result.recipeId)
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
@@ -106,109 +104,110 @@ const AddRow = ({
 
   if (isCreating) {
     return (
-      <TableRow
-        sx={{
-          '> .MuiTableCell-root': {
-            padding: SPACING.TINY.PX,
-          },
-        }}
-      >
-        {/* Column 1: Empty (matches checkbox column) */}
-        <TableCell colSpan={2}></TableCell>
-
-        {/* Column 2: Title */}
-        <TableCell>
-          <TextField
-            size="small"
-            value={formData.title}
-            onChange={handleInputChange('title')}
-            required
-            fullWidth
-            placeholder={t('title')}
-            variant="outlined"
-          />
-        </TableCell>
-
-        {/* Column 3: Produces */}
-        <TableCell align="right">
-          <TextField
-            size="small"
-            type="number"
-            value={formData.produces}
-            onChange={handleInputChange('produces')}
-            required
-            placeholder={t('produces')}
-            variant="outlined"
-            sx={{ width: '100px' }}
-          />
-        </TableCell>
-
-        {/* Column 4: Units */}
-        <TableCell>
-          <FormControl size="small" fullWidth required>
-            <Select
-              value={formData.units}
-              onChange={e =>
-                handleInputChange('units')(
-                  e as React.ChangeEvent<HTMLInputElement>,
-                )
-              }
-              displayEmpty
-              variant="outlined"
-            >
-              <MenuItem value="" disabled>
-                {t('units')}
-              </MenuItem>
-              {Object.entries(ALL_UNITS).map(([key, value]) => (
-                <MenuItem key={key} value={value}>
-                  {t(value as keyof typeof ALL_UNITS)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </TableCell>
-
-        {/* Column 5: Status */}
-        <TableCell>
-          <FormControl size="small" fullWidth required>
-            <Select
-              value={formData.status}
-              onChange={handleInputChange('status')}
-              variant="outlined"
-            >
-              <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
-              <MenuItem value={RECIPE_STATUS.published}>
-                {t('published')}
-              </MenuItem>
-              <MenuItem value={RECIPE_STATUS.archived}>
-                {t('archived')}
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </TableCell>
-
-        {/* Column 6: Show in Menu */}
-        <TableCell align="center">
-          <Checkbox
-            checked={formData.showInMenu}
-            onChange={handleCheckboxChange('showInMenu')}
-          />
-        </TableCell>
-
-        {/* Column 7: Actions */}
-        <TableCell>
-          <Box display="flex">
-            <IconButton onClick={handleCancel} title={t('cancel')} size="small">
-              <Icon name="close" size={30} />
-            </IconButton>
-            <IconButton
+      <TableRow>
+        <TableCell colSpan={8}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+              display: 'flex',
+              gap: 2,
+              alignItems: 'center',
+              width: '100%',
+              backgroundColor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: 1,
+              padding: 2,
+            }}
+          >
+            <TextField
               size="small"
-              type="submit"
-              onClick={handleSubmit}
-              disabled={preventSubmit}
-            >
-              <Icon name="add" size={30} />
-            </IconButton>
+              label={t('title')}
+              value={formData.title}
+              onChange={handleInputChange('title')}
+              required
+              sx={{ flex: 2 }}
+              variant="outlined"
+            />
+
+            <TextField
+              size="small"
+              label={t('produces')}
+              type="number"
+              value={formData.produces}
+              onChange={handleInputChange('produces')}
+              required
+              sx={{ width: 100 }}
+              variant="outlined"
+              inputProps={{ min: 0, step: 'any' }}
+            />
+
+            <FormControl size="small" sx={{ width: 120 }} required>
+              <Select
+                value={formData.units}
+                onChange={e =>
+                  handleInputChange('units')(
+                    e as React.ChangeEvent<HTMLInputElement>,
+                  )
+                }
+                displayEmpty
+                variant="outlined"
+              >
+                <MenuItem value="" disabled>
+                  {t('units')}
+                </MenuItem>
+                {Object.entries(ALL_UNITS).map(([key, value]) => (
+                  <MenuItem key={key} value={value}>
+                    {t(value as keyof typeof ALL_UNITS)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl size="small" sx={{ width: 120 }} required>
+              <Select
+                value={formData.status}
+                onChange={handleInputChange('status')}
+                variant="outlined"
+              >
+                <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
+                <MenuItem value={RECIPE_STATUS.published}>
+                  {t('published')}
+                </MenuItem>
+                <MenuItem value={RECIPE_STATUS.archived}>
+                  {t('archived')}
+                </MenuItem>
+              </Select>
+            </FormControl>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Checkbox
+                checked={formData.showInMenu}
+                onChange={handleCheckboxChange('showInMenu')}
+              />
+              <Box component="span" sx={{ fontSize: '0.875rem' }}>
+                {t('showInMenu')}
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <IconButton
+                onClick={handleCancel}
+                title={t('cancel')}
+                size="small"
+              >
+                <Icon name="close" />
+              </IconButton>
+              <IconButton
+                size="small"
+                type="submit"
+                disabled={preventSubmit}
+                title={t('save')}
+              >
+                <Icon name="add" />
+              </IconButton>
+            </Box>
           </Box>
         </TableCell>
       </TableRow>

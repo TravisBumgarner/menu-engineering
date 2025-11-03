@@ -1,5 +1,6 @@
 const SORTABLE_OPTIONS = {
   title: 'title',
+  createdAt: 'createdAt',
 } as const
 
 export { SORTABLE_OPTIONS }
