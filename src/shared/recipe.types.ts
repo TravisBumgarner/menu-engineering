@@ -28,7 +28,39 @@ export type NewIngredientDTO = {
   notes: string
   cost: number
 }
+
+export type RelationDTO = {
+  quantity: number
+  units: string
+}
+
 export type IngredientDTO = NewIngredientDTO & {
+  id: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type NewSubRecipeInRecipeDTO = {
+  parentId: string
+  childId: string
+  quantity: number
+  units: string
+}
+
+export type SubRecipeInRecipeDTO = NewSubRecipeInRecipeDTO & {
+  id: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type NewIngredientInRecipeDTO = {
+  parentId: string
+  childId: string
+  quantity: number
+  units: string
+}
+
+export type IngredientInRecipeDTO = NewIngredientInRecipeDTO & {
   id: string
   createdAt: string
   updatedAt: string

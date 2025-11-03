@@ -10,9 +10,9 @@ export const recipeSchema = sqliteTable('recipes', {
 
   status: text('status', {
     enum: [
-      RECIPE_STATUS.ARCHIVED,
-      RECIPE_STATUS.DRAFT,
-      RECIPE_STATUS.PUBLISHED,
+      RECIPE_STATUS.archived,
+      RECIPE_STATUS.draft,
+      RECIPE_STATUS.published,
     ],
   }).notNull(),
   createdAt: text('created_at')
@@ -43,13 +43,33 @@ export const ingredientSchema = sqliteTable('ingredients', {
 })
 
 export const recipeIngredientSchema = sqliteTable('recipe_ingredients', {
+  createdAt: text('created_at')
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text('updated_at')
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
   id: text('id').primaryKey(),
   parentId: text('recipe_id').notNull(),
   childId: text('ingredient_id').notNull(),
+  quantity: real('quantity').notNull(),
+  units: text('units', {
+    enum: Object.values({ ...ALL_UNITS }) as [string, ...string[]],
+  }).notNull(),
 })
 
 export const recipeSubRecipeSchema = sqliteTable('recipe_sub_recipes', {
+  createdAt: text('created_at')
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text('updated_at')
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
   id: text('id').primaryKey(),
   parentId: text('recipe_id').notNull(),
   childId: text('child_recipe_id').notNull(),
+  quantity: real('quantity').notNull(),
+  units: text('units', {
+    enum: Object.values({ ...ALL_UNITS }) as [string, ...string[]],
+  }).notNull(),
 })

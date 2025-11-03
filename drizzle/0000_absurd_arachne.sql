@@ -12,7 +12,9 @@ CREATE TABLE `ingredients` (
 CREATE TABLE `recipe_ingredients` (
 	`id` text PRIMARY KEY NOT NULL,
 	`recipe_id` text NOT NULL,
-	`ingredient_id` text NOT NULL
+	`ingredient_id` text NOT NULL,
+	`quantity` real NOT NULL,
+	`units` text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `recipes` (
@@ -30,5 +32,7 @@ CREATE TABLE `recipes` (
 CREATE TABLE `recipe_sub_recipes` (
 	`id` text PRIMARY KEY NOT NULL,
 	`recipe_id` text NOT NULL,
-	`child_recipe_id` text NOT NULL
+	`child_recipe_id` text NOT NULL,
+	`quantity` real NOT NULL,
+	`units` text NOT NULL
 );

@@ -1,5 +1,10 @@
 import { and, eq } from 'drizzle-orm'
-import { NewIngredientDTO, NewRecipeDTO } from 'src/shared/recipe.types'
+import {
+  NewIngredientDTO,
+  NewIngredientInRecipeDTO,
+  NewRecipeDTO,
+  NewSubRecipeInRecipeDTO,
+} from 'src/shared/recipe.types'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from './client'
 import {
@@ -45,17 +50,13 @@ const addIngredient = async (ingredientData: NewIngredientDTO) => {
   return newId
 }
 
-const addIngredientToRecipe = async ({
-  ingredientId,
-  recipeId,
-}: {
-  ingredientId: string
-  recipeId: string
-}) => {
+const addIngredientToRecipe = async (
+  newIngredientInRecipe: NewIngredientInRecipeDTO,
+) => {
   const newId = uuidv4()
   await db
     .insert(recipeIngredientSchema)
-    .values({ id: newId, parentId: recipeId, childId: ingredientId })
+    .values({ id: newId, ...newIngredientInRecipe })
     .run()
 
   return newId
@@ -63,14 +64,21 @@ const addIngredientToRecipe = async ({
 
 const getRecipeIngredients = async (recipeId: string) => {
   const ingredients = await db
-    .select({ ingredient: ingredientSchema })
+    .select({
+      ingredient: ingredientSchema,
+      recipeQuantity: recipeIngredientSchema.quantity,
+      recipeUnits: recipeIngredientSchema.units,
+    })
     .from(recipeIngredientSchema)
     .where(eq(recipeIngredientSchema.parentId, recipeId))
     .leftJoin(
       ingredientSchema,
       eq(recipeIngredientSchema.childId, ingredientSchema.id),
     )
-  return ingredients.map(row => row.ingredient)
+  return ingredients.map(row => ({
+    ...row.ingredient,
+    relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
+  }))
 }
 
 const getIngredients = async () => {
@@ -95,17 +103,13 @@ const removeIngredientFromRecipe = async (
   return result
 }
 
-const addSubRecipeToRecipe = async ({
-  parentRecipeId,
-  childRecipeId,
-}: {
-  parentRecipeId: string
-  childRecipeId: string
-}) => {
+const addSubRecipeToRecipe = async (
+  newSubRecipeInRecipeDTO: NewSubRecipeInRecipeDTO,
+) => {
   const newId = uuidv4()
   await db
     .insert(recipeSubRecipeSchema)
-    .values({ id: newId, parentId: parentRecipeId, childId: childRecipeId })
+    .values({ id: newId, ...newSubRecipeInRecipeDTO })
     .run()
 
   return newId
@@ -113,11 +117,18 @@ const addSubRecipeToRecipe = async ({
 
 const getRecipeSubRecipes = async (recipeId: string) => {
   const recipes = await db
-    .select({ recipe: recipeSchema })
+    .select({
+      recipe: recipeSchema,
+      recipeQuantity: recipeSubRecipeSchema.quantity,
+      recipeUnits: recipeSubRecipeSchema.units,
+    })
     .from(recipeSubRecipeSchema)
     .where(eq(recipeSubRecipeSchema.parentId, recipeId))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.childId, recipeSchema.id))
-  return recipes.map(row => row.recipe)
+  return recipes.map(row => ({
+    ...row.recipe,
+    relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
+  }))
 }
 
 const updateIngredient = async (

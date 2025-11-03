@@ -1,4 +1,10 @@
-import { Tooltip } from '@mui/material'
+import {
+  FormControl,
+  MenuItem,
+  Select,
+  TextField,
+  Tooltip,
+} from '@mui/material'
 import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
@@ -17,6 +23,7 @@ import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../../../signals'
+import { SPACING } from '../../../../../styles/consts'
 import { formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
@@ -70,6 +77,19 @@ function IngredientRow(props: {
     }
   }
 
+  const handleUnitsChange = (event: React.ChangeEvent<{ value: string }>) => {
+    // This function is just a placeholder since units are not editable in this view
+    event.preventDefault()
+    console.log('Units change attempted:', event.target.value)
+  }
+
+  const handleQuantityChange = (
+    event: React.ChangeEvent<{ value: string }>,
+  ) => {
+    event.preventDefault()
+    console.log('Quantity change attempted:', parseFloat(event.target.value))
+  }
+
   return (
     <React.Fragment>
       <TableRow
@@ -94,7 +114,7 @@ function IngredientRow(props: {
             )}
           </IconButton>
         </TableCell>
-        <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
+        <TableCell padding="none">{formatDisplayDate(row.createdAt)}</TableCell>
         <TableCell component="th" id={labelId} scope="row" padding="none">
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Icon name="ingredient" size={ICON_SIZE} /> {row.title}
@@ -107,23 +127,71 @@ function IngredientRow(props: {
           scope="row"
           padding="none"
         >
+          <TextField
+            size="small"
+            type="number"
+            value={row.quantity}
+            onChange={handleQuantityChange}
+            variant="outlined"
+          />
+        </TableCell>
+        <TableCell
+          align="left"
+          component="th"
+          id={labelId}
+          scope="row"
+          padding="none"
+        >
+          <FormControl size="small" sx={{ width: 120 }} required>
+            <Select
+              value={row.units}
+              onChange={e => handleUnitsChange(e)}
+              displayEmpty
+              variant="outlined"
+            >
+              <MenuItem value="" disabled>
+                {t('units')}
+              </MenuItem>
+              {Object.entries(ALL_UNITS).map(([key, value]) => (
+                <MenuItem key={key} value={value}>
+                  {t(value as keyof typeof ALL_UNITS)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </TableCell>
+        <TableCell
+          align="right"
+          component="th"
+          id={labelId}
+          scope="row"
+          padding="none"
+        >
           {row.cost}
         </TableCell>
         <TableCell align="center">
-          <Tooltip title={t('editIngredient')}>
-            <IconButton onClick={handleOpenEditModal}>
-              <Icon name="edit" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t('removeIngredientFromRecipe')}>
-            <IconButton onClick={handleOpenRemoveModal}>
-              <Icon name="close" />
-            </IconButton>
-          </Tooltip>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: SPACING.TINY.PX,
+              justifyContent: 'center',
+            }}
+          >
+            <Tooltip title={t('editIngredient')}>
+              <IconButton onClick={handleOpenEditModal}>
+                <Icon name="edit" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t('removeIngredientFromRecipe')}>
+              <IconButton onClick={handleOpenRemoveModal}>
+                <Icon name="close" />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">

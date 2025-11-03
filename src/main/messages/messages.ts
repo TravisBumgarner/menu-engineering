@@ -32,8 +32,10 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPE, async (_event, params) => {
 typedIpcMain.handle(CHANNEL.DB.ADD_SUB_RECIPE, async (_event, params) => {
   const newRecipeId = await queries.addRecipe(params.payload.newRecipe)
   const newSubRecipeRecipeLink = await queries.addSubRecipeToRecipe({
-    parentRecipeId: params.payload.parentRecipeId,
-    childRecipeId: newRecipeId,
+    parentId: params.payload.parentRecipeId,
+    childId: newRecipeId,
+    units: 'units', // Todo replace
+    quantity: 1, // Todo replace
   })
   return {
     type: 'add_sub_recipe_to_recipe',
@@ -49,8 +51,10 @@ typedIpcMain.handle(CHANNEL.DB.ADD_INGREDIENT, async (_event, params) => {
   // Ingredient can be added independently or directly to a recipe
   if (params.payload.recipeId && newIngredientId) {
     const newIngredientRecipeLink = await queries.addIngredientToRecipe({
-      ingredientId: newIngredientId,
-      recipeId: params.payload.recipeId,
+      childId: newIngredientId,
+      parentId: params.payload.recipeId,
+      units: 'units', // Todo replace
+      quantity: 1, // Todo replace
     })
     return {
       type: 'add_ingredient',
@@ -105,20 +109,14 @@ typedIpcMain.handle(
   CHANNEL.DB.ADD_EXISTING_TO_RECIPE,
   async (_event, params) => {
     if (params.type === 'ingredient') {
-      const result = await queries.addIngredientToRecipe({
-        ingredientId: params.childId,
-        recipeId: params.parentId,
-      })
+      const result = await queries.addIngredientToRecipe(params)
       return {
         type: 'add_existing_to_recipe',
         success: !!result,
       }
     }
-    if (params.type === 'recipe') {
-      const result = await queries.addSubRecipeToRecipe({
-        parentRecipeId: params.parentId,
-        childRecipeId: params.childId,
-      })
+    if (params.type === 'sub-recipe') {
+      const result = await queries.addSubRecipeToRecipe(params)
       return {
         type: 'add_existing_to_recipe',
         success: !!result,

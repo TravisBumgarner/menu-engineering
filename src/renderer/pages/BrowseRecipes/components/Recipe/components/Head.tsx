@@ -10,7 +10,14 @@ import { isSortable, SORTABLE_OPTIONS } from './consts'
 
 interface HeadCell {
   disablePadding: boolean
-  id: 'title' | 'cost' | 'actions' | 'createdAt'
+  id:
+    | 'title'
+    | 'cost'
+    | 'actions'
+    | 'createdAt'
+    | 'quantity'
+    | 'units'
+    | 'collapse'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
@@ -31,6 +38,13 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
   const headCells: readonly HeadCell[] = [
     {
+      id: 'collapse',
+      align: 'left',
+      disablePadding: false,
+      label: '',
+      width: '5%',
+    },
+    {
       id: 'createdAt',
       align: 'left',
       disablePadding: true,
@@ -42,21 +56,35 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       align: 'left',
       disablePadding: true,
       label: t('title'),
-      width: '50%',
+      width: '20%',
+    },
+    {
+      id: 'quantity',
+      align: 'right',
+      disablePadding: true,
+      label: t('quantity'),
+      width: '10%',
+    },
+    {
+      id: 'units',
+      align: 'right',
+      disablePadding: true,
+      label: t('units'),
+      width: '15%',
     },
     {
       id: 'cost',
       align: 'right',
       disablePadding: true,
       label: t('cost'),
-      width: '20%',
+      width: '10%',
     },
     {
       id: 'actions',
       align: 'center',
       disablePadding: false,
       label: t('actions'),
-      width: '10%',
+      width: '15%',
     },
   ]
 
@@ -69,7 +97,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell width={60} />
         {headCells.map(headCell => (
           <TableCell
             sx={{ width: headCell.width }}

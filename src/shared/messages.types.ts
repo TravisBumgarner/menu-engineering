@@ -1,8 +1,11 @@
 import {
   IngredientDTO,
   NewIngredientDTO,
+  NewIngredientInRecipeDTO,
   NewRecipeDTO,
+  NewSubRecipeInRecipeDTO,
   RecipeDTO,
+  RelationDTO,
 } from './recipe.types'
 
 export const CHANNEL = {
@@ -60,8 +63,8 @@ export type Invokes = {
     args: { id: string }
     result: {
       recipe: RecipeDTO | null
-      ingredients: Array<IngredientDTO>
-      subRecipes: Array<RecipeDTO>
+      ingredients: Array<IngredientDTO & { relation: RelationDTO }>
+      subRecipes: Array<RecipeDTO & { relation: RelationDTO }>
     }
   }
   [CHANNEL.DB.ADD_INGREDIENT]: {
@@ -90,11 +93,9 @@ export type Invokes = {
     result: { ingredients: Array<IngredientDTO> }
   }
   [CHANNEL.DB.ADD_EXISTING_TO_RECIPE]: {
-    args: {
-      childId: string
-      parentId: string
-      type: 'ingredient' | 'recipe'
-    }
+    args:
+      | (NewIngredientInRecipeDTO & { type: 'ingredient' })
+      | (NewSubRecipeInRecipeDTO & { type: 'sub-recipe' })
     result: { success: boolean }
   }
 }
