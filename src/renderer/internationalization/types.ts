@@ -48,6 +48,7 @@ export type TranslationKeys =
   | 'addIngredient'
   | 'editRecipe'
   | 'editIngredient'
+  | 'editIngredients'
   | 'updateRecipe'
   | 'updateIngredient'
   | 'deleteRecipe'
@@ -61,6 +62,7 @@ export type TranslationKeys =
   | 'selectAllRecipes'
   | 'recipeDetails'
   | 'ingredientDetails'
+  | 'unitsHelpText'
 
   // Form Labels and Placeholders
   | 'ingredientNamePlaceholder'

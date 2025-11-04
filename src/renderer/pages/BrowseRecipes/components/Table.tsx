@@ -10,7 +10,11 @@ import * as React from 'react'
 import { RECIPE_STATUS, RecipeDTO } from '../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
-import AddRow from './AddRow'
+// import AddRow from './AddRow'
+import { Button } from '@mui/material'
+import { useSignals } from '@preact/signals-react/runtime'
+import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
+import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
 import Filters, { FilterOptions } from './Filters'
 import Head from './Head'
 import RecipeRow from './Row'
@@ -38,11 +42,11 @@ function getComparator<Key extends keyof RecipeDTO>(
 }
 
 const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
+  useSignals()
   const { t } = useAppTranslation()
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('createdAt')
   const [page, setPage] = React.useState(0)
-  const [focusedRecipeId, setFocusedRecipeId] = React.useState<string>('')
 
   // Default filters: show draft and published, hide archived, show both in menu and not in menu
   const [filters, setFilters] = React.useState<FilterOptions>({
@@ -87,6 +91,12 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
     })
   }, [recipes, filters])
 
+  const handleAddRecipe = () => {
+    activeModalSignal.value = {
+      id: MODAL_ID.ADD_RECIPE_MODAL,
+    }
+  }
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0
@@ -120,15 +130,7 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`
 
-                return (
-                  <RecipeRow
-                    setFocusedRecipeId={setFocusedRecipeId}
-                    focusedRecipeId={focusedRecipeId}
-                    key={row.id}
-                    row={row}
-                    labelId={labelId}
-                  />
-                )
+                return <RecipeRow key={row.id} row={row} labelId={labelId} />
               })}
               {emptyRows > 0 && (
                 <TableRow
@@ -139,15 +141,23 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
                   <TableCell colSpan={8} />
                 </TableRow>
               )}
-              <AddRow
-                setFocusedRecipeId={setFocusedRecipeId}
-                focusedRecipeId={focusedRecipeId}
-              />
+              <TableRow>
+                <TableCell colSpan={8}>
+                  <Button
+                    sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
+                    onClick={handleAddRecipe}
+                    fullWidth
+                    variant="outlined"
+                  >
+                    {t('addRecipe')}
+                  </Button>
+                </TableCell>
+              </TableRow>
             </TableBody>
           </MuiTable>
         </TableContainer>
         <TablePagination
-          sx={focusedRecipeId ? { opacity: 0.1 } : {}}
+          sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
           component="div"
           count={filteredRecipes.length}
           rowsPerPage={ROWS_PER_PAGE}

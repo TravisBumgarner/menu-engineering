@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import MUIModal from '@mui/material/Modal'
@@ -10,9 +11,10 @@ interface ActiveModal {
   children: React.ReactNode | React.ReactNode[]
   closeCallback?: () => void
   sx?: SxProps
+  title: string
 }
 
-const Modal: FC<ActiveModal> = ({ children, closeCallback, sx }) => {
+const Modal: FC<ActiveModal> = ({ children, closeCallback, sx, title }) => {
   const handleClose = useCallback(
     (_event: unknown, reason?: string) => {
       if (closeCallback) closeCallback()
@@ -53,10 +55,14 @@ const Modal: FC<ActiveModal> = ({ children, closeCallback, sx }) => {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             paddingBottom: SPACING.SMALL.PX,
           }}
         >
+          <Typography variant="h5" component="h2">
+            {title}
+          </Typography>
           <IconButton component="button" onClick={handleClose}>
             <Icon name="close" size={24} />
           </IconButton>

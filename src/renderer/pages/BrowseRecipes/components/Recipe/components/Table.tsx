@@ -7,7 +7,11 @@ import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
 import { useMemo } from 'react'
-import { IngredientDTO, RecipeDTO } from '../../../../../../shared/recipe.types'
+import {
+  IngredientDTO,
+  RecipeDTO,
+  RelationDTO,
+} from '../../../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import Message from '../../../../../sharedComponents/Message'
@@ -44,8 +48,8 @@ const Table = ({
   subRecipes,
   recipe,
 }: {
-  ingredients: IngredientDTO[]
-  subRecipes: RecipeDTO[]
+  ingredients: (IngredientDTO & { relation: RelationDTO })[]
+  subRecipes: (RecipeDTO & { relation: RelationDTO })[]
   recipe: RecipeDTO
 }) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
@@ -73,6 +77,7 @@ const Table = ({
     page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
 
   const hasRows = ingredients.length + subRecipes.length > 0
+
   const selectedIds = useMemo(
     () =>
       ingredients
@@ -81,6 +86,7 @@ const Table = ({
         .concat([recipe.id]),
     [ingredients, subRecipes, recipe],
   )
+
   const visibleRows = React.useMemo(
     () =>
       [
@@ -107,9 +113,11 @@ const Table = ({
           />
           <TableBody>
             {!hasRows && (
-              <TableCell colSpan={8} sx={{ border: 0, paddingBottom: 0 }}>
-                <Message color="info" message={t('noDetails')} />
-              </TableCell>
+              <TableRow>
+                <TableCell colSpan={8} sx={{ border: 0, paddingBottom: 0 }}>
+                  <Message color="info" message={t('noDetails')} />
+                </TableCell>
+              </TableRow>
             )}
             {visibleRows.map((row, index) => {
               const labelId = `enhanced-table-checkbox-${index}`

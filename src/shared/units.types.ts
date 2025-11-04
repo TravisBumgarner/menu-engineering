@@ -16,7 +16,8 @@ export type WeightUnit = keyof typeof WEIGHT_UNIT
 
 export const GENERIC_UNIT = {
   units: 'units',
-}
+} as const
+
 export type GenericUnit = keyof typeof GENERIC_UNIT
 
 export const ALL_UNITS = {

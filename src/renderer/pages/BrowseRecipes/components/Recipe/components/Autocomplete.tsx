@@ -11,6 +11,7 @@ import Icon from '../../../../../sharedComponents/Icon'
 import { useState } from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import { RecipeDTO } from '../../../../../../shared/recipe.types'
+import { AllUnits } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
@@ -19,7 +20,8 @@ import { SPACING } from '../../../../../styles/consts'
 type Value = {
   label: string
   id: string
-  type: 'ingredient' | 'recipe'
+  type: 'ingredient' | 'sub-recipe'
+  units: AllUnits
 }
 
 const Autocomplete = ({
@@ -45,11 +47,13 @@ const Autocomplete = ({
           label: i.title,
           id: i.id,
           type: 'ingredient' as const,
+          units: i.units,
         })),
         ...recipes.recipes.map(r => ({
           label: r.title,
           id: r.id,
-          type: 'recipe' as const,
+          type: 'sub-recipe' as const,
+          units: r.units,
         })),
       ]
     },
@@ -58,7 +62,8 @@ const Autocomplete = ({
   const [selectedAutocomplete, setSelectedAutocomplete] = useState<{
     label: string
     id: string
-    type: 'ingredient' | 'recipe'
+    type: 'ingredient' | 'sub-recipe'
+    units: AllUnits
   } | null>(null)
 
   const {
@@ -71,6 +76,7 @@ const Autocomplete = ({
         childId: selectedAutocomplete.id,
         parentId: recipe.id,
         type: selectedAutocomplete.type,
+        units: selectedAutocomplete.units,
       })
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
       setSelectedAutocomplete(null)
@@ -82,16 +88,6 @@ const Autocomplete = ({
   })
 
   const handleChange = (event: unknown, value: Value | null) => {
-    handleAutocompleteSelect(value)
-  }
-
-  const handleAutocompleteSelect = (
-    value: {
-      label: string
-      id: string
-      type: 'ingredient' | 'recipe'
-    } | null,
-  ) => {
     setSelectedAutocomplete(value)
   }
 
@@ -136,7 +132,7 @@ const Autocomplete = ({
           return (
             <Box key={key} component="li" {...optionProps}>
               {option.type === 'ingredient' && <Icon name="ingredient" />}
-              {option.type === 'recipe' && <Icon name="recipe" />}
+              {option.type === 'sub-recipe' && <Icon name="recipe" />}
               &nbsp; {option.label}
             </Box>
           )

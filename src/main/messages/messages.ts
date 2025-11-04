@@ -43,7 +43,6 @@ typedIpcMain.handle(CHANNEL.DB.ADD_SUB_RECIPE, async (_event, params) => {
     parentId: params.payload.parentRecipeId,
     childId: newRecipeId,
     units: params.payload.units,
-    quantity: 1, // Todo replace
   })
   return {
     type: 'add_sub_recipe_to_recipe',
@@ -62,7 +61,6 @@ typedIpcMain.handle(CHANNEL.DB.ADD_INGREDIENT, async (_event, params) => {
       childId: newIngredientId,
       parentId: params.payload.recipeId,
       units: params.payload.units,
-      quantity: 1, // Todo replace
     })
     return {
       type: 'add_ingredient',

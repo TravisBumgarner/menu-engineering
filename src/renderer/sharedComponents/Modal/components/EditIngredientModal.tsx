@@ -118,12 +118,9 @@ const EditIngredientModal = ({
     }
 
   return (
-    <DefaultModal>
-      <Typography variant="h5" component="h2" gutterBottom>
-        {t('editIngredient')}: {ingredient.title}
-        {recipeId && ` (in ${recipeTitle})`}
-      </Typography>
-
+    <DefaultModal
+      title={`${t('editIngredient')}: ${ingredient.title}${recipeId ? ` (in ${recipeTitle})` : ''}`}
+    >
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={3}>
           <TextField
@@ -150,6 +147,7 @@ const EditIngredientModal = ({
           <FormControl size="small" fullWidth required>
             <InputLabel>{t('units')}</InputLabel>
             <Select
+              disabled
               value={formData.units}
               onChange={e =>
                 handleInputChange('units')(
@@ -165,6 +163,13 @@ const EditIngredientModal = ({
               ))}
             </Select>
           </FormControl>
+          <Typography
+            sx={{ marginTop: '0 !important' }}
+            variant="caption"
+            color="textSecondary"
+          >
+            {t('unitsHelpText')}
+          </Typography>
           <TextField
             size="small"
             label={t('cost')}

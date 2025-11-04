@@ -24,6 +24,7 @@ import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
+import { SPACING } from '../../../styles/consts'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -39,7 +40,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
   const [formData, setFormData] = useState<NewRecipeDTO>({
     title: '',
     produces: 0,
-    units: '',
+    units: ALL_UNITS.units,
     status: RECIPE_STATUS.draft,
     notes: '',
     showInMenu: false,
@@ -59,6 +60,8 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
+
         activeModalSignal.value = null
       } else {
         alert(t('failedToAddRecipe'))
@@ -75,6 +78,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
         payload: {
           newRecipe: args.newRecipe,
           parentRecipeId: args.parentRecipeId,
+          units: args.newRecipe.units,
         },
       }),
     onSuccess: async result => {
@@ -82,7 +86,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
         // Invalidate and refetch queries
         await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        alert(t('subRecipeAddedSuccessfully'))
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
         activeModalSignal.value = null
       } else {
         alert(t('failedToAddSubRecipe'))
@@ -94,7 +98,6 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('yyy', parentRecipe)
     e.preventDefault()
     if (parentRecipe) {
       await addSubRecipeMutation.mutate({
@@ -132,14 +135,11 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
     formData.produces <= 0
 
   return (
-    <DefaultModal>
-      <Typography variant="h5" component="h2" gutterBottom>
-        {t('addNewRecipe')}
-        {parentRecipe ? `to ${parentRecipe.title}` : ''}
-      </Typography>
-
+    <DefaultModal
+      title={`${t('addNewRecipe')} ${parentRecipe ? `to ${parentRecipe.title}` : ''}`}
+    >
       <Box component="form" onSubmit={handleSubmit}>
-        <Stack spacing={3}>
+        <Stack spacing={SPACING.MEDIUM.PX}>
           <TextField
             size="small"
             label={t('title')}
@@ -148,36 +148,42 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
             required
             fullWidth
           />
-
-          <TextField
-            size="small"
-            label={t('produces')}
-            type="number"
-            value={formData.produces}
-            onChange={handleInputChange('produces')}
-            required
-            fullWidth
-          />
-
-          <FormControl size="small" fullWidth required>
-            <InputLabel>{t('units')}</InputLabel>
-            <Select
-              value={formData.units}
-              onChange={e =>
-                handleInputChange('units')(
-                  e as React.ChangeEvent<HTMLInputElement>,
-                )
-              }
-              label={t('units')}
-            >
-              {Object.entries(ALL_UNITS).map(([key, value]) => (
-                <MenuItem key={key} value={value}>
-                  {t(value as keyof typeof ALL_UNITS)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
+          <Stack direction="row" spacing={SPACING.SMALL.PX}>
+            <TextField
+              size="small"
+              label={t('produces')}
+              type="number"
+              value={formData.produces}
+              onChange={handleInputChange('produces')}
+              required
+              fullWidth
+            />
+            <FormControl size="small" fullWidth required>
+              <InputLabel>{t('units')}</InputLabel>
+              <Select
+                value={formData.units}
+                onChange={e =>
+                  handleInputChange('units')(
+                    e as React.ChangeEvent<HTMLInputElement>,
+                  )
+                }
+                label={t('units')}
+              >
+                {Object.entries(ALL_UNITS).map(([key, value]) => (
+                  <MenuItem key={key} value={value}>
+                    {t(value as keyof typeof ALL_UNITS)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Stack>
+          <Typography
+            sx={{ marginTop: '0 !important' }}
+            variant="caption"
+            color="textSecondary"
+          >
+            {t('unitsHelpText')}
+          </Typography>
           <FormControl size="small" fullWidth required>
             <InputLabel>{t('status')}</InputLabel>
             <Select
@@ -194,7 +200,6 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
               </MenuItem>
             </Select>
           </FormControl>
-
           <TextField
             size="small"
             label={t('notes')}
@@ -204,7 +209,6 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
             rows={2}
             fullWidth
           />
-
           <FormControlLabel
             control={
               <Checkbox
@@ -214,7 +218,6 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
             }
             label={t('showInMenu')}
           />
-
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button onClick={handleCancel} variant="outlined" type="button">
               {t('cancel')}

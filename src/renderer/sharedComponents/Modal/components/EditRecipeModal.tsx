@@ -119,11 +119,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
     }
 
   return (
-    <DefaultModal>
-      <Typography variant="h5" component="h2" gutterBottom>
-        {t('editRecipe')}: {recipe.title}
-      </Typography>
-
+    <DefaultModal title={`${t('editRecipe')}: ${recipe.title}`}>
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={3}>
           <TextField
@@ -148,6 +144,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
           <FormControl size="small" fullWidth required>
             <InputLabel>{t('units')}</InputLabel>
             <Select
+              disabled
               value={formData.units}
               onChange={e =>
                 handleInputChange('units')(
@@ -163,6 +160,13 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
               ))}
             </Select>
           </FormControl>
+          <Typography
+            sx={{ marginTop: '0 !important' }}
+            variant="caption"
+            color="textSecondary"
+          >
+            {t('unitsHelpText')}
+          </Typography>
 
           <FormControl size="small" fullWidth required>
             <InputLabel>{t('status')}</InputLabel>
