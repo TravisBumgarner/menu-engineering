@@ -3,10 +3,12 @@ import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Toolbar from '@mui/material/Toolbar'
-import { Link, Link as RouterLink, useLocation } from 'react-router-dom'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { ROUTES } from '../consts'
 import { useAppTranslation } from '../hooks/useTranslation'
 import Icon from '../sharedComponents/Icon'
+import { MODAL_ID } from '../sharedComponents/Modal/Modal.consts'
+import { activeModalSignal } from '../signals'
 import { SPACING } from '../styles/consts'
 import LanguageSwitcher from './LanguageSwitcher'
 
@@ -67,11 +69,15 @@ const Navigation = () => {
             }}
           >
             <LanguageSwitcher />
-            <Link to={ROUTES.settings.href()}>
-              <Tooltip title={t('settings')}>
+            <Tooltip title={t('settings')}>
+              <Button
+                onClick={() =>
+                  (activeModalSignal.value = { id: MODAL_ID.SETTINGS_MODAL })
+                }
+              >
                 <Icon name="settings" />
-              </Tooltip>
-            </Link>
+              </Button>
+            </Tooltip>
           </Box>
         </Box>
       </Toolbar>
