@@ -6,7 +6,9 @@ export const recipeSchema = sqliteTable('recipes', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
   produces: real('produces').notNull(),
-  units: text('units').notNull(),
+  units: text('units', {
+    enum: Object.values(ALL_UNITS) as [AllUnits, ...AllUnits[]],
+  }).notNull(),
 
   status: text('status', {
     enum: [
@@ -52,7 +54,7 @@ export const recipeIngredientSchema = sqliteTable('recipe_ingredients', {
   id: text('id').primaryKey(),
   parentId: text('recipe_id').notNull(),
   childId: text('ingredient_id').notNull(),
-  quantity: real('quantity').notNull(),
+  quantity: real('quantity').default(0),
   units: text('units', {
     enum: Object.values(ALL_UNITS) as [AllUnits, ...AllUnits[]],
   }).notNull(),
@@ -68,7 +70,7 @@ export const recipeSubRecipeSchema = sqliteTable('recipe_sub_recipes', {
   id: text('id').primaryKey(),
   parentId: text('recipe_id').notNull(),
   childId: text('child_recipe_id').notNull(),
-  quantity: real('quantity').notNull(),
+  quantity: real('quantity').default(0),
   units: text('units', {
     enum: Object.values(ALL_UNITS) as [AllUnits, ...AllUnits[]],
   }).notNull(),

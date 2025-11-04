@@ -34,7 +34,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
     useState<NewIngredientDTO>({
       title: '',
       quantity: 0,
-      units: ALL_UNITS.cups, // Todo replace
+      units: ALL_UNITS.cups,
       notes: '',
       cost: 0,
     })
@@ -54,7 +54,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           payload: {
             newIngredient,
             recipeId,
-            units: ALL_UNITS.cups, // Todo replace
+            units: newIngredient.units,
           },
         })
         .then(result => ({ ...result, shouldClose })),
@@ -72,7 +72,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           setIngredientFormData({
             title: '',
             quantity: 0,
-            units: ALL_UNITS.cups, // Todo replace
+            units: ALL_UNITS.cups,
             notes: '',
             cost: 0,
           })

@@ -45,7 +45,6 @@ export type IngredientDTO = NewIngredientDTO & {
 export type NewSubRecipeInRecipeDTO = {
   parentId: string
   childId: string
-  quantity: number
   units: AllUnits
 }
 
@@ -58,7 +57,6 @@ export type SubRecipeInRecipeDTO = NewSubRecipeInRecipeDTO & {
 export type NewIngredientInRecipeDTO = {
   parentId: string
   childId: string
-  quantity: number
   units: AllUnits
 }
 

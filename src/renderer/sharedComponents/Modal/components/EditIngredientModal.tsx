@@ -118,12 +118,9 @@ const EditIngredientModal = ({
     }
 
   return (
-    <DefaultModal>
-      <Typography variant="h5" component="h2" gutterBottom>
-        {t('editIngredient')}: {ingredient.title}
-        {recipeId && ` (in ${recipeTitle})`}
-      </Typography>
-
+    <DefaultModal
+      title={`${t('editIngredient')}: ${ingredient.title}${recipeId ? ` (in ${recipeTitle})` : ''}`}
+    >
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={3}>
           <TextField

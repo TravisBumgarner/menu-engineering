@@ -119,11 +119,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
     }
 
   return (
-    <DefaultModal>
-      <Typography variant="h5" component="h2" gutterBottom>
-        {t('editRecipe')}: {recipe.title}
-      </Typography>
-
+    <DefaultModal title={`${t('editRecipe')}: ${recipe.title}`}>
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={3}>
           <TextField

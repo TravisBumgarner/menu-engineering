@@ -78,7 +78,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
         payload: {
           newRecipe: args.newRecipe,
           parentRecipeId: args.parentRecipeId,
-          units: ALL_UNITS.cups, // Todo replace
+          units: args.newRecipe.units,
         },
       }),
     onSuccess: async result => {
