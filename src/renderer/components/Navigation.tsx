@@ -10,7 +10,6 @@ import Icon from '../sharedComponents/Icon'
 import { MODAL_ID } from '../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../signals'
 import { SPACING } from '../styles/consts'
-import LanguageSwitcher from './LanguageSwitcher'
 
 const NAV_ROUTES: Array<keyof typeof ROUTES> = [
   'recipes',
@@ -68,7 +67,6 @@ const Navigation = () => {
               alignItems: 'center',
             }}
           >
-            <LanguageSwitcher />
             <Tooltip title={t('settings')}>
               <Button
                 onClick={() =>

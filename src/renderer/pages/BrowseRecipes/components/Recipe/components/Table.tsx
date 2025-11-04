@@ -103,7 +103,12 @@ const Table = ({
     <Box sx={{ width: '100%', tableLayout: 'fixed' }}>
       <TableContainer>
         <MuiTable
-          sx={{ backgroundColor: PALETTE.primary[50] }}
+          sx={{
+            backgroundColor: theme =>
+              theme.palette.mode === 'dark'
+                ? PALETTE.primary[800]
+                : PALETTE.primary[50],
+          }}
           aria-labelledby="tableTitle"
           size="medium"
         >

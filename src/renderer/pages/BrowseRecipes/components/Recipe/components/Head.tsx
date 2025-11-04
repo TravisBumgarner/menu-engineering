@@ -103,7 +103,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             sx={{
               width: headCell.width,
               padding: `0 ${SPACING.TINY.PX}`,
-              backgroundColor: PALETTE.primary[100],
+
+              backgroundColor: theme =>
+                theme.palette.mode === 'dark'
+                  ? PALETTE.primary[900]
+                  : PALETTE.primary[100],
             }}
             key={headCell.id}
             align={headCell.align}

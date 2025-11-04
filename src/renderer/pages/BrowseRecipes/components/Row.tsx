@@ -13,7 +13,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
-import { PALETTE, SPACING } from '../../../styles/consts'
+import { SPACING } from '../../../styles/consts'
 import { formatDisplayDate } from '../../../utilities'
 import Recipe from './Recipe'
 
@@ -34,10 +34,10 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
         tabIndex={-1}
         key={row.id}
         sx={{
-          backgroundColor: isOpen.value ? PALETTE.grayscale[50] : 'inherit',
           '& > *': {
             borderBottom: 'unset',
             opacity: opacity.value,
+            fontWeight: 900,
           },
         }}
       >

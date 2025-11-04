@@ -4,7 +4,7 @@ import { CHANNEL } from '../../../../../shared/messages.types'
 import { QUERY_KEYS } from '../../../../consts'
 import { useAppTranslation } from '../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../ipcMessenger'
-import { PALETTE, SPACING } from '../../../../styles/consts'
+import { SPACING } from '../../../../styles/consts'
 import Table from './components/Table'
 
 const Recipe = ({ id }: { id: string }) => {
@@ -42,7 +42,6 @@ const Recipe = ({ id }: { id: string }) => {
     <Box
       sx={{
         padding: SPACING.SMALL.PX,
-        backgroundColor: PALETTE.grayscale[50],
       }}
     >
       <Table
