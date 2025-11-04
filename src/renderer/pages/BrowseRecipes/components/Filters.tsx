@@ -5,11 +5,11 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Typography,
 } from '@mui/material'
 import React from 'react'
 import { RECIPE_STATUS, RecipeStatus } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import { SPACING } from '../../../styles/consts'
 
 export interface FilterOptions {
   status: RecipeStatus[]
@@ -45,17 +45,10 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
       sx={{
         display: 'flex',
         gap: 2,
-        alignItems: 'center',
-        padding: 2,
-        backgroundColor: 'background.paper',
-        borderRadius: 1,
-        marginBottom: 2,
+        justifyContent: 'flex-end',
+        padding: SPACING.SMALL.PX,
       }}
     >
-      <Typography variant="h6" component="h2" sx={{ marginRight: 2 }}>
-        {t('filters')}:
-      </Typography>
-
       <FormControl size="small" sx={{ minWidth: 180 }}>
         <InputLabel>{t('status')}</InputLabel>
         <Select

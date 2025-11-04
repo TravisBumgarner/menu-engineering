@@ -1,3 +1,4 @@
+import { Button } from '@mui/material'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import MuiTable from '@mui/material/Table'
@@ -14,7 +15,6 @@ import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
 import EnhancedTableHead from './Head'
 import IngredientRow from './Row'
-import EnhancedTableToolbar from './Toolbar'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -39,8 +39,8 @@ function getComparator<Key extends keyof IngredientDTO>(
 }
 
 const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
-  const [order, setOrder] = React.useState<'asc' | 'desc'>('asc')
-  const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO>('title')
+  const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
+  const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO>('createdAt')
   const [page, setPage] = React.useState(0)
   const { t } = useAppTranslation()
 
@@ -78,7 +78,6 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar onAddIngredient={handleOpenAddIngredientModal} />
         <TableContainer>
           <MuiTable
             sx={{ minWidth: 750 }}
@@ -107,6 +106,18 @@ const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
+              <TableRow>
+                <TableCell colSpan={8}>
+                  <Button
+                    size="small"
+                    onClick={handleOpenAddIngredientModal}
+                    fullWidth
+                    variant="outlined"
+                  >
+                    {t('addIngredient')}
+                  </Button>
+                </TableCell>
+              </TableRow>
             </TableBody>
           </MuiTable>
         </TableContainer>

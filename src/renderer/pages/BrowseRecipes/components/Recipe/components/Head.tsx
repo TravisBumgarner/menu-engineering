@@ -6,6 +6,7 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
+import { PALETTE, SPACING } from '../../../../../styles/consts'
 import { isSortable, SORTABLE_OPTIONS } from './consts'
 
 interface HeadCell {
@@ -42,14 +43,14 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       align: 'left',
       disablePadding: false,
       label: '',
-      width: '5%',
+      width: '2%',
     },
     {
       id: 'createdAt',
       align: 'left',
       disablePadding: true,
       label: t('created'),
-      width: '20%',
+      width: '10%',
     },
     {
       id: 'title',
@@ -63,14 +64,14 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       align: 'right',
       disablePadding: true,
       label: t('quantity'),
-      width: '10%',
+      width: '5%',
     },
     {
       id: 'units',
-      align: 'right',
+      align: 'left',
       disablePadding: true,
       label: t('units'),
-      width: '15%',
+      width: '5%',
     },
     {
       id: 'cost',
@@ -83,7 +84,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       id: 'actions',
       align: 'center',
       disablePadding: false,
-      label: t('actions'),
+      label: '',
       width: '15%',
     },
   ]
@@ -99,10 +100,13 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       <TableRow>
         {headCells.map(headCell => (
           <TableCell
-            sx={{ width: headCell.width }}
+            sx={{
+              width: headCell.width,
+              padding: `0 ${SPACING.TINY.PX}`,
+              backgroundColor: PALETTE.primary[100],
+            }}
             key={headCell.id}
             align={headCell.align}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             {isSortable(headCell.id) ? (

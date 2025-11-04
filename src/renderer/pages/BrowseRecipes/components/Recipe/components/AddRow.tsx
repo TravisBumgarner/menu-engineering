@@ -42,19 +42,18 @@ const AddRow = ({
           sx={{
             display: 'flex',
             gap: SPACING.MEDIUM.PX,
-            alignItems: 'center',
+            alignItems: 'end',
           }}
         >
-          <Box sx={{ flexGrow: 1, display: 'flex', gap: 1 }}>
-            <Autocomplete
-              selectedIds={selectedIds}
-              handleAddSubRecipe={handleAddSubRecipe}
-              handleAddIngredient={handleAddIngredient}
-              recipe={recipe}
-            />
-          </Box>
+          <Autocomplete
+            selectedIds={selectedIds}
+            handleAddSubRecipe={handleAddSubRecipe}
+            handleAddIngredient={handleAddIngredient}
+            recipe={recipe}
+          />
           <Tooltip title={t('addIngredient')}>
             <Button
+              size="small"
               variant="outlined"
               onClick={handleAddIngredient}
               startIcon={<Icon name="add" />}
@@ -64,6 +63,7 @@ const AddRow = ({
           </Tooltip>
           <Tooltip title={t('addRecipe')}>
             <Button
+              size="small"
               variant="outlined"
               onClick={handleAddSubRecipe}
               startIcon={<Icon name="add" />}

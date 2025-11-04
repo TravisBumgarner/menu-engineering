@@ -97,7 +97,10 @@ const Autocomplete = ({
         size="small"
         disablePortal
         options={data || []}
-        sx={{ flexGrow: 1 }}
+        sx={{
+          flexGrow: 1,
+          margin: 0,
+        }}
         onChange={handleChange}
         noOptionsText={
           <Box
@@ -138,11 +141,17 @@ const Autocomplete = ({
           )
         }}
         renderInput={params => (
-          <TextField {...params} label={t('addExisting')} />
+          <TextField
+            {...params}
+            size="small"
+            variant="standard"
+            label={t('addExisting')}
+          />
         )}
       />
       <Button
         variant="outlined"
+        size="small"
         disabled={!selectedAutocomplete || addExistingToRecipeIsLoading}
         onClick={() => addExistingToRecipe()}
       >

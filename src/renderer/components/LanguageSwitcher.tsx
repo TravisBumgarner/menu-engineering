@@ -1,16 +1,17 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { FormControl, MenuItem, Select } from '@mui/material'
 import { useAppTranslation } from '../hooks/useTranslation'
 
 const LanguageSwitcher = () => {
-  const { changeLanguage, currentLanguage } = useAppTranslation()
+  const { changeLanguage, currentLanguage, t } = useAppTranslation()
 
   return (
     <FormControl size="small" sx={{ minWidth: 80 }}>
-      <InputLabel>Lang</InputLabel>
       <Select
+        size="small"
+        variant="standard"
         value={currentLanguage}
         onChange={e => changeLanguage(e.target.value)}
-        label="Lang"
+        label={t('language')}
       >
         <MenuItem value="en">EN</MenuItem>
         <MenuItem value="es">ES</MenuItem>

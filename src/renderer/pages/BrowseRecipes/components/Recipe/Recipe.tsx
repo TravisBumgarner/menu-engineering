@@ -41,7 +41,7 @@ const Recipe = ({ id }: { id: string }) => {
   return (
     <Box
       sx={{
-        padding: SPACING.MEDIUM.PX,
+        padding: SPACING.SMALL.PX,
         backgroundColor: PALETTE.grayscale[50],
       }}
     >

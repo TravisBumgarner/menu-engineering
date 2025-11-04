@@ -31,6 +31,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
   const headCells: readonly HeadCell[] = [
     {
+      id: 'createdAt',
+      numeric: false,
+      disablePadding: true,
+      label: t('created'),
+    },
+    {
       id: 'title',
       numeric: false,
       disablePadding: true,

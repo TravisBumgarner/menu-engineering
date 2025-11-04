@@ -7,10 +7,11 @@ import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
 import { RecipeDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import { SPACING } from '../../../styles/consts'
 
 interface HeadCell {
   disablePadding: boolean
-  id: keyof RecipeDTO | 'actions'
+  id: keyof RecipeDTO | 'actions' | 'collapse'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
@@ -29,6 +30,13 @@ function Head({ onRequestSort, order, orderBy }: Props) {
   const { t } = useAppTranslation()
 
   const headCells: readonly HeadCell[] = [
+    {
+      id: 'collapse',
+      align: 'left',
+      disablePadding: true,
+      label: '',
+      width: '4%',
+    },
     {
       id: 'createdAt',
       align: 'left',
@@ -59,14 +67,14 @@ function Head({ onRequestSort, order, orderBy }: Props) {
     },
     {
       id: 'status',
-      align: 'center',
+      align: 'left',
       disablePadding: false,
       label: t('status'),
       width: '10%',
     },
     {
       id: 'showInMenu',
-      align: 'center',
+      align: 'left',
       disablePadding: false,
       label: t('showInMenu'),
       width: '15%',
@@ -75,8 +83,8 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       id: 'actions',
       align: 'center',
       disablePadding: false,
-      label: t('actions'),
-      width: '10%',
+      label: '',
+      width: '5%',
     },
   ]
 
@@ -88,16 +96,14 @@ function Head({ onRequestSort, order, orderBy }: Props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell sx={{ width: '7%' }} />
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
             align={headCell.align}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width }}
+            sx={{ width: headCell.width, padding: `0 ${SPACING.SMALL.PX}` }}
           >
-            {headCell.id === 'actions' ? (
+            {headCell.id === 'actions' || headCell.id === 'collapse' ? (
               headCell.label
             ) : (
               <TableSortLabel

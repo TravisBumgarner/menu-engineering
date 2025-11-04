@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
 import MuiTable from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -114,61 +113,61 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
       <Filters filters={filters} onFiltersChange={handleFiltersChange} />
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer>
-          <MuiTable
-            sx={{ minWidth: 750, tableLayout: 'fixed' }}
-            aria-labelledby="tableTitle"
-            size="medium"
-          >
-            <Head
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`
+      <TableContainer>
+        <MuiTable
+          sx={{ minWidth: 750, tableLayout: 'fixed' }}
+          aria-labelledby="tableTitle"
+          size="medium"
+        >
+          <Head
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+          />
+          <TableBody>
+            {visibleRows.map((row, index) => {
+              const labelId = `enhanced-table-checkbox-${index}`
 
-                return <RecipeRow key={row.id} row={row} labelId={labelId} />
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={8} />
-                </TableRow>
-              )}
-              <TableRow>
-                <TableCell colSpan={8}>
-                  <Button
-                    sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
-                    onClick={handleAddRecipe}
-                    fullWidth
-                    variant="outlined"
-                  >
-                    {t('addRecipe')}
-                  </Button>
-                </TableCell>
+              return <RecipeRow key={row.id} row={row} labelId={labelId} />
+            })}
+            {emptyRows > 0 && (
+              <TableRow
+                style={{
+                  height: 53 * emptyRows,
+                }}
+              >
+                <TableCell colSpan={8} />
               </TableRow>
-            </TableBody>
-          </MuiTable>
-        </TableContainer>
-        <TablePagination
-          sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
-          component="div"
-          count={filteredRecipes.length}
-          rowsPerPage={ROWS_PER_PAGE}
-          rowsPerPageOptions={[]}
-          page={page}
-          onPageChange={handleChangePage}
-          labelDisplayedRows={({ from, to, count }) =>
-            `${from}–${to} ${t('outOf')} ${count}`
-          }
-        />
-      </Paper>
+            )}
+            <TableRow>
+              <TableCell colSpan={8}>
+                <Button
+                  size="small"
+                  sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
+                  onClick={handleAddRecipe}
+                  fullWidth
+                  variant="outlined"
+                >
+                  {t('addRecipe')}
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </MuiTable>
+      </TableContainer>
+      <TablePagination
+        sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
+        size="small"
+        component="div"
+        count={filteredRecipes.length}
+        rowsPerPage={ROWS_PER_PAGE}
+        rowsPerPageOptions={[]}
+        page={page}
+        onPageChange={handleChangePage}
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}–${to} ${t('outOf')} ${count}`
+        }
+      />
     </Box>
   )
 }
