@@ -63,6 +63,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   recipeDetails: 'Recipe Details',
   ingredientDetails: 'Ingredient Details',
   noDetails: 'No Details',
+  unitsHelpText: 'Note - Units cannot be changed later.',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'e.g. Flour, Salt, Olive Oil',

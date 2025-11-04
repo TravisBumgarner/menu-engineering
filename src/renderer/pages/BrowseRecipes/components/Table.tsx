@@ -10,7 +10,10 @@ import * as React from 'react'
 import { RECIPE_STATUS, RecipeDTO } from '../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
-import AddRow from './AddRow'
+// import AddRow from './AddRow'
+import { Button } from '@mui/material'
+import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
+import { activeModalSignal } from '../../../signals'
 import Filters, { FilterOptions } from './Filters'
 import Head from './Head'
 import RecipeRow from './Row'
@@ -87,6 +90,12 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
     })
   }, [recipes, filters])
 
+  const handleAddRecipe = () => {
+    activeModalSignal.value = {
+      id: MODAL_ID.ADD_RECIPE_MODAL,
+    }
+  }
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0
@@ -139,12 +148,15 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
                   <TableCell colSpan={8} />
                 </TableRow>
               )}
-              <AddRow
+              {/* <AddRow
                 setFocusedRecipeId={setFocusedRecipeId}
                 focusedRecipeId={focusedRecipeId}
-              />
+              /> */}
             </TableBody>
           </MuiTable>
+          <Button onClick={handleAddRecipe} fullWidth variant="outlined">
+            {t('addRecipe')}
+          </Button>
         </TableContainer>
         <TablePagination
           sx={focusedRecipeId ? { opacity: 0.1 } : {}}

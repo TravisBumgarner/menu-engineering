@@ -63,6 +63,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   recipeDetails: 'Detalles de Receta',
   ingredientDetails: 'Detalles de Ingrediente',
   noDetails: 'Sin detalles',
+  unitsHelpText: 'Nota - Las unidades no se pueden cambiar más tarde.',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'ej. Harina, Sal, Aceite de Oliva',

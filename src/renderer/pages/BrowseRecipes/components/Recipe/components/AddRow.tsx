@@ -2,17 +2,18 @@ import { Button, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import { useState } from 'react'
 import { RecipeDTO } from '../../../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import Icon from '../../../../../sharedComponents/Icon'
 import { SPACING } from '../../../../../styles/consts'
-import AddIngredientRow from './AddIngredientRow'
-import AddSubRecipeRow from './AddSubRecipeRow'
+// import AddIngredientRow from './AddIngredientRow'
+// import AddSubRecipeRow from './AddSubRecipeRow'
+import { MODAL_ID } from '../../../../../sharedComponents/Modal/Modal.consts'
+import { activeModalSignal } from '../../../../../signals'
 import Autocomplete from './Autocomplete'
 import { ADD_ROW_HEIGHT } from './consts'
 
-type RowMode = 'default' | 'addIngredient' | 'addSubRecipe'
+// type RowMode = 'default' | 'addIngredient' | 'addSubRecipe'
 
 const AddRow = ({
   recipe,
@@ -22,27 +23,41 @@ const AddRow = ({
   selectedIds: string[]
 }) => {
   const { t } = useAppTranslation()
-  const [rowMode, setRowMode] = useState<RowMode>('default')
+  // const [rowMode, setRowMode] = useState<RowMode>('default')
+
+  // const handleAddIngredient = () => {
+  //   setRowMode('addIngredient')
+  // }
+
+  // const handleAddSubRecipe = () => {
+  //   setRowMode('addSubRecipe')
+  // }
+
+  // const handleCancel = () => {
+  //   setRowMode('default')
+  // }
+
+  // Render different rows based on mode
+  // if (rowMode === 'addIngredient') {
+  //   return <AddIngredientRow recipe={recipe} onCancel={handleCancel} />
+  // }
+
+  // if (rowMode === 'addSubRecipe') {
+  //   return <AddSubRecipeRow parentRecipe={recipe} onCancel={handleCancel} />
+  // }
 
   const handleAddIngredient = () => {
-    setRowMode('addIngredient')
+    activeModalSignal.value = {
+      id: MODAL_ID.ADD_INGREDIENT_MODAL,
+      recipe,
+    }
   }
 
   const handleAddSubRecipe = () => {
-    setRowMode('addSubRecipe')
-  }
-
-  const handleCancel = () => {
-    setRowMode('default')
-  }
-
-  // Render different rows based on mode
-  if (rowMode === 'addIngredient') {
-    return <AddIngredientRow recipe={recipe} onCancel={handleCancel} />
-  }
-
-  if (rowMode === 'addSubRecipe') {
-    return <AddSubRecipeRow parentRecipe={recipe} onCancel={handleCancel} />
+    activeModalSignal.value = {
+      id: MODAL_ID.ADD_RECIPE_MODAL,
+      parentRecipe: recipe,
+    }
   }
 
   // Default row with buttons

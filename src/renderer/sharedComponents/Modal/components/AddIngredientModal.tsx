@@ -33,7 +33,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
     useState<NewIngredientDTO>({
       title: '',
       quantity: 0,
-      units: '',
+      units: ALL_UNITS.cups, // Todo replace
       notes: '',
       cost: 0,
     })
@@ -53,6 +53,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           payload: {
             newIngredient,
             recipeId,
+            units: ALL_UNITS.cups, // Todo replace
           },
         })
         .then(result => ({ ...result, shouldClose })),
@@ -69,7 +70,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           setIngredientFormData({
             title: '',
             quantity: 0,
-            units: '',
+            units: ALL_UNITS.cups, // Todo replace
             notes: '',
             cost: 0,
           })
@@ -162,6 +163,13 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               ))}
             </Select>
           </FormControl>
+          <Typography
+            sx={{ marginTop: '0 !important' }}
+            variant="caption"
+            color="textSecondary"
+          >
+            {t('unitsHelpText')}
+          </Typography>
 
           <TextField
             size="small"

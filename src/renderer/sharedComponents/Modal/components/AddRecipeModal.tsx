@@ -39,7 +39,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
   const [formData, setFormData] = useState<NewRecipeDTO>({
     title: '',
     produces: 0,
-    units: '',
+    units: ALL_UNITS.units,
     status: RECIPE_STATUS.draft,
     notes: '',
     showInMenu: false,
@@ -75,6 +75,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
         payload: {
           newRecipe: args.newRecipe,
           parentRecipeId: args.parentRecipeId,
+          units: ALL_UNITS.cups, // Todo replace
         },
       }),
     onSuccess: async result => {
@@ -82,7 +83,6 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
         // Invalidate and refetch queries
         await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        alert(t('subRecipeAddedSuccessfully'))
         activeModalSignal.value = null
       } else {
         alert(t('failedToAddSubRecipe'))
@@ -177,6 +177,14 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
               ))}
             </Select>
           </FormControl>
+
+          <Typography
+            sx={{ marginTop: '0 !important' }}
+            variant="caption"
+            color="textSecondary"
+          >
+            {t('unitsHelpText')}
+          </Typography>
 
           <FormControl size="small" fullWidth required>
             <InputLabel>{t('status')}</InputLabel>

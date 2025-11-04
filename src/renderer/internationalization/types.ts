@@ -61,6 +61,7 @@ export type TranslationKeys =
   | 'selectAllRecipes'
   | 'recipeDetails'
   | 'ingredientDetails'
+  | 'unitsHelpText'
 
   // Form Labels and Placeholders
   | 'ingredientNamePlaceholder'
