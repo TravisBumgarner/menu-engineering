@@ -107,9 +107,11 @@ const Table = ({
           />
           <TableBody>
             {!hasRows && (
-              <TableCell colSpan={8} sx={{ border: 0, paddingBottom: 0 }}>
-                <Message color="info" message={t('noDetails')} />
-              </TableCell>
+              <TableRow>
+                <TableCell colSpan={8} sx={{ border: 0, paddingBottom: 0 }}>
+                  <Message color="info" message={t('noDetails')} />
+                </TableCell>
+              </TableRow>
             )}
             {visibleRows.map((row, index) => {
               const labelId = `enhanced-table-checkbox-${index}`
