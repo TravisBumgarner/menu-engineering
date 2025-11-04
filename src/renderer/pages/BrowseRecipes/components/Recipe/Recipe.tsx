@@ -14,7 +14,6 @@ const Recipe = ({ id }: { id: string }) => {
     queryKey: [QUERY_KEYS.RECIPE, id],
     queryFn: async () => {
       if (!id) throw new Error(t('recipeNotFound'))
-      console.log('fetching recipe with id', id)
 
       const response = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE, {
         id,

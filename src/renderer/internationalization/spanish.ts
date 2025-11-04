@@ -49,6 +49,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   addIngredient: 'Agregar Ingrediente',
   editRecipe: 'Editar Receta',
   editIngredient: 'Editar Ingrediente',
+  editIngredients: 'Editar Ingredientes',
   updateRecipe: 'Actualizar Receta',
   updateIngredient: 'Actualizar Ingrediente',
   deleteRecipe: 'Eliminar Receta',
@@ -63,7 +64,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   recipeDetails: 'Detalles de Receta',
   ingredientDetails: 'Detalles de Ingrediente',
   noDetails: 'Sin detalles',
-  unitsHelpText: 'Nota - Las unidades no se pueden cambiar más tarde.',
+  unitsHelpText: 'Nota - Las unidades solo se pueden establecer al crear',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'ej. Harina, Sal, Aceite de Oliva',

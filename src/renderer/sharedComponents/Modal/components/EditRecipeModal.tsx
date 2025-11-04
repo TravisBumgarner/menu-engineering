@@ -148,6 +148,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
           <FormControl size="small" fullWidth required>
             <InputLabel>{t('units')}</InputLabel>
             <Select
+              disabled
               value={formData.units}
               onChange={e =>
                 handleInputChange('units')(
@@ -163,6 +164,13 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
               ))}
             </Select>
           </FormControl>
+          <Typography
+            sx={{ marginTop: '0 !important' }}
+            variant="caption"
+            color="textSecondary"
+          >
+            {t('unitsHelpText')}
+          </Typography>
 
           <FormControl size="small" fullWidth required>
             <InputLabel>{t('status')}</InputLabel>

@@ -150,6 +150,7 @@ const EditIngredientModal = ({
           <FormControl size="small" fullWidth required>
             <InputLabel>{t('units')}</InputLabel>
             <Select
+              disabled
               value={formData.units}
               onChange={e =>
                 handleInputChange('units')(
@@ -165,6 +166,13 @@ const EditIngredientModal = ({
               ))}
             </Select>
           </FormControl>
+          <Typography
+            sx={{ marginTop: '0 !important' }}
+            variant="caption"
+            color="textSecondary"
+          >
+            {t('unitsHelpText')}
+          </Typography>
           <TextField
             size="small"
             label={t('cost')}

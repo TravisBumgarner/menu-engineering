@@ -16,7 +16,7 @@ import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
-import { activeModalSignal } from '../../../../../signals'
+import { activeModalSignal, activeRecipeIdSignal } from '../../../../../signals'
 import { formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
@@ -33,7 +33,6 @@ function SubRecipeRow(props: {
   const subRecipeCostQuery = useQuery({
     queryKey: [QUERY_KEYS.RECIPE_COST],
     queryFn: async () => {
-      console.log('calcin new cost')
       const result = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE_COST, {
         id: row.id,
       })
@@ -106,6 +105,10 @@ function SubRecipeRow(props: {
     if (!isNaN(newQuantity)) {
       updateSubRecipeRelationMutation.mutate({ quantity: newQuantity })
     }
+  }
+
+  const handleEditIngredients = () => {
+    activeRecipeIdSignal.value = row.id
   }
 
   const handleOpenRemoveModal = () => {
@@ -208,6 +211,11 @@ function SubRecipeRow(props: {
           <Tooltip title={t('editRecipe')}>
             <IconButton onClick={handleOpenEditModal}>
               <Icon name="edit" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={t('editIngredients')}>
+            <IconButton onClick={handleEditIngredients}>
+              <Icon name="recipe" />
             </IconButton>
           </Tooltip>
           <Tooltip title={t('remove')}>

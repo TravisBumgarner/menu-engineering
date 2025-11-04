@@ -117,57 +117,55 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
     !ingredientFormData.units.trim()
 
   return (
-    <DefaultModal>
-      <Typography variant="h5" component="h2" gutterBottom>
-        {recipe
+    <DefaultModal
+      title={
+        recipe
           ? `${t('addNewIngredient')} to ${recipe.title}`
-          : t('addNewIngredient')}
-      </Typography>
-
+          : t('addNewIngredient')
+      }
+    >
       <Box component="form">
         <Stack spacing={SPACING.MEDIUM.PX}>
-          <Stack spacing={SPACING.SMALL.PX}>
+          <TextField
+            size="small"
+            label={t('ingredientName')}
+            value={ingredientFormData.title}
+            onChange={handleInputChange('title')}
+            required
+            fullWidth
+            placeholder={t('ingredientNamePlaceholder')}
+          />
+
+          <Stack spacing={SPACING.SMALL.PX} direction="row">
             <TextField
               size="small"
-              label={t('ingredientName')}
-              value={ingredientFormData.title}
-              onChange={handleInputChange('title')}
+              label={t('quantity')}
+              type="number"
+              value={ingredientFormData.quantity}
+              onChange={handleInputChange('quantity')}
               required
               fullWidth
-              placeholder={t('ingredientNamePlaceholder')}
+              slotProps={{ htmlInput: { min: 0, step: 'any' } }}
             />
 
-            <Stack spacing={SPACING.SMALL.PX} direction="row">
-              <TextField
-                size="small"
-                label={t('quantity')}
-                type="number"
-                value={ingredientFormData.quantity}
-                onChange={handleInputChange('quantity')}
-                required
-                fullWidth
-                slotProps={{ htmlInput: { min: 0, step: 'any' } }}
-              />
-
-              <FormControl size="small" fullWidth required>
-                <InputLabel>{t('units')}</InputLabel>
-                <Select
-                  value={ingredientFormData.units}
-                  onChange={e =>
-                    handleInputChange('units')(
-                      e as React.ChangeEvent<HTMLInputElement>,
-                    )
-                  }
-                  label={t('units')}
-                >
-                  {Object.entries(ALL_UNITS).map(([key, value]) => (
-                    <MenuItem key={key} value={value}>
-                      {t(value as keyof typeof ALL_UNITS)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Stack>
+            <FormControl size="small" fullWidth required>
+              <InputLabel>{t('units')}</InputLabel>
+              <Select
+                value={ingredientFormData.units}
+                onChange={e =>
+                  handleInputChange('units')(
+                    e as React.ChangeEvent<HTMLInputElement>,
+                  )
+                }
+                label={t('units')}
+              >
+                {Object.entries(ALL_UNITS).map(([key, value]) => (
+                  <MenuItem key={key} value={value}>
+                    {t(value as keyof typeof ALL_UNITS)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             <TextField
               size="small"

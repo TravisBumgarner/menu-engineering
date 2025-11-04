@@ -4,38 +4,28 @@ import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
+import { computed } from '@preact/signals-react'
+import { useSignals } from '@preact/signals-react/runtime'
 import * as React from 'react'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
-import { activeModalSignal } from '../../../signals'
+import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
 import { PALETTE, SPACING } from '../../../styles/consts'
 import { formatDisplayDate } from '../../../utilities'
 import Recipe from './Recipe'
 
-function RecipeRow({
-  row,
-  labelId,
-  focusedRecipeId,
-  setFocusedRecipeId,
-}: {
-  row: RecipeDTO
-  labelId: string
-  focusedRecipeId: string
-  setFocusedRecipeId: (id: string) => void
-}) {
+function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
+  useSignals()
   const { t } = useAppTranslation()
 
-  const isOpen = focusedRecipeId === row.id
+  const isOpen = computed(() => activeRecipeIdSignal.value === row.id)
 
-  const opacity = React.useMemo(() => {
-    if (focusedRecipeId === '') {
-      return 1
-    }
-    return isOpen ? 1 : 0.1
-  }, [isOpen, focusedRecipeId])
+  const opacity = computed(() =>
+    activeRecipeIdSignal.value === '' ? 1 : isOpen.value ? 1 : 0.1,
+  )
 
   return (
     <React.Fragment>
@@ -44,10 +34,10 @@ function RecipeRow({
         tabIndex={-1}
         key={row.id}
         sx={{
-          backgroundColor: isOpen ? PALETTE.grayscale[100] : 'inherit',
+          backgroundColor: isOpen.value ? PALETTE.grayscale[100] : 'inherit',
           '& > *': {
             borderBottom: 'unset',
-            opacity,
+            opacity: opacity.value,
           },
         }}
       >
@@ -57,10 +47,10 @@ function RecipeRow({
             size="small"
             onClick={event => {
               event.stopPropagation()
-              setFocusedRecipeId(isOpen ? '' : row.id)
+              activeRecipeIdSignal.value = isOpen.value ? '' : row.id
             }}
           >
-            {isOpen ? (
+            {isOpen.value ? (
               <Icon name="collapseVertical" />
             ) : (
               <Icon name="expandVertical" />
@@ -126,7 +116,7 @@ function RecipeRow({
       </TableRow>
       <TableRow>
         <TableCell style={{ padding: 0, border: 0 }} colSpan={8}>
-          <Collapse in={isOpen} timeout="auto" unmountOnExit>
+          <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>
         </TableCell>

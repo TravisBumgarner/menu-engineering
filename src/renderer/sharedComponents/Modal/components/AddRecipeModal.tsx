@@ -98,7 +98,6 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('yyy', parentRecipe)
     e.preventDefault()
     if (parentRecipe) {
       await addSubRecipeMutation.mutate({
@@ -136,12 +135,9 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
     formData.produces <= 0
 
   return (
-    <DefaultModal>
-      <Typography variant="h5" component="h2" gutterBottom>
-        {t('addNewRecipe')}
-        {parentRecipe ? `to ${parentRecipe.title}` : ''}
-      </Typography>
-
+    <DefaultModal
+      title={`${t('addNewRecipe')} ${parentRecipe ? `to ${parentRecipe.title}` : ''}`}
+    >
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={SPACING.MEDIUM.PX}>
           <TextField

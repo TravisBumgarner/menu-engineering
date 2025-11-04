@@ -48,6 +48,7 @@ export type TranslationKeys =
   | 'addIngredient'
   | 'editRecipe'
   | 'editIngredient'
+  | 'editIngredients'
   | 'updateRecipe'
   | 'updateIngredient'
   | 'deleteRecipe'
