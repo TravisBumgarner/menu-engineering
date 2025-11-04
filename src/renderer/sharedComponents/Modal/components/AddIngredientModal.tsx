@@ -18,6 +18,7 @@ import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
+import { SPACING } from '../../../styles/consts'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -62,6 +63,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
         // Invalidate and refetch ingredients query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
 
         if (result.shouldClose) {
           activeModalSignal.value = null
@@ -123,46 +125,61 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
       </Typography>
 
       <Box component="form">
-        <Stack spacing={3}>
-          <TextField
-            size="small"
-            label={t('ingredientName')}
-            value={ingredientFormData.title}
-            onChange={handleInputChange('title')}
-            required
-            fullWidth
-            placeholder={t('ingredientNamePlaceholder')}
-          />
+        <Stack spacing={SPACING.MEDIUM.PX}>
+          <Stack spacing={SPACING.SMALL.PX}>
+            <TextField
+              size="small"
+              label={t('ingredientName')}
+              value={ingredientFormData.title}
+              onChange={handleInputChange('title')}
+              required
+              fullWidth
+              placeholder={t('ingredientNamePlaceholder')}
+            />
 
-          <TextField
-            size="small"
-            label={t('quantity')}
-            type="number"
-            value={ingredientFormData.quantity}
-            onChange={handleInputChange('quantity')}
-            required
-            fullWidth
-            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
-          />
+            <Stack spacing={SPACING.SMALL.PX} direction="row">
+              <TextField
+                size="small"
+                label={t('quantity')}
+                type="number"
+                value={ingredientFormData.quantity}
+                onChange={handleInputChange('quantity')}
+                required
+                fullWidth
+                slotProps={{ htmlInput: { min: 0, step: 'any' } }}
+              />
 
-          <FormControl size="small" fullWidth required>
-            <InputLabel>{t('units')}</InputLabel>
-            <Select
-              value={ingredientFormData.units}
-              onChange={e =>
-                handleInputChange('units')(
-                  e as React.ChangeEvent<HTMLInputElement>,
-                )
-              }
-              label={t('units')}
-            >
-              {Object.entries(ALL_UNITS).map(([key, value]) => (
-                <MenuItem key={key} value={value}>
-                  {t(value as keyof typeof ALL_UNITS)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <FormControl size="small" fullWidth required>
+                <InputLabel>{t('units')}</InputLabel>
+                <Select
+                  value={ingredientFormData.units}
+                  onChange={e =>
+                    handleInputChange('units')(
+                      e as React.ChangeEvent<HTMLInputElement>,
+                    )
+                  }
+                  label={t('units')}
+                >
+                  {Object.entries(ALL_UNITS).map(([key, value]) => (
+                    <MenuItem key={key} value={value}>
+                      {t(value as keyof typeof ALL_UNITS)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+
+            <TextField
+              size="small"
+              label={t('cost')}
+              type="number"
+              value={ingredientFormData.cost}
+              onChange={handleInputChange('cost')}
+              required
+              fullWidth
+              slotProps={{ htmlInput: { min: 0, step: 'any' } }}
+            />
+          </Stack>
           <Typography
             sx={{ marginTop: '0 !important' }}
             variant="caption"
@@ -170,18 +187,6 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           >
             {t('unitsHelpText')}
           </Typography>
-
-          <TextField
-            size="small"
-            label={t('cost')}
-            type="number"
-            value={ingredientFormData.cost}
-            onChange={handleInputChange('cost')}
-            required
-            fullWidth
-            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
-          />
-
           <TextField
             size="small"
             label={t('notes')}
