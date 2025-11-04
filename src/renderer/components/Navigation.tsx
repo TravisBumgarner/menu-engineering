@@ -1,11 +1,13 @@
+import { Tooltip } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
+import { Link, Link as RouterLink, useLocation } from 'react-router-dom'
 import { ROUTES } from '../consts'
 import { useAppTranslation } from '../hooks/useTranslation'
+import Icon from '../sharedComponents/Icon'
 import LanguageSwitcher from './LanguageSwitcher'
 
 const NAV_ROUTES: Array<keyof typeof ROUTES> = [
@@ -47,6 +49,11 @@ const Navigation = () => {
             )
           })}
           <LanguageSwitcher />
+          <Link to={ROUTES.settings.href()}>
+            <Tooltip title={t('settings')}>
+              <Icon name="settings" />
+            </Tooltip>
+          </Link>
         </Box>
       </Toolbar>
     </AppBar>

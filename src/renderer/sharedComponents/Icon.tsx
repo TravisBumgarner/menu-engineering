@@ -2,9 +2,10 @@ import { BiCollapseVertical, BiExpandVertical } from 'react-icons/bi'
 import { CgDetailsMore } from 'react-icons/cg'
 import { FaThList } from 'react-icons/fa'
 import { FaBottleWater } from 'react-icons/fa6'
-import { IoMdCheckbox, IoMdWarning } from 'react-icons/io'
+import { IoMdCheckbox, IoMdSettings, IoMdWarning } from 'react-icons/io'
 import { IoInformationCircleOutline } from 'react-icons/io5'
 import { LuPartyPopper } from 'react-icons/lu'
+
 import {
   MdAdd,
   MdClose,
@@ -28,6 +29,7 @@ export const iconMap = {
   expandVertical: BiExpandVertical,
   collapseVertical: BiCollapseVertical,
   details: CgDetailsMore,
+  settings: IoMdSettings,
 }
 
 const Icon = ({

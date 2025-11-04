@@ -141,20 +141,20 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
                   <TableCell colSpan={8} />
                 </TableRow>
               )}
-              {/* <AddRow
-                setFocusedRecipeId={setFocusedRecipeId}
-                focusedRecipeId={focusedRecipeId}
-              /> */}
+              <TableRow>
+                <TableCell colSpan={8}>
+                  <Button
+                    sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
+                    onClick={handleAddRecipe}
+                    fullWidth
+                    variant="outlined"
+                  >
+                    {t('addRecipe')}
+                  </Button>
+                </TableCell>
+              </TableRow>
             </TableBody>
           </MuiTable>
-          <Button
-            sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
-            onClick={handleAddRecipe}
-            fullWidth
-            variant="outlined"
-          >
-            {t('addRecipe')}
-          </Button>
         </TableContainer>
         <TablePagination
           sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
