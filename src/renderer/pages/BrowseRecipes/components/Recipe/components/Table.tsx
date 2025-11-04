@@ -15,6 +15,7 @@ import {
 import { ROWS_PER_PAGE } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import Message from '../../../../../sharedComponents/Message'
+import { PALETTE } from '../../../../../styles/consts'
 import AddRow from './AddRow'
 import { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
@@ -102,7 +103,12 @@ const Table = ({
     <Box sx={{ width: '100%', tableLayout: 'fixed' }}>
       <TableContainer>
         <MuiTable
-          sx={{ minWidth: 750 }}
+          sx={{
+            backgroundColor: theme =>
+              theme.palette.mode === 'dark'
+                ? PALETTE.primary[800]
+                : PALETTE.primary[50],
+          }}
           aria-labelledby="tableTitle"
           size="medium"
         >
@@ -157,6 +163,7 @@ const Table = ({
         </MuiTable>
       </TableContainer>
       <TablePagination
+        size="small"
         component="div"
         count={ingredients.length}
         page={page}

@@ -21,6 +21,7 @@ import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
+import { SPACING } from '../../../styles/consts'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -122,7 +123,7 @@ const EditIngredientModal = ({
       title={`${t('editIngredient')}: ${ingredient.title}${recipeId ? ` (in ${recipeTitle})` : ''}`}
     >
       <Box component="form" onSubmit={handleSubmit}>
-        <Stack spacing={3}>
+        <Stack spacing={SPACING.MEDIUM.PX}>
           <TextField
             size="small"
             label={t('ingredientName')}
@@ -132,37 +133,49 @@ const EditIngredientModal = ({
             fullWidth
             placeholder="e.g. Flour, Salt, Olive Oil"
           />
+          <Stack direction="row" spacing={SPACING.SMALL.PX}>
+            <TextField
+              size="small"
+              label={t('quantity')}
+              type="number"
+              value={formData.quantity}
+              onChange={handleInputChange('quantity')}
+              required
+              fullWidth
+              slotProps={{ htmlInput: { min: 0, step: 'any' } }}
+            />
 
-          <TextField
-            size="small"
-            label={t('quantity')}
-            type="number"
-            value={formData.quantity}
-            onChange={handleInputChange('quantity')}
-            required
-            fullWidth
-            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
-          />
+            <FormControl size="small" fullWidth required>
+              <InputLabel>{t('units')}</InputLabel>
+              <Select
+                disabled
+                value={formData.units}
+                onChange={e =>
+                  handleInputChange('units')(
+                    e as React.ChangeEvent<HTMLInputElement>,
+                  )
+                }
+                label="Units"
+              >
+                {Object.entries(ALL_UNITS).map(([key, value]) => (
+                  <MenuItem key={key} value={value}>
+                    {value.toLowerCase().replace('_', ' ')}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-          <FormControl size="small" fullWidth required>
-            <InputLabel>{t('units')}</InputLabel>
-            <Select
-              disabled
-              value={formData.units}
-              onChange={e =>
-                handleInputChange('units')(
-                  e as React.ChangeEvent<HTMLInputElement>,
-                )
-              }
-              label="Units"
-            >
-              {Object.entries(ALL_UNITS).map(([key, value]) => (
-                <MenuItem key={key} value={value}>
-                  {value.toLowerCase().replace('_', ' ')}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+            <TextField
+              size="small"
+              label={t('cost')}
+              type="number"
+              value={formData.cost}
+              onChange={handleInputChange('cost')}
+              required
+              fullWidth
+              slotProps={{ htmlInput: { min: 0, step: 'any' } }}
+            />
+          </Stack>
           <Typography
             sx={{ marginTop: '0 !important' }}
             variant="caption"
@@ -170,16 +183,6 @@ const EditIngredientModal = ({
           >
             {t('unitsHelpText')}
           </Typography>
-          <TextField
-            size="small"
-            label={t('cost')}
-            type="number"
-            value={formData.cost}
-            onChange={handleInputChange('cost')}
-            required
-            fullWidth
-            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
-          />
 
           <TextField
             size="small"

@@ -13,7 +13,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
-import { PALETTE, SPACING } from '../../../styles/consts'
+import { SPACING } from '../../../styles/consts'
 import { formatDisplayDate } from '../../../utilities'
 import Recipe from './Recipe'
 
@@ -34,14 +34,14 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
         tabIndex={-1}
         key={row.id}
         sx={{
-          backgroundColor: isOpen.value ? PALETTE.grayscale[100] : 'inherit',
           '& > *': {
             borderBottom: 'unset',
             opacity: opacity.value,
+            fontWeight: 900,
           },
         }}
       >
-        <TableCell>
+        <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -57,17 +57,27 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
             )}
           </IconButton>
         </TableCell>
-        <TableCell component="th" id={labelId} scope="row" padding="none">
+        <TableCell
+          id={labelId}
+          scope="row"
+          sx={{ padding: `0 ${SPACING.SMALL.PX}` }}
+        >
           {formatDisplayDate(row.createdAt)}
         </TableCell>
-        <TableCell component="th" id={labelId} scope="row" padding="none">
+        <TableCell
+          id={labelId}
+          scope="row"
+          sx={{ padding: `0 ${SPACING.SMALL.PX}` }}
+        >
           {row.title}
         </TableCell>
-        <TableCell align="right">{row.produces}</TableCell>
-        <TableCell align="left">
+        <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }} align="right">
+          {row.produces}
+        </TableCell>
+        <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }} align="left">
           {t(row.units as keyof typeof ALL_UNITS)}
         </TableCell>
-        <TableCell align="left">
+        <TableCell align="left" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
           <Typography
             variant="body2"
             sx={{
@@ -92,14 +102,12 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
             {t(row.status)}
           </Typography>
         </TableCell>
-        <TableCell align="center">
-          {row.showInMenu ? (
-            <Icon name="checkbox" />
-          ) : (
-            <Icon name="checkboxOutline" />
-          )}
+        <TableCell align="left" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
+          <Typography variant="body2">
+            {row.showInMenu ? t('yes') : t('no')}
+          </Typography>
         </TableCell>
-        <TableCell align="center">
+        <TableCell align="center" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
           <Tooltip title={t('editRecipe')}>
             <IconButton
               onClick={() =>

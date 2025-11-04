@@ -6,6 +6,7 @@ import Router from './components/Router'
 import './internationalization' // Initialize i18n
 import RenderModal from './sharedComponents/Modal'
 import AppThemeProvider from './styles/Theme'
+import { SPACING } from './styles/consts'
 
 const queryClient = new QueryClient()
 
@@ -13,7 +14,15 @@ function App() {
   return (
     <>
       <Navigation />
-      <Router />
+      <Box
+        sx={{
+          padding: SPACING.SMALL.PX,
+          height: '100%',
+          paddingBottom: '20px', // Lazy way to ensure content is visible.
+        }}
+      >
+        <Router />
+      </Box>
       <RenderModal />
     </>
   )

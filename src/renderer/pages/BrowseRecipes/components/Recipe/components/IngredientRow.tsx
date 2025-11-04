@@ -1,9 +1,6 @@
 import { TextField, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
-import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
@@ -14,7 +11,7 @@ import {
   IngredientDTO,
   RelationDTO,
 } from '../../../../../../shared/recipe.types'
-import { ALL_UNITS, AllUnits } from '../../../../../../shared/units.types'
+import { AllUnits } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
@@ -30,7 +27,7 @@ function IngredientRow(props: {
   labelId: string
 }) {
   const { row, recipeId, labelId } = props
-  const [open, setOpen] = React.useState(false)
+  // const [open, setOpen] = React.useState(false)
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
 
@@ -98,22 +95,8 @@ function IngredientRow(props: {
   }
 
   const relationCost = React.useMemo(() => {
-    // Function currently assumes row units are the same.
-
-    // row.cost
-    // row.units
-    // row.quantity
-
-    // row.relation.quantity
-    // row.relation.units
-
     return row.relation.quantity * (row.cost / row.quantity)
   }, [row.cost, row.quantity, row.relation.quantity])
-
-  // const handleUnitsChange = (event: { target: { value: string } }) => {
-  //   const newUnits = event.target.value
-  //   updateIngredientRelationMutation.mutate({ units: newUnits })
-  // }
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantity = parseFloat(event.target.value)
@@ -130,8 +113,8 @@ function IngredientRow(props: {
         key={row.id}
         sx={{ '& > *': { borderBottom: 'unset' } }}
       >
-        <TableCell>
-          <IconButton
+        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
+          {/* <IconButton
             aria-label="expand row"
             size="small"
             onClick={event => {
@@ -144,61 +127,47 @@ function IngredientRow(props: {
             ) : (
               <Icon name="expandVertical" />
             )}
-          </IconButton>
+          </IconButton> */}
         </TableCell>
-        <TableCell padding="none">{formatDisplayDate(row.createdAt)}</TableCell>
-        <TableCell component="th" id={labelId} scope="row" padding="none">
+        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
+          {formatDisplayDate(row.createdAt)}
+        </TableCell>
+        <TableCell
+          id={labelId}
+          scope="row"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Icon name="ingredient" size={ICON_SIZE} /> {row.title}
           </Box>{' '}
         </TableCell>
         <TableCell
           align="right"
-          component="th"
           id={labelId}
           scope="row"
-          padding="none"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
           <TextField
             size="small"
             type="number"
             value={row.relation.quantity}
             onChange={handleQuantityChange}
-            variant="outlined"
+            variant="standard"
           />
         </TableCell>
         <TableCell
           align="left"
-          component="th"
           id={labelId}
           scope="row"
-          padding="none"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
           {row.units}
-          {/* <FormControl size="small" sx={{ width: 120 }} required>
-            <Select
-              value={row.relation.units}
-              onChange={e => handleUnitsChange(e)}
-              displayEmpty
-              variant="outlined"
-            >
-              <MenuItem value="" disabled>
-                {t('units')}
-              </MenuItem>
-              {Object.entries(ALL_UNITS).map(([key, value]) => (
-                <MenuItem key={key} value={value}>
-                  {t(value as keyof typeof ALL_UNITS)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl> */}
         </TableCell>
         <TableCell
           align="right"
-          component="th"
           id={labelId}
           scope="row"
-          padding="none"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
           {relationCost}
           <Tooltip
@@ -215,28 +184,20 @@ function IngredientRow(props: {
             </span>
           </Tooltip>
         </TableCell>
-        <TableCell align="center">
-          <Box
-            sx={{
-              display: 'flex',
-              gap: SPACING.TINY.PX,
-              justifyContent: 'center',
-            }}
-          >
-            <Tooltip title={t('editIngredient')}>
-              <IconButton onClick={handleOpenEditModal}>
-                <Icon name="edit" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={t('removeIngredientFromRecipe')}>
-              <IconButton onClick={handleOpenRemoveModal}>
-                <Icon name="close" />
-              </IconButton>
-            </Tooltip>
-          </Box>
+        <TableCell align="right" sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
+          <Tooltip title={t('editIngredient')}>
+            <IconButton onClick={handleOpenEditModal}>
+              <Icon name="edit" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={t('remove')}>
+            <IconButton onClick={handleOpenRemoveModal}>
+              <Icon name="close" />
+            </IconButton>
+          </Tooltip>
         </TableCell>
       </TableRow>
-      <TableRow>
+      {/* <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
@@ -246,33 +207,21 @@ function IngredientRow(props: {
               <Table size="small" aria-label="ingredient details">
                 <TableBody>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('id')}
                     </TableCell>
                     <TableCell>{row.id}</TableCell>
                   </TableRow>
 
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('quantity')}
                     </TableCell>
                     <TableCell>{row.quantity}</TableCell>
                   </TableRow>
 
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('units')}
                     </TableCell>
                     <TableCell>
@@ -281,21 +230,13 @@ function IngredientRow(props: {
                   </TableRow>
 
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('created')}
                     </TableCell>
                     <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('updated')}
                     </TableCell>
                     <TableCell>
@@ -303,11 +244,7 @@ function IngredientRow(props: {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('notes')}
                     </TableCell>
                     <TableCell>{row.notes || <em>No notes</em>}</TableCell>
@@ -317,7 +254,7 @@ function IngredientRow(props: {
             </Box>
           </Collapse>
         </TableCell>
-      </TableRow>
+      </TableRow> */}
     </React.Fragment>
   )
 }

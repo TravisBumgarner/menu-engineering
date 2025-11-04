@@ -24,6 +24,7 @@ import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
+import { SPACING } from '../../../styles/consts'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -121,7 +122,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
   return (
     <DefaultModal title={`${t('editRecipe')}: ${recipe.title}`}>
       <Box component="form" onSubmit={handleSubmit}>
-        <Stack spacing={3}>
+        <Stack spacing={SPACING.MEDIUM.PX}>
           <TextField
             size="small"
             label={t('title')}
@@ -130,36 +131,37 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
             required
             fullWidth
           />
+          <Stack direction="row" spacing={SPACING.MEDIUM.PX}>
+            <TextField
+              size="small"
+              label={t('produces')}
+              type="number"
+              value={formData.produces}
+              onChange={handleInputChange('produces')}
+              required
+              fullWidth
+            />
 
-          <TextField
-            size="small"
-            label={t('produces')}
-            type="number"
-            value={formData.produces}
-            onChange={handleInputChange('produces')}
-            required
-            fullWidth
-          />
-
-          <FormControl size="small" fullWidth required>
-            <InputLabel>{t('units')}</InputLabel>
-            <Select
-              disabled
-              value={formData.units}
-              onChange={e =>
-                handleInputChange('units')(
-                  e as React.ChangeEvent<HTMLInputElement>,
-                )
-              }
-              label={t('units')}
-            >
-              {Object.entries(ALL_UNITS).map(([key, value]) => (
-                <MenuItem key={key} value={value}>
-                  {value.toLowerCase().replace('_', ' ')}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+            <FormControl size="small" fullWidth required>
+              <InputLabel>{t('units')}</InputLabel>
+              <Select
+                disabled
+                value={formData.units}
+                onChange={e =>
+                  handleInputChange('units')(
+                    e as React.ChangeEvent<HTMLInputElement>,
+                  )
+                }
+                label={t('units')}
+              >
+                {Object.entries(ALL_UNITS).map(([key, value]) => (
+                  <MenuItem key={key} value={value}>
+                    {value.toLowerCase().replace('_', ' ')}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Stack>
           <Typography
             sx={{ marginTop: '0 !important' }}
             variant="caption"

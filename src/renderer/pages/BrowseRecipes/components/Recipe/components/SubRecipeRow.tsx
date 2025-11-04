@@ -1,12 +1,8 @@
 import { TextField, Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
-import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import Typography from '@mui/material/Typography'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
@@ -17,6 +13,7 @@ import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../../../signals'
+import { SPACING } from '../../../../../styles/consts'
 import { formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
@@ -26,7 +23,7 @@ function SubRecipeRow(props: {
   labelId: string
 }) {
   const { row, recipeId, labelId } = props
-  const [open, setOpen] = React.useState(false)
+  // const [open, setOpen] = React.useState(false)
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
 
@@ -95,11 +92,6 @@ function SubRecipeRow(props: {
     }
   }
 
-  // const handleUnitsChange = (event: { target: { value: string } }) => {
-  //   const newUnits = event.target.value
-  //   updateSubRecipeRelationMutation.mutate({ units: newUnits })
-  // }
-
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantity = parseFloat(event.target.value)
     if (!isNaN(newQuantity)) {
@@ -131,8 +123,8 @@ function SubRecipeRow(props: {
         key={row.id}
         sx={{ '& > *': { borderBottom: 'unset' } }}
       >
-        <TableCell>
-          <IconButton
+        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
+          {/* <IconButton
             aria-label="expand row"
             size="small"
             onClick={event => {
@@ -145,79 +137,65 @@ function SubRecipeRow(props: {
             ) : (
               <Icon name="expandVertical" />
             )}
-          </IconButton>
+          </IconButton> */}
         </TableCell>
-        <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
+        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
+          {formatDisplayDate(row.createdAt)}
+        </TableCell>
 
-        <TableCell component="th" id={labelId} scope="row" padding="none">
+        <TableCell
+          id={labelId}
+          scope="row"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Icon name="recipe" size={ICON_SIZE} /> {row.title}
           </Box>
         </TableCell>
         <TableCell
           align="right"
-          component="th"
           id={labelId}
           scope="row"
-          padding="none"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
           <TextField
             size="small"
             type="number"
             value={row.relation?.quantity || 0}
             onChange={handleQuantityChange}
-            variant="outlined"
+            variant="standard"
           />
         </TableCell>
         <TableCell
           align="left"
-          component="th"
           id={labelId}
           scope="row"
-          padding="none"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
           {row.units}
-          {/* <FormControl size="small" sx={{ width: 120 }} required>
-            <Select
-              value={row.relation?.units || ''}
-              onChange={e => handleUnitsChange(e)}
-              displayEmpty
-              variant="outlined"
-            >
-              <MenuItem value="" disabled>
-                {t('units')}
-              </MenuItem>
-              {Object.entries(ALL_UNITS).map(([key, value]) => (
-                <MenuItem key={key} value={value}>
-                  {t(value as keyof typeof ALL_UNITS)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl> */}
         </TableCell>
         <TableCell
           align="right"
-          component="th"
           id={labelId}
           scope="row"
-          padding="none"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
-          {/* Cost calculation could go here */}
           {subRecipeCostQuery.data?.success
             ? `$${subRecipeCostQuery.data.cost.toFixed(2)}`
             : 'N/A'}
         </TableCell>
-        <TableCell align="center">
-          <Tooltip title={t('editRecipe')}>
-            <IconButton onClick={handleOpenEditModal}>
-              <Icon name="edit" />
-            </IconButton>
-          </Tooltip>
+        <TableCell align="right" sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
           <Tooltip title={t('editIngredients')}>
             <IconButton onClick={handleEditIngredients}>
               <Icon name="recipe" />
             </IconButton>
           </Tooltip>
+          <Tooltip title={t('editRecipe')}>
+            <IconButton onClick={handleOpenEditModal}>
+              <Icon name="edit" />
+            </IconButton>
+          </Tooltip>
+
           <Tooltip title={t('remove')}>
             <IconButton onClick={handleOpenRemoveModal}>
               <Icon name="close" />
@@ -225,7 +203,7 @@ function SubRecipeRow(props: {
           </Tooltip>
         </TableCell>
       </TableRow>
-      <TableRow>
+      {/* <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
@@ -235,31 +213,19 @@ function SubRecipeRow(props: {
               <Table size="small" aria-label="ingredient details">
                 <TableBody>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       ID
                     </TableCell>
                     <TableCell>{row.id}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       Created
                     </TableCell>
                     <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       Updated
                     </TableCell>
                     <TableCell>
@@ -268,11 +234,7 @@ function SubRecipeRow(props: {
                   </TableRow>
 
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       Produces
                     </TableCell>
                     <TableCell>
@@ -281,11 +243,7 @@ function SubRecipeRow(props: {
                   </TableRow>
 
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       Notes
                     </TableCell>
                     <TableCell>{row.notes || <em>No notes</em>}</TableCell>
@@ -295,7 +253,7 @@ function SubRecipeRow(props: {
             </Box>
           </Collapse>
         </TableCell>
-      </TableRow>
+      </TableRow> */}
     </React.Fragment>
   )
 }

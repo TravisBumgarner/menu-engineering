@@ -3,12 +3,13 @@ import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Toolbar from '@mui/material/Toolbar'
-import Typography from '@mui/material/Typography'
-import { Link, Link as RouterLink, useLocation } from 'react-router-dom'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { ROUTES } from '../consts'
 import { useAppTranslation } from '../hooks/useTranslation'
 import Icon from '../sharedComponents/Icon'
-import LanguageSwitcher from './LanguageSwitcher'
+import { MODAL_ID } from '../sharedComponents/Modal/Modal.consts'
+import { activeModalSignal } from '../signals'
+import { SPACING } from '../styles/consts'
 
 const NAV_ROUTES: Array<keyof typeof ROUTES> = [
   'recipes',
@@ -23,37 +24,59 @@ const Navigation = () => {
   return (
     <AppBar position="static" color="default" elevation={1}>
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          {t('appTitle')}
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {NAV_ROUTES.map(key => {
-            const route = ROUTES[key]
-            const isActive = location.pathname === route.href()
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              gap: SPACING.MEDIUM.PX,
+              alignItems: 'center',
+            }}
+          >
+            {NAV_ROUTES.map(key => {
+              const route = ROUTES[key]
+              const isActive = location.pathname === route.href()
 
-            return (
-              <Button
-                size="small"
-                key={key}
-                component={RouterLink}
-                to={route.href()}
-                variant={isActive ? 'contained' : 'text'}
-                color={isActive ? 'primary' : 'inherit'}
-                sx={{
-                  minWidth: 'auto',
-                  px: 2,
-                }}
-              >
-                {t(key)}
-              </Button>
-            )
-          })}
-          <LanguageSwitcher />
-          <Link to={ROUTES.settings.href()}>
+              return (
+                <Button
+                  size="small"
+                  key={key}
+                  component={RouterLink}
+                  to={route.href()}
+                  variant={isActive ? 'contained' : 'text'}
+                  color={isActive ? 'primary' : 'inherit'}
+                  sx={{
+                    minWidth: 'auto',
+                    px: 2,
+                  }}
+                >
+                  {t(key)}
+                </Button>
+              )
+            })}
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: SPACING.MEDIUM.PX,
+              alignItems: 'center',
+            }}
+          >
             <Tooltip title={t('settings')}>
-              <Icon name="settings" />
+              <Button
+                onClick={() =>
+                  (activeModalSignal.value = { id: MODAL_ID.SETTINGS_MODAL })
+                }
+              >
+                <Icon name="settings" />
+              </Button>
             </Tooltip>
-          </Link>
+          </Box>
         </Box>
       </Toolbar>
     </AppBar>

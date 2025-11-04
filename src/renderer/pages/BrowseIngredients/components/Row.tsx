@@ -1,12 +1,7 @@
 import { Tooltip } from '@mui/material'
-import Box from '@mui/material/Box'
-import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import { IngredientDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
@@ -17,7 +12,7 @@ import { formatDisplayDate } from '../../../utilities'
 
 function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
   const { row, labelId } = props
-  const [open, setOpen] = React.useState(false)
+  // const [open, setOpen] = React.useState(false)
   const { t } = useAppTranslation()
 
   const handleOpenEditModal = () => {
@@ -36,7 +31,7 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
         sx={{ '& > *': { borderBottom: 'unset' } }}
       >
         <TableCell>
-          <IconButton
+          {/* <IconButton
             aria-label="expand row"
             size="small"
             onClick={event => {
@@ -49,9 +44,12 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
             ) : (
               <Icon name="expandVertical" />
             )}
-          </IconButton>
+          </IconButton> */}
         </TableCell>
-        <TableCell component="th" id={labelId} scope="row" padding="none">
+        <TableCell scope="row" padding="none">
+          {formatDisplayDate(row.createdAt)}
+        </TableCell>
+        <TableCell id={labelId} scope="row" padding="none">
           {row.title}
         </TableCell>
         <TableCell align="right">{row.quantity}</TableCell>
@@ -71,7 +69,7 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
           </Tooltip>
         </TableCell>
       </TableRow>
-      <TableRow>
+      {/* <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
@@ -81,31 +79,19 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
               <Table size="small" aria-label="ingredient details">
                 <TableBody>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('id')}
                     </TableCell>
                     <TableCell>{row.id}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('created')}
                     </TableCell>
                     <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('updated')}
                     </TableCell>
                     <TableCell>
@@ -113,11 +99,7 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      sx={{ fontWeight: 'bold' }}
-                    >
+                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
                       {t('notes')}
                     </TableCell>
                     <TableCell>
@@ -129,7 +111,7 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
             </Box>
           </Collapse>
         </TableCell>
-      </TableRow>
+      </TableRow> */}
     </React.Fragment>
   )
 }
