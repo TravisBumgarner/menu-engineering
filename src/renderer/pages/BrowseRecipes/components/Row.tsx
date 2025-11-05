@@ -6,10 +6,14 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import { computed } from '@preact/signals-react'
 import { useSignals } from '@preact/signals-react/runtime'
+import { useQuery } from '@tanstack/react-query'
 import * as React from 'react'
+import { CHANNEL } from '../../../../shared/messages.types'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
+import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
@@ -26,6 +30,16 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
   const opacity = computed(() =>
     activeRecipeIdSignal.value === '' ? 1 : isOpen.value ? 1 : 0.1,
   )
+
+  const recipeCostQuery = useQuery({
+    queryKey: [QUERY_KEYS.RECIPE_COST],
+    queryFn: async () => {
+      const result = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE_COST, {
+        id: row.id,
+      })
+      return result
+    },
+  })
 
   return (
     <React.Fragment>
@@ -69,7 +83,17 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
           scope="row"
           sx={{ padding: `0 ${SPACING.SMALL.PX}` }}
         >
-          {row.title}
+          {row.title} {row.id.slice(0, 6)}
+        </TableCell>
+        <TableCell
+          align="right"
+          id={labelId}
+          scope="row"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
+        >
+          {recipeCostQuery.data?.success
+            ? `$${recipeCostQuery.data.cost.toFixed(2)}`
+            : 'N/A'}
         </TableCell>
         <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }} align="right">
           {row.produces}

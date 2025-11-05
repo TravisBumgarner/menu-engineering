@@ -149,7 +149,8 @@ function SubRecipeRow(props: {
           sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Icon name="recipe" size={ICON_SIZE} /> {row.title}
+            <Icon name="recipe" size={ICON_SIZE} /> {row.title}{' '}
+            {row.id.slice(0, 6)}
           </Box>
         </TableCell>
         <TableCell

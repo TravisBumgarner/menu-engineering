@@ -1,9 +1,12 @@
 import { and, eq } from 'drizzle-orm'
 import {
+  IngredientDTO,
   NewIngredientDTO,
   NewIngredientInRecipeDTO,
   NewRecipeDTO,
   NewSubRecipeInRecipeDTO,
+  RecipeDTO,
+  RelationDTO,
 } from 'src/shared/recipe.types'
 import { AllUnits } from 'src/shared/units.types'
 import { v4 as uuidv4 } from 'uuid'
@@ -219,78 +222,67 @@ const updateRecipeRelation = async (
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 const getRecipeCost = async (
   recipeId: string,
 ): Promise<
   { success: true; cost: number } | { success: false; error: string }
 > => {
-  // Helper function to recursively calculate cost with circular dependency detection
-  const calculateCostRecursive = async (
-    currentRecipeId: string,
-    ancestorPath: string[] = [],
-  ): Promise<
-    { success: true; cost: number } | { success: false; error: string }
-  > => {
-    // Check for circular dependency
-    if (ancestorPath.includes(currentRecipeId)) {
-      const parentId = ancestorPath[ancestorPath.length - 1]
-      return {
-        success: false,
-        error: `Found ${currentRecipeId} as child of ${parentId} and can't continue`,
-      }
+  const allSubRecipes: Array<RecipeDTO & { relation: RelationDTO }> = []
+  let recipeIds = [recipeId]
+  let loops = 0
+
+  // For now let's assume that no recipe has > 5 layers deep of sub recipes.
+  while (loops < 5) {
+    const subRecipes: Array<RecipeDTO & { relation: RelationDTO }> = []
+    for (const currentRecipeId of recipeIds) {
+      subRecipes.push(...(await getRecipeSubRecipes(currentRecipeId)))
     }
 
-    let totalCost = 0
-    const newPath = [...ancestorPath, currentRecipeId]
+    // Add the found sub-recipes to our collection
+    allSubRecipes.push(...subRecipes)
 
-    // Get direct ingredients for this recipe
-    const ingredients = await getRecipeIngredients(currentRecipeId)
-
-    // Calculate cost from direct ingredients
-    for (const ingredient of ingredients) {
-      if (ingredient) {
-        // Convert ingredient quantity to recipe units if needed
-        const ingredientCost = ingredient.cost || 0
-        const ingredientQuantity = ingredient.quantity || 0
-        const relationQuantity = ingredient.relation?.quantity || 0
-
-        // Cost per unit of ingredient * quantity used in recipe
-        const ingredientTotalCost =
-          (ingredientCost / ingredientQuantity) * relationQuantity
-        totalCost += ingredientTotalCost
-      }
+    recipeIds = subRecipes.map(recipe => recipe.id)
+    if (recipeIds.length === 0) {
+      break
     }
-
-    // Get sub-recipes for this recipe
-    const subRecipes = await getRecipeSubRecipes(currentRecipeId)
-
-    // Recursively calculate cost from sub-recipes
-    for (const subRecipe of subRecipes) {
-      if (subRecipe) {
-        const subRecipeResult = await calculateCostRecursive(
-          subRecipe.id,
-          newPath,
-        )
-
-        if (!subRecipeResult.success) {
-          return subRecipeResult // Propagate error up the chain
-        }
-
-        const relationQuantity = subRecipe.relation?.quantity || 0
-        const subRecipeProduces = subRecipe.produces || 1
-
-        // Cost of sub-recipe * (quantity needed / quantity it produces)
-        const subRecipeCostContribution =
-          subRecipeResult.cost * (relationQuantity / subRecipeProduces)
-        totalCost += subRecipeCostContribution
-      }
-    }
-
-    return { success: true, cost: totalCost }
+    loops += 1
   }
 
-  return await calculateCostRecursive(recipeId)
+  const allSubIngredients: Array<IngredientDTO & { relation: RelationDTO }> = []
+  
+
+  for (const subRecipe of allSubRecipes) {
+    allSubIngredients.push(...(await getRecipeIngredients(subRecipe.id)))
+  }
+
+  return { success: true, cost: 0 }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export default {
   addRecipe,
