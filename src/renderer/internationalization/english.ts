@@ -32,6 +32,8 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   updated: 'Updated',
   outOf: 'of',
   selected: 'selected',
+  unitCost: 'Unit Cost',
+  totalCost: 'Total Cost',
 
   // Navigation
   appTitle: 'Menu Engineering',

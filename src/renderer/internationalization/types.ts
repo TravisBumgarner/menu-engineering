@@ -30,6 +30,8 @@ export type TranslationKeys =
   | 'updated'
   | 'outOf'
   | 'selected'
+  | 'unitCost'
+  | 'totalCost'
 
   // Navigation
   | 'appTitle'

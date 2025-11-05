@@ -1,12 +1,9 @@
 import { and, eq } from 'drizzle-orm'
 import {
-  IngredientDTO,
   NewIngredientDTO,
   NewIngredientInRecipeDTO,
   NewRecipeDTO,
   NewSubRecipeInRecipeDTO,
-  RecipeDTO,
-  RelationDTO,
 } from 'src/shared/recipe.types'
 import { AllUnits } from 'src/shared/units.types'
 import { v4 as uuidv4 } from 'uuid'
@@ -222,67 +219,44 @@ const updateRecipeRelation = async (
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 const getRecipeCost = async (
   recipeId: string,
+  depth = 0,
 ): Promise<
   { success: true; cost: number } | { success: false; error: string }
 > => {
-  const allSubRecipes: Array<RecipeDTO & { relation: RelationDTO }> = []
-  let recipeIds = [recipeId]
-  let loops = 0
+  try {
+    if (depth > 5) return { success: true, cost: 0 } // safety limit
+    let totalCost = 0
 
-  // For now let's assume that no recipe has > 5 layers deep of sub recipes.
-  while (loops < 5) {
-    const subRecipes: Array<RecipeDTO & { relation: RelationDTO }> = []
-    for (const currentRecipeId of recipeIds) {
-      subRecipes.push(...(await getRecipeSubRecipes(currentRecipeId)))
+    // 1️⃣ INGREDIENT COSTS (direct)
+    const ingredients = await getRecipeIngredients(recipeId)
+    console.log('ingredients for', recipeId, ingredients)
+    for (const ing of ingredients) {
+      const usedQty = ing.relation.quantity
+      // TODO: optionally normalize units here if units differ
+      totalCost += ing.unitCost * usedQty
     }
 
-    // Add the found sub-recipes to our collection
-    allSubRecipes.push(...subRecipes)
-
-    recipeIds = subRecipes.map(recipe => recipe.id)
-    if (recipeIds.length === 0) {
-      break
+    // 2️⃣ SUB-RECIPE COSTS (recursive)
+    const subRecipes = await getRecipeSubRecipes(recipeId)
+    console.log('sub-recipes for', recipeId, subRecipes)
+    for (const sub of subRecipes) {
+      const subCostResult = await getRecipeCost(sub.id, depth + 1)
+      if (subCostResult.success) {
+        const usedQty = sub.relation.quantity
+        const subRecipe = sub // includes .produces from getRecipeSubRecipes join
+        const costPerUnit = subCostResult.cost / (subRecipe.produces || 1)
+        totalCost += costPerUnit * usedQty
+      }
     }
-    loops += 1
+
+    return { success: true, cost: totalCost }
+  } catch (err) {
+    console.error(err)
+    return { success: false, error: String(err) }
   }
-
-  const allSubIngredients: Array<IngredientDTO & { relation: RelationDTO }> = []
-  
-
-  for (const subRecipe of allSubRecipes) {
-    allSubIngredients.push(...(await getRecipeIngredients(subRecipe.id)))
-  }
-
-  return { success: true, cost: 0 }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 export default {
   addRecipe,

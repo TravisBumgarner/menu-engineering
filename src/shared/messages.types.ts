@@ -22,6 +22,7 @@ export const CHANNEL = {
     ADD_EXISTING_TO_RECIPE: 'db:add-existing-to-recipe',
     UPDATE_RECIPE_RELATION: 'db:update-recipe-relation',
     REMOVE_INGREDIENT_FROM_RECIPE: 'db:remove-ingredient-from-recipe',
+    REMOVE_SUB_RECIPE_FROM_RECIPE: 'db:remove-sub-recipe-from-recipe',
     DELETE_INGREDIENT: 'db:delete-ingredient',
     DELETE_RECIPE: 'db:delete-recipe',
     GET_RECIPE_COST: 'db:get-recipe-cost',
@@ -91,6 +92,10 @@ export type Invokes = {
   }
   [CHANNEL.DB.REMOVE_INGREDIENT_FROM_RECIPE]: {
     args: { ingredientId: string; recipeId: string }
+    result: { success: boolean }
+  }
+  [CHANNEL.DB.REMOVE_SUB_RECIPE_FROM_RECIPE]: {
+    args: { subRecipeId: string; recipeId: string }
     result: { success: boolean }
   }
   [CHANNEL.DB.DELETE_INGREDIENT]: {

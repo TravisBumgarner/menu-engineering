@@ -18,7 +18,7 @@ import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
-import { formatDisplayDate } from '../../../utilities'
+import { formatCurrency, formatDisplayDate } from '../../../utilities'
 import Recipe from './Recipe'
 
 function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
@@ -32,7 +32,7 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
   )
 
   const recipeCostQuery = useQuery({
-    queryKey: [QUERY_KEYS.RECIPE_COST],
+    queryKey: [QUERY_KEYS.RECIPE_COST, row.id],
     queryFn: async () => {
       const result = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE_COST, {
         id: row.id,
@@ -92,7 +92,7 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
           sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
           {recipeCostQuery.data?.success
-            ? `$${recipeCostQuery.data.cost.toFixed(2)}`
+            ? formatCurrency(recipeCostQuery.data.cost)
             : 'N/A'}
         </TableCell>
         <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }} align="right">
@@ -147,7 +147,7 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ padding: 0, border: 0 }} colSpan={8}>
+        <TableCell style={{ padding: 0, border: 0 }} colSpan={9}>
           <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>

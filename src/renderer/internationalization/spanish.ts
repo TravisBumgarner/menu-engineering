@@ -32,6 +32,8 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   updated: 'Actualizado',
   outOf: 'de',
   selected: 'seleccionado',
+  unitCost: 'Costo Unitario',
+  totalCost: 'Costo Total',
 
   // Navigation
   appTitle: 'Ingeniería de Menú',

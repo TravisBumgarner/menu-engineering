@@ -30,8 +30,7 @@ export const recipeSchema = sqliteTable('recipes', {
 export const ingredientSchema = sqliteTable('ingredients', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
-  cost: real('cost').notNull(),
-  quantity: real('quantity').notNull(),
+  unitCost: real('unitCost').notNull(),
   units: text('units', {
     enum: Object.values(ALL_UNITS) as [AllUnits, ...AllUnits[]],
   }).notNull(),

@@ -19,6 +19,7 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPES, async () => {
 
 typedIpcMain.handle(CHANNEL.DB.GET_RECIPE_COST, async (_event, params) => {
   const result = await queries.getRecipeCost(params.id)
+  console.log('cost of', params.id, result.success ? result.cost : 'na')
   return {
     type: 'get_recipe_cost',
     ...result,
@@ -90,6 +91,20 @@ typedIpcMain.handle(
     )
     return {
       type: 'remove_ingredient_from_recipe',
+      success: !!result,
+    }
+  },
+)
+
+typedIpcMain.handle(
+  CHANNEL.DB.REMOVE_SUB_RECIPE_FROM_RECIPE,
+  async (_event, params) => {
+    const result = await queries.removeSubRecipeFromRecipe(
+      params.subRecipeId,
+      params.recipeId,
+    )
+    return {
+      type: 'remove_sub_recipe_from_recipe',
       success: !!result,
     }
   },

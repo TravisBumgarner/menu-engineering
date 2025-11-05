@@ -1,8 +1,7 @@
 CREATE TABLE `ingredients` (
 	`id` text PRIMARY KEY NOT NULL,
 	`title` text NOT NULL,
-	`cost` real NOT NULL,
-	`quantity` real NOT NULL,
+	`unitCost` real NOT NULL,
 	`units` text NOT NULL,
 	`created_at` text NOT NULL,
 	`updated_at` text NOT NULL,
@@ -10,10 +9,12 @@ CREATE TABLE `ingredients` (
 );
 --> statement-breakpoint
 CREATE TABLE `recipe_ingredients` (
+	`created_at` text NOT NULL,
+	`updated_at` text NOT NULL,
 	`id` text PRIMARY KEY NOT NULL,
 	`recipe_id` text NOT NULL,
 	`ingredient_id` text NOT NULL,
-	`quantity` real NOT NULL,
+	`quantity` real DEFAULT 0,
 	`units` text NOT NULL
 );
 --> statement-breakpoint
@@ -30,9 +31,11 @@ CREATE TABLE `recipes` (
 );
 --> statement-breakpoint
 CREATE TABLE `recipe_sub_recipes` (
+	`created_at` text NOT NULL,
+	`updated_at` text NOT NULL,
 	`id` text PRIMARY KEY NOT NULL,
 	`recipe_id` text NOT NULL,
 	`child_recipe_id` text NOT NULL,
-	`quantity` real NOT NULL,
+	`quantity` real DEFAULT 0,
 	`units` text NOT NULL
 );

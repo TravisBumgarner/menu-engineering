@@ -12,7 +12,8 @@ interface HeadCell {
   disablePadding: boolean
   id: keyof IngredientDTO | 'actions'
   label: string
-  numeric: boolean
+  align: 'left' | 'right' | 'center'
+  width: string
 }
 
 interface EnhancedTableProps {
@@ -32,38 +33,37 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   const headCells: readonly HeadCell[] = [
     {
       id: 'createdAt',
-      numeric: false,
+      align: 'left',
       disablePadding: true,
       label: t('created'),
+      width: '20%',
     },
     {
       id: 'title',
-      numeric: false,
+      align: 'left',
       disablePadding: true,
       label: t('title'),
-    },
-    {
-      id: 'quantity',
-      numeric: true,
-      disablePadding: false,
-      label: t('quantity'),
+      width: '20%',
     },
     {
       id: 'units',
-      numeric: false,
+      align: 'left',
       disablePadding: false,
       label: t('units'),
+      width: '20%',
     },
     {
-      id: 'cost',
-      numeric: true,
+      id: 'unitCost',
+      align: 'right',
       disablePadding: false,
-      label: t('cost'),
+      width: '20%',
+      label: t('unitCost'),
     },
     {
       id: 'actions',
-      numeric: false,
+      align: 'left',
       disablePadding: false,
+      width: '20%',
       label: t('actions'),
     },
   ]
@@ -76,11 +76,10 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell />
         {headCells.map(headCell => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
+            align={headCell.align}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >

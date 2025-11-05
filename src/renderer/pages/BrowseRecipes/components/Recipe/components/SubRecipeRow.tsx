@@ -14,7 +14,7 @@ import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
-import { formatDisplayDate } from '../../../../../utilities'
+import { formatCurrency, formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
 function SubRecipeRow(props: {
@@ -55,6 +55,9 @@ function SubRecipeRow(props: {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPE, recipeId],
         })
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECIPE_COST],
+        })
       } else {
         alert('Failed to update sub-recipe relation.')
       }
@@ -66,8 +69,8 @@ function SubRecipeRow(props: {
 
   const removeSubRecipeMutation = useMutation({
     mutationFn: () =>
-      ipcMessenger.invoke(CHANNEL.DB.REMOVE_INGREDIENT_FROM_RECIPE, {
-        ingredientId: row.id,
+      ipcMessenger.invoke(CHANNEL.DB.REMOVE_SUB_RECIPE_FROM_RECIPE, {
+        subRecipeId: row.id,
         recipeId: recipeId,
       }),
     onSuccess: result => {
@@ -94,9 +97,9 @@ function SubRecipeRow(props: {
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantity = parseFloat(event.target.value)
-    if (!isNaN(newQuantity)) {
-      updateSubRecipeRelationMutation.mutate({ quantity: newQuantity })
-    }
+    updateSubRecipeRelationMutation.mutate({
+      quantity: !isNaN(newQuantity) ? newQuantity : 0,
+    })
   }
 
   const handleEditIngredients = () => {
@@ -124,22 +127,6 @@ function SubRecipeRow(props: {
         sx={{ '& > *': { borderBottom: 'unset' } }}
       >
         <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
-          {/* <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={event => {
-              event.stopPropagation()
-              setOpen(!open)
-            }}
-          >
-            {open ? (
-              <Icon name="collapseVertical" />
-            ) : (
-              <Icon name="expandVertical" />
-            )}
-          </IconButton> */}
-        </TableCell>
-        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
           {formatDisplayDate(row.createdAt)}
         </TableCell>
 
@@ -164,7 +151,7 @@ function SubRecipeRow(props: {
             type="number"
             value={row.relation?.quantity || 0}
             onChange={handleQuantityChange}
-            variant="standard"
+            variant="filled"
           />
         </TableCell>
         <TableCell
@@ -182,7 +169,19 @@ function SubRecipeRow(props: {
           sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
           {subRecipeCostQuery.data?.success
-            ? `$${subRecipeCostQuery.data.cost.toFixed(2)}`
+            ? formatCurrency(subRecipeCostQuery.data.cost)
+            : 'N/A'}
+        </TableCell>
+        <TableCell
+          align="right"
+          id={labelId}
+          scope="row"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
+        >
+          {subRecipeCostQuery.data?.success
+            ? formatCurrency(
+                subRecipeCostQuery.data.cost * row.relation.quantity,
+              )
             : 'N/A'}
         </TableCell>
         <TableCell align="right" sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
@@ -204,57 +203,6 @@ function SubRecipeRow(props: {
           </Tooltip>
         </TableCell>
       </TableRow>
-      {/* <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                {t('recipeDetails')}
-              </Typography>
-              <Table size="small" aria-label="ingredient details">
-                <TableBody>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      ID
-                    </TableCell>
-                    <TableCell>{row.id}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      Created
-                    </TableCell>
-                    <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      Updated
-                    </TableCell>
-                    <TableCell>
-                      {new Date(row.updatedAt).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      Produces
-                    </TableCell>
-                    <TableCell>
-                      {row.produces} - {row.units}
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      Notes
-                    </TableCell>
-                    <TableCell>{row.notes || <em>No notes</em>}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow> */}
     </React.Fragment>
   )
 }

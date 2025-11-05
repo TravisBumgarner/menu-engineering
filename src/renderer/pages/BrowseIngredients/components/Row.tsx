@@ -30,33 +30,16 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
         key={row.id}
         sx={{ '& > *': { borderBottom: 'unset' } }}
       >
-        <TableCell>
-          {/* <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={event => {
-              event.stopPropagation()
-              setOpen(!open)
-            }}
-          >
-            {open ? (
-              <Icon name="collapseVertical" />
-            ) : (
-              <Icon name="expandVertical" />
-            )}
-          </IconButton> */}
-        </TableCell>
         <TableCell scope="row" padding="none">
           {formatDisplayDate(row.createdAt)}
         </TableCell>
         <TableCell id={labelId} scope="row" padding="none">
           {row.title}
         </TableCell>
-        <TableCell align="right">{row.quantity}</TableCell>
         <TableCell align="left">
           {t(row.units as keyof typeof ALL_UNITS)}
         </TableCell>
-        <TableCell align="right">{row.cost}</TableCell>
+        <TableCell align="right">{row.unitCost}</TableCell>
         <TableCell align="left">
           <Tooltip title={t('editIngredient')}>
             <IconButton
@@ -69,49 +52,6 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
           </Tooltip>
         </TableCell>
       </TableRow>
-      {/* <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                {t('ingredientDetails')}
-              </Typography>
-              <Table size="small" aria-label="ingredient details">
-                <TableBody>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('id')}
-                    </TableCell>
-                    <TableCell>{row.id}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('created')}
-                    </TableCell>
-                    <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('updated')}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(row.updatedAt).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('notes')}
-                    </TableCell>
-                    <TableCell>
-                      {row.notes || <em>{t('noNotes')}</em>}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow> */}
     </React.Fragment>
   )
 }

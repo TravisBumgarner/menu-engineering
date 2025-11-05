@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "7fbea0fe-83de-47a1-b38e-db63a7113954",
+  "id": "55d0270e-1dfa-4983-b25e-2ea7740bfaba",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "ingredients": {
@@ -21,15 +21,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "cost": {
-          "name": "cost",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "quantity": {
-          "name": "quantity",
+        "unitCost": {
+          "name": "unitCost",
           "type": "real",
           "primaryKey": false,
           "notNull": true,
@@ -74,6 +67,20 @@
     "recipe_ingredients": {
       "name": "recipe_ingredients",
       "columns": {
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "id": {
           "name": "id",
           "type": "text",
@@ -99,8 +106,9 @@
           "name": "quantity",
           "type": "real",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
         },
         "units": {
           "name": "units",
@@ -193,6 +201,20 @@
     "recipe_sub_recipes": {
       "name": "recipe_sub_recipes",
       "columns": {
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "id": {
           "name": "id",
           "type": "text",
@@ -218,8 +240,9 @@
           "name": "quantity",
           "type": "real",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
         },
         "units": {
           "name": "units",
