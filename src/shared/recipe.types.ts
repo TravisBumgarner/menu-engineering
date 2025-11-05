@@ -25,10 +25,9 @@ export type RecipeDTO = NewRecipeDTO & {
 
 export type NewIngredientDTO = {
   title: string
-  quantity: number
   units: AllUnits
   notes: string
-  cost: number
+  unitCost: number
 }
 
 export type RelationDTO = {

@@ -11,7 +11,7 @@ import { SPACING } from '../../../styles/consts'
 
 interface HeadCell {
   disablePadding: boolean
-  id: keyof RecipeDTO | 'actions' | 'collapse'
+  id: keyof RecipeDTO | 'actions' | 'collapse' | 'cost'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
@@ -50,6 +50,13 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       disablePadding: true,
       label: t('recipeName'),
       width: '20%',
+    },
+    {
+      id: 'cost',
+      align: 'left',
+      disablePadding: true,
+      label: t('cost'),
+      width: '10%',
     },
     {
       id: 'produces',
@@ -103,7 +110,9 @@ function Head({ onRequestSort, order, orderBy }: Props) {
             sortDirection={orderBy === headCell.id ? order : false}
             sx={{ width: headCell.width, padding: `0 ${SPACING.SMALL.PX}` }}
           >
-            {headCell.id === 'actions' || headCell.id === 'collapse' ? (
+            {headCell.id === 'actions' ||
+            headCell.id === 'collapse' ||
+            headCell.id === 'cost' ? (
               headCell.label
             ) : (
               <TableSortLabel

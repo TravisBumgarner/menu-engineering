@@ -13,12 +13,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { NewIngredientDTO, RecipeDTO } from '../../../../shared/recipe.types'
-import { ALL_UNITS } from '../../../../shared/units.types'
+import { ALL_UNITS, AllUnits } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
+import { getUnitLabel } from '../../../utilities'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -27,17 +28,24 @@ export interface AddIngredientModalProps {
   recipe?: RecipeDTO
 }
 
+type FormData = {
+  title: string
+  quantity: number
+  units: AllUnits
+  notes: string
+  cost: number
+}
+
 const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
-  const [ingredientFormData, setIngredientFormData] =
-    useState<NewIngredientDTO>({
-      title: '',
-      quantity: 0,
-      units: ALL_UNITS.cups,
-      notes: '',
-      cost: 0,
-    })
+  const [ingredientFormData, setIngredientFormData] = useState<FormData>({
+    title: '',
+    quantity: 1,
+    units: ALL_UNITS.cups,
+    notes: '',
+    cost: 0,
+  })
 
   const addIngredientMutation = useMutation({
     mutationFn: ({
@@ -71,7 +79,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           // Reset form for "Save & Add another"
           setIngredientFormData({
             title: '',
-            quantity: 0,
+            quantity: 1,
             units: ALL_UNITS.cups,
             notes: '',
             cost: 0,
@@ -89,19 +97,24 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
   const handleSubmit = (shouldClose: boolean) => (e: React.FormEvent) => {
     e.preventDefault()
     addIngredientMutation.mutate({
-      newIngredient: ingredientFormData,
+      newIngredient: {
+        title: ingredientFormData.title,
+        units: ingredientFormData.units,
+        notes: ingredientFormData.notes,
+        unitCost: ingredientFormData.cost / ingredientFormData.quantity,
+      },
       recipeId: recipe?.id,
       shouldClose,
     })
   }
 
   const handleInputChange =
-    (field: keyof NewIngredientDTO) =>
+    (field: string) =>
     (
       e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } },
     ) => {
       const value =
-        field === 'quantity' || field === 'cost'
+        field === 'quantity' || field === 'unitCost'
           ? Number(e.target.value)
           : e.target.value
       setIngredientFormData(prev => ({
@@ -136,7 +149,24 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
             placeholder={t('ingredientNamePlaceholder')}
           />
 
-          <Stack spacing={SPACING.SMALL.PX} direction="row">
+          <Stack
+            spacing={SPACING.SMALL.PX}
+            direction="row"
+            sx={{ alignItems: 'center' }}
+          >
+            <TextField
+              size="small"
+              label={t('cost')}
+              type="number"
+              value={ingredientFormData.cost}
+              onChange={handleInputChange('cost')}
+              required
+              sx={{ width: '100px' }}
+              slotProps={{ htmlInput: { min: 0, step: 'any' } }}
+            />
+
+            <Typography>/</Typography>
+
             <TextField
               size="small"
               label={t('quantity')}
@@ -144,11 +174,10 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               value={ingredientFormData.quantity}
               onChange={handleInputChange('quantity')}
               required
-              fullWidth
+              sx={{ width: '100px' }}
               slotProps={{ htmlInput: { min: 0, step: 'any' } }}
             />
-
-            <FormControl size="small" fullWidth required>
+            <FormControl size="small" required sx={{ width: '150px' }}>
               <InputLabel>{t('units')}</InputLabel>
               <Select
                 value={ingredientFormData.units}
@@ -161,22 +190,25 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               >
                 {Object.entries(ALL_UNITS).map(([key, value]) => (
                   <MenuItem key={key} value={value}>
-                    {t(value as keyof typeof ALL_UNITS)}
+                    {getUnitLabel(value, 2)}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
 
-            <TextField
-              size="small"
-              label={t('cost')}
-              type="number"
-              value={ingredientFormData.cost}
-              onChange={handleInputChange('cost')}
-              required
-              fullWidth
-              slotProps={{ htmlInput: { min: 0, step: 'any' } }}
-            />
+            <Typography>=</Typography>
+
+            <Typography>
+              $
+              {(ingredientFormData.cost / ingredientFormData.quantity).toFixed(
+                2,
+              )}
+              /{' '}
+              {getUnitLabel(
+                ingredientFormData.units,
+                ingredientFormData.quantity,
+              )}
+            </Typography>
           </Stack>
           <Typography
             sx={{ marginTop: '0 !important' }}

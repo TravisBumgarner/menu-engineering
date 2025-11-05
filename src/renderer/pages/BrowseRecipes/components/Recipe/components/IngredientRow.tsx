@@ -3,7 +3,6 @@ import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import Typography from '@mui/material/Typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
@@ -18,7 +17,7 @@ import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
-import { formatDisplayDate } from '../../../../../utilities'
+import { formatCurrency, formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
 function IngredientRow(props: {
@@ -73,6 +72,9 @@ function IngredientRow(props: {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPE, recipeId],
         })
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.RECIPE_COST],
+        })
       } else {
         alert('Failed to update ingredient relation.')
       }
@@ -95,14 +97,15 @@ function IngredientRow(props: {
   }
 
   const relationCost = React.useMemo(() => {
-    return row.relation.quantity * (row.cost / row.quantity)
-  }, [row.cost, row.quantity, row.relation.quantity])
+    return row.relation.quantity * row.unitCost
+  }, [row.unitCost, row.relation.quantity])
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantity = parseFloat(event.target.value)
-    if (!isNaN(newQuantity)) {
-      updateIngredientRelationMutation.mutate({ quantity: newQuantity })
-    }
+
+    updateIngredientRelationMutation.mutate({
+      quantity: !isNaN(newQuantity) ? newQuantity : 0,
+    })
   }
 
   return (
@@ -114,22 +117,6 @@ function IngredientRow(props: {
         sx={{ '& > *': { borderBottom: 'unset' } }}
       >
         <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
-          {/* <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={event => {
-              event.stopPropagation()
-              setOpen(!open)
-            }}
-          >
-            {open ? (
-              <Icon name="collapseVertical" />
-            ) : (
-              <Icon name="expandVertical" />
-            )}
-          </IconButton> */}
-        </TableCell>
-        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
           {formatDisplayDate(row.createdAt)}
         </TableCell>
         <TableCell
@@ -138,7 +125,8 @@ function IngredientRow(props: {
           sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Icon name="ingredient" size={ICON_SIZE} /> {row.title}
+            <Icon name="ingredient" size={ICON_SIZE} /> {row.title}{' '}
+            {row.id.slice(0, 6)}
           </Box>{' '}
         </TableCell>
         <TableCell
@@ -152,7 +140,7 @@ function IngredientRow(props: {
             type="number"
             value={row.relation.quantity}
             onChange={handleQuantityChange}
-            variant="standard"
+            variant="filled"
           />
         </TableCell>
         <TableCell
@@ -169,20 +157,15 @@ function IngredientRow(props: {
           scope="row"
           sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
-          {relationCost}
-          <Tooltip
-            title={
-              <Typography>
-                {row.quantity} {row.units} = ${row.cost}
-                <br />
-                {row.relation.quantity} {row.relation.units} = ${relationCost}
-              </Typography>
-            }
-          >
-            <span>
-              <Icon name="info" />
-            </span>
-          </Tooltip>
+          {formatCurrency(row.unitCost)}
+        </TableCell>
+        <TableCell
+          align="right"
+          id={labelId}
+          scope="row"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
+        >
+          {formatCurrency(relationCost)}
         </TableCell>
         <TableCell align="right" sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
           <Tooltip title={t('editIngredient')}>
@@ -197,64 +180,6 @@ function IngredientRow(props: {
           </Tooltip>
         </TableCell>
       </TableRow>
-      {/* <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                {t('ingredientDetails')}
-              </Typography>
-              <Table size="small" aria-label="ingredient details">
-                <TableBody>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('id')}
-                    </TableCell>
-                    <TableCell>{row.id}</TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('quantity')}
-                    </TableCell>
-                    <TableCell>{row.quantity}</TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('units')}
-                    </TableCell>
-                    <TableCell>
-                      {t(row.units as keyof typeof ALL_UNITS)}
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('created')}
-                    </TableCell>
-                    <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('updated')}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(row.updatedAt).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell scope="row" sx={{ fontWeight: 'bold' }}>
-                      {t('notes')}
-                    </TableCell>
-                    <TableCell>{row.notes || <em>No notes</em>}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow> */}
     </React.Fragment>
   )
 }

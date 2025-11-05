@@ -18,7 +18,7 @@ interface HeadCell {
     | 'createdAt'
     | 'quantity'
     | 'units'
-    | 'collapse'
+    | 'unitCost'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
@@ -39,13 +39,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
   const headCells: readonly HeadCell[] = [
     {
-      id: 'collapse',
-      align: 'left',
-      disablePadding: false,
-      label: '',
-      width: '2%',
-    },
-    {
       id: 'createdAt',
       align: 'left',
       disablePadding: true,
@@ -64,20 +57,27 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       align: 'right',
       disablePadding: true,
       label: t('quantity'),
-      width: '5%',
+      width: '10%',
     },
     {
       id: 'units',
       align: 'left',
       disablePadding: true,
       label: t('units'),
-      width: '5%',
+      width: '3%',
+    },
+    {
+      id: 'unitCost',
+      align: 'right',
+      disablePadding: true,
+      label: t('unitCost'),
+      width: '8%',
     },
     {
       id: 'cost',
       align: 'right',
       disablePadding: true,
-      label: t('cost'),
+      label: t('totalCost'),
       width: '10%',
     },
     {

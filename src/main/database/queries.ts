@@ -221,75 +221,41 @@ const updateRecipeRelation = async (
 
 const getRecipeCost = async (
   recipeId: string,
+  depth = 0,
 ): Promise<
   { success: true; cost: number } | { success: false; error: string }
 > => {
-  // Helper function to recursively calculate cost with circular dependency detection
-  const calculateCostRecursive = async (
-    currentRecipeId: string,
-    ancestorPath: string[] = [],
-  ): Promise<
-    { success: true; cost: number } | { success: false; error: string }
-  > => {
-    // Check for circular dependency
-    if (ancestorPath.includes(currentRecipeId)) {
-      const parentId = ancestorPath[ancestorPath.length - 1]
-      return {
-        success: false,
-        error: `Found ${currentRecipeId} as child of ${parentId} and can't continue`,
-      }
+  try {
+    if (depth > 5) {
+      throw new Error('Maximum recursion depth exceeded')
     }
-
     let totalCost = 0
-    const newPath = [...ancestorPath, currentRecipeId]
 
-    // Get direct ingredients for this recipe
-    const ingredients = await getRecipeIngredients(currentRecipeId)
-
-    // Calculate cost from direct ingredients
-    for (const ingredient of ingredients) {
-      if (ingredient) {
-        // Convert ingredient quantity to recipe units if needed
-        const ingredientCost = ingredient.cost || 0
-        const ingredientQuantity = ingredient.quantity || 0
-        const relationQuantity = ingredient.relation?.quantity || 0
-
-        // Cost per unit of ingredient * quantity used in recipe
-        const ingredientTotalCost =
-          (ingredientCost / ingredientQuantity) * relationQuantity
-        totalCost += ingredientTotalCost
-      }
+    // 1️⃣ INGREDIENT COSTS (direct)
+    const ingredients = await getRecipeIngredients(recipeId)
+    for (const ing of ingredients) {
+      const usedQty = ing.relation.quantity
+      // TODO: optionally normalize units here if units differ
+      totalCost += ing.unitCost * usedQty
     }
 
-    // Get sub-recipes for this recipe
-    const subRecipes = await getRecipeSubRecipes(currentRecipeId)
-
-    // Recursively calculate cost from sub-recipes
-    for (const subRecipe of subRecipes) {
-      if (subRecipe) {
-        const subRecipeResult = await calculateCostRecursive(
-          subRecipe.id,
-          newPath,
-        )
-
-        if (!subRecipeResult.success) {
-          return subRecipeResult // Propagate error up the chain
-        }
-
-        const relationQuantity = subRecipe.relation?.quantity || 0
-        const subRecipeProduces = subRecipe.produces || 1
-
-        // Cost of sub-recipe * (quantity needed / quantity it produces)
-        const subRecipeCostContribution =
-          subRecipeResult.cost * (relationQuantity / subRecipeProduces)
-        totalCost += subRecipeCostContribution
+    // 2️⃣ SUB-RECIPE COSTS (recursive)
+    const subRecipes = await getRecipeSubRecipes(recipeId)
+    for (const sub of subRecipes) {
+      const subCostResult = await getRecipeCost(sub.id, depth + 1)
+      if (subCostResult.success) {
+        const usedQty = sub.relation.quantity
+        const subRecipe = sub // includes .produces from getRecipeSubRecipes join
+        const costPerUnit = subCostResult.cost / (subRecipe.produces || 1)
+        totalCost += costPerUnit * usedQty
       }
     }
 
     return { success: true, cost: totalCost }
+  } catch (err) {
+    console.error(err)
+    return { success: false, error: String(err) }
   }
-
-  return await calculateCostRecursive(recipeId)
 }
 
 export default {

@@ -95,6 +95,20 @@ typedIpcMain.handle(
   },
 )
 
+typedIpcMain.handle(
+  CHANNEL.DB.REMOVE_SUB_RECIPE_FROM_RECIPE,
+  async (_event, params) => {
+    const result = await queries.removeSubRecipeFromRecipe(
+      params.subRecipeId,
+      params.recipeId,
+    )
+    return {
+      type: 'remove_sub_recipe_from_recipe',
+      success: !!result,
+    }
+  },
+)
+
 typedIpcMain.handle(CHANNEL.DB.UPDATE_INGREDIENT, async (_event, params) => {
   const result = await queries.updateIngredient(params.id, params.payload)
   return {
