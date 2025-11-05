@@ -19,6 +19,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
+import { getUnitLabel } from '../../../utilities'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -189,7 +190,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               >
                 {Object.entries(ALL_UNITS).map(([key, value]) => (
                   <MenuItem key={key} value={value}>
-                    {t(value as keyof typeof ALL_UNITS)}
+                    {getUnitLabel(value, 2)}
                   </MenuItem>
                 ))}
               </Select>
@@ -202,7 +203,11 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               {(ingredientFormData.cost / ingredientFormData.quantity).toFixed(
                 2,
               )}
-              / {t(ingredientFormData.units)}
+              /{' '}
+              {getUnitLabel(
+                ingredientFormData.units,
+                ingredientFormData.quantity,
+              )}
             </Typography>
           </Stack>
           <Typography

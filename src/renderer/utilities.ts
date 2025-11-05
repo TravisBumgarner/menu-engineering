@@ -1,10 +1,12 @@
 import log from 'electron-log/renderer'
+import { t } from 'i18next'
 import {
   VOLUME_UNIT,
   VolumeUnit,
   WEIGHT_UNIT,
   WeightUnit,
 } from '../shared/units.types'
+import { TranslationKeys } from './internationalization/types'
 
 // Volume conversion factors (to milliliters)
 const VOLUME_TO_ML = {
@@ -95,4 +97,19 @@ export const formatCurrency = (
     style: 'currency',
     currency: currency,
   }).format(amount)
+}
+
+export const getUnitLabel = (
+  unit: string,
+  quantity: number | 'singular' | 'plural',
+) => {
+  let suffix: string
+  if (quantity === 'singular') {
+    suffix = '_singular'
+  } else if (quantity === 'plural') {
+    suffix = '_plural'
+  } else {
+    suffix = quantity === 1 ? '_singular' : '_plural'
+  }
+  return t(`${unit}${suffix}` as TranslationKeys)
 }

@@ -22,6 +22,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
+import { getUnitLabel } from '../../../utilities'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -150,6 +151,7 @@ const EditIngredientModal = ({
             <FormControl size="small" required sx={{ width: '150px' }}>
               <InputLabel>{t('units')}</InputLabel>
               <Select
+                disabled
                 value={formData.units}
                 onChange={e =>
                   handleInputChange('units')(
@@ -160,7 +162,7 @@ const EditIngredientModal = ({
               >
                 {Object.entries(ALL_UNITS).map(([key, value]) => (
                   <MenuItem key={key} value={value}>
-                    {t(value as keyof typeof ALL_UNITS)}
+                    {getUnitLabel(value, 'plural')}
                   </MenuItem>
                 ))}
               </Select>
@@ -170,7 +172,7 @@ const EditIngredientModal = ({
 
             <Typography>
               ${(formData.cost / formData.quantity).toFixed(2)}/{' '}
-              {t(formData.units)}
+              {getUnitLabel(formData.units, 'singular')}
             </Typography>
           </Stack>
           <Typography

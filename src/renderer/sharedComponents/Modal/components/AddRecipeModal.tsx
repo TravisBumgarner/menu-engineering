@@ -25,6 +25,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
+import { getUnitLabel } from '../../../utilities'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -171,7 +172,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
               >
                 {Object.entries(ALL_UNITS).map(([key, value]) => (
                   <MenuItem key={key} value={value}>
-                    {t(value as keyof typeof ALL_UNITS)}
+                    {getUnitLabel(value, 'plural')}
                   </MenuItem>
                 ))}
               </Select>
