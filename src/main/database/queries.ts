@@ -226,12 +226,13 @@ const getRecipeCost = async (
   { success: true; cost: number } | { success: false; error: string }
 > => {
   try {
-    if (depth > 5) return { success: true, cost: 0 } // safety limit
+    if (depth > 5) {
+      throw new Error('Maximum recursion depth exceeded')
+    }
     let totalCost = 0
 
     // 1️⃣ INGREDIENT COSTS (direct)
     const ingredients = await getRecipeIngredients(recipeId)
-    console.log('ingredients for', recipeId, ingredients)
     for (const ing of ingredients) {
       const usedQty = ing.relation.quantity
       // TODO: optionally normalize units here if units differ
@@ -240,7 +241,6 @@ const getRecipeCost = async (
 
     // 2️⃣ SUB-RECIPE COSTS (recursive)
     const subRecipes = await getRecipeSubRecipes(recipeId)
-    console.log('sub-recipes for', recipeId, subRecipes)
     for (const sub of subRecipes) {
       const subCostResult = await getRecipeCost(sub.id, depth + 1)
       if (subCostResult.success) {

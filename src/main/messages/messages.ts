@@ -19,7 +19,6 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPES, async () => {
 
 typedIpcMain.handle(CHANNEL.DB.GET_RECIPE_COST, async (_event, params) => {
   const result = await queries.getRecipeCost(params.id)
-  console.log('cost of', params.id, result.success ? result.cost : 'na')
   return {
     type: 'get_recipe_cost',
     ...result,
