@@ -110,12 +110,7 @@ function IngredientRow(props: {
 
   return (
     <React.Fragment>
-      <TableRow
-        hover
-        tabIndex={-1}
-        key={row.id}
-        sx={{ '& > *': { borderBottom: 'unset' } }}
-      >
+      <TableRow hover tabIndex={-1} key={row.id}>
         <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
           {formatDisplayDate(row.createdAt)}
         </TableCell>

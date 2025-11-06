@@ -7,10 +7,11 @@ import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
 import { IngredientDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import { SPACING } from '../../../styles/consts'
 
 interface HeadCell {
   disablePadding: boolean
-  id: keyof IngredientDTO | 'actions'
+  id: keyof IngredientDTO | 'actions' | 'usedIn' | 'collapse'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
@@ -32,11 +33,18 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
   const headCells: readonly HeadCell[] = [
     {
+      id: 'collapse',
+      align: 'left',
+      disablePadding: true,
+      label: '',
+      width: '5%',
+    },
+    {
       id: 'createdAt',
       align: 'left',
       disablePadding: true,
       label: t('created'),
-      width: '20%',
+      width: '10%',
     },
     {
       id: 'title',
@@ -50,21 +58,28 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       align: 'left',
       disablePadding: false,
       label: t('units'),
-      width: '20%',
+      width: '10%',
     },
     {
       id: 'unitCost',
       align: 'right',
       disablePadding: false,
-      width: '20%',
+      width: '15%',
       label: t('unitCost'),
+    },
+    {
+      id: 'usedIn',
+      align: 'left',
+      disablePadding: false,
+      width: '10%',
+      label: t('usedIn'),
     },
     {
       id: 'actions',
       align: 'left',
       disablePadding: false,
       width: '20%',
-      label: t('actions'),
+      label: '',
     },
   ]
 
@@ -80,10 +95,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           <TableCell
             key={headCell.id}
             align={headCell.align}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sx={{ width: headCell.width, padding: `0 ${SPACING.TINY.PX}` }}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            {headCell.id === 'actions' ? (
+            {headCell.id === 'actions' ||
+            headCell.id === 'usedIn' ||
+            headCell.id === 'collapse' ? (
               headCell.label
             ) : (
               <TableSortLabel

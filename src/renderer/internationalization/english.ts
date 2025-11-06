@@ -67,6 +67,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   ingredientDetails: 'Ingredient Details',
   noDetails: 'No Details',
   unitsHelpText: 'Note - Units can only be set on creation',
+  usedIn: 'Used In',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'e.g. Flour, Salt, Olive Oil',
@@ -89,6 +90,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   noIngredientsFound: 'No ingredients found.',
   noDataAvailable: 'No data available.',
   recipeNotFound: 'Recipe not found.',
+  ingredientNotFound: 'Ingredient not found.',
   errorLoadingRecipe: 'Error loading recipe.',
   errorLoadingRecipes: 'Error loading recipes.',
   errorLoadingIngredients: 'Error loading ingredients.',

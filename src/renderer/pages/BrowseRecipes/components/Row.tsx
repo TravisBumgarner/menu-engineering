@@ -10,7 +10,6 @@ import { useQuery } from '@tanstack/react-query'
 import * as React from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
-import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
@@ -18,10 +17,20 @@ import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
-import { formatCurrency, formatDisplayDate } from '../../../utilities'
+import {
+  formatCurrency,
+  formatDisplayDate,
+  getUnitLabel,
+} from '../../../utilities'
 import Recipe from './Recipe'
 
-function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
+function RecipeRow({
+  row,
+  labelId,
+}: {
+  row: RecipeDTO & { usedInRecipesCount: number }
+  labelId: string
+}) {
   useSignals()
   const { t } = useAppTranslation()
 
@@ -99,7 +108,7 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
           {row.produces}
         </TableCell>
         <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }} align="left">
-          {t(row.units as keyof typeof ALL_UNITS)}
+          {getUnitLabel(row.units, 'plural')}
         </TableCell>
         <TableCell align="left" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
           <Typography
@@ -131,6 +140,9 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
             {row.showInMenu ? t('yes') : t('no')}
           </Typography>
         </TableCell>
+        <TableCell align="left" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
+          {row.usedInRecipesCount}
+        </TableCell>
         <TableCell align="center" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
           <Tooltip title={t('editRecipe')}>
             <IconButton
@@ -147,7 +159,7 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO; labelId: string }) {
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ padding: 0, border: 0 }} colSpan={9}>
+        <TableCell style={{ padding: 0, border: 0 }} colSpan={10}>
           <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>

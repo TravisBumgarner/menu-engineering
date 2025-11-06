@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, count, eq } from 'drizzle-orm'
 import {
   NewIngredientDTO,
   NewIngredientInRecipeDTO,
@@ -28,16 +28,43 @@ const addRecipe = async (recipeData: NewRecipeDTO) => {
 }
 
 const getRecipes = async () => {
-  const recipes = await db.select().from(recipeSchema).all()
-  return recipes
+  const recipes = await db
+    .select({
+      recipe: recipeSchema,
+      usedInRecipesCount: count(recipeSubRecipeSchema.id),
+    })
+    .from(recipeSchema)
+    .leftJoin(
+      recipeSubRecipeSchema,
+      eq(recipeSchema.id, recipeSubRecipeSchema.childId),
+    )
+    .groupBy(recipeSchema.id)
+    .all()
+
+  return recipes.map(row => ({
+    ...row.recipe,
+    usedInRecipesCount: row.usedInRecipesCount,
+  }))
 }
 
 const getRecipe = async (id: string) => {
-  const recipes = await db
+  const recipe = await db
     .select()
     .from(recipeSchema)
     .where(eq(recipeSchema.id, id))
-  return recipes[0]
+
+  const usedInRecipes = await db
+    .select({
+      recipe: recipeSchema,
+    })
+    .from(recipeSubRecipeSchema)
+    .where(eq(recipeSubRecipeSchema.childId, id))
+    .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.parentId, recipeSchema.id))
+
+  return {
+    ...recipe[0],
+    usedInRecipes: usedInRecipes.map(row => row.recipe).filter(Boolean),
+  }
 }
 
 const addIngredient = async (ingredientData: NewIngredientDTO) => {
@@ -82,9 +109,34 @@ const getRecipeIngredients = async (recipeId: string) => {
   }))
 }
 
+const getIngredient = async (id: string) => {
+  const ingredientResult = await db
+    .select()
+    .from(ingredientSchema)
+    .where(eq(ingredientSchema.id, id))
+    .limit(1)
+
+  return ingredientResult[0]
+}
+
 const getIngredients = async () => {
-  const ingredients = await db.select().from(ingredientSchema).all()
-  return ingredients
+  const ingredients = await db
+    .select({
+      ingredient: ingredientSchema,
+      recipeCount: count(recipeIngredientSchema.id),
+    })
+    .from(ingredientSchema)
+    .leftJoin(
+      recipeIngredientSchema,
+      eq(ingredientSchema.id, recipeIngredientSchema.childId),
+    )
+    .groupBy(ingredientSchema.id)
+    .all()
+
+  return ingredients.map(row => ({
+    ...row.ingredient,
+    recipeCount: row.recipeCount,
+  }))
 }
 
 const removeIngredientFromRecipe = async (
@@ -258,6 +310,33 @@ const getRecipeCost = async (
   }
 }
 
+const getRecipesUsingSubRecipe = async (subRecipeId: string) => {
+  const recipes = await db
+    .select({
+      recipe: recipeSchema,
+    })
+    .from(recipeSubRecipeSchema)
+    .where(eq(recipeSubRecipeSchema.childId, subRecipeId))
+    .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.parentId, recipeSchema.id))
+
+  return recipes.map(row => row.recipe).filter(Boolean)
+}
+
+const getRecipesUsingIngredient = async (ingredientId: string) => {
+  const recipes = await db
+    .select({
+      recipe: recipeSchema,
+    })
+    .from(recipeIngredientSchema)
+    .where(eq(recipeIngredientSchema.childId, ingredientId))
+    .leftJoin(
+      recipeSchema,
+      eq(recipeIngredientSchema.parentId, recipeSchema.id),
+    )
+
+  return recipes.map(row => row.recipe).filter(Boolean)
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -265,13 +344,16 @@ export default {
   getRecipeIngredients,
   addIngredient,
   addIngredientToRecipe,
+  getIngredient,
   getIngredients,
   removeIngredientFromRecipe,
   removeSubRecipeFromRecipe,
   addSubRecipeToRecipe,
   getRecipeSubRecipes,
+  getRecipesUsingSubRecipe,
   updateIngredient,
   updateRecipe,
   updateRecipeRelation,
   getRecipeCost,
+  getRecipesUsingIngredient,
 }

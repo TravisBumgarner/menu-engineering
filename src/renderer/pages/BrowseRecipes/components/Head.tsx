@@ -11,7 +11,7 @@ import { SPACING } from '../../../styles/consts'
 
 interface HeadCell {
   disablePadding: boolean
-  id: keyof RecipeDTO | 'actions' | 'collapse' | 'cost'
+  id: keyof RecipeDTO | 'actions' | 'collapse' | 'cost' | 'usedInRecipesCount'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
@@ -87,6 +87,13 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       width: '15%',
     },
     {
+      id: 'usedInRecipesCount',
+      align: 'left',
+      disablePadding: false,
+      label: t('usedIn'),
+      width: '15%',
+    },
+    {
       id: 'actions',
       align: 'center',
       disablePadding: false,
@@ -112,6 +119,7 @@ function Head({ onRequestSort, order, orderBy }: Props) {
           >
             {headCell.id === 'actions' ||
             headCell.id === 'collapse' ||
+            headCell.id === 'usedInRecipesCount' ||
             headCell.id === 'cost' ? (
               headCell.label
             ) : (

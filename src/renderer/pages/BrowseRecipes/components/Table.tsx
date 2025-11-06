@@ -40,7 +40,13 @@ function getComparator<Key extends keyof RecipeDTO>(
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
+const Table = ({
+  recipes,
+}: {
+  recipes: (RecipeDTO & {
+    usedInRecipesCount: number
+  })[]
+}) => {
   useSignals()
   const { t } = useAppTranslation()
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
@@ -136,11 +142,11 @@ const Table = ({ recipes }: { recipes: RecipeDTO[] }) => {
                   height: 53 * emptyRows,
                 }}
               >
-                <TableCell colSpan={8} />
+                <TableCell colSpan={10} />
               </TableRow>
             )}
             <TableRow>
-              <TableCell colSpan={8}>
+              <TableCell colSpan={10}>
                 <Button
                   size="small"
                   sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
