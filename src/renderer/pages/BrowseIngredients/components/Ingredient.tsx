@@ -1,10 +1,10 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
-import { activeRecipeIdSignal } from '../../../signals'
+import Link from '../../../sharedComponents/Link'
 import { SPACING } from '../../../styles/consts'
 
 const Ingredient = ({ id }: { id: string }) => {
@@ -47,13 +47,9 @@ const Ingredient = ({ id }: { id: string }) => {
       <Typography>
         {t('usedIn')} -{' '}
         {data.usedInRecipes.map(recipe => (
-          <Button
-            variant="text"
-            key={recipe.id}
-            onClick={() => (activeRecipeIdSignal.value = recipe.id)}
-          >
+          <Link key={recipe.id} to={`/?activeRecipeId=${recipe.id}`}>
             {recipe.title}
-          </Button>
+          </Link>
         ))}
       </Typography>
     </Box>
