@@ -67,6 +67,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   ingredientDetails: 'Detalles de Ingrediente',
   noDetails: 'Sin detalles',
   unitsHelpText: 'Nota - Las unidades solo se pueden establecer al crear',
+  usedIn: 'Usado en',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'ej. Harina, Sal, Aceite de Oliva',
@@ -89,6 +90,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   noIngredientsFound: 'No se encontraron ingredientes.',
   noDataAvailable: 'No hay datos disponibles.',
   recipeNotFound: 'Receta no encontrada.',
+  ingredientNotFound: 'Ingrediente no encontrado.',
   errorLoadingRecipe: 'Error cargando receta.',
   errorLoadingRecipes: 'Error cargando recetas.',
   errorLoadingIngredients: 'Error cargando ingredientes.',

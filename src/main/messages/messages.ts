@@ -29,11 +29,13 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPE, async (_event, params) => {
   const recipe = await queries.getRecipe(params.id)
   const ingredients = await queries.getRecipeIngredients(params.id)
   const subRecipes = await queries.getRecipeSubRecipes(params.id)
+  const usedInRecipes = await queries.getRecipesUsingSubRecipe(params.id)
   return {
     type: 'get_recipe',
     recipe: recipe || null,
     ingredients: ingredients || [],
     subRecipes: subRecipes || [],
+    usedInRecipes: usedInRecipes || [],
   }
 })
 
@@ -78,6 +80,16 @@ typedIpcMain.handle(CHANNEL.DB.GET_INGREDIENTS, async () => {
   return {
     type: 'get_ingredients',
     ingredients: await queries.getIngredients(),
+  }
+})
+
+typedIpcMain.handle(CHANNEL.DB.GET_INGREDIENT, async (_event, params) => {
+  const ingredient = await queries.getIngredient(params.id)
+  const usedInRecipes = await queries.getRecipesUsingIngredient(params.id)
+  return {
+    type: 'get_ingredient',
+    ingredient: ingredient || null,
+    usedInRecipes: usedInRecipes || [],
   }
 })
 

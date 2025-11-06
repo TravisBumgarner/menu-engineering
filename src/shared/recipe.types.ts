@@ -35,6 +35,10 @@ export type RelationDTO = {
   units: AllUnits
 }
 
+// export type UsedInDTO = {
+//   usedIn: RecipeDTO[]
+// }
+
 export type IngredientDTO = NewIngredientDTO & {
   id: string
   createdAt: string

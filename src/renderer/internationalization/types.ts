@@ -32,6 +32,7 @@ export type TranslationKeys =
   | 'selected'
   | 'unitCost'
   | 'totalCost'
+  | 'usedIn'
 
   // Navigation
   | 'appTitle'
@@ -87,6 +88,7 @@ export type TranslationKeys =
   | 'noIngredientsFound'
   | 'noDataAvailable'
   | 'recipeNotFound'
+  | 'ingredientNotFound'
   | 'errorLoadingRecipe'
   | 'errorLoadingRecipes'
   | 'errorLoadingIngredients'

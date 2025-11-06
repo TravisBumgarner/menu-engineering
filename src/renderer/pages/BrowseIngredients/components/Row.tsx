@@ -1,19 +1,23 @@
-import { Tooltip } from '@mui/material'
+import { Collapse, Tooltip } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
 import { IngredientDTO } from '../../../../shared/recipe.types'
-import { ALL_UNITS } from '../../../../shared/units.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../signals'
-import { formatDisplayDate } from '../../../utilities'
+import { SPACING } from '../../../styles/consts'
+import { formatDisplayDate, getUnitLabel } from '../../../utilities'
+import Ingredient from './Ingredient'
 
-function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
+function Row(props: {
+  row: IngredientDTO & { recipeCount: number }
+  labelId: string
+}) {
   const { row, labelId } = props
-  // const [open, setOpen] = React.useState(false)
   const { t } = useAppTranslation()
+  const [isOpen, setIsOpen] = React.useState(false)
 
   const handleOpenEditModal = () => {
     activeModalSignal.value = {
@@ -24,36 +28,70 @@ function IngredientRow(props: { row: IngredientDTO; labelId: string }) {
 
   return (
     <React.Fragment>
-      <TableRow
-        hover
-        tabIndex={-1}
-        key={row.id}
-        sx={{ '& > *': { borderBottom: 'unset' } }}
-      >
-        <TableCell scope="row" padding="none">
+      <TableRow hover tabIndex={-1} key={row.id}>
+        <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={event => {
+              event.stopPropagation()
+              setIsOpen(!isOpen)
+            }}
+          >
+            {isOpen ? (
+              <Icon name="collapseVertical" />
+            ) : (
+              <Icon name="expandVertical" />
+            )}
+          </IconButton>
+        </TableCell>
+        <TableCell
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
+          scope="row"
+          padding="none"
+        >
           {formatDisplayDate(row.createdAt)}
         </TableCell>
-        <TableCell id={labelId} scope="row" padding="none">
+        <TableCell
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
+          id={labelId}
+          scope="row"
+          padding="none"
+        >
           {row.title}
         </TableCell>
-        <TableCell align="left">
-          {t(row.units as keyof typeof ALL_UNITS)}
+        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }} align="left">
+          {getUnitLabel(row.units, 'plural')}
         </TableCell>
-        <TableCell align="right">{row.unitCost}</TableCell>
-        <TableCell align="left">
+        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }} align="right">
+          {row.unitCost}
+        </TableCell>
+        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }} align="left">
+          {row.recipeCount} {row.recipeCount === 1 ? t('recipe') : t('recipes')}
+        </TableCell>
+        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }} align="left">
           <Tooltip title={t('editIngredient')}>
-            <IconButton
-              size="small"
-              title={t('edit')}
-              onClick={handleOpenEditModal}
-            >
-              <Icon name="edit" />
-            </IconButton>
+            <span>
+              <IconButton
+                size="small"
+                title={t('edit')}
+                onClick={handleOpenEditModal}
+              >
+                <Icon name="edit" />
+              </IconButton>
+            </span>
           </Tooltip>
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ padding: 0, border: 0 }} colSpan={9}>
+          <Collapse in={isOpen} timeout="auto" unmountOnExit>
+            <Ingredient id={row.id} />
+          </Collapse>
         </TableCell>
       </TableRow>
     </React.Fragment>
   )
 }
 
-export default IngredientRow
+export default Row

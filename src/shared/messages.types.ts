@@ -16,6 +16,7 @@ export const CHANNEL = {
     ADD_SUB_RECIPE: 'db:add-sub-recipe',
     UPDATE_RECIPE: 'db:update-recipe',
     UPDATE_INGREDIENT: 'db:update-ingredient',
+    GET_INGREDIENT: 'db:get-ingredient',
     GET_INGREDIENTS: 'db:get-ingredients',
     GET_RECIPES: 'db:get-recipes',
     GET_RECIPE: 'db:get-recipe',
@@ -62,7 +63,7 @@ export type Invokes = {
   }
   [CHANNEL.DB.GET_RECIPES]: {
     args: undefined
-    result: { recipes: Array<RecipeDTO> }
+    result: { recipes: Array<RecipeDTO & { usedInRecipesCount: number }> }
   }
   [CHANNEL.DB.GET_RECIPE]: {
     args: { id: string }
@@ -70,6 +71,7 @@ export type Invokes = {
       recipe: RecipeDTO | null
       ingredients: Array<IngredientDTO & { relation: RelationDTO }>
       subRecipes: Array<RecipeDTO & { relation: RelationDTO }>
+      usedInRecipes: Array<RecipeDTO>
     }
   }
   [CHANNEL.DB.GET_RECIPE_COST]: {
@@ -102,9 +104,16 @@ export type Invokes = {
     args: { id: string }
     result: { success: boolean }
   }
+  [CHANNEL.DB.GET_INGREDIENT]: {
+    args: { id: string }
+    result: {
+      ingredient: IngredientDTO | null
+      usedInRecipes: Array<RecipeDTO>
+    }
+  }
   [CHANNEL.DB.GET_INGREDIENTS]: {
     args: undefined
-    result: { ingredients: Array<IngredientDTO> }
+    result: { ingredients: Array<IngredientDTO & { recipeCount: number }> }
   }
   [CHANNEL.DB.ADD_EXISTING_TO_RECIPE]: {
     args:
