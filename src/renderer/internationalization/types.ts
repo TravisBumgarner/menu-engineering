@@ -3,7 +3,9 @@ export type TranslationKeys =
   | 'add'
   | 'edit'
   | 'remove'
-  | 'confirm'
+  | 'update'
+  | 'cancel'
+  | 'loading'
   | 'yes'
   | 'no'
   | 'status'
@@ -36,7 +38,6 @@ export type TranslationKeys =
   | 'editRecipe'
   | 'editIngredient'
   | 'editIngredients'
-  | 'updateRecipe'
   | 'addExisting'
   | 'saveAndAddAnother'
   | 'addSubRecipe'
@@ -65,20 +66,6 @@ export type TranslationKeys =
   | 'saving'
   | 'updating'
 
-  // Tooltips and Labels
-  | 'addRecipeTooltip'
-  | 'deleteTooltip'
-
-  // Table Headers
-  | 'ingredientDetailsTable'
-
-  // Modal Titles
-  | 'addNewRecipeModalTitle'
-  | 'addNewIngredientModalTitle'
-  | 'editRecipeModalTitle'
-  | 'editIngredientModalTitle'
-  | 'addSubRecipeModalTitle'
-
   // Units
   | 'units_singular'
   | 'units_plural'
@@ -105,22 +92,16 @@ export type TranslationKeys =
   | 'language'
   | 'english'
   | 'spanish'
-  | 'recipeAddedSuccessfully'
   | 'failedToAddRecipe'
   | 'errorAddingRecipe'
-  | 'subRecipeAddedSuccessfully'
   | 'failedToAddSubRecipe'
   | 'errorAddingSubRecipe'
-  | 'recipeUpdatedSuccessfully'
   | 'failedToUpdateRecipe'
   | 'errorUpdatingRecipe'
-  | 'ingredientUpdatedSuccessfully'
   | 'failedToUpdateIngredient'
   | 'errorUpdatingIngredient'
-  | 'ingredientAddedSuccessfully'
   | 'weightConversions'
   | 'volumeConversions'
   | 'unitConversions'
   | 'conversionDisclaimer'
-  | 'filters'
   | 'all'

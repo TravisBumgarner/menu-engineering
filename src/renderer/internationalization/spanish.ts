@@ -6,9 +6,11 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   add: 'Agregar',
   edit: 'Editar',
   remove: 'Quitar',
-  confirm: 'Confirmar',
+  update: 'Actualizar',
+  cancel: 'Cancelar',
   yes: 'Sí',
   no: 'No',
+  loading: 'Cargando...',
   status: 'Estado',
   title: 'Título',
   quantity: 'Cantidad',
@@ -37,7 +39,6 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   editRecipe: 'Editar Receta',
   editIngredient: 'Editar Ingrediente',
   editIngredients: 'Editar Ingredientes',
-  updateRecipe: 'Actualizar Receta',
   addExisting: 'Agregar Existente',
   saveAndAddAnother: 'Guardar y Agregar otro',
   addSubRecipe: 'Agregar Sub-Receta',
@@ -67,20 +68,6 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   adding: 'Agregando...',
   saving: 'Guardando...',
   updating: 'Actualizando...',
-
-  // Tooltips and Labels
-  addRecipeTooltip: 'Agregar Receta',
-  deleteTooltip: 'Eliminar',
-
-  // Table Headers
-  ingredientDetailsTable: 'detalles de ingredientes',
-
-  // Modal Titles
-  addNewRecipeModalTitle: 'Agregar Nueva Receta',
-  addNewIngredientModalTitle: 'Agregar Nuevo Ingrediente',
-  editRecipeModalTitle: 'Editar Receta',
-  editIngredientModalTitle: 'Editar Ingrediente',
-  addSubRecipeModalTitle: 'Agregar Nueva Sub-Receta',
 
   // Units
   units_singular: 'Unidad',
@@ -113,20 +100,14 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   language: 'Idioma',
   english: 'Inglés',
   spanish: 'Español',
-  recipeAddedSuccessfully: '¡Receta agregada exitosamente!',
   failedToAddRecipe: 'Falló al agregar receta.',
   errorAddingRecipe: 'Error agregando receta.',
-  subRecipeAddedSuccessfully: '¡Sub-receta agregada exitosamente!',
   failedToAddSubRecipe: 'Falló al agregar sub-receta.',
   errorAddingSubRecipe: 'Error agregando sub-receta.',
-  recipeUpdatedSuccessfully: '¡Receta actualizada exitosamente!',
   failedToUpdateRecipe: 'Falló al actualizar receta.',
   errorUpdatingRecipe: 'Error actualizando receta.',
-  ingredientUpdatedSuccessfully: '¡Ingrediente actualizado exitosamente!',
   failedToUpdateIngredient: 'Falló al actualizar ingrediente.',
   errorUpdatingIngredient: 'Error actualizando ingrediente.',
-  ingredientAddedSuccessfully: '¡Ingrediente agregado exitosamente!',
-  filters: 'Filtros',
   all: 'Todos',
 }
 

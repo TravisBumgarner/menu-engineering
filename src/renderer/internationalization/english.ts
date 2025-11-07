@@ -6,9 +6,11 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
 
   edit: 'Edit',
   remove: 'Remove',
-  confirm: 'Confirm',
+  update: 'Update',
   yes: 'Yes',
   no: 'No',
+  loading: 'Loading...',
+  cancel: 'Cancel',
   status: 'Status',
   title: 'Title',
   quantity: 'Quantity',
@@ -37,25 +39,16 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   editRecipe: 'Edit Recipe',
   editIngredient: 'Edit Ingredient',
   editIngredients: 'Edit Ingredients',
-  updateRecipe: 'Update Recipe',
   addExisting: 'Add Existing',
   saveAndAddAnother: 'Save & Add another',
   addSubRecipe: 'Add Sub-Recipe',
   showInMenu: 'Show in Menu',
-  recipeDetails: 'Recipe Details',
-  ingredientDetails: 'Ingredient Details',
   noDetails: 'No Details',
   unitsHelpText: 'Note - Units can only be set on creation',
   usedIn: 'Used In',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'e.g. Flour, Salt, Olive Oil',
-  quantityLabel: 'Quantity',
-  costLabel: 'Cost',
-  producesLabel: 'Produces',
-  titleLabel: 'Title',
-  unitsLabel: 'Units',
-  statusLabel: 'Status',
 
   // Status Values
   draft: 'Draft',
@@ -63,18 +56,11 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   archived: 'Archived',
 
   // Messages
-  noRecipesFound: 'No recipes found.',
-  noIngredientsFound: 'No ingredients found.',
-  noDataAvailable: 'No data available.',
   recipeNotFound: 'Recipe not found.',
   ingredientNotFound: 'Ingredient not found.',
   errorLoadingRecipe: 'Error loading recipe.',
   errorLoadingRecipes: 'Error loading recipes.',
   errorLoadingIngredients: 'Error loading ingredients.',
-  addFirstRecipe: 'Add your first recipe',
-  addFirstIngredient: 'Add your first ingredient',
-  failedToRemoveIngredient: 'Failed to remove ingredient from recipe.',
-  errorRemovingIngredient: 'Error removing ingredient from recipe.',
   failedToAddIngredient: 'Failed to add ingredient.',
   errorAddingIngredient: 'Error adding ingredient.',
 
@@ -82,26 +68,6 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   adding: 'Adding...',
   saving: 'Saving...',
   updating: 'Updating...',
-  removing: 'Removing...',
-
-  // Tooltips and Labels
-  expandRow: 'expand row',
-  editRecipeDetails: 'Edit Recipe Details',
-  editIngredientDetails: 'Edit Ingredient Details',
-  removeIngredientFromRecipe: 'Remove from Recipe',
-  addIngredientTooltip: 'Add Ingredient',
-  addRecipeTooltip: 'Add Recipe',
-  deleteTooltip: 'Delete',
-
-  // Table Headers
-  ingredientDetailsTable: 'ingredient details',
-
-  // Modal Titles
-  addNewRecipeModalTitle: 'Add New Recipe',
-  addNewIngredientModalTitle: 'Add New Ingredient',
-  editRecipeModalTitle: 'Edit Recipe',
-  editIngredientModalTitle: 'Edit Ingredient',
-  addSubRecipeModalTitle: 'Add New Sub-Recipe',
 
   // Units
   units_singular: 'Unit',
@@ -134,20 +100,14 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   language: 'Language',
   english: 'English',
   spanish: 'Spanish',
-  recipeAddedSuccessfully: 'Recipe added successfully!',
   failedToAddRecipe: 'Failed to add recipe.',
   errorAddingRecipe: 'Error adding recipe.',
-  subRecipeAddedSuccessfully: 'Sub-recipe added successfully!',
   failedToAddSubRecipe: 'Failed to add sub-recipe.',
   errorAddingSubRecipe: 'Error adding sub-recipe.',
-  recipeUpdatedSuccessfully: 'Recipe updated successfully!',
   failedToUpdateRecipe: 'Failed to update recipe.',
   errorUpdatingRecipe: 'Error updating recipe.',
-  ingredientUpdatedSuccessfully: 'Ingredient updated successfully!',
   failedToUpdateIngredient: 'Failed to update ingredient.',
   errorUpdatingIngredient: 'Error updating ingredient.',
-  ingredientAddedSuccessfully: 'Ingredient added successfully!',
-  filters: 'Filters',
   all: 'All',
 }
 
