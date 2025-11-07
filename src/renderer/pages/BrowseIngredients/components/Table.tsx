@@ -38,7 +38,13 @@ function getComparator<Key extends keyof IngredientDTO>(
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-const Table = ({ ingredients }: { ingredients: IngredientDTO[] }) => {
+const Table = ({
+  ingredients,
+}: {
+  ingredients: (IngredientDTO & {
+    recipeCount: number
+  })[]
+}) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO>('createdAt')
   const [page, setPage] = React.useState(0)

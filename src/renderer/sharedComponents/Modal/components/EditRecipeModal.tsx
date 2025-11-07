@@ -199,7 +199,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
             >
               {updateRecipeMutation.isPending
                 ? t('updating')
-                : t('updateRecipe')}
+                : t('update')}
             </Button>
           </Stack>
         </Stack>
