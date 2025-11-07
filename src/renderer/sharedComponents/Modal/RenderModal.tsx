@@ -17,6 +17,9 @@ import EditIngredientModal, {
 import EditRecipeModal, {
   type EditRecipeModalProps,
 } from './components/EditRecipeModal'
+import ExportCsvModal, {
+  type ExportCsvModalProps,
+} from './components/ExportCsvModal'
 import SettingsModal, { SettingsModalProps } from './components/Settings'
 import { MODAL_ID } from './Modal.consts'
 
@@ -27,6 +30,7 @@ export type ActiveModal =
   | EditRecipeModalProps
   | EditIngredientModalProps
   | SettingsModalProps
+  | ExportCsvModalProps
 
 export type ModalId = (typeof MODAL_ID)[keyof typeof MODAL_ID]
 
@@ -48,6 +52,8 @@ const RenderModal: FC = () => {
       return <EditIngredientModal {...activeModalSignal.value} />
     case MODAL_ID.SETTINGS_MODAL:
       return <SettingsModal {...activeModalSignal.value} />
+    case MODAL_ID.EXPORT_CSV_MODAL:
+      return <ExportCsvModal {...activeModalSignal.value} />
     default:
       return null
   }

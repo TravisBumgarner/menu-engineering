@@ -56,6 +56,13 @@ const Table = ({
     }
   }
 
+  const handleOpenExportCsvModal = () => {
+    activeModalSignal.value = {
+      id: MODAL_ID.EXPORT_CSV_MODAL,
+      ingredients,
+    }
+  }
+
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof IngredientDTO,
@@ -113,7 +120,7 @@ const Table = ({
                 </TableRow>
               )}
               <TableRow>
-                <TableCell colSpan={8}>
+                <TableCell colSpan={6}>
                   <Button
                     size="small"
                     onClick={handleOpenAddIngredientModal}
@@ -121,6 +128,16 @@ const Table = ({
                     variant="outlined"
                   >
                     {t('addIngredient')}
+                  </Button>
+                </TableCell>
+                <TableCell colSpan={2}>
+                  <Button
+                    size="small"
+                    onClick={handleOpenExportCsvModal}
+                    fullWidth
+                    variant="outlined"
+                  >
+                    Export CSV
                   </Button>
                 </TableCell>
               </TableRow>
