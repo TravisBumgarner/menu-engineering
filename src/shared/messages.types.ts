@@ -28,6 +28,9 @@ export const CHANNEL = {
     DELETE_RECIPE: 'db:delete-recipe',
     GET_RECIPE_COST: 'db:get-recipe-cost',
   },
+  APP: {
+    GET_BACKUP_DIRECTORY: 'app:get-backup-directory',
+  },
 } as const
 
 export type FromRenderer = {
@@ -130,5 +133,9 @@ export type Invokes = {
       units?: AllUnits
     }
     result: { success: boolean }
+  }
+  [CHANNEL.APP.GET_BACKUP_DIRECTORY]: {
+    args: undefined
+    result: { backupDirectory: string }
   }
 }

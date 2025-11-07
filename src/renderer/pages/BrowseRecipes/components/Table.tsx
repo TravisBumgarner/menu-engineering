@@ -102,6 +102,13 @@ const Table = ({
     }
   }
 
+  const handleOpenExportRecipesModal = () => {
+    activeModalSignal.value = {
+      id: MODAL_ID.EXPORT_RECIPES,
+      recipes,
+    }
+  }
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0
@@ -146,7 +153,7 @@ const Table = ({
               </TableRow>
             )}
             <TableRow>
-              <TableCell colSpan={10}>
+              <TableCell colSpan={8}>
                 <Button
                   size="small"
                   sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
@@ -155,6 +162,17 @@ const Table = ({
                   variant="outlined"
                 >
                   {t('addRecipe')}
+                </Button>
+              </TableCell>
+              <TableCell colSpan={2}>
+                <Button
+                  size="small"
+                  sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
+                  onClick={handleOpenExportRecipesModal}
+                  fullWidth
+                  variant="outlined"
+                >
+                  Export PDF
                 </Button>
               </TableCell>
             </TableRow>

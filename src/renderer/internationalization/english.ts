@@ -3,7 +3,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   // General
   save: 'Save',
   add: 'Add',
-
+  export: 'Export',
   edit: 'Edit',
   remove: 'Remove',
   update: 'Update',
@@ -11,6 +11,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   no: 'No',
   loading: 'Loading...',
   cancel: 'Cancel',
+  filename: 'Filename',
   status: 'Status',
   title: 'Title',
   quantity: 'Quantity',

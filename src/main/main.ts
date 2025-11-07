@@ -6,6 +6,7 @@ import {
 } from 'electron'
 import log from 'electron-log/main'
 import started from 'electron-squirrel-startup'
+import fs from 'node:fs'
 import path from 'node:path'
 import { updateElectronApp } from 'update-electron-app'
 import './messages/messages'
@@ -24,6 +25,42 @@ updateElectronApp({
 // Something something Windows. Not currently supported, will just leave it.
 if (started) {
   app.quit()
+}
+
+// Database backup function
+const createDailyBackup = () => {
+  const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+
+  // Database is always in the current working directory (project root in dev, app root in prod)
+  const dbPath = path.join(process.cwd(), 'data.sqlite')
+  // But backups should go in a dedicated folder
+  const backupDir = path.join(process.cwd(), 'db_backups')
+  const backupPath = path.join(backupDir, `data-backup-${today}.sqlite`)
+
+  // Create backup directory if it doesn't exist
+  if (!fs.existsSync(backupDir)) {
+    fs.mkdirSync(backupDir, { recursive: true })
+  }
+
+  // Check if today's backup already exists
+  if (fs.existsSync(backupPath)) {
+    log.info(`Backup already exists for today: ${backupPath}`)
+    return
+  }
+
+  // Check if database exists
+  if (!fs.existsSync(dbPath)) {
+    log.warn('Database file not found, skipping backup')
+    return
+  }
+
+  try {
+    // Create backup
+    fs.copyFileSync(dbPath, backupPath)
+    log.info(`Database backup created: ${backupPath}`)
+  } catch (error) {
+    log.error('Failed to create database backup:', error)
+  }
 }
 
 const createWindow = () => {
@@ -61,7 +98,10 @@ const createWindow = () => {
   mainWindow.webContents.openDevTools()
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createDailyBackup()
+  createWindow()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
