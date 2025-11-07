@@ -53,7 +53,6 @@ function RecipeRow({
   return (
     <React.Fragment>
       <TableRow
-        hover
         tabIndex={-1}
         key={row.id}
         sx={{

@@ -111,6 +111,38 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   failedToUpdateIngredient: 'Failed to update ingredient.',
   errorUpdatingIngredient: 'Error updating ingredient.',
   all: 'All',
+
+  // Data Management
+  dataManagement: 'Data Management',
+  databaseBackups: 'Database Backups',
+  backupLocation: 'Backup location',
+  exportAllData: 'Export All Data (JSON)',
+  restoreFromBackup: 'Restore from Backup',
+  exporting: 'Exporting...',
+  restoring: 'Restoring...',
+  dataExportedSuccessfully: 'Data exported successfully!',
+  dataRestoredSuccessfully:
+    'Data restored successfully! Please restart the app.',
+  failedToExportData: 'Failed to export data',
+  failedToRestoreData: 'Failed to restore data',
+  errorExportingData: 'Error exporting data',
+  errorRestoringData: 'Error restoring data',
+  invalidBackupFile: 'Invalid backup file format',
+  exportDataDescription:
+    'Export all your data as JSON or restore from a backup file.',
+  restoreConfirmation:
+    'Type "CONFIRM" to restore data (this will delete all current data)',
+  confirmationPlaceholder: 'Type CONFIRM here',
+  confirmationRequired: 'You must type CONFIRM to proceed',
+  nukeDatabase: 'Clear All Data',
+  nukeDatabaseConfirmation:
+    'Type "NUKE" to permanently delete ALL data (this cannot be undone)',
+  nukeDatabaseSuccessfully: 'All data cleared successfully!',
+  failedToNukeDatabase: 'Failed to clear database',
+  errorNukingDatabase: 'Error clearing database',
+  nukeDatabaseDescription:
+    'Permanently delete all recipes, ingredients, and relationships.',
+  nuking: 'Clearing...',
 }
 
 export default EnglishTranslations

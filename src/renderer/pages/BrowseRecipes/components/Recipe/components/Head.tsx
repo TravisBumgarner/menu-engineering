@@ -106,8 +106,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
               backgroundColor: theme =>
                 theme.palette.mode === 'dark'
-                  ? PALETTE.primary[900]
-                  : PALETTE.primary[100],
+                  ? PALETTE.grayscale[700]
+                  : PALETTE.grayscale[100],
             }}
             key={headCell.id}
             align={headCell.align}

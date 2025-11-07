@@ -106,8 +106,8 @@ const Table = ({
           sx={{
             backgroundColor: theme =>
               theme.palette.mode === 'dark'
-                ? PALETTE.primary[800]
-                : PALETTE.primary[50],
+                ? PALETTE.grayscale[700]
+                : PALETTE.grayscale[50],
           }}
           aria-labelledby="tableTitle"
           size="medium"

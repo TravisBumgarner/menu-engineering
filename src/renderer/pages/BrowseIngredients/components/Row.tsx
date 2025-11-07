@@ -28,7 +28,7 @@ function Row(props: {
 
   return (
     <React.Fragment>
-      <TableRow hover tabIndex={-1} key={row.id}>
+      <TableRow tabIndex={-1} key={row.id}>
         <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
           <IconButton
             aria-label="expand row"

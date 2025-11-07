@@ -114,16 +114,8 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
       MuiTableRow: {
         styleOverrides: {
           root: {
-            '&:hover': {
-              backgroundColor: colors.hover.light,
-            },
             '&:last-child td': {
               borderBottom: 'none',
-            },
-          },
-          head: {
-            '&:hover': {
-              backgroundColor: colors.hover.medium,
             },
           },
         },

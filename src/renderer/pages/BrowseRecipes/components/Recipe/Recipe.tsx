@@ -46,7 +46,7 @@ const Recipe = ({ id }: { id: string }) => {
       }}
     >
       <Typography>
-        {t('usedIn')} -{' '}
+        {t('usedIn')}: {data.usedInRecipes.length === 0 && ` 0 ${t('recipes')}`}
         {data.usedInRecipes.map(recipe => (
           <Button
             variant="text"

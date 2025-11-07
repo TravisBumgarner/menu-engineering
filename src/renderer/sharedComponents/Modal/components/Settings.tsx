@@ -1,10 +1,19 @@
 import {
+  Alert,
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  Stack,
+  TextField,
   Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -23,6 +32,18 @@ export interface SettingsModalProps {
 const SettingsModal = ({ id }: SettingsModalProps) => {
   const { t, currentLanguage, changeLanguage } = useAppTranslation()
   const [backupDirectory, setBackupDirectory] = useState<string>('')
+  const [isExporting, setIsExporting] = useState(false)
+  const [isRestoring, setIsRestoring] = useState(false)
+  const [message, setMessage] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [confirmationText, setConfirmationText] = useState('')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [showNukeDialog, setShowNukeDialog] = useState(false)
+  const [nukeConfirmationText, setNukeConfirmationText] = useState('')
+  const [isNuking, setIsNuking] = useState(false)
 
   useEffect(() => {
     const getBackupDirectory = async () => {
@@ -39,6 +60,180 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
 
     getBackupDirectory()
   }, [])
+
+  const handleExportData = async () => {
+    setIsExporting(true)
+    setMessage(null)
+    try {
+      const result = await ipcMessenger.invoke(
+        CHANNEL.APP.EXPORT_ALL_DATA,
+        undefined,
+      )
+
+      if (result.success && result.data) {
+        // Create and download JSON file
+        const dataStr = JSON.stringify(result.data, null, 2)
+        const dataBlob = new Blob([dataStr], { type: 'application/json' })
+
+        const link = document.createElement('a')
+        const url = URL.createObjectURL(dataBlob)
+        link.setAttribute('href', url)
+
+        const timestamp = new Date().toISOString().split('T')[0]
+        link.setAttribute(
+          'download',
+          `menu-engineering-backup-${timestamp}.json`,
+        )
+        link.style.visibility = 'hidden'
+
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+
+        setMessage({ type: 'success', text: t('dataExportedSuccessfully') })
+      } else {
+        setMessage({
+          type: 'error',
+          text: result.error || t('failedToExportData'),
+        })
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: t('errorExportingData') + ': ' + (error as Error).message,
+      })
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  const handleRestoreData = async () => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.json'
+
+    input.onchange = async e => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (!file) return
+
+      // Show confirmation dialog
+      setSelectedFile(file)
+      setShowConfirmDialog(true)
+    }
+
+    input.click()
+  }
+
+  const handleConfirmRestore = async () => {
+    if (!selectedFile) return
+
+    if (confirmationText !== 'CONFIRM' && confirmationText !== 'CONFIRMAR') {
+      setMessage({
+        type: 'error',
+        text: t('confirmationRequired'),
+      })
+      return
+    }
+
+    setIsRestoring(true)
+    setMessage(null)
+    setShowConfirmDialog(false)
+    setConfirmationText('')
+
+    try {
+      const text = await selectedFile.text()
+      const data = JSON.parse(text)
+
+      // Validate the data structure (basic check)
+      if (!data.ingredients || !data.recipes || !data.relations) {
+        throw new Error(t('invalidBackupFile'))
+      }
+
+      const result = await ipcMessenger.invoke(CHANNEL.APP.RESTORE_ALL_DATA, {
+        data,
+      })
+
+      if (result.success) {
+        setMessage({
+          type: 'success',
+          text: t('dataRestoredSuccessfully'),
+        })
+      } else {
+        setMessage({
+          type: 'error',
+          text: result.error || t('failedToRestoreData'),
+        })
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: t('errorRestoringData') + ': ' + (error as Error).message,
+      })
+    } finally {
+      setIsRestoring(false)
+      setSelectedFile(null)
+    }
+  }
+
+  const handleCancelRestore = () => {
+    setShowConfirmDialog(false)
+    setConfirmationText('')
+    setSelectedFile(null)
+  }
+
+  const handleNukeDatabase = () => {
+    setShowNukeDialog(true)
+  }
+
+  const handleConfirmNuke = async () => {
+    if (
+      nukeConfirmationText !== 'NUKE' &&
+      nukeConfirmationText !== 'ELIMINAR'
+    ) {
+      setMessage({
+        type: 'error',
+        text: t('confirmationRequired'),
+      })
+      return
+    }
+
+    setIsNuking(true)
+    setMessage(null)
+    setShowNukeDialog(false)
+    setNukeConfirmationText('')
+
+    try {
+      const result = await ipcMessenger.invoke(
+        CHANNEL.APP.NUKE_DATABASE,
+        undefined,
+      )
+
+      if (result.success) {
+        setMessage({
+          type: 'success',
+          text: t('nukeDatabaseSuccessfully'),
+        })
+      } else {
+        setMessage({
+          type: 'error',
+          text: result.error || t('failedToNukeDatabase'),
+        })
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: t('errorNukingDatabase') + ': ' + (error as Error).message,
+      })
+    } finally {
+      setIsNuking(false)
+    }
+  }
+
+  const handleCancelNuke = () => {
+    setShowNukeDialog(false)
+    setNukeConfirmationText('')
+  }
 
   return (
     <DefaultModal title={t('settings')}>
@@ -60,13 +255,163 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
 
         <Box sx={{ mt: SPACING.MEDIUM.PX }}>
           <Typography variant="subtitle2" gutterBottom>
-            Database Backups
+            {t('databaseBackups')}
           </Typography>
-          <Typography variant="body2" color="textSecondary">
-            Backup location: {backupDirectory || 'Loading...'}
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{ mb: SPACING.SMALL.PX }}
+          >
+            {t('backupLocation')}: {backupDirectory || t('loading')}
           </Typography>
         </Box>
+
+        <Divider sx={{ my: SPACING.MEDIUM.PX }} />
+
+        <Box sx={{ mt: SPACING.MEDIUM.PX }}>
+          <Typography variant="subtitle2" gutterBottom>
+            {t('dataManagement')}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{ mb: SPACING.MEDIUM.PX }}
+          >
+            {t('exportDataDescription')}
+          </Typography>
+
+          {message && (
+            <Alert severity={message.type} sx={{ mb: SPACING.MEDIUM.PX }}>
+              {message.text}
+            </Alert>
+          )}
+
+          <Stack spacing={SPACING.SMALL.PX}>
+            <Button
+              variant="outlined"
+              onClick={handleExportData}
+              disabled={isExporting || isRestoring || isNuking}
+              fullWidth
+            >
+              {isExporting ? t('exporting') : t('exportAllData')}
+            </Button>
+
+            <Button
+              variant="outlined"
+              color="warning"
+              onClick={handleRestoreData}
+              disabled={isExporting || isRestoring || isNuking}
+              fullWidth
+            >
+              {isRestoring ? t('restoring') : t('restoreFromBackup')}
+            </Button>
+          </Stack>
+        </Box>
+
+        <Divider sx={{ my: SPACING.MEDIUM.PX }} />
+
+        <Box sx={{ mt: SPACING.MEDIUM.PX }}>
+          <Typography variant="subtitle2" gutterBottom color="error">
+            {t('nukeDatabase')}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{ mb: SPACING.MEDIUM.PX }}
+          >
+            {t('nukeDatabaseDescription')}
+          </Typography>
+
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleNukeDatabase}
+            disabled={isExporting || isRestoring || isNuking}
+            fullWidth
+          >
+            {isNuking ? t('nuking') : t('nukeDatabase')}
+          </Button>
+        </Box>
       </Box>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={showConfirmDialog}
+        onClose={handleCancelRestore}
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-description"
+      >
+        <DialogTitle id="confirm-dialog-title">
+          {t('restoreFromBackup')}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="confirm-dialog-description">
+            {t('restoreConfirmation')}
+          </DialogContentText>
+          <TextField
+            margin="dense"
+            fullWidth
+            variant="outlined"
+            placeholder={t('confirmationPlaceholder')}
+            value={confirmationText}
+            onChange={e => setConfirmationText(e.target.value)}
+            sx={{ mt: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelRestore}>{t('cancel')}</Button>
+          <Button
+            onClick={handleConfirmRestore}
+            color="warning"
+            variant="contained"
+            disabled={!confirmationText.trim()}
+          >
+            {t('restoreFromBackup')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Nuke Database Confirmation Dialog */}
+      <Dialog
+        open={showNukeDialog}
+        onClose={handleCancelNuke}
+        aria-labelledby="nuke-dialog-title"
+        aria-describedby="nuke-dialog-description"
+      >
+        <DialogTitle id="nuke-dialog-title" color="error">
+          {t('nukeDatabase')}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="nuke-dialog-description">
+            {t('nukeDatabaseConfirmation')}
+          </DialogContentText>
+          <TextField
+            margin="dense"
+            fullWidth
+            variant="outlined"
+            placeholder={
+              currentLanguage === 'es'
+                ? 'Escribe ELIMINAR aquí'
+                : 'Type NUKE here'
+            }
+            value={nukeConfirmationText}
+            onChange={e => setNukeConfirmationText(e.target.value)}
+            sx={{ mt: 2 }}
+            color="error"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelNuke}>{t('cancel')}</Button>
+          <Button
+            onClick={handleConfirmNuke}
+            color="error"
+            variant="contained"
+            disabled={!nukeConfirmationText.trim()}
+          >
+            {t('nukeDatabase')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </DefaultModal>
   )
 }
