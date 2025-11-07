@@ -13,7 +13,6 @@ export type NewRecipeDTO = {
   produces: number
   units: AllUnits
   status: RecipeStatus
-  notes: string
   showInMenu: boolean
 }
 
@@ -26,7 +25,6 @@ export type RecipeDTO = NewRecipeDTO & {
 export type NewIngredientDTO = {
   title: string
   units: AllUnits
-  notes: string
   unitCost: number
 }
 
