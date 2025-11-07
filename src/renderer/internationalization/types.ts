@@ -47,6 +47,15 @@ export type TranslationKeys =
 
   // Form Labels and Placeholders
   | 'ingredientNamePlaceholder'
+<<<<<<< HEAD
+=======
+  | 'quantityLabel'
+  | 'costLabel'
+  | 'producesLabel'
+  | 'titleLabel'
+  | 'unitsLabel'
+  | 'statusLabel'
+>>>>>>> main
 
   // Status Values
   | 'draft'

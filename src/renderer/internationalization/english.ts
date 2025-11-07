@@ -9,8 +9,13 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   update: 'Update',
   yes: 'Yes',
   no: 'No',
+<<<<<<< HEAD
   loading: 'Loading...',
   cancel: 'Cancel',
+=======
+  ok: 'OK',
+  actions: 'Actions',
+>>>>>>> main
   status: 'Status',
   title: 'Title',
   quantity: 'Quantity',
