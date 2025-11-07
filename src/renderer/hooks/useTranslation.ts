@@ -14,11 +14,12 @@ const setStoredLanguage = (language: string): void => {
 }
 
 // Translation key usage tracker
-const TRACK_TRANSLATION_KEYS = true
+const TRACK_TRANSLATION_KEYS = false
 
 const usedKeys = new Set<TranslationKeys>()
 const allKeys = Object.keys(englishTranslations) as TranslationKeys[]
 
+// Used for auditing app for unused translation keys. Not exhaustive, requires a manual followup.
 const trackKeyUsage = (key: TranslationKeys) => {
   if (!TRACK_TRANSLATION_KEYS) return
 
