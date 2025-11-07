@@ -28,6 +28,7 @@ export type TranslationKeys =
   | 'ingredient'
 
   // Recipe Management
+  | 'noDataAvailable'
   | 'noDetails'
   | 'recipeName'
   | 'ingredientName'

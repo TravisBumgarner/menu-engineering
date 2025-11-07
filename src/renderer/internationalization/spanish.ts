@@ -30,6 +30,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   ingredient: 'Ingrediente',
 
   // Recipe Management
+  noDataAvailable: 'No hay datos disponibles',
   recipeName: 'Nombre de Receta',
   ingredientName: 'Nombre de Ingrediente',
   addNewRecipe: 'Agregar Nueva Receta',

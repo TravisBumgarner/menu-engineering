@@ -193,9 +193,7 @@ const EditIngredientModal = ({
               type="submit"
               disabled={updateIngredientMutation.isPending}
             >
-              {updateIngredientMutation.isPending
-                ? t('updating')
-                : t('updateIngredient')}
+              {updateIngredientMutation.isPending ? t('updating') : t('update')}
             </Button>
           </Stack>
         </Stack>
