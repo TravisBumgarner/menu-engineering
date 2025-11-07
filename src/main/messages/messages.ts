@@ -245,45 +245,85 @@ typedIpcMain.handle(CHANNEL.APP.EXPORT_ALL_DATA, async () => {
 
 typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
   try {
-    // This is a destructive operation - wipe all existing data
-    // Note: This is a simplified implementation - for production you'd want
-    // proper database clearing methods and better error handling
+    // This is a destructive operation - wipe all existing data first
+    const { db } = await import('../database/client.js')
+    const {
+      recipeSchema,
+      ingredientSchema,
+      recipeIngredientSchema,
+      recipeSubRecipeSchema,
+    } = await import('../database/schema.js')
+
+    // Delete all records from all tables (same as nuke database)
+    // Order matters due to foreign key relationships: delete relations first, then main entities
+    await db.delete(recipeIngredientSchema).run()
+    await db.delete(recipeSubRecipeSchema).run()
+    await db.delete(recipeSchema).run()
+    await db.delete(ingredientSchema).run()
 
     // Insert new data
     const { ingredients, recipes, relations } = params.data
 
-    // Insert ingredients first
+    // Keep track of old ID -> new ID mappings
+    const ingredientIdMap = new Map<string, string>()
+    const recipeIdMap = new Map<string, string>()
+
+    // Insert ingredients first and track ID mappings
     for (const ingredient of ingredients) {
-      await queries.addIngredient({
+      const newIngredientId = await queries.addIngredient({
         title: ingredient.title,
         unitCost: ingredient.unitCost,
         units: ingredient.units,
       })
+      ingredientIdMap.set(ingredient.id, newIngredientId)
     }
 
-    // Insert recipes
+    // Insert recipes and track ID mappings
     for (const recipe of recipes) {
-      await queries.addRecipe({
+      const newRecipeId = await queries.addRecipe({
         title: recipe.title,
         produces: recipe.produces,
         units: recipe.units,
         status: recipe.status,
         showInMenu: recipe.showInMenu,
       })
+      recipeIdMap.set(recipe.id, newRecipeId)
     }
 
-    // Insert relations
+    // Insert relations using the new IDs
     for (const relation of relations) {
+      const newParentId = recipeIdMap.get(relation.parentId)
+      if (!newParentId) {
+        console.warn(
+          `Could not find new parent ID for relation: ${relation.parentId}`,
+        )
+        continue
+      }
+
       if (relation.type === 'ingredient') {
+        const newChildId = ingredientIdMap.get(relation.childId)
+        if (!newChildId) {
+          console.warn(
+            `Could not find new ingredient ID for relation: ${relation.childId}`,
+          )
+          continue
+        }
         await queries.addIngredientToRecipe({
-          parentId: relation.parentId,
-          childId: relation.childId,
+          parentId: newParentId,
+          childId: newChildId,
           units: relation.units,
         })
       } else if (relation.type === 'sub-recipe') {
+        const newChildId = recipeIdMap.get(relation.childId)
+        if (!newChildId) {
+          console.warn(
+            `Could not find new recipe ID for relation: ${relation.childId}`,
+          )
+          continue
+        }
         await queries.addSubRecipeToRecipe({
-          parentId: relation.parentId,
-          childId: relation.childId,
+          parentId: newParentId,
+          childId: newChildId,
           units: relation.units,
         })
       }

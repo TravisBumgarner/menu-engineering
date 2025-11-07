@@ -111,58 +111,37 @@ function IngredientRow(props: {
   return (
     <React.Fragment>
       <TableRow tabIndex={-1} key={row.id}>
-        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
-          {formatDisplayDate(row.createdAt)}
-        </TableCell>
-        <TableCell
-          id={labelId}
-          scope="row"
-          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
-        >
+        <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
+        <TableCell id={labelId} scope="row">
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Icon name="ingredient" size={ICON_SIZE} /> {row.title}{' '}
-            {row.id.slice(0, 6)}
           </Box>{' '}
         </TableCell>
-        <TableCell
-          align="right"
-          id={labelId}
-          scope="row"
-          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
-        >
+        <TableCell align="right" id={labelId} scope="row">
           <TextField
             size="small"
             type="number"
             value={row.relation.quantity}
             onChange={handleQuantityChange}
             variant="filled"
+            sx={{
+              '& .MuiFilledInput-input': {
+                textAlign: 'right',
+                padding: SPACING.TINY.PX,
+              },
+            }}
           />
         </TableCell>
-        <TableCell
-          align="left"
-          id={labelId}
-          scope="row"
-          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
-        >
+        <TableCell align="left" id={labelId} scope="row">
           {row.units}
         </TableCell>
-        <TableCell
-          align="right"
-          id={labelId}
-          scope="row"
-          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
-        >
+        <TableCell align="right" id={labelId} scope="row">
           {formatCurrency(row.unitCost)}
         </TableCell>
-        <TableCell
-          align="right"
-          id={labelId}
-          scope="row"
-          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
-        >
+        <TableCell align="right" id={labelId} scope="row">
           {formatCurrency(relationCost)}
         </TableCell>
-        <TableCell align="right" sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
+        <TableCell align="right">
           <Tooltip title={t('editIngredient')}>
             <IconButton onClick={handleOpenEditModal}>
               <Icon name="edit" />

@@ -95,8 +95,9 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
       MuiTableCell: {
         styleOverrides: {
           root: {
-            borderBottom: `1px solid ${colors.border.light}`,
-            padding: `${SPACING.SMALL.PX} ${SPACING.MEDIUM.PX}`,
+            borderTop: `1px solid ${colors.border.light}`,
+            borderBottom: '0px',
+            padding: `${SPACING.TINY.PX}`,
             fontSize: FONT_SIZES.SMALL.PX,
             color: colors.text.primary,
           },

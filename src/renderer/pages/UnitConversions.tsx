@@ -35,7 +35,7 @@ const VolumeConversionTable = () => {
               <TableCell></TableCell>
               {volumeUnits.map(unit => (
                 <TableCell key={unit} align="right">
-                  {t(unit)}
+                  {t(`${unit}_plural`)}
                 </TableCell>
               ))}
             </TableRow>
@@ -44,7 +44,7 @@ const VolumeConversionTable = () => {
             {volumeUnits.map(fromUnit => (
               <TableRow key={fromUnit}>
                 <TableCell component="th" scope="row">
-                  <strong>1 {t(fromUnit)}</strong>
+                  <strong>1 {t(`${fromUnit}_plural`)}</strong>
                 </TableCell>
                 {volumeUnits.map(toUnit => {
                   const conversion = convertUnits({
@@ -87,7 +87,7 @@ const WeightConversionTable = () => {
               <TableCell></TableCell>
               {weightUnits.map(unit => (
                 <TableCell key={unit} align="right">
-                  {t(unit)}
+                  {t(`${unit}_plural`)}
                 </TableCell>
               ))}
             </TableRow>
@@ -96,7 +96,7 @@ const WeightConversionTable = () => {
             {weightUnits.map(fromUnit => (
               <TableRow key={fromUnit}>
                 <TableCell component="th" scope="row">
-                  <strong>1 {t(fromUnit)}</strong>
+                  <strong>1 {t(`${fromUnit}_plural`)}</strong>
                 </TableCell>
                 {weightUnits.map(toUnit => {
                   const conversion = convertUnits({

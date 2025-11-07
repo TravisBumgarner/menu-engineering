@@ -13,6 +13,7 @@ import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
+import { SPACING } from '../../../styles/consts'
 import EnhancedTableHead from './Head'
 import IngredientRow from './Row'
 
@@ -116,29 +117,34 @@ const Table = ({
                     height: 53 * emptyRows,
                   }}
                 >
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={8} />
                 </TableRow>
               )}
               <TableRow>
-                <TableCell colSpan={6}>
-                  <Button
-                    size="small"
-                    onClick={handleOpenAddIngredientModal}
-                    fullWidth
-                    variant="outlined"
+                <TableCell colSpan={8} sx={{ padding: SPACING.MEDIUM.PX }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      gap: SPACING.MEDIUM.PX,
+                    }}
                   >
-                    {t('addIngredient')}
-                  </Button>
-                </TableCell>
-                <TableCell colSpan={2}>
-                  <Button
-                    size="small"
-                    onClick={handleOpenExportIngredientsModal}
-                    fullWidth
-                    variant="outlined"
-                  >
-                    Export CSV
-                  </Button>
+                    <Button
+                      size="small"
+                      onClick={handleOpenAddIngredientModal}
+                      fullWidth
+                      variant="outlined"
+                    >
+                      {t('addIngredient')}
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={handleOpenExportIngredientsModal}
+                      fullWidth
+                      variant="outlined"
+                    >
+                      Export CSV
+                    </Button>
+                  </Box>
                 </TableCell>
               </TableRow>
             </TableBody>

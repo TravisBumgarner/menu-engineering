@@ -7,7 +7,6 @@ import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
 import { RecipeDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
-import { SPACING } from '../../../styles/consts'
 
 interface HeadCell {
   disablePadding: boolean
@@ -42,7 +41,7 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       align: 'left',
       disablePadding: true,
       label: t('created'),
-      width: '10%',
+      width: '12%',
     },
     {
       id: 'title',
@@ -56,14 +55,14 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       align: 'left',
       disablePadding: true,
       label: t('cost'),
-      width: '10%',
+      width: '8%',
     },
     {
       id: 'produces',
       align: 'right',
       disablePadding: false,
       label: t('produces'),
-      width: '10%',
+      width: '12%',
     },
     {
       id: 'units',
@@ -84,14 +83,14 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       align: 'left',
       disablePadding: false,
       label: t('showInMenu'),
-      width: '15%',
+      width: '12%',
     },
     {
       id: 'usedInRecipesCount',
       align: 'left',
       disablePadding: false,
       label: t('usedIn'),
-      width: '15%',
+      width: '10%',
     },
     {
       id: 'actions',
@@ -115,7 +114,7 @@ function Head({ onRequestSort, order, orderBy }: Props) {
             key={headCell.id}
             align={headCell.align}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width, padding: `0 ${SPACING.SMALL.PX}` }}
+            sx={{ width: headCell.width }}
           >
             {headCell.id === 'actions' ||
             headCell.id === 'collapse' ||

@@ -6,7 +6,7 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
-import { PALETTE, SPACING } from '../../../../../styles/consts'
+import { PALETTE } from '../../../../../styles/consts'
 import { isSortable, SORTABLE_OPTIONS } from './consts'
 
 interface HeadCell {
@@ -102,7 +102,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           <TableCell
             sx={{
               width: headCell.width,
-              padding: `0 ${SPACING.TINY.PX}`,
 
               backgroundColor: theme =>
                 theme.palette.mode === 'dark'

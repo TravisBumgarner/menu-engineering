@@ -44,7 +44,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   addExisting: 'Add Existing',
   saveAndAddAnother: 'Save & Add another',
   addSubRecipe: 'Add Sub-Recipe',
-  showInMenu: 'Show in Menu',
+  showInMenu: 'On Menu',
   noDetails: 'No Details',
   unitsHelpText: 'Note - Units can only be set on creation',
   usedIn: 'Used In',
