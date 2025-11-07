@@ -45,7 +45,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   addExisting: 'Agregar Existente',
   saveAndAddAnother: 'Guardar y Agregar otro',
   addSubRecipe: 'Agregar Sub-Receta',
-  showInMenu: 'Mostrar en Menú',
+  showInMenu: 'En Menú',
   noDetails: 'Sin detalles',
   unitsHelpText: 'Nota - Las unidades solo se pueden establecer al crear',
   usedIn: 'Usado en',
@@ -112,6 +112,38 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   failedToUpdateIngredient: 'Falló al actualizar ingrediente.',
   errorUpdatingIngredient: 'Error actualizando ingrediente.',
   all: 'Todos',
+
+  // Data Management
+  dataManagement: 'Gestión de Datos',
+  databaseBackups: 'Copias de Seguridad de Base de Datos',
+  backupLocation: 'Ubicación de copia de seguridad',
+  exportAllData: 'Exportar Todos los Datos (JSON)',
+  restoreFromBackup: 'Restaurar desde Copia de Seguridad',
+  exporting: 'Exportando...',
+  restoring: 'Restaurando...',
+  dataExportedSuccessfully: '¡Datos exportados exitosamente!',
+  dataRestoredSuccessfully:
+    '¡Datos restaurados exitosamente! Por favor reinicia la aplicación.',
+  failedToExportData: 'Falló al exportar datos',
+  failedToRestoreData: 'Falló al restaurar datos',
+  errorExportingData: 'Error exportando datos',
+  errorRestoringData: 'Error restaurando datos',
+  invalidBackupFile: 'Formato de archivo de copia de seguridad inválido',
+  exportDataDescription:
+    'Exporta todos tus datos como JSON o restaura desde un archivo de copia de seguridad.',
+  restoreConfirmation:
+    'Escribe "CONFIRMAR" para restaurar datos (esto eliminará todos los datos actuales)',
+  confirmationPlaceholder: 'Escribe CONFIRMAR aquí',
+  confirmationRequired: 'Debes escribir CONFIRMAR para continuar',
+  nukeDatabase: 'Eliminar Todos los Datos',
+  nukeDatabaseConfirmation:
+    'Escribe "ELIMINAR" para borrar permanentemente TODOS los datos (esto no se puede deshacer)',
+  nukeDatabaseSuccessfully: '¡Todos los datos eliminados exitosamente!',
+  failedToNukeDatabase: 'Falló al eliminar base de datos',
+  errorNukingDatabase: 'Error eliminando base de datos',
+  nukeDatabaseDescription:
+    'Eliminar permanentemente todas las recetas, ingredientes y relaciones.',
+  nuking: 'Eliminando...',
 }
 
 export default SpanishTranslations

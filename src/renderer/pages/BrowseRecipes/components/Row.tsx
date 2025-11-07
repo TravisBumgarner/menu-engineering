@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material'
+import { SxProps, Tooltip } from '@mui/material'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
@@ -16,7 +16,7 @@ import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
-import { SPACING } from '../../../styles/consts'
+import { FONT_SIZES, SPACING } from '../../../styles/consts'
 import {
   formatCurrency,
   formatDisplayDate,
@@ -53,18 +53,15 @@ function RecipeRow({
   return (
     <React.Fragment>
       <TableRow
-        hover
         tabIndex={-1}
         key={row.id}
         sx={{
           '& > *': {
-            borderBottom: 'unset',
             opacity: opacity.value,
-            fontWeight: 900,
           },
         }}
       >
-        <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
+        <TableCell>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -80,19 +77,11 @@ function RecipeRow({
             )}
           </IconButton>
         </TableCell>
-        <TableCell
-          id={labelId}
-          scope="row"
-          sx={{ padding: `0 ${SPACING.SMALL.PX}` }}
-        >
+        <TableCell sx={cellSx} id={labelId} scope="row">
           {formatDisplayDate(row.createdAt)}
         </TableCell>
-        <TableCell
-          id={labelId}
-          scope="row"
-          sx={{ padding: `0 ${SPACING.SMALL.PX}` }}
-        >
-          {row.title} {row.id.slice(0, 6)}
+        <TableCell sx={cellSx} id={labelId} scope="row">
+          {row.title}
         </TableCell>
         <TableCell
           align="right"
@@ -104,13 +93,13 @@ function RecipeRow({
             ? formatCurrency(recipeCostQuery.data.cost)
             : 'N/A'}
         </TableCell>
-        <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }} align="right">
+        <TableCell sx={cellSx} align="right">
           {row.produces}
         </TableCell>
-        <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }} align="left">
+        <TableCell sx={cellSx} align="left">
           {getUnitLabel(row.units, 'plural')}
         </TableCell>
-        <TableCell align="left" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
+        <TableCell sx={cellSx} align="left">
           <Typography
             variant="body2"
             sx={{
@@ -135,15 +124,15 @@ function RecipeRow({
             {t(row.status)}
           </Typography>
         </TableCell>
-        <TableCell align="left" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
+        <TableCell sx={cellSx} align="left">
           <Typography variant="body2">
             {row.showInMenu ? t('yes') : t('no')}
           </Typography>
         </TableCell>
-        <TableCell align="left" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
+        <TableCell sx={cellSx} align="left">
           {row.usedInRecipesCount}
         </TableCell>
-        <TableCell align="center" sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
+        <TableCell sx={cellSx} align="center">
           <Tooltip title={t('editRecipe')}>
             <IconButton
               onClick={() =>
@@ -159,7 +148,7 @@ function RecipeRow({
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ padding: 0, border: 0 }} colSpan={10}>
+        <TableCell sx={cellSx} style={{ padding: 0, border: 0 }} colSpan={10}>
           <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>
@@ -167,6 +156,10 @@ function RecipeRow({
       </TableRow>
     </React.Fragment>
   )
+}
+
+const cellSx: SxProps = {
+  fontSize: FONT_SIZES.MEDIUM.PX,
 }
 
 export default RecipeRow

@@ -1,5 +1,6 @@
 import path from 'node:path'
 import { CHANNEL } from '../../shared/messages.types'
+import { RelationDTO } from '../../shared/recipe.types'
 import queries from '../database/queries'
 import { typedIpcMain } from './index'
 
@@ -179,5 +180,214 @@ typedIpcMain.handle(CHANNEL.APP.GET_BACKUP_DIRECTORY, async () => {
   return {
     type: 'get_backup_directory',
     backupDirectory: path.resolve(process.cwd(), 'db_backups'),
+  }
+})
+
+typedIpcMain.handle(CHANNEL.APP.EXPORT_ALL_DATA, async () => {
+  try {
+    // Get all data from the database
+    const ingredients = await queries.getIngredients()
+    const recipes = await queries.getRecipes()
+
+    // Get all relations by fetching detailed data for each recipe
+    const relations: Array<
+      RelationDTO & {
+        parentId: string
+        childId: string
+        type: 'ingredient' | 'sub-recipe'
+      }
+    > = []
+
+    for (const recipe of recipes) {
+      const recipeIngredients = await queries.getRecipeIngredients(recipe.id)
+      const recipeSubRecipes = await queries.getRecipeSubRecipes(recipe.id)
+
+      // Add ingredient relations
+      for (const ing of recipeIngredients || []) {
+        relations.push({
+          parentId: recipe.id,
+          childId: ing.id,
+          type: 'ingredient' as const,
+          quantity: ing.relation.quantity,
+          units: ing.relation.units,
+        })
+      }
+
+      // Add sub-recipe relations
+      for (const subRecipe of recipeSubRecipes || []) {
+        relations.push({
+          parentId: recipe.id,
+          childId: subRecipe.id,
+          type: 'sub-recipe' as const,
+          quantity: subRecipe.relation.quantity,
+          units: subRecipe.relation.units,
+        })
+      }
+    }
+
+    return {
+      type: 'export_all_data',
+      success: true,
+      data: {
+        ingredients: ingredients || [],
+        recipes: recipes || [],
+        relations,
+      },
+    }
+  } catch (error) {
+    return {
+      type: 'export_all_data',
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+})
+
+typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
+  try {
+    // This is a destructive operation - wipe all existing data first
+    const { db } = await import('../database/client.js')
+    const {
+      recipeSchema,
+      ingredientSchema,
+      recipeIngredientSchema,
+      recipeSubRecipeSchema,
+    } = await import('../database/schema.js')
+
+    // Delete all records from all tables (same as nuke database)
+    // Order matters due to foreign key relationships: delete relations first, then main entities
+    await db.delete(recipeIngredientSchema).run()
+    await db.delete(recipeSubRecipeSchema).run()
+    await db.delete(recipeSchema).run()
+    await db.delete(ingredientSchema).run()
+
+    // Insert new data
+    const { ingredients, recipes, relations } = params.data
+
+    // Keep track of old ID -> new ID mappings
+    const ingredientIdMap = new Map<string, string>()
+    const recipeIdMap = new Map<string, string>()
+
+    // Insert ingredients first and track ID mappings
+    for (const ingredient of ingredients) {
+      const newIngredientId = await queries.addIngredient({
+        title: ingredient.title,
+        unitCost: ingredient.unitCost,
+        units: ingredient.units,
+      })
+      ingredientIdMap.set(ingredient.id, newIngredientId)
+    }
+
+    // Insert recipes and track ID mappings
+    for (const recipe of recipes) {
+      const newRecipeId = await queries.addRecipe({
+        title: recipe.title,
+        produces: recipe.produces,
+        units: recipe.units,
+        status: recipe.status,
+        showInMenu: recipe.showInMenu,
+      })
+      recipeIdMap.set(recipe.id, newRecipeId)
+    }
+
+    // Insert relations using the new IDs
+    for (const relation of relations) {
+      const newParentId = recipeIdMap.get(relation.parentId)
+      if (!newParentId) {
+        console.warn(
+          `Could not find new parent ID for relation: ${relation.parentId}`,
+        )
+        continue
+      }
+
+      if (relation.type === 'ingredient') {
+        const newChildId = ingredientIdMap.get(relation.childId)
+        if (!newChildId) {
+          console.warn(
+            `Could not find new ingredient ID for relation: ${relation.childId}`,
+          )
+          continue
+        }
+        await queries.addIngredientToRecipe({
+          parentId: newParentId,
+          childId: newChildId,
+          units: relation.units,
+        })
+        // Set the quantity using the existing update mechanism
+        console.log(
+          `Setting ingredient quantity: ${relation.quantity} for ${newChildId}`,
+        )
+        await queries.updateRecipeRelation(
+          newParentId,
+          newChildId,
+          'ingredient',
+          relation.quantity,
+          relation.units,
+        )
+      } else if (relation.type === 'sub-recipe') {
+        const newChildId = recipeIdMap.get(relation.childId)
+        if (!newChildId) {
+          console.warn(
+            `Could not find new recipe ID for relation: ${relation.childId}`,
+          )
+          continue
+        }
+        await queries.addSubRecipeToRecipe({
+          parentId: newParentId,
+          childId: newChildId,
+          units: relation.units,
+        })
+        // Set the quantity using the existing update mechanism
+        await queries.updateRecipeRelation(
+          newParentId,
+          newChildId,
+          'sub-recipe',
+          relation.quantity,
+          relation.units,
+        )
+      }
+    }
+
+    return {
+      type: 'restore_all_data',
+      success: true,
+    }
+  } catch (error) {
+    return {
+      type: 'restore_all_data',
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+})
+
+typedIpcMain.handle(CHANNEL.APP.NUKE_DATABASE, async () => {
+  try {
+    // This is a destructive operation that clears all data from all tables
+    const { db } = await import('../database/client.js')
+    const {
+      recipeSchema,
+      ingredientSchema,
+      recipeIngredientSchema,
+      recipeSubRecipeSchema,
+    } = await import('../database/schema.js')
+
+    // Delete all records from all tables
+    // Order matters due to foreign key relationships: delete relations first, then main entities
+    await db.delete(recipeIngredientSchema).run()
+    await db.delete(recipeSubRecipeSchema).run()
+    await db.delete(recipeSchema).run()
+    await db.delete(ingredientSchema).run()
+
+    return {
+      type: 'nuke_database',
+      success: true,
+    }
+  } catch (error) {
+    return {
+      type: 'nuke_database',
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
   }
 })

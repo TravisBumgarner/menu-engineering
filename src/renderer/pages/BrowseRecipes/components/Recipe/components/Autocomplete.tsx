@@ -145,7 +145,7 @@ const Autocomplete = ({
             {...params}
             size="small"
             variant="standard"
-            label={t('addExisting')}
+            placeholder={t('addExisting')}
           />
         )}
       />

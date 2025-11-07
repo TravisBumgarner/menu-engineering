@@ -45,7 +45,9 @@ const Ingredient = ({ id }: { id: string }) => {
       }}
     >
       <Typography>
-        {t('usedIn')} -{' '}
+        {t('usedIn')}
+        {': '}
+        {data.usedInRecipes.length === 0 && ` 0 ${t('recipes')}`}
         {data.usedInRecipes.map(recipe => (
           <Link key={recipe.id} to={`/?activeRecipeId=${recipe.id}`}>
             {recipe.title}

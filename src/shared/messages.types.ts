@@ -30,6 +30,9 @@ export const CHANNEL = {
   },
   APP: {
     GET_BACKUP_DIRECTORY: 'app:get-backup-directory',
+    EXPORT_ALL_DATA: 'app:export-all-data',
+    RESTORE_ALL_DATA: 'app:restore-all-data',
+    NUKE_DATABASE: 'app:nuke-database',
   },
 } as const
 
@@ -137,5 +140,43 @@ export type Invokes = {
   [CHANNEL.APP.GET_BACKUP_DIRECTORY]: {
     args: undefined
     result: { backupDirectory: string }
+  }
+  [CHANNEL.APP.EXPORT_ALL_DATA]: {
+    args: undefined
+    result: {
+      success: boolean
+      data?: {
+        ingredients: Array<IngredientDTO>
+        recipes: Array<RecipeDTO>
+        relations: Array<
+          RelationDTO & {
+            parentId: string
+            childId: string
+            type: 'ingredient' | 'sub-recipe'
+          }
+        >
+      }
+      error?: string
+    }
+  }
+  [CHANNEL.APP.RESTORE_ALL_DATA]: {
+    args: {
+      data: {
+        ingredients: Array<IngredientDTO>
+        recipes: Array<RecipeDTO>
+        relations: Array<
+          RelationDTO & {
+            parentId: string
+            childId: string
+            type: 'ingredient' | 'sub-recipe'
+          }
+        >
+      }
+    }
+    result: { success: boolean; error?: string }
+  }
+  [CHANNEL.APP.NUKE_DATABASE]: {
+    args: undefined
+    result: { success: boolean; error?: string }
   }
 }

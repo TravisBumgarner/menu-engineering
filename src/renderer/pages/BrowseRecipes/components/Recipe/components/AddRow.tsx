@@ -9,7 +9,6 @@ import { MODAL_ID } from '../../../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
 import Autocomplete from './Autocomplete'
-import { ADD_ROW_HEIGHT } from './consts'
 
 const AddRow = ({
   recipe,
@@ -36,13 +35,12 @@ const AddRow = ({
 
   // Default row with buttons
   return (
-    <TableRow sx={{ height: ADD_ROW_HEIGHT }}>
-      <TableCell colSpan={8}>
+    <TableRow>
+      <TableCell sx={{ padding: SPACING.MEDIUM.PX }} colSpan={8}>
         <Box
           sx={{
             display: 'flex',
             gap: SPACING.MEDIUM.PX,
-            alignItems: 'end',
           }}
         >
           <Autocomplete

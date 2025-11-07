@@ -7,7 +7,6 @@ import { IngredientDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../signals'
-import { SPACING } from '../../../styles/consts'
 import { formatDisplayDate, getUnitLabel } from '../../../utilities'
 import Ingredient from './Ingredient'
 
@@ -28,8 +27,8 @@ function Row(props: {
 
   return (
     <React.Fragment>
-      <TableRow hover tabIndex={-1} key={row.id}>
-        <TableCell sx={{ padding: `0 ${SPACING.SMALL.PX}` }}>
+      <TableRow tabIndex={-1} key={row.id}>
+        <TableCell>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -45,31 +44,18 @@ function Row(props: {
             )}
           </IconButton>
         </TableCell>
-        <TableCell
-          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
-          scope="row"
-          padding="none"
-        >
+        <TableCell scope="row" padding="none">
           {formatDisplayDate(row.createdAt)}
         </TableCell>
-        <TableCell
-          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
-          id={labelId}
-          scope="row"
-          padding="none"
-        >
+        <TableCell id={labelId} scope="row" padding="none">
           {row.title}
         </TableCell>
-        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }} align="left">
-          {getUnitLabel(row.units, 'plural')}
-        </TableCell>
-        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }} align="right">
-          {row.unitCost}
-        </TableCell>
-        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }} align="left">
+        <TableCell align="left">{getUnitLabel(row.units, 'plural')}</TableCell>
+        <TableCell align="right">{row.unitCost}</TableCell>
+        <TableCell align="left">
           {row.recipeCount} {row.recipeCount === 1 ? t('recipe') : t('recipes')}
         </TableCell>
-        <TableCell sx={{ padding: `0 ${SPACING.TINY.PX}` }} align="left">
+        <TableCell align="left">
           <Tooltip title={t('editIngredient')}>
             <span>
               <IconButton

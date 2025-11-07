@@ -7,7 +7,6 @@ import { visuallyHidden } from '@mui/utils'
 import * as React from 'react'
 import { IngredientDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
-import { SPACING } from '../../../styles/consts'
 
 interface HeadCell {
   disablePadding: boolean
@@ -95,7 +94,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           <TableCell
             key={headCell.id}
             align={headCell.align}
-            sx={{ width: headCell.width, padding: `0 ${SPACING.TINY.PX}` }}
+            sx={{ width: headCell.width }}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             {headCell.id === 'actions' ||

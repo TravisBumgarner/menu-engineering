@@ -1,0 +1,695 @@
+{
+  "ingredients": [
+    {
+      "id": "ing-001",
+      "title": "All-Purpose Flour",
+      "unitCost": 0.05,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-002",
+      "title": "Water",
+      "unitCost": 0.001,
+      "units": "milliliters",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-003",
+      "title": "Salt",
+      "unitCost": 0.01,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-004",
+      "title": "Active Dry Yeast",
+      "unitCost": 0.25,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-005",
+      "title": "Olive Oil",
+      "unitCost": 0.02,
+      "units": "milliliters",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-006",
+      "title": "Crushed Tomatoes",
+      "unitCost": 0.008,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-007",
+      "title": "Garlic",
+      "unitCost": 0.15,
+      "units": "pieces",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-008",
+      "title": "Dried Oregano",
+      "unitCost": 0.05,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-009",
+      "title": "Mozzarella Cheese",
+      "unitCost": 0.012,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-010",
+      "title": "Ground Beef",
+      "unitCost": 0.015,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-011",
+      "title": "Onion",
+      "unitCost": 0.08,
+      "units": "pieces",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-012",
+      "title": "Lettuce",
+      "unitCost": 0.02,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-013",
+      "title": "Tomato",
+      "unitCost": 0.1,
+      "units": "pieces",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-014",
+      "title": "Hamburger Bun",
+      "unitCost": 0.5,
+      "units": "pieces",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-015",
+      "title": "Eggs",
+      "unitCost": 0.25,
+      "units": "pieces",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-016",
+      "title": "Milk",
+      "unitCost": 0.001,
+      "units": "milliliters",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-017",
+      "title": "Butter",
+      "unitCost": 0.008,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-018",
+      "title": "Sugar",
+      "unitCost": 0.002,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-019",
+      "title": "Baking Powder",
+      "unitCost": 0.04,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-020",
+      "title": "Vanilla Extract",
+      "unitCost": 0.12,
+      "units": "milliliters",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-021",
+      "title": "Chicken Breast",
+      "unitCost": 0.012,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-022",
+      "title": "Soy Sauce",
+      "unitCost": 0.006,
+      "units": "milliliters",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-023",
+      "title": "Rice",
+      "unitCost": 0.003,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-024",
+      "title": "Pasta",
+      "unitCost": 0.004,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-025",
+      "title": "Parmesan Cheese",
+      "unitCost": 0.025,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-026",
+      "title": "Heavy Cream",
+      "unitCost": 0.005,
+      "units": "milliliters",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-027",
+      "title": "Black Pepper",
+      "unitCost": 0.08,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "ing-028",
+      "title": "Basil",
+      "unitCost": 0.15,
+      "units": "grams",
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "recipe-001",
+      "title": "Pizza Dough",
+      "produces": 2,
+      "units": "pieces",
+      "status": "published",
+      "showInMenu": false,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-002",
+      "title": "Pizza Sauce",
+      "produces": 500,
+      "units": "grams",
+      "status": "published",
+      "showInMenu": false,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-003",
+      "title": "Margherita Pizza",
+      "produces": 1,
+      "units": "pieces",
+      "status": "published",
+      "showInMenu": true,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-004",
+      "title": "Burger Patty",
+      "produces": 4,
+      "units": "pieces",
+      "status": "published",
+      "showInMenu": false,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-005",
+      "title": "Classic Burger",
+      "produces": 1,
+      "units": "pieces",
+      "status": "published",
+      "showInMenu": true,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-006",
+      "title": "Pancake Batter",
+      "produces": 800,
+      "units": "grams",
+      "status": "published",
+      "showInMenu": false,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-007",
+      "title": "Fluffy Pancakes",
+      "produces": 8,
+      "units": "pieces",
+      "status": "published",
+      "showInMenu": true,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-008",
+      "title": "Teriyaki Chicken",
+      "produces": 4,
+      "units": "pieces",
+      "status": "published",
+      "showInMenu": true,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-009",
+      "title": "Steamed Rice",
+      "produces": 600,
+      "units": "grams",
+      "status": "published",
+      "showInMenu": false,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-010",
+      "title": "Alfredo Sauce",
+      "produces": 400,
+      "units": "grams",
+      "status": "published",
+      "showInMenu": false,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-011",
+      "title": "Chicken Alfredo Pasta",
+      "produces": 4,
+      "units": "pieces",
+      "status": "published",
+      "showInMenu": true,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    },
+    {
+      "id": "recipe-012",
+      "title": "Caesar Salad",
+      "produces": 2,
+      "units": "pieces",
+      "status": "published",
+      "showInMenu": true,
+      "createdAt": "2025-11-07T10:00:00.000Z",
+      "updatedAt": "2025-11-07T10:00:00.000Z"
+    }
+  ],
+  "relations": [
+    {
+      "parentId": "recipe-001",
+      "childId": "ing-001",
+      "type": "ingredient",
+      "quantity": 500,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-001",
+      "childId": "ing-002",
+      "type": "ingredient",
+      "quantity": 300,
+      "units": "milliliters"
+    },
+    {
+      "parentId": "recipe-001",
+      "childId": "ing-003",
+      "type": "ingredient",
+      "quantity": 10,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-001",
+      "childId": "ing-004",
+      "type": "ingredient",
+      "quantity": 7,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-001",
+      "childId": "ing-005",
+      "type": "ingredient",
+      "quantity": 30,
+      "units": "milliliters"
+    },
+    {
+      "parentId": "recipe-002",
+      "childId": "ing-006",
+      "type": "ingredient",
+      "quantity": 400,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-002",
+      "childId": "ing-007",
+      "type": "ingredient",
+      "quantity": 3,
+      "units": "pieces"
+    },
+    {
+      "parentId": "recipe-002",
+      "childId": "ing-008",
+      "type": "ingredient",
+      "quantity": 5,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-002",
+      "childId": "ing-005",
+      "type": "ingredient",
+      "quantity": 15,
+      "units": "milliliters"
+    },
+    {
+      "parentId": "recipe-002",
+      "childId": "ing-003",
+      "type": "ingredient",
+      "quantity": 5,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-003",
+      "childId": "recipe-001",
+      "type": "sub-recipe",
+      "quantity": 0.5,
+      "units": "pieces"
+    },
+    {
+      "parentId": "recipe-003",
+      "childId": "recipe-002",
+      "type": "sub-recipe",
+      "quantity": 100,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-003",
+      "childId": "ing-009",
+      "type": "ingredient",
+      "quantity": 200,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-003",
+      "childId": "ing-028",
+      "type": "ingredient",
+      "quantity": 10,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-004",
+      "childId": "ing-010",
+      "type": "ingredient",
+      "quantity": 800,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-004",
+      "childId": "ing-011",
+      "type": "ingredient",
+      "quantity": 1,
+      "units": "pieces"
+    },
+    {
+      "parentId": "recipe-004",
+      "childId": "ing-003",
+      "type": "ingredient",
+      "quantity": 8,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-004",
+      "childId": "ing-027",
+      "type": "ingredient",
+      "quantity": 3,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-005",
+      "childId": "recipe-004",
+      "type": "sub-recipe",
+      "quantity": 0.25,
+      "units": "pieces"
+    },
+    {
+      "parentId": "recipe-005",
+      "childId": "ing-014",
+      "type": "ingredient",
+      "quantity": 1,
+      "units": "pieces"
+    },
+    {
+      "parentId": "recipe-005",
+      "childId": "ing-012",
+      "type": "ingredient",
+      "quantity": 30,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-005",
+      "childId": "ing-013",
+      "type": "ingredient",
+      "quantity": 1,
+      "units": "pieces"
+    },
+    {
+      "parentId": "recipe-006",
+      "childId": "ing-001",
+      "type": "ingredient",
+      "quantity": 300,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-006",
+      "childId": "ing-016",
+      "type": "ingredient",
+      "quantity": 350,
+      "units": "milliliters"
+    },
+    {
+      "parentId": "recipe-006",
+      "childId": "ing-015",
+      "type": "ingredient",
+      "quantity": 2,
+      "units": "pieces"
+    },
+    {
+      "parentId": "recipe-006",
+      "childId": "ing-018",
+      "type": "ingredient",
+      "quantity": 30,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-006",
+      "childId": "ing-019",
+      "type": "ingredient",
+      "quantity": 15,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-006",
+      "childId": "ing-020",
+      "type": "ingredient",
+      "quantity": 10,
+      "units": "milliliters"
+    },
+    {
+      "parentId": "recipe-007",
+      "childId": "recipe-006",
+      "type": "sub-recipe",
+      "quantity": 800,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-007",
+      "childId": "ing-017",
+      "type": "ingredient",
+      "quantity": 50,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-008",
+      "childId": "ing-021",
+      "type": "ingredient",
+      "quantity": 600,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-008",
+      "childId": "ing-022",
+      "type": "ingredient",
+      "quantity": 60,
+      "units": "milliliters"
+    },
+    {
+      "parentId": "recipe-008",
+      "childId": "ing-018",
+      "type": "ingredient",
+      "quantity": 30,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-008",
+      "childId": "ing-007",
+      "type": "ingredient",
+      "quantity": 2,
+      "units": "pieces"
+    },
+    {
+      "parentId": "recipe-009",
+      "childId": "ing-023",
+      "type": "ingredient",
+      "quantity": 300,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-009",
+      "childId": "ing-002",
+      "type": "ingredient",
+      "quantity": 600,
+      "units": "milliliters"
+    },
+    {
+      "parentId": "recipe-009",
+      "childId": "ing-003",
+      "type": "ingredient",
+      "quantity": 5,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-010",
+      "childId": "ing-017",
+      "type": "ingredient",
+      "quantity": 50,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-010",
+      "childId": "ing-026",
+      "type": "ingredient",
+      "quantity": 300,
+      "units": "milliliters"
+    },
+    {
+      "parentId": "recipe-010",
+      "childId": "ing-025",
+      "type": "ingredient",
+      "quantity": 100,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-010",
+      "childId": "ing-007",
+      "type": "ingredient",
+      "quantity": 2,
+      "units": "pieces"
+    },
+    {
+      "parentId": "recipe-010",
+      "childId": "ing-027",
+      "type": "ingredient",
+      "quantity": 2,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-011",
+      "childId": "ing-024",
+      "type": "ingredient",
+      "quantity": 400,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-011",
+      "childId": "ing-021",
+      "type": "ingredient",
+      "quantity": 400,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-011",
+      "childId": "recipe-010",
+      "type": "sub-recipe",
+      "quantity": 400,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-012",
+      "childId": "ing-012",
+      "type": "ingredient",
+      "quantity": 300,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-012",
+      "childId": "ing-025",
+      "type": "ingredient",
+      "quantity": 50,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-012",
+      "childId": "ing-021",
+      "type": "ingredient",
+      "quantity": 200,
+      "units": "grams"
+    },
+    {
+      "parentId": "recipe-012",
+      "childId": "ing-005",
+      "type": "ingredient",
+      "quantity": 30,
+      "units": "milliliters"
+    }
+  ]
+}
