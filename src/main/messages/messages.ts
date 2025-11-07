@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { CHANNEL } from '../../shared/messages.types'
 import queries from '../database/queries'
 import { typedIpcMain } from './index'
@@ -173,3 +174,10 @@ typedIpcMain.handle(
     }
   },
 )
+
+typedIpcMain.handle(CHANNEL.APP.GET_BACKUP_DIRECTORY, async () => {
+  return {
+    type: 'get_backup_directory',
+    backupDirectory: path.resolve(process.cwd(), 'db_backups'),
+  }
+})
