@@ -8,12 +8,12 @@ import { formateDateFilename } from '../../../utilities'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
-export interface ExportCsvModalProps {
-  id: typeof MODAL_ID.EXPORT_CSV_MODAL
+export interface ExportIngredientsProps {
+  id: typeof MODAL_ID.EXPORT_INGREDIENTS
   ingredients: (IngredientDTO & { recipeCount: number })[]
 }
 
-const ExportCsvModal = ({ ingredients }: ExportCsvModalProps) => {
+const ExportIngredients = ({ ingredients }: ExportIngredientsProps) => {
   const { t } = useAppTranslation()
   const [filename, setFilename] = useState(
     formateDateFilename() + `_${t('ingredients')}`,
@@ -94,4 +94,4 @@ const ExportCsvModal = ({ ingredients }: ExportCsvModalProps) => {
   )
 }
 
-export default ExportCsvModal
+export default ExportIngredients

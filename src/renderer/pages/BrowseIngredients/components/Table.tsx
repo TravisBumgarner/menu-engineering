@@ -56,9 +56,9 @@ const Table = ({
     }
   }
 
-  const handleOpenExportCsvModal = () => {
+  const handleOpenExportIngredientsModal = () => {
     activeModalSignal.value = {
-      id: MODAL_ID.EXPORT_CSV_MODAL,
+      id: MODAL_ID.EXPORT_INGREDIENTS,
       ingredients,
     }
   }
@@ -133,7 +133,7 @@ const Table = ({
                 <TableCell colSpan={2}>
                   <Button
                     size="small"
-                    onClick={handleOpenExportCsvModal}
+                    onClick={handleOpenExportIngredientsModal}
                     fullWidth
                     variant="outlined"
                   >
