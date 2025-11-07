@@ -23,7 +23,6 @@ export const recipeSchema = sqliteTable('recipes', {
   updatedAt: text('updated_at')
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-  notes: text('notes').notNull().default(''),
   showInMenu: integer('show_in_menu', { mode: 'boolean' }).notNull(),
 })
 
@@ -40,7 +39,6 @@ export const ingredientSchema = sqliteTable('ingredients', {
   updatedAt: text('updated_at')
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
-  notes: text('notes').notNull().default(''),
 })
 
 export const recipeIngredientSchema = sqliteTable('recipe_ingredients', {

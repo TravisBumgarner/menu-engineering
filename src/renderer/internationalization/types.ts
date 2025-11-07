@@ -16,7 +16,6 @@ export type TranslationKeys =
   | 'no'
   | 'ok'
   | 'actions'
-  | 'notes'
   | 'status'
   | 'title'
   | 'name'
@@ -69,11 +68,9 @@ export type TranslationKeys =
 
   // Form Labels and Placeholders
   | 'ingredientNamePlaceholder'
-  | 'optionalNotesPlaceholder'
   | 'quantityLabel'
   | 'costLabel'
   | 'producesLabel'
-  | 'notesLabel'
   | 'titleLabel'
   | 'unitsLabel'
   | 'statusLabel'
@@ -147,7 +144,6 @@ export type TranslationKeys =
   | 'pieces_plural'
 
   // Missing translations
-  | 'noNotes'
   | 'language'
   | 'english'
   | 'spanish'

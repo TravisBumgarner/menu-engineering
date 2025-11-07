@@ -32,7 +32,6 @@ type FormData = {
   title: string
   quantity: number
   units: AllUnits
-  notes: string
   cost: number
 }
 
@@ -43,7 +42,6 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
     title: '',
     quantity: 1,
     units: ALL_UNITS.cups,
-    notes: '',
     cost: 0,
   })
 
@@ -81,7 +79,6 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
             title: '',
             quantity: 1,
             units: ALL_UNITS.cups,
-            notes: '',
             cost: 0,
           })
         }
@@ -100,7 +97,6 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
       newIngredient: {
         title: ingredientFormData.title,
         units: ingredientFormData.units,
-        notes: ingredientFormData.notes,
         unitCost: ingredientFormData.cost / ingredientFormData.quantity,
       },
       recipeId: recipe?.id,
@@ -210,23 +206,6 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               )}
             </Typography>
           </Stack>
-          <Typography
-            sx={{ marginTop: '0 !important' }}
-            variant="caption"
-            color="textSecondary"
-          >
-            {t('unitsHelpText')}
-          </Typography>
-          <TextField
-            size="small"
-            label={t('notes')}
-            value={ingredientFormData.notes}
-            onChange={handleInputChange('notes')}
-            multiline
-            rows={2}
-            fullWidth
-            placeholder={t('optionalNotesPlaceholder')}
-          />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button

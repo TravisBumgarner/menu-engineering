@@ -18,7 +18,6 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   no: 'No',
   ok: 'OK',
   actions: 'Actions',
-  notes: 'Notes',
   status: 'Status',
   title: 'Title',
   name: 'Name',
@@ -71,11 +70,9 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'e.g. Flour, Salt, Olive Oil',
-  optionalNotesPlaceholder: 'Optional notes about this ingredient',
   quantityLabel: 'Quantity',
   costLabel: 'Cost',
   producesLabel: 'Produces',
-  notesLabel: 'Notes',
   titleLabel: 'Title',
   unitsLabel: 'Units',
   statusLabel: 'Status',
@@ -154,7 +151,6 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
     'Conversions are approximate and based on US standard measurements',
 
   // Missing translations
-  noNotes: 'No notes',
   language: 'Language',
   english: 'English',
   spanish: 'Spanish',

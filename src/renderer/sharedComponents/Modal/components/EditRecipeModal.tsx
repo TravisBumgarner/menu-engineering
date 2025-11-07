@@ -43,21 +43,8 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
     produces: recipe.produces,
     units: recipe.units,
     status: recipe.status,
-    notes: recipe.notes,
     showInMenu: recipe.showInMenu,
   })
-
-  // // Update form data when recipe prop changes
-  // useEffect(() => {
-  //   setFormData({
-  //     title: recipe.title,
-  //     produces: recipe.produces,
-  //     units: recipe.units,
-  //     status: recipe.status,
-  //     notes: recipe.notes,
-  //     showInMenu: recipe.showInMenu,
-  //   })
-  // }, [recipe])
 
   const updateRecipeMutation = useMutation({
     mutationFn: (recipeData: Partial<NewRecipeDTO>) =>
@@ -89,7 +76,6 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
       changes.produces = formData.produces
     if (formData.units !== recipe.units) changes.units = formData.units
     if (formData.status !== recipe.status) changes.status = formData.status
-    if (formData.notes !== recipe.notes) changes.notes = formData.notes
     if (formData.showInMenu !== recipe.showInMenu)
       changes.showInMenu = formData.showInMenu
 
@@ -187,16 +173,6 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
               </MenuItem>
             </Select>
           </FormControl>
-
-          <TextField
-            size="small"
-            label={t('notes')}
-            value={formData.notes}
-            onChange={handleInputChange('notes')}
-            multiline
-            rows={2}
-            fullWidth
-          />
 
           <FormControlLabel
             control={

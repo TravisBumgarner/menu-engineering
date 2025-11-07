@@ -37,7 +37,6 @@ type FormData = {
   title: string
   quantity: number
   units: AllUnits
-  notes: string
   cost: number
 }
 
@@ -52,7 +51,6 @@ const EditIngredientModal = ({
     title: ingredient.title,
     quantity: 1,
     units: ingredient.units,
-    notes: ingredient.notes,
     cost: ingredient.unitCost,
   })
 
@@ -89,7 +87,6 @@ const EditIngredientModal = ({
     updateIngredientMutation.mutate({
       title: formData.title,
       unitCost: formData.cost / formData.quantity,
-      notes: formData.notes,
     })
   }
 
@@ -182,16 +179,6 @@ const EditIngredientModal = ({
           >
             {t('unitsHelpText')}
           </Typography>
-
-          <TextField
-            size="small"
-            label={t('notes')}
-            value={formData.notes}
-            onChange={handleInputChange('notes')}
-            multiline
-            rows={2}
-            fullWidth
-          />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button

@@ -4,8 +4,7 @@ CREATE TABLE `ingredients` (
 	`unitCost` real NOT NULL,
 	`units` text NOT NULL,
 	`created_at` text NOT NULL,
-	`updated_at` text NOT NULL,
-	`notes` text DEFAULT '' NOT NULL
+	`updated_at` text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `recipe_ingredients` (
@@ -26,7 +25,6 @@ CREATE TABLE `recipes` (
 	`status` text NOT NULL,
 	`created_at` text NOT NULL,
 	`updated_at` text NOT NULL,
-	`notes` text DEFAULT '' NOT NULL,
 	`show_in_menu` integer NOT NULL
 );
 --> statement-breakpoint

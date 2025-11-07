@@ -43,7 +43,6 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
     produces: 0,
     units: ALL_UNITS.units,
     status: RECIPE_STATUS.draft,
-    notes: '',
     showInMenu: false,
   })
 
@@ -201,15 +200,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
               </MenuItem>
             </Select>
           </FormControl>
-          <TextField
-            size="small"
-            label={t('notes')}
-            value={formData.notes}
-            onChange={handleInputChange('notes')}
-            multiline
-            rows={2}
-            fullWidth
-          />
+
           <FormControlLabel
             control={
               <Checkbox
