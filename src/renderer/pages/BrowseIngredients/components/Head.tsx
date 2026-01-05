@@ -10,7 +10,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
   disablePadding: boolean
-  id: keyof IngredientDTO | 'actions' | 'usedIn' | 'collapse'
+  id: keyof IngredientDTO | 'actions' | 'recipeCount' | 'collapse'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
@@ -19,7 +19,7 @@ interface HeadCell {
 interface EnhancedTableProps {
   onRequestSort: (
     event: React.MouseEvent<unknown>,
-    property: keyof IngredientDTO,
+    property: keyof IngredientDTO | 'recipeCount',
   ) => void
 
   order: 'asc' | 'desc'
@@ -67,7 +67,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       label: t('unitCost'),
     },
     {
-      id: 'usedIn',
+      id: 'recipeCount',
       align: 'left',
       disablePadding: false,
       width: '10%',
@@ -83,7 +83,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   ]
 
   const createSortHandler =
-    (property: keyof IngredientDTO) => (event: React.MouseEvent<unknown>) => {
+    (property: keyof IngredientDTO | 'recipeCount') => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property)
     }
 
@@ -98,8 +98,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             sortDirection={orderBy === headCell.id ? order : false}
           >
             {headCell.id === 'actions' ||
-            headCell.id === 'usedIn' ||
-            headCell.id === 'collapse' ? (
+              headCell.id === 'collapse' ? (
               headCell.label
             ) : (
               <TableSortLabel

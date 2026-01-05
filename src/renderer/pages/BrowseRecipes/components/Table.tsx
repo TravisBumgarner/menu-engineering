@@ -28,7 +28,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0
 }
 
-function getComparator<Key extends keyof RecipeDTO>(
+function getComparator<Key extends keyof RecipeDTO | 'usedInRecipesCount'>(
   order: 'asc' | 'desc',
   orderBy: Key,
 ): (
@@ -50,7 +50,7 @@ const Table = ({
   useSignals()
   const { t } = useAppTranslation()
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
-  const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO>('createdAt')
+  const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO | 'usedInRecipesCount'>('createdAt')
   const [page, setPage] = React.useState(0)
 
   // Default filters: show draft and published, hide archived, show both in menu and not in menu
@@ -61,7 +61,7 @@ const Table = ({
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof RecipeDTO,
+    property: keyof RecipeDTO | 'usedInRecipesCount',
   ) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')

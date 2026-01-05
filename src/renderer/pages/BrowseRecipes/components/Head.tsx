@@ -19,7 +19,7 @@ interface HeadCell {
 interface Props {
   onRequestSort: (
     event: React.MouseEvent<unknown>,
-    property: keyof RecipeDTO,
+    property: keyof RecipeDTO | 'usedInRecipesCount',
   ) => void
   order: 'asc' | 'desc'
   orderBy: string | number | symbol
@@ -102,7 +102,7 @@ function Head({ onRequestSort, order, orderBy }: Props) {
   ]
 
   const createSortHandler =
-    (property: keyof RecipeDTO) => (event: React.MouseEvent<unknown>) => {
+    (property: keyof RecipeDTO | 'usedInRecipesCount') => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property)
     }
 
@@ -117,9 +117,8 @@ function Head({ onRequestSort, order, orderBy }: Props) {
             sx={{ width: headCell.width }}
           >
             {headCell.id === 'actions' ||
-            headCell.id === 'collapse' ||
-            headCell.id === 'usedInRecipesCount' ||
-            headCell.id === 'cost' ? (
+              headCell.id === 'collapse' ||
+              headCell.id === 'cost' ? (
               headCell.label
             ) : (
               <TableSortLabel

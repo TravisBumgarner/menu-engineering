@@ -27,16 +27,16 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0
 }
 
-function getComparator<Key extends keyof IngredientDTO>(
+function getComparator<Key extends keyof IngredientDTO | 'recipeCount'>(
   order: 'asc' | 'desc',
   orderBy: Key,
 ): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
+  a: IngredientDTO & { recipeCount: number },
+  b: IngredientDTO & { recipeCount: number },
 ) => number {
   return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy)
+    ? (a, b) => descendingComparator(a, b, orderBy as keyof (IngredientDTO & { recipeCount: number }))
+    : (a, b) => -descendingComparator(a, b, orderBy as keyof (IngredientDTO & { recipeCount: number }))
 }
 
 const Table = ({
@@ -47,7 +47,7 @@ const Table = ({
   })[]
 }) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
-  const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO>('createdAt')
+  const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO | 'recipeCount'>('createdAt')
   const [page, setPage] = React.useState(0)
   const { t } = useAppTranslation()
 
@@ -66,7 +66,7 @@ const Table = ({
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof IngredientDTO,
+    property: keyof IngredientDTO | 'recipeCount',
   ) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
