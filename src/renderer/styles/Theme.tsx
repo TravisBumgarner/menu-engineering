@@ -85,6 +85,13 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
           },
         },
       },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            textTransform: 'none',
+          },
+        },
+      },
       MuiTableHead: {
         styleOverrides: {
           root: {
@@ -321,7 +328,7 @@ const AppThemeProvider = ({ children }: { children: React.ReactNode }) => {
 // Export themes for external use
 export {
   darkThemeWithResponsiveFonts as darkTheme,
-  lightThemeWithResponsiveFonts as lightTheme,
+  lightThemeWithResponsiveFonts as lightTheme
 }
 
 export default AppThemeProvider

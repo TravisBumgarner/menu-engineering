@@ -50,6 +50,9 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   noDetails: 'Sin detalles',
   unitsHelpText: 'Nota - Las unidades solo se pueden establecer al crear',
   usedIn: 'Usado en',
+  addToRecipe: 'Agregar a Receta',
+  recipeUses: 'Receta utiliza',
+  close: 'Cerrar',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'ej. Harina, Sal, Aceite de Oliva',

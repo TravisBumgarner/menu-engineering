@@ -12,7 +12,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { NewIngredientDTO, RecipeDTO } from '../../../../shared/recipe.types'
+import { NewIngredientDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS, AllUnits } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
@@ -25,7 +25,6 @@ import DefaultModal from './DefaultModal'
 
 export interface AddIngredientModalProps {
   id: typeof MODAL_ID.ADD_INGREDIENT_MODAL
-  recipe?: RecipeDTO
 }
 
 type FormData = {
@@ -35,7 +34,7 @@ type FormData = {
   cost: number
 }
 
-const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
+const AddIngredientModal = (_props: AddIngredientModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
   const [ingredientFormData, setIngredientFormData] = useState<FormData>({
@@ -48,7 +47,6 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
   const addIngredientMutation = useMutation({
     mutationFn: ({
       newIngredient,
-      recipeId,
       shouldClose,
     }: {
       newIngredient: NewIngredientDTO
@@ -59,7 +57,6 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
         .invoke(CHANNEL.DB.ADD_INGREDIENT, {
           payload: {
             newIngredient,
-            recipeId,
             units: newIngredient.units,
           },
         })
@@ -99,25 +96,24 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
         units: ingredientFormData.units,
         unitCost: ingredientFormData.cost / ingredientFormData.quantity,
       },
-      recipeId: recipe?.id,
       shouldClose,
     })
   }
 
   const handleInputChange =
     (field: string) =>
-    (
-      e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } },
-    ) => {
-      const value =
-        field === 'quantity' || field === 'unitCost'
-          ? Number(e.target.value)
-          : e.target.value
-      setIngredientFormData(prev => ({
-        ...prev,
-        [field]: value,
-      }))
-    }
+      (
+        e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } },
+      ) => {
+        const value =
+          field === 'quantity' || field === 'unitCost'
+            ? Number(e.target.value)
+            : e.target.value
+        setIngredientFormData(prev => ({
+          ...prev,
+          [field]: value,
+        }))
+      }
 
   const preventSubmit =
     addIngredientMutation.isPending ||
@@ -128,9 +124,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
   return (
     <DefaultModal
       title={
-        recipe
-          ? `${t('addNewIngredient')} to ${recipe.title}`
-          : t('addNewIngredient')
+        t('addNewIngredient')
       }
     >
       <Box component="form">
@@ -202,7 +196,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               /{' '}
               {getUnitLabel(
                 ingredientFormData.units,
-                ingredientFormData.quantity,
+                1
               )}
             </Typography>
           </Stack>
@@ -213,7 +207,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
               type="button"
               onClick={() => (activeModalSignal.value = null)}
             >
-              {t('cancel')}
+              {t('close')}
             </Button>
             <Button
               variant="outlined"
@@ -236,7 +230,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           </Stack>
         </Stack>
       </Box>
-    </DefaultModal>
+    </DefaultModal >
   )
 }
 

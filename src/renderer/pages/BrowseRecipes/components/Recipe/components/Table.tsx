@@ -1,3 +1,4 @@
+import { Button } from '@mui/material'
 import Box from '@mui/material/Box'
 import MuiTable from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -6,7 +7,6 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
-import { useMemo } from 'react'
 import {
   IngredientDTO,
   RecipeDTO,
@@ -14,9 +14,11 @@ import {
 } from '../../../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
+import Icon from '../../../../../sharedComponents/Icon'
 import Message from '../../../../../sharedComponents/Message'
-import { PALETTE } from '../../../../../styles/consts'
-import AddRow from './AddRow'
+import { MODAL_ID } from '../../../../../sharedComponents/Modal/Modal.consts'
+import { activeModalSignal } from '../../../../../signals'
+import { PALETTE, SPACING } from '../../../../../styles/consts'
 import { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
 import IngredientRow from './IngredientRow'
@@ -79,15 +81,6 @@ const Table = ({
 
   const hasRows = ingredients.length + subRecipes.length > 0
 
-  const selectedIds = useMemo(
-    () =>
-      ingredients
-        .map(i => i.id)
-        .concat(subRecipes.map(s => s.id))
-        .concat([recipe.id]),
-    [ingredients, subRecipes, recipe],
-  )
-
   const visibleRows = React.useMemo(
     () =>
       [
@@ -98,6 +91,15 @@ const Table = ({
         .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
     [ingredients, subRecipes, order, orderBy, page],
   )
+
+  const handleAddToRecipe = () => {
+    activeModalSignal.value = {
+      id: MODAL_ID.ADD_TO_RECIPE_MODAL,
+      recipe,
+
+    }
+  }
+
 
   return (
     <Box sx={{ width: '100%', tableLayout: 'fixed' }}>
@@ -157,8 +159,19 @@ const Table = ({
                 <TableCell colSpan={7} />
               </TableRow>
             )}
-
-            <AddRow recipe={recipe} selectedIds={selectedIds} />
+            <TableRow>
+              <TableCell sx={{ padding: SPACING.MEDIUM.PX }} colSpan={8}>
+                <Button
+                  fullWidth
+                  size="small"
+                  variant="outlined"
+                  onClick={handleAddToRecipe}
+                  startIcon={<Icon name="add" />}
+                >
+                  {t('addToRecipe')}
+                </Button>
+              </TableCell>
+            </TableRow>
           </TableBody>
         </MuiTable>
       </TableContainer>

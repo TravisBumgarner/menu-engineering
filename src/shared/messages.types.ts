@@ -88,7 +88,10 @@ export type Invokes = {
     args: {
       payload: {
         newIngredient: NewIngredientDTO
-        recipeId?: string
+        attachToRecipe?: {
+          recipeId: string
+          recipeQuantity: number
+        }
         units: AllUnits
       }
     }

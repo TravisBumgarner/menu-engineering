@@ -84,7 +84,7 @@ const addIngredientToRecipe = async (
   const newId = uuidv4()
   await db
     .insert(recipeIngredientSchema)
-    .values({ id: newId, ...newIngredientInRecipe })
+    .values({ id: newId, ...newIngredientInRecipe,  })
     .run()
 
   return newId

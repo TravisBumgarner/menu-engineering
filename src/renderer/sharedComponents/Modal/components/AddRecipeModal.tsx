@@ -16,8 +16,7 @@ import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import {
   NewRecipeDTO,
-  RECIPE_STATUS,
-  RecipeDTO,
+  RECIPE_STATUS
 } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
@@ -31,10 +30,9 @@ import DefaultModal from './DefaultModal'
 
 export interface AddRecipeModalProps {
   id: typeof MODAL_ID.ADD_RECIPE_MODAL
-  parentRecipe?: RecipeDTO
 }
 
-const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
+const AddRecipeModal = (_props: AddRecipeModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
 
@@ -46,7 +44,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
     showInMenu: false,
   })
 
-  const handleCancel = () => {
+  const handleClose = () => {
     activeModalSignal.value = null
   }
 
@@ -99,26 +97,19 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (parentRecipe) {
-      await addSubRecipeMutation.mutate({
-        newRecipe: formData,
-        parentRecipeId: parentRecipe.id,
-      })
-    } else {
-      addRecipeMutation.mutate(formData)
-    }
+    addRecipeMutation.mutate(formData)
   }
 
   const handleInputChange =
     (field: keyof NewRecipeDTO) =>
-    (
-      e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } },
-    ) => {
-      setFormData(prev => ({
-        ...prev,
-        [field]: e.target.value,
-      }))
-    }
+      (
+        e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } },
+      ) => {
+        setFormData(prev => ({
+          ...prev,
+          [field]: e.target.value,
+        }))
+      }
 
   const handleCheckboxChange =
     (field: keyof NewRecipeDTO) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +127,7 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
 
   return (
     <DefaultModal
-      title={`${t('addNewRecipe')} ${parentRecipe ? `to ${parentRecipe.title}` : ''}`}
+      title={t('addNewRecipe')}
     >
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={SPACING.MEDIUM.PX}>
@@ -211,8 +202,8 @@ const AddRecipeModal = ({ parentRecipe }: AddRecipeModalProps) => {
             label={t('showInMenu')}
           />
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button onClick={handleCancel} variant="outlined" type="button">
-              {t('cancel')}
+            <Button onClick={handleClose} variant="outlined" type="button">
+              {t('close')}
             </Button>
             <Button variant="contained" type="submit" disabled={preventSubmit}>
               {addRecipeMutation.isPending ? t('adding') : t('addRecipe')}

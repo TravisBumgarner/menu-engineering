@@ -53,12 +53,14 @@ export type SubRecipeInRecipeDTO = NewSubRecipeInRecipeDTO & {
   id: string
   createdAt: string
   updatedAt: string
+  quantity: number
 }
 
 export type NewIngredientInRecipeDTO = {
   parentId: string
   childId: string
   units: AllUnits
+  quantity: number
 }
 
 export type IngredientInRecipeDTO = NewIngredientInRecipeDTO & {

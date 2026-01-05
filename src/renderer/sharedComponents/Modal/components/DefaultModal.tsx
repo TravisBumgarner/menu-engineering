@@ -28,12 +28,14 @@ const Modal: FC<ActiveModal> = ({ children, closeCallback, sx, title }) => {
   return (
     <MUIModal
       sx={{
-        maxHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'background.paper',
         zIndex: Z_INDICES.MODAL,
+        padding: '5vh 0',
+        overflowY: 'auto',
+        maxHeight: '100vh',
       }}
       open={activeModalSignal.value !== null}
       onClose={handleClose}
@@ -44,11 +46,14 @@ const Modal: FC<ActiveModal> = ({ children, closeCallback, sx, title }) => {
         sx={{
           width: '600px',
           maxWidth: '90%',
+          maxHeight: '90vh',
+          overflow: 'auto',
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: 'background.paper',
           color: 'text.primary',
           padding: SPACING.MEDIUM.PX,
+
           ...sx,
         }}
       >
@@ -57,7 +62,7 @@ const Modal: FC<ActiveModal> = ({ children, closeCallback, sx, title }) => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            paddingBottom: SPACING.SMALL.PX,
+            paddingBottom: SPACING.SMALL.PX
           }}
         >
           <Typography variant="h5" component="h2">
