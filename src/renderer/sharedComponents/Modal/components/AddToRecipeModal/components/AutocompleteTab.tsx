@@ -12,7 +12,7 @@ import Icon from '../../../../Icon'
 import { useMemo, useState } from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import { RecipeDTO } from '../../../../../../shared/recipe.types'
-import { AllUnits } from '../../../../../../shared/units.types'
+import { ALL_UNITS, AllUnits } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
@@ -173,7 +173,7 @@ const Autocomplete = ({
             />
           )}
         />
-        <RecipeDetails units="cups" />
+        <RecipeDetails units={selectedAutocomplete?.units || ALL_UNITS.cups} />
       </Stack>
       <Stack justifyContent="flex-end" direction="row" sx={{ mb: SPACING.SMALL.PX, mt: SPACING.SMALL.PX }}>
         <Button

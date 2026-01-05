@@ -197,7 +197,7 @@ const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
                 <RecipeDetails units={ingredientFormData.units} />
 
             </Stack>
-            <Stack direction="row" spacing={SPACING.MEDIUM.PX} justifyContent="flex-end">
+            <Stack direction="row" spacing={SPACING.SMALL.PX} justifyContent="flex-end">
                 <Button
                     variant="outlined"
                     type="button"
