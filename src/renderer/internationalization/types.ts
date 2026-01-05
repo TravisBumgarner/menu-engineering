@@ -48,6 +48,7 @@ export type TranslationKeys =
   | 'unitsHelpText'
   | 'filterToMenuItems'
   | 'addToRecipe'
+  | 'recipeUses'
 
   // Form Labels and Placeholders
   | 'ingredientNamePlaceholder'

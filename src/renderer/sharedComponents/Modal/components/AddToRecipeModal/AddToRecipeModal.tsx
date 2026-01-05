@@ -6,7 +6,7 @@ import { SPACING } from '../../../../styles/consts'
 import { MODAL_ID } from '../../Modal.consts'
 import DefaultModal from './../DefaultModal'
 import AddIngredientTab from './components/AddIngredientTab'
-import AddRecipeTab from './components/AddRecipeTab'
+import AddRecipeTab from './components/AddSubRecipeTab'
 import AutocompleteTab from './components/AutocompleteTab'
 
 const TABS = {
@@ -38,7 +38,7 @@ const AddToRecipeModal = ({ recipe }: AddToRecipeModalProps) => {
     }
 
     return (
-        <DefaultModal title={`${t('addToRecipe')}: ${recipe.title}`} sx={{ minHeight: '450px' }}>
+        <DefaultModal title={`${t('addToRecipe')}: ${recipe.title}`} sx={{ minHeight: '550px' }}>
             <Stack spacing={SPACING.MEDIUM.PX} sx={{ flexGrow: 1 }}>
                 <Tabs value={selectedTab} onChange={handleTabChange}>
                     <Tab value={TABS.AUTOCOMPLETE} label={t('addExisting')} />

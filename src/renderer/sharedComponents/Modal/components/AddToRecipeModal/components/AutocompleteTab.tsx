@@ -17,6 +17,7 @@ import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import { SPACING } from '../../../../../styles/consts'
+import RecipeDetails from './RecipeDetails'
 
 type Value = {
   label: string
@@ -115,63 +116,65 @@ const Autocomplete = ({
   }
 
   return (
-    <Stack spacing={SPACING.MEDIUM.PX} sx={{ flexGrow: 1 }}>
-      <MUIAutocomplete
-        size="small"
-        disablePortal
-        options={autocompleteData || []}
-        sx={{
-          flexGrow: 1,
-          margin: 0,
-        }}
-        onChange={handleChange}
-        noOptionsText={
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: SPACING.TINY.PX,
-            }}
-          >
-            <Typography>No ingredients or recipes found</Typography>
-            <Button
-              fullWidth
-              onClick={() => setTab('addIngredient')}
-              variant="outlined"
-              size="small"
+    <Stack spacing={SPACING.MEDIUM.PX} sx={{ flexGrow: 1, justifyContent: 'space-between' }}>
+      <Stack spacing={SPACING.MEDIUM.PX} sx={{ flexGrow: 1 }}>
+        <MUIAutocomplete
+          size="small"
+          disablePortal
+          options={autocompleteData || []}
+          sx={{
+            margin: 0,
+          }}
+          onChange={handleChange}
+          noOptionsText={
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: SPACING.TINY.PX,
+              }}
             >
-              {t('addIngredient')}
-            </Button>
-            <Button
-              fullWidth
-              onClick={() => setTab('addRecipe')}
-              variant="outlined"
-              size="small"
-            >
-              {t('addSubRecipe')}
-            </Button>
-          </Box>
-        }
-        getOptionDisabled={option => existingRecipeComponentIds.includes(option.id)}
-        renderOption={(props, option) => {
-          const { key, ...optionProps } = props
-          return (
-            <Box key={key} component="li" {...optionProps}>
-              {option.type === 'ingredient' && <Icon name="ingredient" />}
-              {option.type === 'sub-recipe' && <Icon name="recipe" />}
-              &nbsp; {option.label}
+              <Typography>No ingredients or recipes found</Typography>
+              <Button
+                fullWidth
+                onClick={() => setTab('addIngredient')}
+                variant="outlined"
+                size="small"
+              >
+                {t('addIngredient')}
+              </Button>
+              <Button
+                fullWidth
+                onClick={() => setTab('addRecipe')}
+                variant="outlined"
+                size="small"
+              >
+                {t('addSubRecipe')}
+              </Button>
             </Box>
-          )
-        }}
-        renderInput={params => (
-          <TextField
-            {...params}
-            size="small"
-            variant="standard"
-            placeholder={t('addExisting')}
-          />
-        )}
-      />
+          }
+          getOptionDisabled={option => existingRecipeComponentIds.includes(option.id)}
+          renderOption={(props, option) => {
+            const { key, ...optionProps } = props
+            return (
+              <Box key={key} component="li" {...optionProps}>
+                {option.type === 'ingredient' && <Icon name="ingredient" />}
+                {option.type === 'sub-recipe' && <Icon name="recipe" />}
+                &nbsp; {option.label}
+              </Box>
+            )
+          }}
+          renderInput={params => (
+            <TextField
+              {...params}
+              size="small"
+              variant="standard"
+              placeholder={t('addExisting')}
+            />
+          )}
+        />
+        <RecipeDetails units="cups" />
+      </Stack>
       <Stack justifyContent="flex-end" direction="row" sx={{ mb: SPACING.SMALL.PX, mt: SPACING.SMALL.PX }}>
         <Button
           variant="outlined"

@@ -26,6 +26,7 @@ import ipcMessenger from '../../../../../ipcMessenger'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
 import { getUnitLabel } from '../../../../../utilities'
+import RecipeDetails from './RecipeDetails'
 
 const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
     const { t } = useAppTranslation()
@@ -201,6 +202,7 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                     }
                     label={t('showInMenu')}
                 />
+                <RecipeDetails units={formData.units} />
             </Stack>
             <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button onClick={handleCancel} variant="outlined" type="button">

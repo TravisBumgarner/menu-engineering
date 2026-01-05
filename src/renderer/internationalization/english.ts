@@ -24,6 +24,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   unitCost: 'Unit Cost',
   totalCost: 'Total Cost',
   addToRecipe: 'Add to Recipe',
+  recipeUses: 'Recipe uses',
 
   // Navigation
   recipes: 'Recipes',

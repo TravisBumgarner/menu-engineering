@@ -20,6 +20,7 @@ import ipcMessenger from '../../../../../ipcMessenger'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
 import { getUnitLabel } from '../../../../../utilities'
+import RecipeDetails from './RecipeDetails'
 
 
 type FormData = {
@@ -193,6 +194,8 @@ const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
                         )}
                     </Typography>
                 </Stack>
+                <RecipeDetails units={ingredientFormData.units} />
+
             </Stack>
             <Stack direction="row" spacing={SPACING.MEDIUM.PX} justifyContent="flex-end">
                 <Button
