@@ -56,7 +56,7 @@ const Table = ({
   // Default filters: show draft and published, hide archived, show both in menu and not in menu
   const [filters, setFilters] = React.useState<FilterOptions>({
     status: [RECIPE_STATUS.draft, RECIPE_STATUS.published],
-    showInMenu: 'all',
+    filterToMenuItemsOnly: false,
   })
 
   const handleRequestSort = (
@@ -83,16 +83,13 @@ const Table = ({
       // Filter by status
       const statusMatch = filters.status.includes(recipe.status)
 
-      // Filter by showInMenu
-      let showInMenuMatch = true
-      if (filters.showInMenu === 'yes') {
-        showInMenuMatch = recipe.showInMenu === true
-      } else if (filters.showInMenu === 'no') {
-        showInMenuMatch = recipe.showInMenu === false
+      // Filter by if item is on the menu
+      let menuItemsOnly = true
+      if (filters.filterToMenuItemsOnly) {
+        menuItemsOnly = recipe.showInMenu === true
       }
-      // If 'all', showInMenuMatch remains true
 
-      return statusMatch && showInMenuMatch
+      return statusMatch && menuItemsOnly
     })
   }, [recipes, filters])
 

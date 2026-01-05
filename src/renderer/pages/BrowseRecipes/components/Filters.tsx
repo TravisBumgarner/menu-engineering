@@ -1,10 +1,13 @@
 import {
   Box,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Switch,
 } from '@mui/material'
 import React from 'react'
 import { RECIPE_STATUS, RecipeStatus } from '../../../../shared/recipe.types'
@@ -13,7 +16,7 @@ import { SPACING } from '../../../styles/consts'
 
 export interface FilterOptions {
   status: RecipeStatus[]
-  showInMenu: 'all' | 'yes' | 'no'
+  filterToMenuItemsOnly: boolean
 }
 
 interface FiltersProps {
@@ -32,13 +35,13 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
     })
   }
 
-  const handleShowInMenuChange = (event: SelectChangeEvent<string>) => {
-    const value = event.target.value as 'all' | 'yes' | 'no'
+  const handleShowInMenuChange = (_event: React.SyntheticEvent<Element, Event>, checked: boolean) => {
     onFiltersChange({
       ...filters,
-      showInMenu: value,
+      filterToMenuItemsOnly: checked,
     })
   }
+  console.log(filters)
 
   return (
     <Box
@@ -49,7 +52,7 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
         padding: SPACING.SMALL.PX,
       }}
     >
-      <FormControl size="small" sx={{ minWidth: 180 }}>
+      <FormControl size="small">
         <InputLabel>{t('status')}</InputLabel>
         <Select
           multiple
@@ -68,17 +71,10 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
         </Select>
       </FormControl>
 
-      <FormControl size="small" sx={{ minWidth: 160 }}>
-        <InputLabel>{t('showInMenu')}</InputLabel>
-        <Select
-          value={filters.showInMenu}
-          onChange={handleShowInMenuChange}
-          label={t('showInMenu')}
-        >
-          <MenuItem value="all">{t('all')}</MenuItem>
-          <MenuItem value="yes">{t('yes')}</MenuItem>
-          <MenuItem value="no">{t('no')}</MenuItem>
-        </Select>
+      <FormControl size="small" >
+        <FormGroup>
+          <FormControlLabel onChange={handleShowInMenuChange} control={<Switch value={filters.filterToMenuItemsOnly} />} label={t('filterToMenuItems')} />
+        </FormGroup>
       </FormControl>
     </Box>
   )
