@@ -29,7 +29,7 @@ type FormData = {
     cost: number
 }
 
-const AddIngredientForm = ({ recipe }: { recipe?: RecipeDTO }) => {
+const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
     const { t } = useAppTranslation()
     const queryClient = useQueryClient()
     const [ingredientFormData, setIngredientFormData] = useState<FormData>({

@@ -27,7 +27,7 @@ import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
 import { getUnitLabel } from '../../../../../utilities'
 
-const AddRecipeForm = ({ parentRecipe }: { parentRecipe?: RecipeDTO }) => {
+const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
     const { t } = useAppTranslation()
     const queryClient = useQueryClient()
 
