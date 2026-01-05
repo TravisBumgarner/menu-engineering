@@ -67,12 +67,16 @@ const Autocomplete = ({
     },
   })
 
-  const selectedIds = useMemo(
-    () =>
-      recipeData?.ingredients
-        .map(i => i.id)
-        .concat(recipeData?.subRecipes.map(s => s.id))
-        .concat([recipe.id]),
+  const existingRecipeComponentIds = useMemo(
+    () => {
+      if (recipeData) {
+        return recipeData.ingredients
+          .map(i => i.id)
+          .concat(recipeData?.subRecipes.map(s => s.id))
+          .concat([recipe.id])
+      }
+      return []
+    },
     [recipeData, recipe],
   )
 
@@ -147,7 +151,7 @@ const Autocomplete = ({
             </Button>
           </Box>
         }
-        getOptionDisabled={option => selectedAutocomplete?.id === option.id}
+        getOptionDisabled={option => existingRecipeComponentIds.includes(option.id)}
         renderOption={(props, option) => {
           const { key, ...optionProps } = props
           return (

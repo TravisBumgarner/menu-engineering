@@ -1,8 +1,9 @@
-import { Tab, Tabs } from '@mui/material'
+import { Stack, Tab, Tabs } from '@mui/material'
 import { useState } from 'react'
 import { RecipeDTO } from '../../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../../hooks/useTranslation'
 import { activeModalSignal } from '../../../../signals'
+import { SPACING } from '../../../../styles/consts'
 import { formateDateFilename } from '../../../../utilities'
 import AddIngredientForm from '../../../AddIngredientForm'
 import AddRecipeForm from '../../../AddRecipeForm'
@@ -47,21 +48,23 @@ const AddToRecipeModal = ({ recipe }: AddToRecipeModalProps) => {
 
     return (
         <DefaultModal title={`${t('addToRecipe')}: ${recipe.title}`} sx={{ minHeight: '600px' }}>
-            <Tabs value={selectedTab} onChange={handleTabChange}>
-                <Tab value={TABS.AUTOCOMPLETE} label={t('addExisting')} />
-                <Tab value={TABS.ADD_INGREDIENT} label={t('addIngredient')} />
-                <Tab value={TABS.ADD_RECIPE} label={t('addSubRecipe')} />
-            </Tabs>
-            {selectedTab === TABS.AUTOCOMPLETE && (<Autocomplete
-                recipe={recipe}
-                setTab={handleSetTab}
-            />)}
-            {selectedTab === TABS.ADD_INGREDIENT && (
-                <AddIngredientForm recipe={recipe} />
-            )}
-            {selectedTab === TABS.ADD_RECIPE && (
-                <AddRecipeForm parentRecipe={recipe} />
-            )}
+            <Stack spacing={SPACING.MEDIUM.PX}>
+                <Tabs value={selectedTab} onChange={handleTabChange}>
+                    <Tab value={TABS.AUTOCOMPLETE} label={t('addExisting')} />
+                    <Tab value={TABS.ADD_INGREDIENT} label={t('addIngredient')} />
+                    <Tab value={TABS.ADD_RECIPE} label={t('addSubRecipe')} />
+                </Tabs>
+                {selectedTab === TABS.AUTOCOMPLETE && (<Autocomplete
+                    recipe={recipe}
+                    setTab={handleSetTab}
+                />)}
+                {selectedTab === TABS.ADD_INGREDIENT && (
+                    <AddIngredientForm recipe={recipe} />
+                )}
+                {selectedTab === TABS.ADD_RECIPE && (
+                    <AddRecipeForm parentRecipe={recipe} />
+                )}
+            </Stack>
         </DefaultModal >
     )
 }
