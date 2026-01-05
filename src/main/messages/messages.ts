@@ -60,11 +60,12 @@ typedIpcMain.handle(CHANNEL.DB.ADD_INGREDIENT, async (_event, params) => {
   )
 
   // Ingredient can be added independently or directly to a recipe
-  if (params.payload.recipeId && newIngredientId) {
+  if (params.payload.attachToRecipe && newIngredientId) {
     const newIngredientRecipeLink = await queries.addIngredientToRecipe({
       childId: newIngredientId,
-      parentId: params.payload.recipeId,
+      parentId: params.payload.attachToRecipe.recipeId,
       units: params.payload.units,
+      quantity: params.payload.attachToRecipe.recipeQuantity,
     })
     return {
       type: 'add_ingredient',
@@ -312,6 +313,7 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
           parentId: newParentId,
           childId: newChildId,
           units: relation.units,
+          quantity: relation.quantity,
         })
         // Set the quantity using the existing update mechanism
         console.log(

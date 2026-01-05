@@ -1,12 +1,10 @@
 import { Divider, Stack, TextField, Typography } from "@mui/material"
-import { useState } from "react"
 import { AllUnits } from "../../../../../../shared/units.types"
 import { useAppTranslation } from "../../../../../hooks/useTranslation"
 import { SPACING } from "../../../../../styles/consts"
 import { getUnitLabel } from "../../../../../utilities"
 
-const RecipeDetails = ({ units }: { units: AllUnits }) => {
-    const [quantity, setQuantity] = useState<number>(0)
+const RecipeDetails = ({ units, setQuantity, quantity }: { units: AllUnits, quantity: number, setQuantity: React.Dispatch<React.SetStateAction<number>> }) => {
     const { t } = useAppTranslation()
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value

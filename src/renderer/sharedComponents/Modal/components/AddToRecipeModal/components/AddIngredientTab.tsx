@@ -30,8 +30,9 @@ type FormData = {
     cost: number
 }
 
-const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
+const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
     const { t } = useAppTranslation()
+    const [recipeQuantity, setRecipeQuantity] = useState<number>(0)
     const queryClient = useQueryClient()
     const [ingredientFormData, setIngredientFormData] = useState<FormData>({
         title: '',
@@ -54,7 +55,12 @@ const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
                 .invoke(CHANNEL.DB.ADD_INGREDIENT, {
                     payload: {
                         newIngredient,
-                        recipeId,
+                        ...(recipeId ? {
+                            attachToRecipe: {
+                                recipeId,
+                                recipeQuantity: recipeQuantity,
+                            }
+                        } : {}),
                         units: newIngredient.units,
                     },
                 })
@@ -76,6 +82,7 @@ const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
                         units: ALL_UNITS.cups,
                         cost: 0,
                     })
+                    setRecipeQuantity(0)
                 }
             } else {
                 alert(t('failedToAddIngredient'))
@@ -87,6 +94,7 @@ const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
     })
 
     const handleSubmit = (shouldClose: boolean) => (e: React.FormEvent) => {
+        console.log("Submitting with data:", ingredientFormData)
         e.preventDefault()
         addIngredientMutation.mutate({
             newIngredient: {
@@ -194,11 +202,12 @@ const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
                         )}
                     </Typography>
                 </Stack>
-                <RecipeDetails units={ingredientFormData.units} />
+                <RecipeDetails units={ingredientFormData.units} setQuantity={setRecipeQuantity} quantity={recipeQuantity} />
 
             </Stack>
             <Stack direction="row" spacing={SPACING.SMALL.PX} justifyContent="flex-end">
                 <Button
+                    size="small"
                     variant="outlined"
                     type="button"
                     onClick={() => (activeModalSignal.value = null)}
@@ -206,6 +215,7 @@ const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
                     {t('cancel')}
                 </Button>
                 <Button
+                    size="small"
                     variant="outlined"
                     type="button"
                     onClick={handleSubmit(true)}
@@ -214,6 +224,7 @@ const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
                     {addIngredientMutation.isPending ? t('saving') : t('save')}
                 </Button>
                 <Button
+                    size="small"
                     variant="contained"
                     type="button"
                     onClick={handleSubmit(false)}
@@ -228,4 +239,4 @@ const AddIngredientForm = ({ recipe }: { recipe: RecipeDTO }) => {
     )
 }
 
-export default AddIngredientForm
+export default AddIngredientTab

@@ -406,7 +406,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
             onClick={handleConfirmNuke}
             color="error"
             variant="contained"
-            disabled={!nukeConfirmationText.trim()}
+            disabled={!['NUKE', 'ELIMINAR'].includes(nukeConfirmationText)}  // lazy lol.
           >
             {t('nukeDatabase')}
           </Button>

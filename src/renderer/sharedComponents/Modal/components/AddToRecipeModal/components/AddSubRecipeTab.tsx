@@ -31,6 +31,8 @@ import RecipeDetails from './RecipeDetails'
 const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
     const { t } = useAppTranslation()
     const queryClient = useQueryClient()
+    const [recipeQuantity, setRecipeQuantity] = useState<number>(0)
+
 
     const [formData, setFormData] = useState<NewRecipeDTO>({
         title: '',
@@ -45,14 +47,14 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
     }
 
     const addSubRecipeMutation = useMutation({
-        mutationFn: (args: { newRecipe: NewRecipeDTO; parentRecipeId: string }) =>
+        mutationFn: (args: { newRecipe: NewRecipeDTO; parentRecipeId: string; shouldClose: boolean }) =>
             ipcMessenger.invoke(CHANNEL.DB.ADD_SUB_RECIPE, {
                 payload: {
                     newRecipe: args.newRecipe,
                     parentRecipeId: args.parentRecipeId,
                     units: args.newRecipe.units,
-                },
-            }),
+                }
+            }).then(result => ({ ...result, shouldClose: args.shouldClose })),
         onSuccess: async result => {
             if (result.success) {
                 // Invalidate and refetch queries
@@ -60,6 +62,17 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                 await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
                 queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
                 activeModalSignal.value = null
+
+                if (!result.shouldClose) {
+                    setFormData({
+                        title: '',
+                        produces: 0,
+                        units: ALL_UNITS.units,
+                        status: RECIPE_STATUS.draft,
+                        showInMenu: false,
+                    })
+                    setRecipeQuantity(0)
+                }
             } else {
                 alert(t('failedToAddSubRecipe'))
             }
@@ -74,7 +87,7 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
         addSubRecipeMutation.mutate({
             newRecipe: formData,
             parentRecipeId: parentRecipe.id,
-
+            shouldClose,
         })
     }
 
@@ -104,7 +117,7 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
         formData.produces <= 0
 
     return (
-        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, }} onSubmit={() => handleSubmit(true)}>
+        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, }}>
 
             <Stack spacing={SPACING.MEDIUM.PX}>
                 <TextField
@@ -177,16 +190,17 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                     }
                     label={t('showInMenu')}
                 />
-                <RecipeDetails units={formData.units} />
+                <RecipeDetails units={formData.units} setQuantity={setRecipeQuantity} quantity={recipeQuantity} />
             </Stack>
             <Stack direction="row" spacing={SPACING.SMALL.PX} justifyContent="flex-end">
-                <Button onClick={handleCancel} variant="outlined" type="button">
+                <Button size="small" onClick={handleCancel} variant="outlined" type="button">
                     {t('cancel')}
                 </Button>
-                <Button variant="outlined" type="submit" disabled={preventSubmit}>
+                <Button size="small" variant="outlined" type="submit" disabled={preventSubmit} onClick={handleSubmit(true)}>
                     {addSubRecipeMutation.isPending ? t('saving') : t('save')}
                 </Button>
                 <Button
+                    size="small"
                     variant="contained"
                     type="button"
                     onClick={handleSubmit(false)}

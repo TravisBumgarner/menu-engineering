@@ -47,7 +47,6 @@ const AddIngredientModal = (_props: AddIngredientModalProps) => {
   const addIngredientMutation = useMutation({
     mutationFn: ({
       newIngredient,
-      recipeId,
       shouldClose,
     }: {
       newIngredient: NewIngredientDTO
@@ -58,7 +57,6 @@ const AddIngredientModal = (_props: AddIngredientModalProps) => {
         .invoke(CHANNEL.DB.ADD_INGREDIENT, {
           payload: {
             newIngredient,
-            recipeId,
             units: newIngredient.units,
           },
         })

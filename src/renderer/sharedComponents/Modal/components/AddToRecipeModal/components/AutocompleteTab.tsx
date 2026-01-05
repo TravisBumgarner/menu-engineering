@@ -16,6 +16,7 @@ import { ALL_UNITS, AllUnits } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
+import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
 import RecipeDetails from './RecipeDetails'
 
@@ -34,6 +35,7 @@ const Autocomplete = ({
   setTab: (tab: 'addIngredient' | 'addRecipe') => void
 }) => {
   const queryClient = useQueryClient()
+  const [recipeQuantity, setRecipeQuantity] = useState<number>(0)
   const { t } = useAppTranslation()
   const { data: autocompleteData } = useQuery({
     queryKey: [QUERY_KEYS.AUTOCOMPLETE],
@@ -83,31 +85,45 @@ const Autocomplete = ({
   )
 
 
-  const [selectedAutocomplete, setSelectedAutocomplete] = useState<{
-    label: string
-    id: string
-    type: 'ingredient' | 'sub-recipe'
-    units: AllUnits
-  } | null>(null)
+  const handleCancel = () => {
+    activeModalSignal.value = null
+  }
+
+
+  const [selectedAutocomplete, setSelectedAutocomplete] = useState<Value | null>(null)
 
   const {
     isPending: addExistingToRecipeIsLoading,
     mutate: addExistingToRecipe,
   } = useMutation({
-    mutationFn: async () => {
-      if (!selectedAutocomplete) return
-      await ipcMessenger.invoke(CHANNEL.DB.ADD_EXISTING_TO_RECIPE, {
+    mutationFn: async (shouldClose: boolean) => {
+      if (!selectedAutocomplete) {
+        // Always return a Promise with the correct shape
+        return Promise.resolve({ success: false, shouldClose })
+      }
+      const result = await ipcMessenger.invoke(CHANNEL.DB.ADD_EXISTING_TO_RECIPE, {
         childId: selectedAutocomplete.id,
         parentId: recipe.id,
         type: selectedAutocomplete.type,
         units: selectedAutocomplete.units,
+        quantity: recipeQuantity,
       })
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-      setSelectedAutocomplete(null)
+      return { ...result, shouldClose }
+      // queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+      // setSelectedAutocomplete(null)
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-      setSelectedAutocomplete(null)
+    onSuccess: (result) => {
+      if (result.success) {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+        setSelectedAutocomplete(null)
+
+        if (result.shouldClose) {
+          activeModalSignal.value = null
+        } else {
+          setSelectedAutocomplete(null)
+          setRecipeQuantity(0)
+        }
+      }
     },
   })
 
@@ -119,12 +135,14 @@ const Autocomplete = ({
     <Stack spacing={SPACING.MEDIUM.PX} sx={{ flexGrow: 1, justifyContent: 'space-between' }}>
       <Stack spacing={SPACING.MEDIUM.PX} sx={{ flexGrow: 1 }}>
         <MUIAutocomplete
+          key={autocompleteData ? 'loaded' : 'loading'}
           size="small"
           disablePortal
           options={autocompleteData || []}
           sx={{
             margin: 0,
           }}
+          value={selectedAutocomplete}
           onChange={handleChange}
           noOptionsText={
             <Box
@@ -173,16 +191,26 @@ const Autocomplete = ({
             />
           )}
         />
-        <RecipeDetails units={selectedAutocomplete?.units || ALL_UNITS.cups} />
+        <RecipeDetails units={selectedAutocomplete?.units || ALL_UNITS.cups} setQuantity={setRecipeQuantity} quantity={recipeQuantity} />
       </Stack>
-      <Stack justifyContent="flex-end" direction="row" sx={{ mb: SPACING.SMALL.PX, mt: SPACING.SMALL.PX }}>
+      <Stack direction="row" spacing={SPACING.SMALL.PX} justifyContent="flex-end">
+        <Button onClick={handleCancel} variant="outlined" type="button" size="small">
+          {t('cancel')}
+        </Button>
         <Button
           variant="outlined"
           size="small"
           disabled={!selectedAutocomplete || addExistingToRecipeIsLoading}
-          onClick={() => addExistingToRecipe()}
+          onClick={() => addExistingToRecipe(true)}
         >
-          {addExistingToRecipeIsLoading ? t('adding') : t('add')}
+          {addExistingToRecipeIsLoading ? t('saving') : t('save')}
+        </Button>        <Button
+          variant="contained"
+          size="small"
+          disabled={!selectedAutocomplete || addExistingToRecipeIsLoading}
+          onClick={() => addExistingToRecipe(false)}
+        >
+          {addExistingToRecipeIsLoading ? t('saving') : t('saveAndAddAnother')}
         </Button>
       </Stack>
     </Stack>
