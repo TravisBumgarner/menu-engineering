@@ -210,10 +210,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
       )
 
       if (result.success) {
-        setMessage({
-          type: 'success',
-          text: t('nukeDatabaseSuccessfully'),
-        })
+        window.location.reload()
       } else {
         setMessage({
           type: 'error',

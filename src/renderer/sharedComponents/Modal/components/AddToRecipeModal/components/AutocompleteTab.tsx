@@ -55,7 +55,7 @@ const Autocomplete = ({
           type: 'sub-recipe' as const,
           units: r.units,
         })),
-      ]
+      ].sort((a, b) => a.label.localeCompare(b.label))
     },
   })
 
@@ -85,7 +85,7 @@ const Autocomplete = ({
   )
 
 
-  const handleCancel = () => {
+  const handleClose = () => {
     activeModalSignal.value = null
   }
 
@@ -194,8 +194,8 @@ const Autocomplete = ({
         <RecipeDetails units={selectedAutocomplete?.units || ALL_UNITS.cups} setQuantity={setRecipeQuantity} quantity={recipeQuantity} />
       </Stack>
       <Stack direction="row" spacing={SPACING.SMALL.PX} justifyContent="flex-end">
-        <Button onClick={handleCancel} variant="outlined" type="button" size="small">
-          {t('cancel')}
+        <Button onClick={handleClose} variant="outlined" type="button" size="small">
+          {t('close')}
         </Button>
         <Button
           variant="outlined"

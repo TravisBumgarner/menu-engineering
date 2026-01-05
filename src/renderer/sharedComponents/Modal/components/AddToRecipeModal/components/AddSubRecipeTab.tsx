@@ -42,7 +42,7 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
         showInMenu: false,
     })
 
-    const handleCancel = () => {
+    const handleClose = () => {
         activeModalSignal.value = null
     }
 
@@ -61,7 +61,6 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                 await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
                 await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
                 queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
-                activeModalSignal.value = null
 
                 if (!result.shouldClose) {
                     setFormData({
@@ -72,6 +71,8 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                         showInMenu: false,
                     })
                     setRecipeQuantity(0)
+                } else {
+                    activeModalSignal.value = null
                 }
             } else {
                 alert(t('failedToAddSubRecipe'))
@@ -193,8 +194,8 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                 <RecipeDetails units={formData.units} setQuantity={setRecipeQuantity} quantity={recipeQuantity} />
             </Stack>
             <Stack direction="row" spacing={SPACING.SMALL.PX} justifyContent="flex-end">
-                <Button size="small" onClick={handleCancel} variant="outlined" type="button">
-                    {t('cancel')}
+                <Button size="small" onClick={handleClose} variant="outlined" type="button">
+                    {t('close')}
                 </Button>
                 <Button size="small" variant="outlined" type="submit" disabled={preventSubmit} onClick={handleSubmit(true)}>
                     {addSubRecipeMutation.isPending ? t('saving') : t('save')}

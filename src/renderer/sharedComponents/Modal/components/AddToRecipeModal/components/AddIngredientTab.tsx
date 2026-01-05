@@ -198,7 +198,7 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
                         /{' '}
                         {getUnitLabel(
                             ingredientFormData.units,
-                            ingredientFormData.quantity,
+                            1,
                         )}
                     </Typography>
                 </Stack>
@@ -212,7 +212,7 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
                     type="button"
                     onClick={() => (activeModalSignal.value = null)}
                 >
-                    {t('cancel')}
+                    {t('close')}
                 </Button>
                 <Button
                     size="small"

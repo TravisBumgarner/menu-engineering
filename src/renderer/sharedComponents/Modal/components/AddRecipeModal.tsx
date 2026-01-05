@@ -44,7 +44,7 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
     showInMenu: false,
   })
 
-  const handleCancel = () => {
+  const handleClose = () => {
     activeModalSignal.value = null
   }
 
@@ -202,8 +202,8 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
             label={t('showInMenu')}
           />
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button onClick={handleCancel} variant="outlined" type="button">
-              {t('cancel')}
+            <Button onClick={handleClose} variant="outlined" type="button">
+              {t('close')}
             </Button>
             <Button variant="contained" type="submit" disabled={preventSubmit}>
               {addRecipeMutation.isPending ? t('adding') : t('addRecipe')}

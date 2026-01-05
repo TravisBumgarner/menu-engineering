@@ -25,6 +25,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   totalCost: 'Total Cost',
   addToRecipe: 'Add to Recipe',
   recipeUses: 'Recipe uses',
+  close: 'Close',
 
   // Navigation
   recipes: 'Recipes',

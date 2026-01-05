@@ -52,7 +52,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   usedIn: 'Usado en',
   addToRecipe: 'Agregar a Receta',
   recipeUses: 'Receta utiliza',
-
+  close: 'Cerrar',
 
   // Form Labels and Placeholders
   ingredientNamePlaceholder: 'ej. Harina, Sal, Aceite de Oliva',
