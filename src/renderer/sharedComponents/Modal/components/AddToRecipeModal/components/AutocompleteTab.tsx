@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Autocomplete as MUIAutocomplete,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material'
@@ -114,7 +115,7 @@ const Autocomplete = ({
   }
 
   return (
-    <>
+    <Stack spacing={SPACING.MEDIUM.PX} sx={{ flexGrow: 1 }}>
       <MUIAutocomplete
         size="small"
         disablePortal
@@ -171,15 +172,17 @@ const Autocomplete = ({
           />
         )}
       />
-      <Button
-        variant="outlined"
-        size="small"
-        disabled={!selectedAutocomplete || addExistingToRecipeIsLoading}
-        onClick={() => addExistingToRecipe()}
-      >
-        {addExistingToRecipeIsLoading ? t('adding') : t('add')}
-      </Button>
-    </>
+      <Stack justifyContent="flex-end" direction="row" sx={{ mb: SPACING.SMALL.PX, mt: SPACING.SMALL.PX }}>
+        <Button
+          variant="outlined"
+          size="small"
+          disabled={!selectedAutocomplete || addExistingToRecipeIsLoading}
+          onClick={() => addExistingToRecipe()}
+        >
+          {addExistingToRecipeIsLoading ? t('adding') : t('add')}
+        </Button>
+      </Stack>
+    </Stack>
   )
 }
 

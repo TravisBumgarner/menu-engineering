@@ -13,19 +13,19 @@ import {
 } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
-import { CHANNEL } from '../../shared/messages.types'
+import { CHANNEL } from '../../../../../../shared/messages.types'
 import {
     NewRecipeDTO,
     RECIPE_STATUS,
     RecipeDTO
-} from '../../shared/recipe.types'
-import { ALL_UNITS } from '../../shared/units.types'
-import { QUERY_KEYS } from '../consts'
-import { useAppTranslation } from '../hooks/useTranslation'
-import ipcMessenger from '../ipcMessenger'
-import { activeModalSignal } from '../signals'
-import { SPACING } from '../styles/consts'
-import { getUnitLabel } from '../utilities'
+} from '../../../../../../shared/recipe.types'
+import { ALL_UNITS } from '../../../../../../shared/units.types'
+import { QUERY_KEYS } from '../../../../../consts'
+import { useAppTranslation } from '../../../../../hooks/useTranslation'
+import ipcMessenger from '../../../../../ipcMessenger'
+import { activeModalSignal } from '../../../../../signals'
+import { SPACING } from '../../../../../styles/consts'
+import { getUnitLabel } from '../../../../../utilities'
 
 const AddRecipeForm = ({ parentRecipe }: { parentRecipe?: RecipeDTO }) => {
     const { t } = useAppTranslation()
@@ -128,90 +128,89 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe?: RecipeDTO }) => {
         formData.produces <= 0
 
     return (
-        <Box component="form" onSubmit={handleSubmit}>
-            <Stack justifyContent="space-between">
-                <Stack spacing={SPACING.MEDIUM.PX}>
+        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1, }} onSubmit={handleSubmit}>
+
+            <Stack spacing={SPACING.MEDIUM.PX}>
+                <TextField
+                    size="small"
+                    label={t('title')}
+                    value={formData.title}
+                    onChange={handleInputChange('title')}
+                    required
+                    fullWidth
+                />
+                <Stack direction="row" spacing={SPACING.SMALL.PX}>
                     <TextField
                         size="small"
-                        label={t('title')}
-                        value={formData.title}
-                        onChange={handleInputChange('title')}
+                        label={t('produces')}
+                        type="number"
+                        value={formData.produces}
+                        onChange={handleInputChange('produces')}
                         required
                         fullWidth
                     />
-                    <Stack direction="row" spacing={SPACING.SMALL.PX}>
-                        <TextField
-                            size="small"
-                            label={t('produces')}
-                            type="number"
-                            value={formData.produces}
-                            onChange={handleInputChange('produces')}
-                            required
-                            fullWidth
-                        />
-                        <FormControl size="small" fullWidth required>
-                            <InputLabel>{t('units')}</InputLabel>
-                            <Select
-                                value={formData.units}
-                                onChange={e =>
-                                    handleInputChange('units')(
-                                        e as React.ChangeEvent<HTMLInputElement>,
-                                    )
-                                }
-                                label={t('units')}
-                            >
-                                {Object.entries(ALL_UNITS).map(([key, value]) => (
-                                    <MenuItem key={key} value={value}>
-                                        {getUnitLabel(value, 'plural')}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Stack>
-                    <Typography
-                        sx={{ marginTop: '0 !important' }}
-                        variant="caption"
-                        color="textSecondary"
-                    >
-                        {t('unitsHelpText')}
-                    </Typography>
                     <FormControl size="small" fullWidth required>
-                        <InputLabel>{t('status')}</InputLabel>
+                        <InputLabel>{t('units')}</InputLabel>
                         <Select
-                            value={formData.status}
-                            onChange={handleInputChange('status')}
-                            label={t('status')}
+                            value={formData.units}
+                            onChange={e =>
+                                handleInputChange('units')(
+                                    e as React.ChangeEvent<HTMLInputElement>,
+                                )
+                            }
+                            label={t('units')}
                         >
-                            <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
-                            <MenuItem value={RECIPE_STATUS.published}>
-                                {t('published')}
-                            </MenuItem>
-                            <MenuItem value={RECIPE_STATUS.archived}>
-                                {t('archived')}
-                            </MenuItem>
+                            {Object.entries(ALL_UNITS).map(([key, value]) => (
+                                <MenuItem key={key} value={value}>
+                                    {getUnitLabel(value, 'plural')}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
+                </Stack>
+                <Typography
+                    sx={{ marginTop: '0 !important' }}
+                    variant="caption"
+                    color="textSecondary"
+                >
+                    {t('unitsHelpText')}
+                </Typography>
+                <FormControl size="small" fullWidth required>
+                    <InputLabel>{t('status')}</InputLabel>
+                    <Select
+                        value={formData.status}
+                        onChange={handleInputChange('status')}
+                        label={t('status')}
+                    >
+                        <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
+                        <MenuItem value={RECIPE_STATUS.published}>
+                            {t('published')}
+                        </MenuItem>
+                        <MenuItem value={RECIPE_STATUS.archived}>
+                            {t('archived')}
+                        </MenuItem>
+                    </Select>
+                </FormControl>
 
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={formData.showInMenu}
-                                onChange={handleCheckboxChange('showInMenu')}
-                            />
-                        }
-                        label={t('showInMenu')}
-                    />
-                </Stack>
-                <Stack direction="row" spacing={2} justifyContent="flex-end">
-                    <Button onClick={handleCancel} variant="outlined" type="button">
-                        {t('cancel')}
-                    </Button>
-                    <Button variant="contained" type="submit" disabled={preventSubmit}>
-                        {addRecipeMutation.isPending ? t('saving') : t('save')}
-                    </Button>
-                </Stack>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={formData.showInMenu}
+                            onChange={handleCheckboxChange('showInMenu')}
+                        />
+                    }
+                    label={t('showInMenu')}
+                />
             </Stack>
-        </Box>
+            <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <Button onClick={handleCancel} variant="outlined" type="button">
+                    {t('cancel')}
+                </Button>
+                <Button variant="contained" type="submit" disabled={preventSubmit}>
+                    {addRecipeMutation.isPending ? t('saving') : t('save')}
+                </Button>
+            </Stack>
+        </Box >
     )
 }
 

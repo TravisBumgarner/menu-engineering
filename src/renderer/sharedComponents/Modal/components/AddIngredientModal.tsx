@@ -12,7 +12,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { NewIngredientDTO, RecipeDTO } from '../../../../shared/recipe.types'
+import { NewIngredientDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS, AllUnits } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
@@ -25,7 +25,6 @@ import DefaultModal from './DefaultModal'
 
 export interface AddIngredientModalProps {
   id: typeof MODAL_ID.ADD_INGREDIENT_MODAL
-  recipe?: RecipeDTO
 }
 
 type FormData = {
@@ -35,7 +34,7 @@ type FormData = {
   cost: number
 }
 
-const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
+const AddIngredientModal = (_props: AddIngredientModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
   const [ingredientFormData, setIngredientFormData] = useState<FormData>({
@@ -99,7 +98,6 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
         units: ingredientFormData.units,
         unitCost: ingredientFormData.cost / ingredientFormData.quantity,
       },
-      recipeId: recipe?.id,
       shouldClose,
     })
   }
@@ -128,9 +126,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
   return (
     <DefaultModal
       title={
-        recipe
-          ? `${t('addNewIngredient')} to ${recipe.title}`
-          : t('addNewIngredient')
+        t('addNewIngredient')
       }
     >
       <Box component="form">
@@ -236,7 +232,7 @@ const AddIngredientModal = ({ recipe }: AddIngredientModalProps) => {
           </Stack>
         </Stack>
       </Box>
-    </DefaultModal>
+    </DefaultModal >
   )
 }
 

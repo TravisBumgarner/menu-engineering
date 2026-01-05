@@ -11,15 +11,15 @@ import {
 } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
-import { CHANNEL } from '../../shared/messages.types'
-import { NewIngredientDTO, RecipeDTO } from '../../shared/recipe.types'
-import { ALL_UNITS, AllUnits } from '../../shared/units.types'
-import { QUERY_KEYS } from '../consts'
-import { useAppTranslation } from '../hooks/useTranslation'
-import ipcMessenger from '../ipcMessenger'
-import { activeModalSignal } from '../signals'
-import { SPACING } from '../styles/consts'
-import { getUnitLabel } from '../utilities'
+import { CHANNEL } from '../../../../../../shared/messages.types'
+import { NewIngredientDTO, RecipeDTO } from '../../../../../../shared/recipe.types'
+import { ALL_UNITS, AllUnits } from '../../../../../../shared/units.types'
+import { QUERY_KEYS } from '../../../../../consts'
+import { useAppTranslation } from '../../../../../hooks/useTranslation'
+import ipcMessenger from '../../../../../ipcMessenger'
+import { activeModalSignal } from '../../../../../signals'
+import { SPACING } from '../../../../../styles/consts'
+import { getUnitLabel } from '../../../../../utilities'
 
 
 type FormData = {
@@ -120,7 +120,7 @@ const AddIngredientForm = ({ recipe }: { recipe?: RecipeDTO }) => {
         !ingredientFormData.units.trim()
 
     return (
-        <Box component="form">
+        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flexGrow: 1 }} onSubmit={handleSubmit(true)}>
             <Stack spacing={SPACING.MEDIUM.PX}>
                 <TextField
                     size="small"
@@ -193,36 +193,35 @@ const AddIngredientForm = ({ recipe }: { recipe?: RecipeDTO }) => {
                         )}
                     </Typography>
                 </Stack>
-
-                <Stack direction="row" spacing={2} justifyContent="flex-end">
-                    <Button
-                        variant="outlined"
-                        type="button"
-                        onClick={() => (activeModalSignal.value = null)}
-                    >
-                        {t('cancel')}
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        type="button"
-                        onClick={handleSubmit(true)}
-                        disabled={preventSubmit}
-                    >
-                        {addIngredientMutation.isPending ? t('saving') : t('save')}
-                    </Button>
-                    <Button
-                        variant="contained"
-                        type="button"
-                        onClick={handleSubmit(false)}
-                        disabled={preventSubmit}
-                    >
-                        {addIngredientMutation.isPending
-                            ? t('saving')
-                            : t('saveAndAddAnother')}
-                    </Button>
-                </Stack>
             </Stack>
-        </Box>
+            <Stack direction="row" spacing={SPACING.MEDIUM.PX} justifyContent="flex-end">
+                <Button
+                    variant="outlined"
+                    type="button"
+                    onClick={() => (activeModalSignal.value = null)}
+                >
+                    {t('cancel')}
+                </Button>
+                <Button
+                    variant="outlined"
+                    type="button"
+                    onClick={handleSubmit(true)}
+                    disabled={preventSubmit}
+                >
+                    {addIngredientMutation.isPending ? t('saving') : t('save')}
+                </Button>
+                <Button
+                    variant="contained"
+                    type="button"
+                    onClick={handleSubmit(false)}
+                    disabled={preventSubmit}
+                >
+                    {addIngredientMutation.isPending
+                        ? t('saving')
+                        : t('saveAndAddAnother')}
+                </Button>
+            </Stack>
+        </Box >
     )
 }
 
