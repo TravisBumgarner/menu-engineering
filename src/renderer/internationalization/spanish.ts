@@ -46,6 +46,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   saveAndAddAnother: 'Guardar y Agregar otro',
   addSubRecipe: 'Agregar Sub-Receta',
   showInMenu: 'En Menú',
+  filterToMenuItems: 'Solo platos del menú',
   noDetails: 'Sin detalles',
   unitsHelpText: 'Nota - Las unidades solo se pueden establecer al crear',
   usedIn: 'Usado en',
