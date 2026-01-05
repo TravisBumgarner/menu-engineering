@@ -52,8 +52,8 @@ function Row(props: {
         </TableCell>
         <TableCell align="left">{getUnitLabel(row.units, 'plural')}</TableCell>
         <TableCell align="right">{row.unitCost}</TableCell>
-        <TableCell align="left">
-          {row.recipeCount} {row.recipeCount === 1 ? t('recipe') : t('recipes')}
+        <TableCell align="right">
+          {row.recipeCount}
         </TableCell>
         <TableCell align="left">
           <Tooltip title={t('editIngredient')}>
