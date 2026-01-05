@@ -176,10 +176,14 @@ typedIpcMain.handle(
   },
 )
 
+import { app } from 'electron'
+
 typedIpcMain.handle(CHANNEL.APP.GET_BACKUP_DIRECTORY, async () => {
+  const isProd = app.isPackaged
+  const baseDir = isProd ? app.getPath('userData') : process.cwd()
   return {
     type: 'get_backup_directory',
-    backupDirectory: path.resolve(process.cwd(), 'db_backups'),
+    backupDirectory: path.resolve(baseDir, 'db_backups'),
   }
 })
 
