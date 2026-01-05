@@ -207,7 +207,7 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe?: RecipeDTO }) => {
                         {t('cancel')}
                     </Button>
                     <Button variant="contained" type="submit" disabled={preventSubmit}>
-                        {addRecipeMutation.isPending ? t('adding') : t('addRecipe')}
+                        {addRecipeMutation.isPending ? t('saving') : t('save')}
                     </Button>
                 </Stack>
             </Stack>

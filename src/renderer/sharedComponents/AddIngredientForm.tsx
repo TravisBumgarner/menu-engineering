@@ -124,7 +124,7 @@ const AddIngredientForm = ({ recipe }: { recipe?: RecipeDTO }) => {
             <Stack spacing={SPACING.MEDIUM.PX}>
                 <TextField
                     size="small"
-                    label={t('ingredientName')}
+                    label={t('title')}
                     value={ingredientFormData.title}
                     onChange={handleInputChange('title')}
                     required
