@@ -6,9 +6,9 @@ import {
   Typography,
 } from '@mui/material'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import Icon from '../../../../../sharedComponents/Icon'
+import Icon from '../../../../Icon'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import { RecipeDTO } from '../../../../../../shared/recipe.types'
 import { AllUnits } from '../../../../../../shared/units.types'
@@ -26,18 +26,14 @@ type Value = {
 
 const Autocomplete = ({
   recipe,
-  handleAddSubRecipe,
-  handleAddIngredient,
-  selectedIds,
+  setTab,
 }: {
-  recipe: RecipeDTO
-  handleAddSubRecipe: () => void
-  handleAddIngredient: () => void
-  selectedIds: string[]
+  recipe: RecipeDTO,
+  setTab: (tab: 'addIngredient' | 'addRecipe') => void
 }) => {
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
-  const { data } = useQuery({
+  const { data: autocompleteData } = useQuery({
     queryKey: [QUERY_KEYS.AUTOCOMPLETE],
     queryFn: async (): Promise<Value[]> => {
       const ingredients = await ipcMessenger.invoke(CHANNEL.DB.GET_INGREDIENTS)
@@ -58,6 +54,28 @@ const Autocomplete = ({
       ]
     },
   })
+
+  const { data: recipeData, isLoading, isError } = useQuery({
+    queryKey: [QUERY_KEYS.RECIPE, recipe.id],
+    queryFn: async () => {
+      if (!recipe.id) throw new Error(t('recipeNotFound'))
+
+      const response = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE, {
+        id: recipe.id,
+      })
+      return response
+    },
+  })
+
+  const selectedIds = useMemo(
+    () =>
+      recipeData?.ingredients
+        .map(i => i.id)
+        .concat(recipeData?.subRecipes.map(s => s.id))
+        .concat([recipe.id]),
+    [recipeData, recipe],
+  )
+
 
   const [selectedAutocomplete, setSelectedAutocomplete] = useState<{
     label: string
@@ -96,7 +114,7 @@ const Autocomplete = ({
       <MUIAutocomplete
         size="small"
         disablePortal
-        options={data || []}
+        options={autocompleteData || []}
         sx={{
           flexGrow: 1,
           margin: 0,
@@ -113,7 +131,7 @@ const Autocomplete = ({
             <Typography>No ingredients or recipes found</Typography>
             <Button
               fullWidth
-              onClick={handleAddIngredient}
+              onClick={() => setTab('addIngredient')}
               variant="outlined"
               size="small"
             >
@@ -121,7 +139,7 @@ const Autocomplete = ({
             </Button>
             <Button
               fullWidth
-              onClick={handleAddSubRecipe}
+              onClick={() => setTab('addRecipe')}
               variant="outlined"
               size="small"
             >
@@ -129,7 +147,7 @@ const Autocomplete = ({
             </Button>
           </Box>
         }
-        getOptionDisabled={option => selectedIds.includes(option.id)}
+        getOptionDisabled={option => selectedAutocomplete?.id === option.id}
         renderOption={(props, option) => {
           const { key, ...optionProps } = props
           return (

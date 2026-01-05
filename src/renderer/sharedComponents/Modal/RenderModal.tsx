@@ -8,6 +8,7 @@ import AddIngredientModal, {
 import AddRecipeModal, {
   type AddRecipeModalProps,
 } from './components/AddRecipeModal'
+import AddToRecipeModal, { AddToRecipeModalProps } from './components/AddToRecipeModal/AddToRecipeModal'
 import ConfirmationModal, {
   type ConfirmationModalProps,
 } from './components/ConfirmationModal'
@@ -35,6 +36,7 @@ export type ActiveModal =
   | SettingsModalProps
   | ExportIngredientsProps
   | ExportRecipesProps
+  | AddToRecipeModalProps
 
 export type ModalId = (typeof MODAL_ID)[keyof typeof MODAL_ID]
 
@@ -60,6 +62,8 @@ const RenderModal: FC = () => {
       return <ExportIngredients {...activeModalSignal.value} />
     case MODAL_ID.EXPORT_RECIPES:
       return <ExportRecipes {...activeModalSignal.value} />
+    case MODAL_ID.ADD_TO_RECIPE_MODAL:
+      return <AddToRecipeModal {...activeModalSignal.value} />
     default:
       return null
   }

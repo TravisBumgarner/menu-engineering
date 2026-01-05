@@ -23,6 +23,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   outOf: 'of',
   unitCost: 'Unit Cost',
   totalCost: 'Total Cost',
+  addToRecipe: 'Add to Recipe',
 
   // Navigation
   recipes: 'Recipes',
