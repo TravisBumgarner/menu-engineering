@@ -14,6 +14,7 @@ import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
 import { FONT_SIZES, SPACING } from '../../../styles/consts'
 import {
+  formatCurrency,
   formatDisplayDate,
   getUnitLabel
 } from '../../../utilities'
@@ -23,7 +24,7 @@ function RecipeRow({
   row,
   labelId,
 }: {
-  row: RecipeDTO & { usedInRecipesCount: number, cost: number }
+  row: RecipeDTO & { usedInRecipesCount: number, }
   labelId: string
 }) {
   useSignals()
@@ -85,7 +86,7 @@ function RecipeRow({
           scope="row"
           sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
-          {row.cost}
+          {formatCurrency(row.cost)}
         </TableCell>
         <TableCell sx={cellSx} align="right">
           {row.produces}

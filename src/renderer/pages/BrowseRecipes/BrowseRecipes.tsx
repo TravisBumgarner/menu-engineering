@@ -16,7 +16,6 @@ const BrowseRecipes = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [QUERY_KEYS.RECIPES],
     queryFn: async() => {
-      console.log("i am ionvoked")
       const response = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPES)
       console.log("response", response)
       return response

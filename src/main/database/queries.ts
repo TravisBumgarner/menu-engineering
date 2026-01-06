@@ -226,9 +226,14 @@ const getRecipeSubRecipes = async (recipeId: string) => {
     .from(recipeSubRecipeSchema)
     .where(eq(recipeSubRecipeSchema.parentId, recipeId))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.childId, recipeSchema.id))
-  return recipes.map(row => ({
-    ...row.recipe,
-    relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
+  
+  return Promise.all(recipes.map(async row => {
+    const costResult = await getRecipeCost(row.recipe.id);
+    return {
+      cost: costResult.success ? costResult.cost : -1,
+      ...row.recipe,
+      relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
+    }
   }))
 }
 
@@ -350,7 +355,10 @@ const getRecipesUsingSubRecipe = async (subRecipeId: string) => {
     .where(eq(recipeSubRecipeSchema.childId, subRecipeId))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.parentId, recipeSchema.id))
 
-  return recipes.map(row => row.recipe).filter(Boolean)
+  return Promise.all(recipes.map(async row => {
+    const costResult = await getRecipeCost(row.recipe.id);
+    return {...row.recipe, cost: costResult.success ? costResult.cost : -1 }
+  })).then(results => results.filter(Boolean))
 }
 
 const getRecipesUsingIngredient = async (ingredientId: string) => {
@@ -365,7 +373,10 @@ const getRecipesUsingIngredient = async (ingredientId: string) => {
       eq(recipeIngredientSchema.parentId, recipeSchema.id),
     )
 
-  return recipes.map(row => row.recipe).filter(Boolean)
+  return Promise.all(recipes.map(async row => {
+    const costResult = await getRecipeCost(row.recipe.id);
+    return {...row.recipe, cost: costResult.success ? costResult.cost : -1 }
+  })).then(results => results.filter(Boolean))
 }
 
 export default {
