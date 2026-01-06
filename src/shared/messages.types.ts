@@ -34,6 +34,9 @@ export const CHANNEL = {
     RESTORE_ALL_DATA: 'app:restore-all-data',
     NUKE_DATABASE: 'app:nuke-database',
   },
+  FILES: {
+    GET_PHOTO: 'files:get-photo',
+  }
 } as const
 
 export type FromRenderer = {
@@ -46,13 +49,13 @@ export type FromMain = {
 
 export type Invokes = {
   [CHANNEL.DB.ADD_RECIPE]: {
-    args: { payload: NewRecipeDTO }
+    args: { payload: NewRecipeDTO & NewPhotoUploadDTO }
     result: { recipeId: string, success: true } | { success: false; errorCode: ErrorCode}
   }
   [CHANNEL.DB.ADD_SUB_RECIPE]: {
     args: {
       payload: {
-        newRecipe: NewRecipeDTO
+        newRecipe: NewRecipeDTO & NewPhotoUploadDTO
         parentRecipeId: string
         units: AllUnits
       }
@@ -60,7 +63,7 @@ export type Invokes = {
     result: { success: true } | { success: false; errorCode: ErrorCode}
   }
   [CHANNEL.DB.UPDATE_RECIPE]: {
-    args: { id: string; payload: Partial<NewRecipeDTO> }
+    args: { id: string; payload: Partial<NewRecipeDTO & NewPhotoUploadDTO> }
     result: { success: boolean }
   }
   [CHANNEL.DB.DELETE_RECIPE]: {
@@ -178,4 +181,10 @@ export type Invokes = {
     args: undefined
     result: { success: boolean; error?: string }
   }
+  [CHANNEL.FILES.GET_PHOTO]: {
+    args: { fileName: string }
+    result: { data: Uint8Array | null }
+  }
 }
+
+export type NewPhotoUploadDTO = { photo?: { bytes: Uint8Array; extension: string } }

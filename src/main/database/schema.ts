@@ -6,6 +6,7 @@ export const recipeSchema = sqliteTable('recipes', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
   produces: real('produces').notNull(),
+  photoSrc: text('photo_src'),
   units: text('units', {
     enum: Object.values(ALL_UNITS) as [AllUnits, ...AllUnits[]],
   }).notNull(),

@@ -21,6 +21,7 @@ export type RecipeDTO = NewRecipeDTO & {
   createdAt: string
   updatedAt: string
   cost: number
+  photoSrc?: string
 }
 
 export type NewIngredientDTO = {
@@ -33,10 +34,6 @@ export type RelationDTO = {
   quantity: number
   units: AllUnits
 }
-
-// export type UsedInDTO = {
-//   usedIn: RecipeDTO[]
-// }
 
 export type IngredientDTO = NewIngredientDTO & {
   id: string

@@ -1,8 +1,10 @@
 import path from 'node:path'
+import { v4 as uuidv4 } from 'uuid'
 import { ERROR_CODES } from '../../shared/errorCodes'
 import { CHANNEL } from '../../shared/messages.types'
 import { RelationDTO } from '../../shared/recipe.types'
 import queries from '../database/queries'
+import { deletePhoto, getPhotoBytes } from '../utilities'
 import { typedIpcMain } from './index'
 
 const checkIfComponentExists = async (title: string) => {
@@ -33,7 +35,13 @@ typedIpcMain.handle(CHANNEL.DB.ADD_RECIPE, async (_event, params) => {
       return exists
     }
 
-  const recipeId = await queries.addRecipe(params.payload)
+    let fileName: string | undefined = undefined
+    if (params.payload.photo) {
+      fileName = `${uuidv4()}.${params.payload.photo.extension}`
+      await savePhotoBytes(fileName, params.payload.photo.bytes)
+    }
+
+  const recipeId = await queries.addRecipe({...params.payload, photoSrc: fileName})
   return {
     recipeId,
     success: true,
@@ -62,7 +70,13 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPE, async (_event, params) => {
 })
 
 typedIpcMain.handle(CHANNEL.DB.ADD_SUB_RECIPE, async (_event, params) => {
-  const newRecipeId = await queries.addRecipe(params.payload.newRecipe)
+    let fileName: string | undefined = undefined
+    if (params.payload.newRecipe.photo) {
+      fileName = `${uuidv4()}.${params.payload.newRecipe.photo.extension}`
+      await savePhotoBytes(fileName, params.payload.newRecipe.photo.bytes)
+    }
+
+  const newRecipeId = await queries.addRecipe({...params.payload.newRecipe, photoSrc: fileName })
   const newSubRecipeRecipeLink = await queries.addSubRecipeToRecipe({
     parentId: params.payload.parentRecipeId,
     childId: newRecipeId,
@@ -173,9 +187,22 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_INGREDIENT, async (_event, params) => {
 })
 
 typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE, async (_event, params) => {
-  const result = await queries.updateRecipe(params.id, params.payload)
+  const recipe = await queries.getRecipe(params.id)
+  if (!recipe) {
+    return {
+      success: false,
+    }
+  }
+
+    let fileName: string | undefined = recipe.photoSrc
+    if (params.payload.photo) {
+      fileName = `${uuidv4()}.${params.payload.photo.extension}`
+      await savePhotoBytes(fileName, params.payload.photo.bytes)
+      await deletePhoto(recipe.photoSrc)
+    }
+
+  const result = await queries.updateRecipe(params.id, {...params.payload, photoSrc: fileName})
   return {
-    type: 'update_recipe',
     success: !!result,
   }
 })
@@ -218,6 +245,7 @@ typedIpcMain.handle(
 )
 
 import { app } from 'electron'
+import { savePhotoBytes } from '../utilities'
 
 typedIpcMain.handle(CHANNEL.APP.GET_BACKUP_DIRECTORY, async () => {
   const isProd = app.isPackaged
@@ -431,6 +459,20 @@ typedIpcMain.handle(CHANNEL.APP.NUKE_DATABASE, async () => {
       type: 'nuke_database',
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+})
+
+typedIpcMain.handle(CHANNEL.FILES.GET_PHOTO, async (_event, params) => {
+  try {
+    const data = await getPhotoBytes(params.fileName)
+    return {
+      data,
+    }
+  } catch (error) {
+    console.error('Error getting photo:', error)
+    return {
+      data: null,
     }
   }
 })

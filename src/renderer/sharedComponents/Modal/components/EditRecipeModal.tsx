@@ -4,6 +4,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  Input,
   InputLabel,
   MenuItem,
   Select,
@@ -25,7 +26,9 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
+import { NewPhotoUpload } from '../../../types'
 import { getUnitLabel } from '../../../utilities'
+import Photo from '../../Photo'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -38,20 +41,32 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
 
-  const [formData, setFormData] = useState<NewRecipeDTO>({
+  const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>({
     title: recipe.title,
     produces: recipe.produces,
     units: recipe.units,
     status: recipe.status,
     showInMenu: recipe.showInMenu,
+    photo: undefined,
   })
 
   const updateRecipeMutation = useMutation({
-    mutationFn: (recipeData: Partial<NewRecipeDTO>) =>
-      ipcMessenger.invoke(CHANNEL.DB.UPDATE_RECIPE, {
+    mutationFn: async (recipeData: Partial<NewRecipeDTO & NewPhotoUpload>) => {
+      const payload = {
+        ...recipeData,
+        photo: recipeData.photo
+          ? {
+            extension: recipeData.photo.extension,
+            bytes: new Uint8Array(await recipeData.photo.data.arrayBuffer()),
+          }
+          : undefined,
+      }
+
+      return await ipcMessenger.invoke(CHANNEL.DB.UPDATE_RECIPE, {
         id: recipe.id,
-        payload: recipeData,
-      }),
+        payload: payload,
+      })
+    },
     onSuccess: result => {
       if (result.success) {
         // Invalidate and refetch recipes query
@@ -67,36 +82,28 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
     },
   })
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : undefined
+    setFormData(prev => ({
+      ...prev,
+      photo: { data: file!, extension: file ? file.name.split('.').pop() || '' : '' },
+    }))
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Only send changed fields
-    const changes: Partial<NewRecipeDTO> = {}
-    if (formData.title !== recipe.title) changes.title = formData.title
-    if (formData.produces !== recipe.produces)
-      changes.produces = formData.produces
-    if (formData.units !== recipe.units) changes.units = formData.units
-    if (formData.status !== recipe.status) changes.status = formData.status
-    if (formData.showInMenu !== recipe.showInMenu)
-      changes.showInMenu = formData.showInMenu
-
-    if (Object.keys(changes).length === 0) {
-      activeModalSignal.value = null
-      return
-    }
-
-    updateRecipeMutation.mutate(changes)
+    updateRecipeMutation.mutate(formData)
   }
 
   const handleInputChange =
     (field: keyof NewRecipeDTO) =>
-    (
-      e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } },
-    ) => {
-      setFormData(prev => ({
-        ...prev,
-        [field]: e.target.value,
-      }))
-    }
+      (
+        e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } },
+      ) => {
+        setFormData(prev => ({
+          ...prev,
+          [field]: e.target.value,
+        }))
+      }
 
   const handleCheckboxChange =
     (field: keyof NewRecipeDTO) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,15 +181,22 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
             </Select>
           </FormControl>
 
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.showInMenu}
-                onChange={handleCheckboxChange('showInMenu')}
-              />
-            }
-            label={t('showInMenu')}
-          />
+          <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="center">
+            <FormControlLabel
+              sx={{ flexGrow: 1 }}
+              control={
+                <Checkbox
+                  checked={formData.showInMenu}
+                  onChange={handleCheckboxChange('showInMenu')}
+                />
+              }
+              label={t('showInMenu')}
+            />
+            <Input onChange={handlePhotoChange} type="file" sx={{ flexGrow: 1 }} />
+            {/* If photo exists from backend, load that. If the user has selected a new photo load that instead. */}
+            {(recipe.photoSrc && !formData.photo) && <Photo type="backend" src={recipe.photoSrc} />}
+            {formData.photo && <Photo type="local" data={formData.photo.data} />}
+          </Stack>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button
