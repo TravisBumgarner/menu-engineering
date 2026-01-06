@@ -37,14 +37,6 @@ function RecipeRow({
     activeRecipeIdSignal.value === '' ? 1 : isOpen.value ? 1 : 0.1,
   )
 
-  const handleImageMouseEnter = () => {
-    // Placeholder for image hover logic
-  }
-
-  const handleImageMouseLeave = () => {
-    // Placeholder for image hover logic
-  }
-
   return (
     <React.Fragment>
       <TableRow
