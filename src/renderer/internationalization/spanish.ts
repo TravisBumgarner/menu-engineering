@@ -28,6 +28,8 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   outOf: 'de',
   unitCost: 'Costo Unitario',
   totalCost: 'Costo Total',
+  includeImages: 'Incluir Imágenes',
+  oneFilePerRecipe: 'Un Archivo por Receta',
 
   // Navigation
   recipes: 'Recetas',
@@ -118,6 +120,8 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   failedToUpdateIngredient: 'Falló al actualizar ingrediente.',
   errorUpdatingIngredient: 'Error actualizando ingrediente.',
   all: 'Todos',
+  none: 'Ninguno',
+  select: 'Seleccionar',
 
   // Data Management
   dataManagement: 'Gestión de Datos',
