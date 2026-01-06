@@ -1,19 +1,21 @@
 {
   "name": "menu-engineering",
   "productName": "Menu Engineering",
-  "version": "1.0.4",
+  "version": "1.0.8",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "scripts": {
     "dev": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "dotenv -e .env -- electron-forge publish",
+    "open-output": "open out",
+    "package-and-no-sign": "NODE_ENV=production NO_SIGN=1 electron-forge package && open out",
+    "make": "NODE_ENV=production dotenv -e .env -- electron-forge make && open out",
+    "publish": "NODE_ENV=production dotenv -e .env -- electron-forge publish && open out",
     "lint": "eslint --ext .ts,.tsx .",
     "db:generate": "drizzle-kit generate",
     "db:apply": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "keywords": [],
   "repository": {
@@ -46,6 +48,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "drizzle-kit": "^0.31.6",
     "electron": "38.2.2",
+    "electron-rebuild": "^3.2.9",
     "eslint": "^8.57.1",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",

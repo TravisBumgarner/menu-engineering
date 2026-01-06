@@ -225,10 +225,14 @@ typedIpcMain.handle(
   },
 )
 
+import { app } from 'electron'
+
 typedIpcMain.handle(CHANNEL.APP.GET_BACKUP_DIRECTORY, async () => {
+  const isProd = app.isPackaged
+  const baseDir = isProd ? app.getPath('userData') : process.cwd()
   return {
     type: 'get_backup_directory',
-    backupDirectory: path.resolve(process.cwd(), 'db_backups'),
+    backupDirectory: path.resolve(baseDir, 'db_backups'),
   }
 })
 
@@ -363,10 +367,7 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
           units: relation.units,
           quantity: relation.quantity,
         })
-        // Set the quantity using the existing update mechanism
-        console.log(
-          `Setting ingredient quantity: ${relation.quantity} for ${newChildId}`,
-        )
+
         await queries.updateRecipeRelation(
           newParentId,
           newChildId,

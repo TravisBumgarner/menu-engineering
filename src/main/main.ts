@@ -31,10 +31,11 @@ if (started) {
 const createDailyBackup = () => {
   const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
 
-  // Database is always in the current working directory (project root in dev, app root in prod)
-  const dbPath = path.join(process.cwd(), 'data.sqlite')
-  // But backups should go in a dedicated folder
-  const backupDir = path.join(process.cwd(), 'db_backups')
+  // Use userData directory for the database and backups in production, cwd in dev
+  const isProd = app.isPackaged
+  const baseDir = isProd ? app.getPath('userData') : process.cwd()
+  const dbPath = path.join(baseDir, 'data.sqlite')
+  const backupDir = path.join(baseDir, 'db_backups')
   const backupPath = path.join(backupDir, `data-backup-${today}.sqlite`)
 
   // Create backup directory if it doesn't exist

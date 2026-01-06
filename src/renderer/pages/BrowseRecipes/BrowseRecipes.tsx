@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import Logger from 'electron-log'
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { CHANNEL } from '../../../shared/messages.types'
@@ -12,7 +13,7 @@ const BrowseRecipes = () => {
   const { t } = useAppTranslation()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: [QUERY_KEYS.RECIPES],
     queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_RECIPES),
   })
@@ -29,6 +30,7 @@ const BrowseRecipes = () => {
   }
 
   if (isError) {
+    Logger.error('Error loading recipes', error)
     return <div>{t('errorLoadingRecipes')}</div>
   }
 
