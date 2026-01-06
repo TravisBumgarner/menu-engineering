@@ -323,19 +323,19 @@ const getRecipeCost = async (
     const ingredients = await getRecipeIngredients(recipeId)
     for (const ing of ingredients) {
       const usedQty = ing.relation.quantity
-      // TODO: optionally normalize units here if units differ
       totalCost += ing.unitCost * usedQty
     }
 
     // 2️⃣ SUB-RECIPE COSTS (recursive)
     const subRecipes = await getRecipeSubRecipes(recipeId)
-    for (const sub of subRecipes) {
-      const subCostResult = await getRecipeCost(sub.id, depth + 1)
+    for (const subRecipe of subRecipes) {
+      const subCostResult = await getRecipeCost(subRecipe.id, depth + 1)
       if (subCostResult.success) {
-        const usedQty = sub.relation.quantity
-        const subRecipe = sub // includes .produces from getRecipeSubRecipes join
-        const costPerUnit = subCostResult.cost / (subRecipe.produces || 1)
+        const usedQty = subRecipe.relation.quantity
+        const costPerUnit = subCostResult.cost / (subRecipe.produces)
         totalCost += costPerUnit * usedQty
+      } else {
+        throw new Error(`Failed to get cost for sub-recipe ${subRecipe.id}`)
       }
     }
 

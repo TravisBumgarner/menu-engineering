@@ -50,13 +50,10 @@ function SubRecipeRow(props: {
     onSuccess: result => {
       if (result.success) {
         queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.RECIPE_COST],
+          queryKey: [QUERY_KEYS.RECIPES],
         })
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPE, recipeId],
-        })
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.RECIPE_COST, recipeId],
         })
       } else {
         alert('Failed to update sub-recipe relation.')
