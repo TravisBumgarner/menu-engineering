@@ -90,7 +90,7 @@ export const convertUnits = ({
 
 export const formatCurrency = (
   amount: number,
-  locale = 'es-US',
+  locale = 'en-US',
   currency = 'USD',
 ) => {
   return new Intl.NumberFormat(locale, {
