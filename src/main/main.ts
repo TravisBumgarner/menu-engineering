@@ -10,8 +10,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { updateElectronApp } from 'update-electron-app'
 import './messages/messages'
+import { initializePhotoDirectory } from './utilities'
 
 log.initialize()
+initializePhotoDirectory()
 
 updateElectronApp({
   logger: {

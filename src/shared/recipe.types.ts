@@ -21,6 +21,7 @@ export type RecipeDTO = NewRecipeDTO & {
   createdAt: string
   updatedAt: string
   cost: number
+  photoSrc?: string
 }
 
 export type NewIngredientDTO = {
@@ -69,3 +70,4 @@ export type IngredientInRecipeDTO = NewIngredientInRecipeDTO & {
   createdAt: string
   updatedAt: string
 }
+

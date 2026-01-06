@@ -1,4 +1,5 @@
 import path from 'node:path'
+import { v4 as uuidv4 } from 'uuid'
 import { ERROR_CODES } from '../../shared/errorCodes'
 import { CHANNEL } from '../../shared/messages.types'
 import { RelationDTO } from '../../shared/recipe.types'
@@ -33,7 +34,15 @@ typedIpcMain.handle(CHANNEL.DB.ADD_RECIPE, async (_event, params) => {
       return exists
     }
 
-  const recipeId = await queries.addRecipe(params.payload)
+    console.log(params.payload)
+
+    let fileName: string | undefined = undefined
+    if (params.payload.photo) {
+      fileName = `${uuidv4()}.${params.payload.photo.extension}`
+      await savePhotoBytes(fileName, params.payload.photo.bytes)
+    }
+
+  const recipeId = await queries.addRecipe({...params.payload, photoSrc: fileName})
   return {
     recipeId,
     success: true,
@@ -218,6 +227,7 @@ typedIpcMain.handle(
 )
 
 import { app } from 'electron'
+import { savePhotoBytes } from '../utilities'
 
 typedIpcMain.handle(CHANNEL.APP.GET_BACKUP_DIRECTORY, async () => {
   const isProd = app.isPackaged

@@ -4,6 +4,7 @@ import {
   NewIngredientInRecipeDTO,
   NewRecipeDTO,
   NewSubRecipeInRecipeDTO,
+  RecipeDTO,
 } from 'src/shared/recipe.types'
 import { AllUnits } from 'src/shared/units.types'
 import { v4 as uuidv4 } from 'uuid'
@@ -16,7 +17,7 @@ import {
   recipeSubRecipeSchema,
 } from './schema'
 
-const addRecipe = async (recipeData: NewRecipeDTO) => {
+const addRecipe = async (recipeData: NewRecipeDTO & {photoSrc?: RecipeDTO['photoSrc']}) => {
   // generate an id required by the schema, then insert
   const newId = uuidv4()
 

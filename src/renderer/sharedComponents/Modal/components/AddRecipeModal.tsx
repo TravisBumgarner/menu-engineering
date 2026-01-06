@@ -4,6 +4,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  Input,
   InputLabel,
   MenuItem,
   Select,
@@ -25,6 +26,7 @@ import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { getUnitLabel } from '../../../utilities'
+import Photo from '../../Photo'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -36,12 +38,13 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
 
-  const [formData, setFormData] = useState<NewRecipeDTO>({
+  const [formData, setFormData] = useState<NewRecipeDTO & { photo?: { data: File; extension: string } }>({
     title: '',
     produces: 0,
     units: ALL_UNITS.units,
     status: RECIPE_STATUS.draft,
     showInMenu: false,
+    photo: undefined,
   })
 
   const handleClose = () => {
@@ -49,10 +52,23 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
   }
 
   const addRecipeMutation = useMutation({
-    mutationFn: (recipeData: NewRecipeDTO) =>
-      ipcMessenger.invoke(CHANNEL.DB.ADD_RECIPE, {
-        payload: recipeData,
-      }),
+    mutationFn: async (
+      recipeData: NewRecipeDTO & {
+        photo?: { data: File; extension: string }
+      },
+    ) => {
+      const payload = {
+        ...recipeData,
+        photo: recipeData.photo
+          ? {
+            extension: recipeData.photo.extension,
+            bytes: new Uint8Array(await recipeData.photo.data.arrayBuffer()),
+          }
+          : undefined,
+      }
+
+      return ipcMessenger.invoke(CHANNEL.DB.ADD_RECIPE, { payload })
+    },
     onSuccess: result => {
       if (result.success) {
         // Invalidate and refetch recipes query
@@ -65,33 +81,9 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
         alert(t(result.errorCode))
       }
     },
-    onError: () => {
+    onError: (error) => {
+      console.log(error)
       alert(t('errorAddingRecipe'))
-    },
-  })
-
-  const addSubRecipeMutation = useMutation({
-    mutationFn: (args: { newRecipe: NewRecipeDTO; parentRecipeId: string }) =>
-      ipcMessenger.invoke(CHANNEL.DB.ADD_SUB_RECIPE, {
-        payload: {
-          newRecipe: args.newRecipe,
-          parentRecipeId: args.parentRecipeId,
-          units: args.newRecipe.units,
-        },
-      }),
-    onSuccess: async result => {
-      if (result.success) {
-        // Invalidate and refetch queries
-        await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
-        await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
-        activeModalSignal.value = null
-      } else {
-        alert(t(result.errorCode))
-      }
-    },
-    onError: () => {
-      alert(t('errorAddingSubRecipe'))
     },
   })
 
@@ -118,6 +110,14 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
         [field]: e.target.checked,
       }))
     }
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : undefined
+    setFormData(prev => ({
+      ...prev,
+      photo: { data: file!, extension: file ? file.name.split('.').pop() || '' : '' },
+    }))
+  }
 
   const preventSubmit =
     addRecipeMutation.isPending ||
@@ -192,15 +192,20 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
             </Select>
           </FormControl>
 
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.showInMenu}
-                onChange={handleCheckboxChange('showInMenu')}
-              />
-            }
-            label={t('showInMenu')}
-          />
+          <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="center">
+            <FormControlLabel
+              sx={{ flexGrow: 1 }}
+              control={
+                <Checkbox
+                  checked={formData.showInMenu}
+                  onChange={handleCheckboxChange('showInMenu')}
+                />
+              }
+              label={t('showInMenu')}
+            />
+            <Input onChange={handlePhotoChange} type="file" sx={{ flexGrow: 1 }} />
+            {formData.photo && <Photo data={formData.photo.data} />}
+          </Stack>
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button onClick={handleClose} variant="outlined" type="button">
               {t('close')}

@@ -1,4 +1,4 @@
-import { SxProps, Tooltip } from '@mui/material'
+import { Stack, SxProps, Tooltip } from '@mui/material'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
@@ -11,6 +11,7 @@ import { type RecipeDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
+import Photo from '../../../sharedComponents/Photo'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
 import { FONT_SIZES, SPACING } from '../../../styles/consts'
 import {
@@ -35,6 +36,14 @@ function RecipeRow({
   const opacity = computed(() =>
     activeRecipeIdSignal.value === '' ? 1 : isOpen.value ? 1 : 0.1,
   )
+
+  const handleImageMouseEnter = () => {
+    // Placeholder for image hover logic
+  }
+
+  const handleImageMouseLeave = () => {
+    // Placeholder for image hover logic
+  }
 
   return (
     <React.Fragment>
@@ -67,7 +76,12 @@ function RecipeRow({
           {formatDisplayDate(row.createdAt)}
         </TableCell>
         <TableCell sx={cellSx} id={labelId} scope="row">
-          {row.title}
+          <Stack direction="row" alignItems="center" spacing={1}>
+            {row.photoSrc ? <Photo src={row.photoSrc} /> : null}
+
+            <span>{row.title}</span>
+
+          </Stack>
         </TableCell>
         <TableCell
           align="right"
@@ -147,7 +161,7 @@ function RecipeRow({
           </Collapse>
         </TableCell>
       </TableRow>
-    </React.Fragment>
+    </React.Fragment >
   )
 }
 
