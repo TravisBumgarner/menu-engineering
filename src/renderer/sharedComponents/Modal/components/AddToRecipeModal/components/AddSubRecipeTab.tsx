@@ -75,7 +75,7 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                     activeModalSignal.value = null
                 }
             } else {
-                alert(t('failedToAddSubRecipe'))
+                alert(t(result.errorCode))
             }
         },
         onError: () => {

@@ -66,6 +66,11 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
                 })
                 .then(result => ({ ...result, shouldClose })),
         onSuccess: result => {
+            if (!result.success) {
+                alert(t(result.errorCode))
+                return
+            }
+
             if (result.success) {
                 // Invalidate and refetch ingredients query
                 queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })

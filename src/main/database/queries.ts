@@ -8,6 +8,7 @@ import {
 import { AllUnits } from 'src/shared/units.types'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from './client'
+import { lower } from './functions'
 import {
   ingredientSchema,
   recipeIngredientSchema,
@@ -67,6 +68,8 @@ const getRecipe = async (id: string) => {
   }
 }
 
+
+
 const addIngredient = async (ingredientData: NewIngredientDTO) => {
   const newId = uuidv4()
 
@@ -107,6 +110,26 @@ const getRecipeIngredients = async (recipeId: string) => {
     ...row.ingredient,
     relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
   }))
+}
+
+const ingredientExists = async (title: string) => {
+  const ingredientResult = await db
+    .select()
+    .from(ingredientSchema)
+    .where(eq(lower(ingredientSchema.title), title.toLowerCase()))
+    .limit(1)
+
+  return ingredientResult.length > 0 ? ingredientResult[0] : null
+}
+
+const recipeExists = async (title: string) => {
+  const recipeResult = await db
+    .select()
+    .from(recipeSchema)
+    .where(eq(lower(recipeSchema.title), title.toLowerCase()))
+    .limit(1)
+
+  return recipeResult.length > 0 ? recipeResult[0] : null
 }
 
 const getIngredient = async (id: string) => {
@@ -356,4 +379,6 @@ export default {
   updateRecipeRelation,
   getRecipeCost,
   getRecipesUsingIngredient,
+  recipeExists,
+  ingredientExists
 }
