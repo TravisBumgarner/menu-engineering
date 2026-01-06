@@ -72,9 +72,9 @@ function IngredientRow(props: {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPE, recipeId],
         })
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.RECIPE_COST],
-        })
+        // queryClient.invalidateQueries({
+        //   queryKey: [QUERY_KEYS.RECIPE_COST],
+        // })
       } else {
         alert('Failed to update ingredient relation.')
       }

@@ -70,7 +70,7 @@ export type Invokes = {
   }
   [CHANNEL.DB.GET_RECIPES]: {
     args: undefined
-    result: { recipes: Array<RecipeDTO & { usedInRecipesCount: number }> }
+    result: { recipes: Array<RecipeDTO & { usedInRecipesCount: number, cost: number }> }
   }
   [CHANNEL.DB.GET_RECIPE]: {
     args: { id: string }

@@ -15,7 +15,12 @@ const BrowseRecipes = () => {
   const [searchParams] = useSearchParams()
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [QUERY_KEYS.RECIPES],
-    queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_RECIPES),
+    queryFn: async() => {
+      console.log("i am ionvoked")
+      const response = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPES)
+      console.log("response", response)
+      return response
+    }
   })
 
   useEffect(() => {

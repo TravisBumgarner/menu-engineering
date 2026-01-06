@@ -29,7 +29,7 @@ const addRecipe = async (recipeData: NewRecipeDTO) => {
 }
 
 const getRecipes = async () => {
-  const recipes = await db
+  const rows = await db
     .select({
       recipe: recipeSchema,
       usedInRecipesCount: count(recipeSubRecipeSchema.id),
@@ -42,10 +42,17 @@ const getRecipes = async () => {
     .groupBy(recipeSchema.id)
     .all()
 
-  return recipes.map(row => ({
-    ...row.recipe,
-    usedInRecipesCount: row.usedInRecipesCount,
-  }))
+  return Promise.all(
+    rows.map(async row => {
+      const costResult = await getRecipeCost(row.recipe.id)
+
+      return {
+        ...row.recipe,
+        usedInRecipesCount: row.usedInRecipesCount,
+        cost: costResult.success ? costResult.cost : null,
+      }
+    }),
+  )
 }
 
 const getRecipe = async (id: string) => {
@@ -62,13 +69,14 @@ const getRecipe = async (id: string) => {
     .where(eq(recipeSubRecipeSchema.childId, id))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.parentId, recipeSchema.id))
 
+  const costResult = await getRecipeCost(id)
+
   return {
     ...recipe[0],
     usedInRecipes: usedInRecipes.map(row => row.recipe).filter(Boolean),
+    cost: costResult.success ? costResult.cost : -1,
   }
 }
-
-
 
 const addIngredient = async (ingredientData: NewIngredientDTO) => {
   const newId = uuidv4()
