@@ -1,3 +1,4 @@
+import { ErrorCode } from './errorCodes'
 import {
   IngredientDTO,
   NewIngredientDTO,
@@ -47,7 +48,7 @@ export type FromMain = {
 export type Invokes = {
   [CHANNEL.DB.ADD_RECIPE]: {
     args: { payload: NewRecipeDTO }
-    result: { recipeId: string | null }
+    result: { recipeId: string, success: true } | { success: false; errorCode: ErrorCode}
   }
   [CHANNEL.DB.ADD_SUB_RECIPE]: {
     args: {
@@ -57,7 +58,7 @@ export type Invokes = {
         units: AllUnits
       }
     }
-    result: { success: boolean }
+    result: { success: true } | { success: false; errorCode: ErrorCode}
   }
   [CHANNEL.DB.UPDATE_RECIPE]: {
     args: { id: string; payload: Partial<NewRecipeDTO> }
@@ -95,7 +96,7 @@ export type Invokes = {
         units: AllUnits
       }
     }
-    result: { success: boolean }
+    result: { success: true, ingredientId: string } | { success: false, errorCode: ErrorCode }
   }
   [CHANNEL.DB.UPDATE_INGREDIENT]: {
     args: { id: string; payload: Partial<NewIngredientDTO> }

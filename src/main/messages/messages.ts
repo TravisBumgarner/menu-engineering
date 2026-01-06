@@ -1,14 +1,42 @@
 import path from 'node:path'
+import { ERROR_CODES } from '../../shared/errorCodes'
 import { CHANNEL } from '../../shared/messages.types'
 import { RelationDTO } from '../../shared/recipe.types'
 import queries from '../database/queries'
 import { typedIpcMain } from './index'
 
+const checkIfComponentExists = async (title: string) => {
+  const recipeExists = await queries.recipeExists(title)
+  if (recipeExists) {
+    return {
+      success: false,
+      errorCode: ERROR_CODES.RECIPE_EXISTS,
+    } as const
+  }
+
+  const ingredientExists = await queries.ingredientExists(
+    title
+  )
+  if (ingredientExists) {
+    return {
+      success: false,
+      errorCode: ERROR_CODES.INGREDIENT_EXISTS,
+    } as const
+  }
+
+  return null
+}
+
 typedIpcMain.handle(CHANNEL.DB.ADD_RECIPE, async (_event, params) => {
+    const exists = await checkIfComponentExists(params.payload.title)
+    if (exists) {
+      return exists
+    }
+
   const recipeId = await queries.addRecipe(params.payload)
   return {
-    type: 'add_recipe',
     recipeId,
+    success: true,
   }
 })
 
@@ -48,13 +76,25 @@ typedIpcMain.handle(CHANNEL.DB.ADD_SUB_RECIPE, async (_event, params) => {
     childId: newRecipeId,
     units: params.payload.units,
   })
+
+  if (!newRecipeId || !newSubRecipeRecipeLink) {
+    return {
+      success: false,
+      errorCode: ERROR_CODES.SOMETHING_WENT_WRONG,
+    }
+  }
+
   return {
-    type: 'add_sub_recipe_to_recipe',
-    success: !!newRecipeId && !!newSubRecipeRecipeLink,
+    success: true,
   }
 })
 
 typedIpcMain.handle(CHANNEL.DB.ADD_INGREDIENT, async (_event, params) => {
+  const exists = await checkIfComponentExists(params.payload.newIngredient.title)
+  if (exists) {
+    return exists
+  }
+
   const newIngredientId = await queries.addIngredient(
     params.payload.newIngredient,
   )
@@ -67,15 +107,23 @@ typedIpcMain.handle(CHANNEL.DB.ADD_INGREDIENT, async (_event, params) => {
       units: params.payload.units,
       quantity: params.payload.attachToRecipe.recipeQuantity,
     })
+
+    if(!!newIngredientId && !!newIngredientRecipeLink) {
+      return {
+        success: true,
+        ingredientId: newIngredientId,
+      }
+    }
+    
     return {
-      type: 'add_ingredient',
-      success: !!newIngredientId && !!newIngredientRecipeLink,
+      success: false,
+      errorCode: ERROR_CODES.SOMETHING_WENT_WRONG,
     }
   }
 
   return {
-    type: 'add_ingredient',
-    success: !!newIngredientId,
+    ingredientId: newIngredientId,
+    success: true,
   }
 })
 

@@ -1,5 +1,9 @@
 import { TranslationKeys } from './types'
 const EnglishTranslations: Record<TranslationKeys, string> = {
+  RECIPE_EXISTS: 'Recipe already exists.',
+  INGREDIENT_EXISTS: 'Ingredient already exists.',
+  SOMETHING_WENT_WRONG: 'Something went wrong. Please try again.',
+  
   // General
   save: 'Save',
   add: 'Add',
@@ -106,9 +110,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   language: 'Language',
   english: 'English',
   spanish: 'Spanish',
-  failedToAddRecipe: 'Failed to add recipe.',
   errorAddingRecipe: 'Error adding recipe.',
-  failedToAddSubRecipe: 'Failed to add sub-recipe.',
   errorAddingSubRecipe: 'Error adding sub-recipe.',
   failedToUpdateRecipe: 'Failed to update recipe.',
   errorUpdatingRecipe: 'Error updating recipe.',

@@ -54,7 +54,7 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
         payload: recipeData,
       }),
     onSuccess: result => {
-      if (result.recipeId) {
+      if (result.success) {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
@@ -62,7 +62,7 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
 
         activeModalSignal.value = null
       } else {
-        alert(t('failedToAddRecipe'))
+        alert(t(result.errorCode))
       }
     },
     onError: () => {
@@ -87,7 +87,7 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
         activeModalSignal.value = null
       } else {
-        alert(t('failedToAddSubRecipe'))
+        alert(t(result.errorCode))
       }
     },
     onError: () => {

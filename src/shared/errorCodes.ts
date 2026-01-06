@@ -1,0 +1,7 @@
+export const ERROR_CODES = {
+    RECIPE_EXISTS: 'RECIPE_EXISTS',
+    INGREDIENT_EXISTS: 'INGREDIENT_EXISTS',
+    SOMETHING_WENT_WRONG: 'SOMETHING_WENT_WRONG',
+} as const
+
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]

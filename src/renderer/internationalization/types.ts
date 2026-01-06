@@ -1,4 +1,7 @@
-export type TranslationKeys =
+import { ERROR_CODES } from '../../shared/errorCodes';
+
+export type TranslationKeys = 
+  | keyof typeof ERROR_CODES
   | 'save'
   | 'add'
   | 'edit'
@@ -99,9 +102,7 @@ export type TranslationKeys =
   | 'language'
   | 'english'
   | 'spanish'
-  | 'failedToAddRecipe'
   | 'errorAddingRecipe'
-  | 'failedToAddSubRecipe'
   | 'errorAddingSubRecipe'
   | 'failedToUpdateRecipe'
   | 'errorUpdatingRecipe'
