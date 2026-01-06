@@ -20,7 +20,7 @@ export const getPhotoPath = (photoFileName: string) => {
   return path.join(photosBasePath, photoFileName)
 }
 
-export const getPhotoBlob = (photoFileName: string): Buffer | null => {
+export const getPhotoBytes = (photoFileName: string): Uint8Array | null => {
   const photoPath = getPhotoPath(photoFileName)
   return fs.existsSync(photoPath) ? fs.readFileSync(photoPath) : null
 }

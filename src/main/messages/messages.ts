@@ -4,6 +4,7 @@ import { ERROR_CODES } from '../../shared/errorCodes'
 import { CHANNEL } from '../../shared/messages.types'
 import { RelationDTO } from '../../shared/recipe.types'
 import queries from '../database/queries'
+import { getPhotoBytes } from '../utilities'
 import { typedIpcMain } from './index'
 
 const checkIfComponentExists = async (title: string) => {
@@ -441,6 +442,20 @@ typedIpcMain.handle(CHANNEL.APP.NUKE_DATABASE, async () => {
       type: 'nuke_database',
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+})
+
+typedIpcMain.handle(CHANNEL.FILES.GET_PHOTO, async (_event, params) => {
+  try {
+    const data = await getPhotoBytes(params.fileName)
+    return {
+      data,
+    }
+  } catch (error) {
+    console.error('Error getting photo:', error)
+    return {
+      data: null,
     }
   }
 })

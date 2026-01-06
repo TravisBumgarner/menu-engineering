@@ -24,6 +24,7 @@ export const QUERY_KEYS = {
   INGREDIENTS: 'ingredients',
   INGREDIENT: 'ingredient',
   AUTOCOMPLETE: 'autocomplete',
+  PHOTO: 'photo',
 }
 
 export const ROWS_PER_PAGE = 5

@@ -77,7 +77,7 @@ function RecipeRow({
         </TableCell>
         <TableCell sx={cellSx} id={labelId} scope="row">
           <Stack direction="row" alignItems="center" spacing={1}>
-            {row.photoSrc ? <Photo src={row.photoSrc} /> : null}
+          {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
 
             <span>{row.title}</span>
 

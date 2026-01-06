@@ -34,6 +34,9 @@ export const CHANNEL = {
     RESTORE_ALL_DATA: 'app:restore-all-data',
     NUKE_DATABASE: 'app:nuke-database',
   },
+  FILES: {
+    GET_PHOTO: 'files:get-photo',
+  }
 } as const
 
 export type FromRenderer = {
@@ -177,5 +180,9 @@ export type Invokes = {
   [CHANNEL.APP.NUKE_DATABASE]: {
     args: undefined
     result: { success: boolean; error?: string }
+  }
+  [CHANNEL.FILES.GET_PHOTO]: {
+    args: { fileName: string }
+    result: { data: Uint8Array | null }
   }
 }

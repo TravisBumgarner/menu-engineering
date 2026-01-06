@@ -204,7 +204,7 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
               label={t('showInMenu')}
             />
             <Input onChange={handlePhotoChange} type="file" sx={{ flexGrow: 1 }} />
-            {formData.photo && <Photo data={formData.photo.data} />}
+            {formData.photo && <Photo type="local" data={formData.photo.data} />}
           </Stack>
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button onClick={handleClose} variant="outlined" type="button">
