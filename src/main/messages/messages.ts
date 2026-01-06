@@ -47,14 +47,6 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPES, async () => {
   }
 })
 
-typedIpcMain.handle(CHANNEL.DB.GET_RECIPE_COST, async (_event, params) => {
-  const result = await queries.getRecipeCost(params.id)
-  return {
-    type: 'get_recipe_cost',
-    ...result,
-  }
-})
-
 typedIpcMain.handle(CHANNEL.DB.GET_RECIPE, async (_event, params) => {
   const recipe = await queries.getRecipe(params.id)
   const ingredients = await queries.getRecipeIngredients(params.id)

@@ -20,6 +20,7 @@ export type RecipeDTO = NewRecipeDTO & {
   id: string
   createdAt: string
   updatedAt: string
+  cost: number
 }
 
 export type NewIngredientDTO = {

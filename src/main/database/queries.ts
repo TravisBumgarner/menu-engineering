@@ -29,7 +29,7 @@ const addRecipe = async (recipeData: NewRecipeDTO) => {
 }
 
 const getRecipes = async () => {
-  const recipes = await db
+  const rows = await db
     .select({
       recipe: recipeSchema,
       usedInRecipesCount: count(recipeSubRecipeSchema.id),
@@ -42,10 +42,17 @@ const getRecipes = async () => {
     .groupBy(recipeSchema.id)
     .all()
 
-  return recipes.map(row => ({
-    ...row.recipe,
-    usedInRecipesCount: row.usedInRecipesCount,
-  }))
+  return Promise.all(
+    rows.map(async row => {
+      const costResult = await getRecipeCost(row.recipe.id)
+
+      return {
+        ...row.recipe,
+        usedInRecipesCount: row.usedInRecipesCount,
+        cost: costResult.success ? costResult.cost : null,
+      }
+    }),
+  )
 }
 
 const getRecipe = async (id: string) => {
@@ -62,13 +69,14 @@ const getRecipe = async (id: string) => {
     .where(eq(recipeSubRecipeSchema.childId, id))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.parentId, recipeSchema.id))
 
+  const costResult = await getRecipeCost(id)
+
   return {
     ...recipe[0],
     usedInRecipes: usedInRecipes.map(row => row.recipe).filter(Boolean),
+    cost: costResult.success ? costResult.cost : -1,
   }
 }
-
-
 
 const addIngredient = async (ingredientData: NewIngredientDTO) => {
   const newId = uuidv4()
@@ -218,9 +226,14 @@ const getRecipeSubRecipes = async (recipeId: string) => {
     .from(recipeSubRecipeSchema)
     .where(eq(recipeSubRecipeSchema.parentId, recipeId))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.childId, recipeSchema.id))
-  return recipes.map(row => ({
-    ...row.recipe,
-    relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
+  
+  return Promise.all(recipes.map(async row => {
+    const costResult = await getRecipeCost(row.recipe.id);
+    return {
+      cost: costResult.success ? costResult.cost : -1,
+      ...row.recipe,
+      relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
+    }
   }))
 }
 
@@ -310,19 +323,19 @@ const getRecipeCost = async (
     const ingredients = await getRecipeIngredients(recipeId)
     for (const ing of ingredients) {
       const usedQty = ing.relation.quantity
-      // TODO: optionally normalize units here if units differ
       totalCost += ing.unitCost * usedQty
     }
 
     // 2️⃣ SUB-RECIPE COSTS (recursive)
     const subRecipes = await getRecipeSubRecipes(recipeId)
-    for (const sub of subRecipes) {
-      const subCostResult = await getRecipeCost(sub.id, depth + 1)
+    for (const subRecipe of subRecipes) {
+      const subCostResult = await getRecipeCost(subRecipe.id, depth + 1)
       if (subCostResult.success) {
-        const usedQty = sub.relation.quantity
-        const subRecipe = sub // includes .produces from getRecipeSubRecipes join
-        const costPerUnit = subCostResult.cost / (subRecipe.produces || 1)
+        const usedQty = subRecipe.relation.quantity
+        const costPerUnit = subCostResult.cost / (subRecipe.produces)
         totalCost += costPerUnit * usedQty
+      } else {
+        throw new Error(`Failed to get cost for sub-recipe ${subRecipe.id}`)
       }
     }
 
@@ -342,7 +355,10 @@ const getRecipesUsingSubRecipe = async (subRecipeId: string) => {
     .where(eq(recipeSubRecipeSchema.childId, subRecipeId))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.parentId, recipeSchema.id))
 
-  return recipes.map(row => row.recipe).filter(Boolean)
+  return Promise.all(recipes.map(async row => {
+    const costResult = await getRecipeCost(row.recipe.id);
+    return {...row.recipe, cost: costResult.success ? costResult.cost : -1 }
+  })).then(results => results.filter(Boolean))
 }
 
 const getRecipesUsingIngredient = async (ingredientId: string) => {
@@ -357,7 +373,10 @@ const getRecipesUsingIngredient = async (ingredientId: string) => {
       eq(recipeIngredientSchema.parentId, recipeSchema.id),
     )
 
-  return recipes.map(row => row.recipe).filter(Boolean)
+  return Promise.all(recipes.map(async row => {
+    const costResult = await getRecipeCost(row.recipe.id);
+    return {...row.recipe, cost: costResult.success ? costResult.cost : -1 }
+  })).then(results => results.filter(Boolean))
 }
 
 export default {

@@ -149,7 +149,7 @@ const Table = ({
               </TableRow>
             )}
             <TableRow>
-              <TableCell colSpan={8}>
+              <TableCell colSpan={9}>
                 <Button
                   size="small"
                   sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}

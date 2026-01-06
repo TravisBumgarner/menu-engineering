@@ -60,7 +60,7 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                 // Invalidate and refetch queries
                 await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
                 await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-                queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
+                await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
 
                 if (!result.shouldClose) {
                     setFormData({

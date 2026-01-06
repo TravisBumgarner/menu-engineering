@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import { RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
@@ -23,19 +23,8 @@ function SubRecipeRow(props: {
   labelId: string
 }) {
   const { row, recipeId, labelId } = props
-  // const [open, setOpen] = React.useState(false)
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
-
-  const subRecipeCostQuery = useQuery({
-    queryKey: [QUERY_KEYS.RECIPE_COST],
-    queryFn: async () => {
-      const result = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE_COST, {
-        id: row.id,
-      })
-      return result
-    },
-  })
 
   const updateSubRecipeRelationMutation = useMutation({
     mutationFn: (updateData: { quantity?: number; units?: AllUnits }) => {
@@ -50,13 +39,10 @@ function SubRecipeRow(props: {
     onSuccess: result => {
       if (result.success) {
         queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.RECIPE_COST],
+          queryKey: [QUERY_KEYS.RECIPES],
         })
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPE, recipeId],
-        })
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.RECIPE_COST, recipeId],
         })
       } else {
         alert('Failed to update sub-recipe relation.')
@@ -147,16 +133,10 @@ function SubRecipeRow(props: {
           {row.units}
         </TableCell>
         <TableCell align="right" id={labelId} scope="row">
-          {subRecipeCostQuery.data?.success
-            ? formatCurrency(subRecipeCostQuery.data.cost)
-            : 'N/A'}
+          {formatCurrency(row.cost / row.produces)}
         </TableCell>
         <TableCell align="right" id={labelId} scope="row">
-          {subRecipeCostQuery.data?.success
-            ? formatCurrency(
-                subRecipeCostQuery.data.cost * row.relation.quantity,
-              )
-            : 'N/A'}
+          {formatCurrency((row.cost / row.produces) * row.relation.quantity)}
         </TableCell>
         <TableCell align="right">
           <Tooltip title={t('editIngredients')}>

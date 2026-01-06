@@ -65,7 +65,7 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
                     },
                 })
                 .then(result => ({ ...result, shouldClose })),
-        onSuccess: result => {
+        onSuccess: async result => {
             if (!result.success) {
                 alert(t(result.errorCode))
                 return
@@ -73,9 +73,10 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
 
             if (result.success) {
                 // Invalidate and refetch ingredients query
-                queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
-                queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-                queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
+                await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
+                await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+                await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
+                await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTOCOMPLETE] })
 
                 if (result.shouldClose) {
                     activeModalSignal.value = null

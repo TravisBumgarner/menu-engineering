@@ -109,12 +109,11 @@ const Autocomplete = ({
         quantity: recipeQuantity,
       })
       return { ...result, shouldClose }
-      // queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-      // setSelectedAutocomplete(null)
     },
-    onSuccess: (result) => {
+    onSuccess: async result => {
       if (result.success) {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+        await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+        await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         setSelectedAutocomplete(null)
 
         if (result.shouldClose) {

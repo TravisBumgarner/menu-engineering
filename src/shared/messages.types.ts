@@ -27,7 +27,6 @@ export const CHANNEL = {
     REMOVE_SUB_RECIPE_FROM_RECIPE: 'db:remove-sub-recipe-from-recipe',
     DELETE_INGREDIENT: 'db:delete-ingredient',
     DELETE_RECIPE: 'db:delete-recipe',
-    GET_RECIPE_COST: 'db:get-recipe-cost',
   },
   APP: {
     GET_BACKUP_DIRECTORY: 'app:get-backup-directory',
@@ -70,7 +69,7 @@ export type Invokes = {
   }
   [CHANNEL.DB.GET_RECIPES]: {
     args: undefined
-    result: { recipes: Array<RecipeDTO & { usedInRecipesCount: number }> }
+    result: { recipes: Array<RecipeDTO & { usedInRecipesCount: number}> }
   }
   [CHANNEL.DB.GET_RECIPE]: {
     args: { id: string }
@@ -80,10 +79,6 @@ export type Invokes = {
       subRecipes: Array<RecipeDTO & { relation: RelationDTO }>
       usedInRecipes: Array<RecipeDTO>
     }
-  }
-  [CHANNEL.DB.GET_RECIPE_COST]: {
-    args: { id: string }
-    result: { success: true; cost: number } | { success: false; error: string }
   }
   [CHANNEL.DB.ADD_INGREDIENT]: {
     args: {
