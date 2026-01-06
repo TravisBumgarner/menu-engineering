@@ -63,7 +63,7 @@ export type Invokes = {
     result: { success: true } | { success: false; errorCode: ErrorCode}
   }
   [CHANNEL.DB.UPDATE_RECIPE]: {
-    args: { id: string; payload: Partial<NewRecipeDTO> }
+    args: { id: string; payload: Partial<NewRecipeDTO & NewPhotoUploadDTO> }
     result: { success: boolean }
   }
   [CHANNEL.DB.DELETE_RECIPE]: {

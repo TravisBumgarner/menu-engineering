@@ -251,7 +251,7 @@ const updateIngredient = async (
   return result
 }
 
-const updateRecipe = async (id: string, recipeData: Partial<NewRecipeDTO>) => {
+const updateRecipe = async (id: string, recipeData: Partial<RecipeDTO>) => {
   const result = await db
     .update(recipeSchema)
     .set(recipeData)

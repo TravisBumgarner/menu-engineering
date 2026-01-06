@@ -4,7 +4,7 @@ import { ERROR_CODES } from '../../shared/errorCodes'
 import { CHANNEL } from '../../shared/messages.types'
 import { RelationDTO } from '../../shared/recipe.types'
 import queries from '../database/queries'
-import { getPhotoBytes } from '../utilities'
+import { deletePhoto, getPhotoBytes } from '../utilities'
 import { typedIpcMain } from './index'
 
 const checkIfComponentExists = async (title: string) => {
@@ -34,8 +34,6 @@ typedIpcMain.handle(CHANNEL.DB.ADD_RECIPE, async (_event, params) => {
     if (exists) {
       return exists
     }
-
-    console.log(params.payload)
 
     let fileName: string | undefined = undefined
     if (params.payload.photo) {
@@ -73,7 +71,6 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPE, async (_event, params) => {
 
 typedIpcMain.handle(CHANNEL.DB.ADD_SUB_RECIPE, async (_event, params) => {
     let fileName: string | undefined = undefined
-    console.log('params', params.payload.newRecipe.photo)
     if (params.payload.newRecipe.photo) {
       fileName = `${uuidv4()}.${params.payload.newRecipe.photo.extension}`
       await savePhotoBytes(fileName, params.payload.newRecipe.photo.bytes)
@@ -190,9 +187,22 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_INGREDIENT, async (_event, params) => {
 })
 
 typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE, async (_event, params) => {
-  const result = await queries.updateRecipe(params.id, params.payload)
+  const recipe = await queries.getRecipe(params.id)
+  if (!recipe) {
+    return {
+      success: false,
+    }
+  }
+
+    let fileName: string | undefined = recipe.photoSrc
+    if (params.payload.photo) {
+      fileName = `${uuidv4()}.${params.payload.photo.extension}`
+      await savePhotoBytes(fileName, params.payload.photo.bytes)
+      await deletePhoto(recipe.photoSrc)
+    }
+
+  const result = await queries.updateRecipe(params.id, {...params.payload, photoSrc: fileName})
   return {
-    type: 'update_recipe',
     success: !!result,
   }
 })
