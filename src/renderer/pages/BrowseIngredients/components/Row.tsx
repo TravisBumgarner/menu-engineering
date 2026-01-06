@@ -7,7 +7,7 @@ import { IngredientDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import Icon from '../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../signals'
-import { formatDisplayDate, getUnitLabel } from '../../../utilities'
+import { formatCurrency, formatDisplayDate, getUnitLabel } from '../../../utilities'
 import Ingredient from './Ingredient'
 
 function Row(props: {
@@ -51,7 +51,7 @@ function Row(props: {
           {row.title}
         </TableCell>
         <TableCell align="left">{getUnitLabel(row.units, 'plural')}</TableCell>
-        <TableCell align="right">{row.unitCost}</TableCell>
+        <TableCell align="right">{formatCurrency(row.unitCost)}</TableCell>
         <TableCell align="right">
           {row.recipeCount}
         </TableCell>

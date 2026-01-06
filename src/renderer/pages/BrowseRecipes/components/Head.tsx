@@ -10,7 +10,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
   disablePadding: boolean
-  id: keyof RecipeDTO | 'actions' | 'collapse' | 'cost' | 'usedInRecipesCount'
+  id: keyof RecipeDTO | 'actions' | 'collapse' | 'unitCost' | 'usedInRecipesCount' | 'totalCost'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
@@ -51,11 +51,11 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       width: '20%',
     },
     {
-      id: 'cost',
+      id: 'totalCost',
       align: 'left',
-      disablePadding: true,
-      label: t('cost'),
-      width: '8%',
+      disablePadding: false,
+      label: t('totalCost'),
+      width: '10%',
     },
     {
       id: 'produces',
@@ -68,9 +68,18 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       id: 'units',
       align: 'left',
       disablePadding: false,
-      label: t('units'),
+      label: '',
       width: '10%',
     },
+    {
+      id: 'unitCost',
+      align: 'left',
+      disablePadding: true,
+      label: t('unitCost'),
+      width: '8%',
+    },
+
+
     {
       id: 'status',
       align: 'left',
@@ -118,7 +127,10 @@ function Head({ onRequestSort, order, orderBy }: Props) {
           >
             {headCell.id === 'actions' ||
               headCell.id === 'collapse' ||
-              headCell.id === 'cost' ? (
+              headCell.id === 'units' ||
+              headCell.id === 'unitCost' ||
+              headCell.id === 'totalCost' ||
+              headCell.id === 'produces' ? (
               headCell.label
             ) : (
               <TableSortLabel

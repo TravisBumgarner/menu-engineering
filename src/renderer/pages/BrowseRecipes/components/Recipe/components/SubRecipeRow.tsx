@@ -144,10 +144,10 @@ function SubRecipeRow(props: {
           {row.units}
         </TableCell>
         <TableCell align="right" id={labelId} scope="row">
-          {formatCurrency(row.cost)}
+          {formatCurrency(row.cost / row.produces)}
         </TableCell>
         <TableCell align="right" id={labelId} scope="row">
-          {formatCurrency(row.cost * row.relation.quantity)}
+          {formatCurrency((row.cost / row.produces) * row.relation.quantity)}
         </TableCell>
         <TableCell align="right">
           <Tooltip title={t('editIngredients')}>

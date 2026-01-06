@@ -86,7 +86,7 @@ function RecipeRow({
           scope="row"
           sx={{ padding: `0 ${SPACING.TINY.PX}` }}
         >
-          {formatCurrency(row.cost)}
+          {formatCurrency((row.cost))}
         </TableCell>
         <TableCell sx={cellSx} align="right">
           {row.produces}
@@ -94,6 +94,15 @@ function RecipeRow({
         <TableCell sx={cellSx} align="left">
           {getUnitLabel(row.units, 'plural')}
         </TableCell>
+        <TableCell
+          align="right"
+          id={labelId}
+          scope="row"
+          sx={{ padding: `0 ${SPACING.TINY.PX}` }}
+        >
+          {formatCurrency((row.cost / row.produces))}
+        </TableCell>
+
         <TableCell sx={cellSx} align="left">
           <Typography
             variant="body2"
@@ -143,7 +152,7 @@ function RecipeRow({
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell sx={cellSx} style={{ padding: 0, border: 0 }} colSpan={10}>
+        <TableCell sx={cellSx} style={{ padding: 0, border: 0 }} colSpan={11}>
           <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>
