@@ -81,10 +81,6 @@ export type Invokes = {
       usedInRecipes: Array<RecipeDTO>
     }
   }
-  // [CHANNEL.DB.GET_RECIPE_COST]: {
-  //   args: { id: string }
-  //   result: { success: true; cost: number } | { success: false; error: string }
-  // }
   [CHANNEL.DB.ADD_INGREDIENT]: {
     args: {
       payload: {

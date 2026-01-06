@@ -36,17 +36,6 @@ function RecipeRow({
     activeRecipeIdSignal.value === '' ? 1 : isOpen.value ? 1 : 0.1,
   )
 
-  // const recipeCostQuery = useQuery({
-  //   queryKey: [QUERY_KEYS.RECIPE_COST, row.id],
-  //   staleTime: 0,
-  //   queryFn: async () => {
-  //     const result = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE_COST, {
-  //       id: row.id,
-  //     })
-  //     return result
-  //   },
-  // })
-
   return (
     <React.Fragment>
       <TableRow

@@ -23,19 +23,8 @@ function SubRecipeRow(props: {
   labelId: string
 }) {
   const { row, recipeId, labelId } = props
-  // const [open, setOpen] = React.useState(false)
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
-
-  // const subRecipeCostQuery = useQuery({
-  //   queryKey: [QUERY_KEYS.RECIPE_COST],
-  //   queryFn: async () => {
-  //     const result = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE_COST, {
-  //       id: row.id,
-  //     })
-  //     return result
-  //   },
-  // })
 
   const updateSubRecipeRelationMutation = useMutation({
     mutationFn: (updateData: { quantity?: number; units?: AllUnits }) => {
