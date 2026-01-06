@@ -72,7 +72,14 @@ typedIpcMain.handle(CHANNEL.DB.GET_RECIPE, async (_event, params) => {
 })
 
 typedIpcMain.handle(CHANNEL.DB.ADD_SUB_RECIPE, async (_event, params) => {
-  const newRecipeId = await queries.addRecipe(params.payload.newRecipe)
+    let fileName: string | undefined = undefined
+    console.log('params', params.payload.newRecipe.photo)
+    if (params.payload.newRecipe.photo) {
+      fileName = `${uuidv4()}.${params.payload.newRecipe.photo.extension}`
+      await savePhotoBytes(fileName, params.payload.newRecipe.photo.bytes)
+    }
+
+  const newRecipeId = await queries.addRecipe({...params.payload.newRecipe, photoSrc: fileName })
   const newSubRecipeRecipeLink = await queries.addSubRecipeToRecipe({
     parentId: params.payload.parentRecipeId,
     childId: newRecipeId,

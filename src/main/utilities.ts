@@ -35,3 +35,16 @@ export const savePhotoBytes = (photoFileName: string, bytes: Uint8Array): boolea
     return false
   }
 }
+
+export const deletePhoto = (photoFileName: string): boolean => {
+  try {
+    const photoPath = getPhotoPath(photoFileName)
+    if (fs.existsSync(photoPath)) {
+      fs.unlinkSync(photoPath)
+    }
+    return true
+  } catch (err) {
+    console.error('Error deleting photo:', err)
+    return false
+  }
+}

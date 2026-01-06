@@ -49,13 +49,13 @@ export type FromMain = {
 
 export type Invokes = {
   [CHANNEL.DB.ADD_RECIPE]: {
-    args: { payload: NewRecipeDTO & { photo?: {bytes: Uint8Array, extension: string} } }
+    args: { payload: NewRecipeDTO & NewPhotoUploadDTO }
     result: { recipeId: string, success: true } | { success: false; errorCode: ErrorCode}
   }
   [CHANNEL.DB.ADD_SUB_RECIPE]: {
     args: {
       payload: {
-        newRecipe: NewRecipeDTO
+        newRecipe: NewRecipeDTO & NewPhotoUploadDTO
         parentRecipeId: string
         units: AllUnits
       }
@@ -186,3 +186,5 @@ export type Invokes = {
     result: { data: Uint8Array | null }
   }
 }
+
+export type NewPhotoUploadDTO = { photo?: { bytes: Uint8Array; extension: string } }

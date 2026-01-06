@@ -25,6 +25,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
+import { NewPhotoUpload } from '../../../types'
 import { getUnitLabel } from '../../../utilities'
 import Photo from '../../Photo'
 import { MODAL_ID } from '../Modal.consts'
@@ -38,7 +39,7 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
 
-  const [formData, setFormData] = useState<NewRecipeDTO & { photo?: { data: File; extension: string } }>({
+  const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>({
     title: '',
     produces: 0,
     units: ALL_UNITS.units,
@@ -53,9 +54,7 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
 
   const addRecipeMutation = useMutation({
     mutationFn: async (
-      recipeData: NewRecipeDTO & {
-        photo?: { data: File; extension: string }
-      },
+      recipeData: NewRecipeDTO & NewPhotoUpload,
     ) => {
       const payload = {
         ...recipeData,

@@ -4,6 +4,7 @@ import {
     Checkbox,
     FormControl,
     FormControlLabel,
+    Input,
     InputLabel,
     MenuItem,
     Select,
@@ -25,7 +26,9 @@ import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
+import { NewPhotoUpload } from '../../../../../types'
 import { getUnitLabel } from '../../../../../utilities'
+import Photo from '../../../../Photo'
 import RecipeDetails from './RecipeDetails'
 
 const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
@@ -34,12 +37,13 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
     const [recipeQuantity, setRecipeQuantity] = useState<number>(0)
 
 
-    const [formData, setFormData] = useState<NewRecipeDTO>({
+    const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>({
         title: '',
         produces: 0,
         units: ALL_UNITS.units,
         status: RECIPE_STATUS.draft,
         showInMenu: false,
+        photo: undefined,
     })
 
     const handleClose = () => {
@@ -47,10 +51,15 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
     }
 
     const addSubRecipeMutation = useMutation({
-        mutationFn: (args: { newRecipe: NewRecipeDTO; parentRecipeId: string; shouldClose: boolean }) =>
+        mutationFn: async (args: { newRecipe: NewRecipeDTO & NewPhotoUpload; parentRecipeId: string; shouldClose: boolean }) =>
             ipcMessenger.invoke(CHANNEL.DB.ADD_SUB_RECIPE, {
                 payload: {
-                    newRecipe: args.newRecipe,
+                    newRecipe: {
+                        ...args.newRecipe, photo: args.newRecipe.photo ? {
+                            bytes: new Uint8Array(await args.newRecipe.photo.data.arrayBuffer()),
+                            extension: args.newRecipe.photo.extension
+                        } : undefined,
+                    },
                     parentRecipeId: args.parentRecipeId,
                     units: args.newRecipe.units,
                 }
@@ -69,6 +78,7 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                         units: ALL_UNITS.units,
                         status: RECIPE_STATUS.draft,
                         showInMenu: false,
+                        photo: undefined,
                     })
                     setRecipeQuantity(0)
                 } else {
@@ -102,6 +112,14 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                     [field]: e.target.value,
                 }))
             }
+
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files ? e.target.files[0] : undefined
+        setFormData(prev => ({
+            ...prev,
+            photo: { data: file!, extension: file ? file.name.split('.').pop() || '' : '' },
+        }))
+    }
 
     const handleCheckboxChange =
         (field: keyof NewRecipeDTO) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,15 +200,20 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
                     </Select>
                 </FormControl>
 
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={formData.showInMenu}
-                            onChange={handleCheckboxChange('showInMenu')}
-                        />
-                    }
-                    label={t('showInMenu')}
-                />
+                <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="center">
+                    <FormControlLabel
+                        sx={{ flexGrow: 1 }}
+                        control={
+                            <Checkbox
+                                checked={formData.showInMenu}
+                                onChange={handleCheckboxChange('showInMenu')}
+                            />
+                        }
+                        label={t('showInMenu')}
+                    />
+                    <Input onChange={handlePhotoChange} type="file" sx={{ flexGrow: 1 }} />
+                    {formData.photo && <Photo type="local" data={formData.photo.data} />}
+                </Stack>
                 <RecipeDetails units={formData.units} setQuantity={setRecipeQuantity} quantity={recipeQuantity} />
             </Stack>
             <Stack direction="row" spacing={SPACING.SMALL.PX} justifyContent="flex-end">
