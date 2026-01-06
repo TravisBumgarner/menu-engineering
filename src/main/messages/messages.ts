@@ -317,10 +317,7 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
           childId: newChildId,
           units: relation.units,
         })
-        // Set the quantity using the existing update mechanism
-        console.log(
-          `Setting ingredient quantity: ${relation.quantity} for ${newChildId}`,
-        )
+
         await queries.updateRecipeRelation(
           newParentId,
           newChildId,
