@@ -20,10 +20,10 @@ import EditRecipeModal, {
 } from './components/EditRecipeModal'
 import ExportIngredients, {
   type ExportIngredientsProps,
-} from './components/ExportIngredients'
+} from './components/ExportIngredientsModal'
 import ExportRecipes, {
   type ExportRecipesProps,
-} from './components/ExportRecipes'
+} from './components/ExportRecipesModal'
 import SettingsModal, { SettingsModalProps } from './components/Settings'
 import { MODAL_ID } from './Modal.consts'
 

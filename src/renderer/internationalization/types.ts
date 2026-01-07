@@ -25,6 +25,8 @@ export type TranslationKeys =
   | 'unitCost'
   | 'totalCost'
   | 'usedIn'
+  | 'includeImages'
+  | 'oneFilePerRecipe'
 
   // Navigation
   | 'recipes'
@@ -113,6 +115,8 @@ export type TranslationKeys =
   | 'unitConversions'
   | 'conversionDisclaimer'
   | 'all'
+  | 'none'
+  | 'select'
 
   // Data Management
   | 'dataManagement'

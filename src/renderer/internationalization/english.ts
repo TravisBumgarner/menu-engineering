@@ -30,7 +30,6 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   addToRecipe: 'Add to Recipe',
   recipeUses: 'Recipe uses',
   close: 'Close',
-
   // Navigation
   recipes: 'Recipes',
   ingredients: 'Ingredients',
@@ -117,6 +116,10 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   failedToUpdateIngredient: 'Failed to update ingredient.',
   errorUpdatingIngredient: 'Error updating ingredient.',
   all: 'All',
+  none: 'None',
+  select: 'Select',
+  includeImages: 'Include Images',
+  oneFilePerRecipe: 'One File Per Recipe',
 
   // Data Management
   dataManagement: 'Data Management',
