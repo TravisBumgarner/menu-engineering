@@ -71,9 +71,17 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
       )
 
       if (result.success && result.data) {
-        // Create and download JSON file
-        const dataStr = JSON.stringify(result.data, null, 2)
-        const dataBlob = new Blob([dataStr], { type: 'application/json' })
+        // Create and download zip file
+        const zipData = result.data
+
+        // Convert base64 to binary data
+        const binaryString = atob(zipData)
+        const zipBytes = new Uint8Array(binaryString.length)
+        for (let i = 0; i < binaryString.length; i++) {
+          zipBytes[i] = binaryString.charCodeAt(i)
+        }
+
+        const dataBlob = new Blob([zipBytes], { type: 'application/zip' })
 
         const link = document.createElement('a')
         const url = URL.createObjectURL(dataBlob)
@@ -82,7 +90,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
         const timestamp = new Date().toISOString().split('T')[0]
         link.setAttribute(
           'download',
-          `menu-engineering-backup-${timestamp}.json`,
+          `menu-engineering-backup-${timestamp}.zip`,
         )
         link.style.visibility = 'hidden'
 
@@ -111,7 +119,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
   const handleRestoreData = async () => {
     const input = document.createElement('input')
     input.type = 'file'
-    input.accept = '.json'
+    input.accept = '.zip,.json'
 
     input.onchange = async e => {
       const file = (e.target as HTMLInputElement).files?.[0]
@@ -142,12 +150,25 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
     setConfirmationText('')
 
     try {
-      const text = await selectedFile.text()
-      const data = JSON.parse(text)
+      let data
 
-      // Validate the data structure (basic check)
-      if (!data.ingredients || !data.recipes || !data.relations) {
-        throw new Error(t('invalidBackupFile'))
+      if (selectedFile.name.endsWith('.zip')) {
+        // New ZIP format - convert to base64 for backend
+        const arrayBuffer = await selectedFile.arrayBuffer()
+        const uint8Array = new Uint8Array(arrayBuffer)
+        const binaryString = Array.from(uint8Array, byte => String.fromCharCode(byte)).join('')
+        data = btoa(binaryString)
+      } else {
+        // Old JSON format - parse and pass as object
+        const text = await selectedFile.text()
+        const jsonData = JSON.parse(text)
+
+        // Validate the data structure (basic check)
+        if (!jsonData.ingredients || !jsonData.recipes || !jsonData.relations) {
+          throw new Error(t('invalidBackupFile'))
+        }
+
+        data = jsonData
       }
 
       const result = await ipcMessenger.invoke(CHANNEL.APP.RESTORE_ALL_DATA, {
@@ -361,7 +382,8 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
             onClick={handleConfirmRestore}
             color="warning"
             variant="contained"
-            disabled={!confirmationText.trim()}
+            disabled={!['CONFIRM', 'CONFIRMAR'].includes(confirmationText)}  // lazy lol.
+
           >
             {t('restoreFromBackup')}
           </Button>

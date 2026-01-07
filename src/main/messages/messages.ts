@@ -1,12 +1,14 @@
+import AdmZip from 'adm-zip'
 import { dialog } from 'electron'
 import fs from 'node:fs'
 import path from 'node:path'
+import zlib from 'node:zlib'
 import { v4 as uuidv4 } from 'uuid'
 import { ERROR_CODES } from '../../shared/errorCodes'
 import { CHANNEL } from '../../shared/messages.types'
 import { RelationDTO } from '../../shared/recipe.types'
 import queries from '../database/queries'
-import { deletePhoto, getPhotoBytes } from '../utilities'
+import { deleteAllPhotos, deletePhoto, getAllPhotos, getPhotoBytes, savePhotosFromZipData } from '../utilities'
 import { typedIpcMain } from './index'
 
 const checkIfComponentExists = async (title: string) => {
@@ -303,6 +305,7 @@ typedIpcMain.handle(CHANNEL.APP.EXPORT_ALL_DATA, async () => {
     // Get all data from the database
     const ingredients = await queries.getIngredients()
     const recipes = await queries.getRecipes()
+    const photos = getAllPhotos()
 
     // Get all relations by fetching detailed data for each recipe
     const relations: Array<
@@ -340,14 +343,30 @@ typedIpcMain.handle(CHANNEL.APP.EXPORT_ALL_DATA, async () => {
       }
     }
 
+    // Create ZIP archive
+    const zip = new AdmZip()
+    
+    // Add data.json to ZIP
+    const data = {
+      version: '1.0',
+      ingredients: ingredients || [],
+      recipes: recipes || [],
+      relations,
+    }
+    zip.addFile('data.json', Buffer.from(JSON.stringify(data, null, 2), 'utf8'))
+    
+    // Add photos to ZIP in photos/ folder
+    for (const photo of photos) {
+      zip.addFile(`photos/${photo.filename}`, photo.data)
+    }
+
+    // Generate ZIP buffer
+    const zipBuffer = zip.toBuffer()
+
     return {
       type: 'export_all_data',
       success: true,
-      data: {
-        ingredients: ingredients || [],
-        recipes: recipes || [],
-        relations,
-      },
+      data: zipBuffer.toString('base64'),
     }
   } catch (error) {
     return {
@@ -360,6 +379,64 @@ typedIpcMain.handle(CHANNEL.APP.EXPORT_ALL_DATA, async () => {
 
 typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
   try {
+    let data
+    let photos: { filename: string; data: Buffer }[] = []
+    
+    // Check if data is ZIP format (new) or JSON format (old)
+    if (typeof params.data === 'string' && params.data.length > 1000) {
+      try {
+        // New ZIP format - extract data
+        const zipBuffer = Buffer.from(params.data, 'base64')
+        const zip = new AdmZip(zipBuffer)
+        
+        // Extract data.json
+        const dataEntry = zip.getEntry('data.json')
+        if (!dataEntry) {
+          throw new Error('data.json not found in ZIP archive')
+        }
+        data = JSON.parse(dataEntry.getData().toString('utf8'))
+        
+        // Extract photos
+        const entries = zip.getEntries()
+        for (const entry of entries) {
+          if (entry.entryName.startsWith('photos/') && !entry.isDirectory) {
+            const filename = path.basename(entry.entryName)
+            photos.push({
+              filename,
+              data: entry.getData()
+            })
+          }
+        }
+      } catch (zipError) {
+        // Fallback to old compressed format
+        try {
+          const compressedBuffer = Buffer.from(params.data, 'base64')
+          const decompressedBuffer = zlib.gunzipSync(compressedBuffer)
+          const oldData = JSON.parse(decompressedBuffer.toString('utf8'))
+          
+          // Convert old format to new format
+          data = {
+            ingredients: oldData.ingredients,
+            recipes: oldData.recipes,
+            relations: oldData.relations
+          }
+          
+          // Extract photos from old format
+          if (oldData.photos) {
+            photos = oldData.photos.map((photo: any) => ({
+              filename: photo.filename,
+              data: Buffer.from(photo.data, 'base64')
+            }))
+          }
+        } catch (gzipError) {
+          throw new Error('Invalid backup file format')
+        }
+      }
+    } else {
+      // Old JSON format
+      data = params.data
+    }
+
     // This is a destructive operation - wipe all existing data first
     const { db } = await import('../database/client.js')
     const {
@@ -369,21 +446,28 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
       recipeSubRecipeSchema,
     } = await import('../database/schema.js')
 
-    // Delete all records from all tables (same as nuke database)
-    // Order matters due to foreign key relationships: delete relations first, then main entities
+    // Delete all records from all tables
     await db.delete(recipeIngredientSchema).run()
     await db.delete(recipeSubRecipeSchema).run()
     await db.delete(recipeSchema).run()
     await db.delete(ingredientSchema).run()
+    
+    // Delete all existing photos
+    deleteAllPhotos()
+
+    // Restore photos
+    if (photos.length > 0) {
+      savePhotosFromZipData(photos)
+    }
 
     // Insert new data
-    const { ingredients, recipes, relations } = params.data
+    const { ingredients, recipes, relations } = data
 
     // Keep track of old ID -> new ID mappings
     const ingredientIdMap = new Map<string, string>()
     const recipeIdMap = new Map<string, string>()
 
-    // Insert ingredients first and track ID mappings
+    // Insert ingredients first
     for (const ingredient of ingredients) {
       const newIngredientId = await queries.addIngredient({
         title: ingredient.title,
@@ -393,7 +477,7 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
       ingredientIdMap.set(ingredient.id, newIngredientId)
     }
 
-    // Insert recipes and track ID mappings
+    // Insert recipes
     for (const recipe of recipes) {
       const newRecipeId = await queries.addRecipe({
         title: recipe.title,
@@ -401,26 +485,23 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
         units: recipe.units,
         status: recipe.status,
         showInMenu: recipe.showInMenu,
+        photoSrc: recipe.photoSrc,
       })
       recipeIdMap.set(recipe.id, newRecipeId)
     }
 
-    // Insert relations using the new IDs
+    // Insert relations
     for (const relation of relations) {
       const newParentId = recipeIdMap.get(relation.parentId)
       if (!newParentId) {
-        console.warn(
-          `Could not find new parent ID for relation: ${relation.parentId}`,
-        )
+        console.warn(`Could not find new parent ID for relation: ${relation.parentId}`)
         continue
       }
 
       if (relation.type === 'ingredient') {
         const newChildId = ingredientIdMap.get(relation.childId)
         if (!newChildId) {
-          console.warn(
-            `Could not find new ingredient ID for relation: ${relation.childId}`,
-          )
+          console.warn(`Could not find new ingredient ID for relation: ${relation.childId}`)
           continue
         }
         await queries.addIngredientToRecipe({
@@ -429,7 +510,6 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
           units: relation.units,
           quantity: relation.quantity,
         })
-
         await queries.updateRecipeRelation(
           newParentId,
           newChildId,
@@ -440,9 +520,7 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
       } else if (relation.type === 'sub-recipe') {
         const newChildId = recipeIdMap.get(relation.childId)
         if (!newChildId) {
-          console.warn(
-            `Could not find new recipe ID for relation: ${relation.childId}`,
-          )
+          console.warn(`Could not find new recipe ID for relation: ${relation.childId}`)
           continue
         }
         await queries.addSubRecipeToRecipe({
@@ -450,7 +528,6 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
           childId: newChildId,
           units: relation.units,
         })
-        // Set the quantity using the existing update mechanism
         await queries.updateRecipeRelation(
           newParentId,
           newChildId,
@@ -491,6 +568,9 @@ typedIpcMain.handle(CHANNEL.APP.NUKE_DATABASE, async () => {
     await db.delete(recipeSubRecipeSchema).run()
     await db.delete(recipeSchema).run()
     await db.delete(ingredientSchema).run()
+    
+    // Delete all photos
+    deleteAllPhotos()
 
     return {
       type: 'nuke_database',
