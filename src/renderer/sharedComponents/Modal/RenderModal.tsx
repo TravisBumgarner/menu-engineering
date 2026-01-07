@@ -1,30 +1,15 @@
-import { type FC } from 'react'
-
 import { useSignals } from '@preact/signals-react/runtime'
+import type { FC } from 'react'
 import { activeModalSignal } from '../../signals'
-import AddIngredientModal, {
-  type AddIngredientModalProps,
-} from './components/AddIngredientModal'
-import AddRecipeModal, {
-  type AddRecipeModalProps,
-} from './components/AddRecipeModal'
-import AddToRecipeModal, { AddToRecipeModalProps } from './components/AddToRecipeModal/AddToRecipeModal'
-import ConfirmationModal, {
-  type ConfirmationModalProps,
-} from './components/ConfirmationModal'
-import EditIngredientModal, {
-  type EditIngredientModalProps,
-} from './components/EditIngredientModal'
-import EditRecipeModal, {
-  type EditRecipeModalProps,
-} from './components/EditRecipeModal'
-import ExportIngredients, {
-  type ExportIngredientsProps,
-} from './components/ExportIngredientsModal'
-import ExportRecipes, {
-  type ExportRecipesProps,
-} from './components/ExportRecipesModal'
-import SettingsModal, { SettingsModalProps } from './components/Settings'
+import AddIngredientModal, { type AddIngredientModalProps } from './components/AddIngredientModal'
+import AddRecipeModal, { type AddRecipeModalProps } from './components/AddRecipeModal'
+import AddToRecipeModal, { type AddToRecipeModalProps } from './components/AddToRecipeModal/AddToRecipeModal'
+import ConfirmationModal, { type ConfirmationModalProps } from './components/ConfirmationModal'
+import EditIngredientModal, { type EditIngredientModalProps } from './components/EditIngredientModal'
+import EditRecipeModal, { type EditRecipeModalProps } from './components/EditRecipeModal'
+import ExportIngredients, { type ExportIngredientsProps } from './components/ExportIngredientsModal'
+import ExportRecipes, { type ExportRecipesProps } from './components/ExportRecipesModal'
+import SettingsModal, { type SettingsModalProps } from './components/Settings'
 import { MODAL_ID } from './Modal.consts'
 
 export type ActiveModal =

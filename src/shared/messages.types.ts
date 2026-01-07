@@ -1,5 +1,5 @@
-import { ErrorCode } from './errorCodes'
-import {
+import type { ErrorCode } from './errorCodes'
+import type {
   IngredientDTO,
   NewIngredientDTO,
   NewIngredientInRecipeDTO,
@@ -8,7 +8,7 @@ import {
   RecipeDTO,
   RelationDTO,
 } from './recipe.types'
-import { AllUnits } from './units.types'
+import type { AllUnits } from './units.types'
 
 export const CHANNEL = {
   DB: {
@@ -37,21 +37,21 @@ export const CHANNEL = {
   FILES: {
     GET_PHOTO: 'files:get-photo',
     EXPORT_RECIPES_PDF: 'files:export-recipes-pdf',
-  }
+  },
 } as const
 
 export type FromRenderer = {
-  ['does-not-exist']: { id: number }
+  'does-not-exist': { id: number }
 }
 
 export type FromMain = {
-  ['does-not-exist']: { ok: boolean; id: number }
+  'does-not-exist': { ok: boolean; id: number }
 }
 
 export type Invokes = {
   [CHANNEL.DB.ADD_RECIPE]: {
     args: { payload: NewRecipeDTO & NewPhotoUploadDTO }
-    result: { recipeId: string, success: true } | { success: false; errorCode: ErrorCode}
+    result: { recipeId: string; success: true } | { success: false; errorCode: ErrorCode }
   }
   [CHANNEL.DB.ADD_SUB_RECIPE]: {
     args: {
@@ -61,7 +61,7 @@ export type Invokes = {
         units: AllUnits
       }
     }
-    result: { success: true } | { success: false; errorCode: ErrorCode}
+    result: { success: true } | { success: false; errorCode: ErrorCode }
   }
   [CHANNEL.DB.UPDATE_RECIPE]: {
     args: { id: string; payload: Partial<NewRecipeDTO & NewPhotoUploadDTO> }
@@ -73,7 +73,7 @@ export type Invokes = {
   }
   [CHANNEL.DB.GET_RECIPES]: {
     args: undefined
-    result: { recipes: Array<RecipeDTO & { usedInRecipesCount: number}> }
+    result: { recipes: Array<RecipeDTO & { usedInRecipesCount: number }> }
   }
   [CHANNEL.DB.GET_RECIPE]: {
     args: { id: string }
@@ -95,7 +95,7 @@ export type Invokes = {
         units: AllUnits
       }
     }
-    result: { success: true, ingredientId: string } | { success: false, errorCode: ErrorCode }
+    result: { success: true; ingredientId: string } | { success: false; errorCode: ErrorCode }
   }
   [CHANNEL.DB.UPDATE_INGREDIENT]: {
     args: { id: string; payload: Partial<NewIngredientDTO> }
@@ -125,9 +125,7 @@ export type Invokes = {
     result: { ingredients: Array<IngredientDTO & { recipeCount: number }> }
   }
   [CHANNEL.DB.ADD_EXISTING_TO_RECIPE]: {
-    args:
-      | (NewIngredientInRecipeDTO & { type: 'ingredient' })
-      | (NewSubRecipeInRecipeDTO & { type: 'sub-recipe' })
+    args: (NewIngredientInRecipeDTO & { type: 'ingredient' }) | (NewSubRecipeInRecipeDTO & { type: 'sub-recipe' })
     result: { success: boolean }
   }
   [CHANNEL.DB.UPDATE_RECIPE_RELATION]: {
@@ -148,23 +146,13 @@ export type Invokes = {
     args: undefined
     result: {
       success: boolean
-      data?: {
-        ingredients: Array<IngredientDTO>
-        recipes: Array<RecipeDTO>
-        relations: Array<
-          RelationDTO & {
-            parentId: string
-            childId: string
-            type: 'ingredient' | 'sub-recipe'
-          }
-        >
-      }
+      data?: string  // base64 encoded ZIP data
       error?: string
     }
   }
   [CHANNEL.APP.RESTORE_ALL_DATA]: {
     args: {
-      data: {
+      data: string | {
         ingredients: Array<IngredientDTO>
         recipes: Array<RecipeDTO>
         relations: Array<
@@ -187,7 +175,7 @@ export type Invokes = {
     result: { data: Uint8Array | null }
   }
   [CHANNEL.FILES.EXPORT_RECIPES_PDF]: {
-    args: { 
+    args: {
       pdfs: Array<{
         filename: string
         data: Uint8Array

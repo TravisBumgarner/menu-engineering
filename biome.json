@@ -1,0 +1,44 @@
+{
+    "linter": {
+        "rules": {
+            "suspicious": {
+                "useBiomeIgnoreFolder": "error",
+                "noConsole": "error"
+            }
+        }
+    },
+    "files": {
+        "includes": [
+            "**",
+            "!.vite",
+            "!node_modules",
+            "!.husky",
+            "!out",
+            "!drizzle",
+            "!fake_website",
+            "!biome.json",
+            "!tsconfig.json",
+            "!tsconfig.node.json",
+            "!vite.config.ts",
+            "!*.log",
+            "!package.json",
+            "!package-lock.json"
+        ]
+    },
+    "formatter": {
+        "enabled": true,
+        "formatWithErrors": false,
+        "indentStyle": "space",
+        "indentWidth": 2,
+        "lineEnding": "lf",
+        "lineWidth": 100,
+        "attributePosition": "auto"
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "lineWidth": 120,
+            "semicolons": "asNeeded"
+        }
+    }
+}

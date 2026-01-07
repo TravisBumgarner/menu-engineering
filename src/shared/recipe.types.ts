@@ -1,4 +1,4 @@
-import { AllUnits } from './units.types'
+import type { AllUnits } from './units.types'
 
 export const RECIPE_STATUS = {
   draft: 'draft',

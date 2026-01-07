@@ -1,23 +1,19 @@
 import { and, count, eq } from 'drizzle-orm'
-import {
+import log from 'electron-log/main'
+import type {
   NewIngredientDTO,
   NewIngredientInRecipeDTO,
   NewRecipeDTO,
   NewSubRecipeInRecipeDTO,
   RecipeDTO,
 } from 'src/shared/recipe.types'
-import { AllUnits } from 'src/shared/units.types'
+import type { AllUnits } from 'src/shared/units.types'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from './client'
 import { lower } from './functions'
-import {
-  ingredientSchema,
-  recipeIngredientSchema,
-  recipeSchema,
-  recipeSubRecipeSchema,
-} from './schema'
+import { ingredientSchema, recipeIngredientSchema, recipeSchema, recipeSubRecipeSchema } from './schema'
 
-const addRecipe = async (recipeData: NewRecipeDTO & {photoSrc?: RecipeDTO['photoSrc']}) => {
+const addRecipe = async (recipeData: NewRecipeDTO & { photoSrc?: RecipeDTO['photoSrc'] }) => {
   // generate an id required by the schema, then insert
   const newId = uuidv4()
 
@@ -36,15 +32,12 @@ const getRecipes = async () => {
       usedInRecipesCount: count(recipeSubRecipeSchema.id),
     })
     .from(recipeSchema)
-    .leftJoin(
-      recipeSubRecipeSchema,
-      eq(recipeSchema.id, recipeSubRecipeSchema.childId),
-    )
+    .leftJoin(recipeSubRecipeSchema, eq(recipeSchema.id, recipeSubRecipeSchema.childId))
     .groupBy(recipeSchema.id)
     .all()
 
   return Promise.all(
-    rows.map(async row => {
+    rows.map(async (row) => {
       const costResult = await getRecipeCost(row.recipe.id)
 
       return {
@@ -57,10 +50,7 @@ const getRecipes = async () => {
 }
 
 const getRecipe = async (id: string) => {
-  const recipe = await db
-    .select()
-    .from(recipeSchema)
-    .where(eq(recipeSchema.id, id))
+  const recipe = await db.select().from(recipeSchema).where(eq(recipeSchema.id, id))
 
   const usedInRecipes = await db
     .select({
@@ -74,7 +64,7 @@ const getRecipe = async (id: string) => {
 
   return {
     ...recipe[0],
-    usedInRecipes: usedInRecipes.map(row => row.recipe).filter(Boolean),
+    usedInRecipes: usedInRecipes.map((row) => row.recipe).filter(Boolean),
     cost: costResult.success ? costResult.cost : -1,
   }
 }
@@ -90,13 +80,11 @@ const addIngredient = async (ingredientData: NewIngredientDTO) => {
   return newId
 }
 
-const addIngredientToRecipe = async (
-  newIngredientInRecipe: NewIngredientInRecipeDTO,
-) => {
+const addIngredientToRecipe = async (newIngredientInRecipe: NewIngredientInRecipeDTO) => {
   const newId = uuidv4()
   await db
     .insert(recipeIngredientSchema)
-    .values({ id: newId, ...newIngredientInRecipe,  })
+    .values({ id: newId, ...newIngredientInRecipe })
     .run()
 
   return newId
@@ -111,11 +99,8 @@ const getRecipeIngredients = async (recipeId: string) => {
     })
     .from(recipeIngredientSchema)
     .where(eq(recipeIngredientSchema.parentId, recipeId))
-    .leftJoin(
-      ingredientSchema,
-      eq(recipeIngredientSchema.childId, ingredientSchema.id),
-    )
-  return ingredients.map(row => ({
+    .leftJoin(ingredientSchema, eq(recipeIngredientSchema.childId, ingredientSchema.id))
+  return ingredients.map((row) => ({
     ...row.ingredient,
     relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
   }))
@@ -142,11 +127,7 @@ const recipeExists = async (title: string) => {
 }
 
 const getIngredient = async (id: string) => {
-  const ingredientResult = await db
-    .select()
-    .from(ingredientSchema)
-    .where(eq(ingredientSchema.id, id))
-    .limit(1)
+  const ingredientResult = await db.select().from(ingredientSchema).where(eq(ingredientSchema.id, id)).limit(1)
 
   return ingredientResult[0]
 }
@@ -158,56 +139,35 @@ const getIngredients = async () => {
       recipeCount: count(recipeIngredientSchema.id),
     })
     .from(ingredientSchema)
-    .leftJoin(
-      recipeIngredientSchema,
-      eq(ingredientSchema.id, recipeIngredientSchema.childId),
-    )
+    .leftJoin(recipeIngredientSchema, eq(ingredientSchema.id, recipeIngredientSchema.childId))
     .groupBy(ingredientSchema.id)
     .all()
 
-  return ingredients.map(row => ({
+  return ingredients.map((row) => ({
     ...row.ingredient,
     recipeCount: row.recipeCount,
   }))
 }
 
-const removeIngredientFromRecipe = async (
-  ingredientId: string,
-  recipeId: string,
-) => {
+const removeIngredientFromRecipe = async (ingredientId: string, recipeId: string) => {
   const result = await db
     .delete(recipeIngredientSchema)
-    .where(
-      and(
-        eq(recipeIngredientSchema.childId, ingredientId),
-        eq(recipeIngredientSchema.parentId, recipeId),
-      ),
-    )
+    .where(and(eq(recipeIngredientSchema.childId, ingredientId), eq(recipeIngredientSchema.parentId, recipeId)))
     .run()
 
   return result
 }
 
-const removeSubRecipeFromRecipe = async (
-  subRecipeId: string,
-  recipeId: string,
-) => {
+const removeSubRecipeFromRecipe = async (subRecipeId: string, recipeId: string) => {
   const result = await db
     .delete(recipeSubRecipeSchema)
-    .where(
-      and(
-        eq(recipeSubRecipeSchema.childId, subRecipeId),
-        eq(recipeSubRecipeSchema.parentId, recipeId),
-      ),
-    )
+    .where(and(eq(recipeSubRecipeSchema.childId, subRecipeId), eq(recipeSubRecipeSchema.parentId, recipeId)))
     .run()
 
   return result
 }
 
-const addSubRecipeToRecipe = async (
-  newSubRecipeInRecipeDTO: NewSubRecipeInRecipeDTO,
-) => {
+const addSubRecipeToRecipe = async (newSubRecipeInRecipeDTO: NewSubRecipeInRecipeDTO) => {
   const newId = uuidv4()
   await db
     .insert(recipeSubRecipeSchema)
@@ -227,36 +187,27 @@ const getRecipeSubRecipes = async (recipeId: string) => {
     .from(recipeSubRecipeSchema)
     .where(eq(recipeSubRecipeSchema.parentId, recipeId))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.childId, recipeSchema.id))
-  
-  return Promise.all(recipes.map(async row => {
-    const costResult = await getRecipeCost(row.recipe.id);
-    return {
-      cost: costResult.success ? costResult.cost : -1,
-      ...row.recipe,
-      relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
-    }
-  }))
+
+  return Promise.all(
+    recipes.map(async (row) => {
+      const costResult = await getRecipeCost(row.recipe.id)
+      return {
+        cost: costResult.success ? costResult.cost : -1,
+        ...row.recipe,
+        relation: { quantity: row.recipeQuantity, units: row.recipeUnits },
+      }
+    }),
+  )
 }
 
-const updateIngredient = async (
-  id: string,
-  ingredientData: Partial<NewIngredientDTO>,
-) => {
-  const result = await db
-    .update(ingredientSchema)
-    .set(ingredientData)
-    .where(eq(ingredientSchema.id, id))
-    .run()
+const updateIngredient = async (id: string, ingredientData: Partial<NewIngredientDTO>) => {
+  const result = await db.update(ingredientSchema).set(ingredientData).where(eq(ingredientSchema.id, id)).run()
 
   return result
 }
 
 const updateRecipe = async (id: string, recipeData: Partial<RecipeDTO>) => {
-  const result = await db
-    .update(recipeSchema)
-    .set(recipeData)
-    .where(eq(recipeSchema.id, id))
-    .run()
+  const result = await db.update(recipeSchema).set(recipeData).where(eq(recipeSchema.id, id)).run()
 
   return result
 }
@@ -268,10 +219,9 @@ const updateRecipeRelation = async (
   quantity?: number,
   units?: AllUnits,
 ) => {
-  const updateData: { quantity?: number; units?: AllUnits; updatedAt: string } =
-    {
-      updatedAt: new Date().toISOString(),
-    }
+  const updateData: { quantity?: number; units?: AllUnits; updatedAt: string } = {
+    updatedAt: new Date().toISOString(),
+  }
 
   if (quantity !== undefined) {
     updateData.quantity = quantity
@@ -285,24 +235,14 @@ const updateRecipeRelation = async (
     const result = await db
       .update(recipeIngredientSchema)
       .set(updateData)
-      .where(
-        and(
-          eq(recipeIngredientSchema.parentId, parentId),
-          eq(recipeIngredientSchema.childId, childId),
-        ),
-      )
+      .where(and(eq(recipeIngredientSchema.parentId, parentId), eq(recipeIngredientSchema.childId, childId)))
       .run()
     return result
   } else {
     const result = await db
       .update(recipeSubRecipeSchema)
       .set(updateData)
-      .where(
-        and(
-          eq(recipeSubRecipeSchema.parentId, parentId),
-          eq(recipeSubRecipeSchema.childId, childId),
-        ),
-      )
+      .where(and(eq(recipeSubRecipeSchema.parentId, parentId), eq(recipeSubRecipeSchema.childId, childId)))
       .run()
     return result
   }
@@ -311,9 +251,7 @@ const updateRecipeRelation = async (
 const getRecipeCost = async (
   recipeId: string,
   depth = 0,
-): Promise<
-  { success: true; cost: number } | { success: false; error: string }
-> => {
+): Promise<{ success: true; cost: number } | { success: false; error: string }> => {
   try {
     if (depth > 5) {
       throw new Error('Maximum recursion depth exceeded')
@@ -333,7 +271,7 @@ const getRecipeCost = async (
       const subCostResult = await getRecipeCost(subRecipe.id, depth + 1)
       if (subCostResult.success) {
         const usedQty = subRecipe.relation.quantity
-        const costPerUnit = subCostResult.cost / (subRecipe.produces)
+        const costPerUnit = subCostResult.cost / subRecipe.produces
         totalCost += costPerUnit * usedQty
       } else {
         throw new Error(`Failed to get cost for sub-recipe ${subRecipe.id}`)
@@ -342,7 +280,7 @@ const getRecipeCost = async (
 
     return { success: true, cost: totalCost }
   } catch (err) {
-    console.error(err)
+    log.error(err)
     return { success: false, error: String(err) }
   }
 }
@@ -356,10 +294,12 @@ const getRecipesUsingSubRecipe = async (subRecipeId: string) => {
     .where(eq(recipeSubRecipeSchema.childId, subRecipeId))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.parentId, recipeSchema.id))
 
-  return Promise.all(recipes.map(async row => {
-    const costResult = await getRecipeCost(row.recipe.id);
-    return {...row.recipe, cost: costResult.success ? costResult.cost : -1 }
-  })).then(results => results.filter(Boolean))
+  return Promise.all(
+    recipes.map(async (row) => {
+      const costResult = await getRecipeCost(row.recipe.id)
+      return { ...row.recipe, cost: costResult.success ? costResult.cost : -1 }
+    }),
+  ).then((results) => results.filter(Boolean))
 }
 
 const getRecipesUsingIngredient = async (ingredientId: string) => {
@@ -369,47 +309,34 @@ const getRecipesUsingIngredient = async (ingredientId: string) => {
     })
     .from(recipeIngredientSchema)
     .where(eq(recipeIngredientSchema.childId, ingredientId))
-    .leftJoin(
-      recipeSchema,
-      eq(recipeIngredientSchema.parentId, recipeSchema.id),
-    )
+    .leftJoin(recipeSchema, eq(recipeIngredientSchema.parentId, recipeSchema.id))
 
-  return Promise.all(recipes.map(async row => {
-    const costResult = await getRecipeCost(row.recipe.id);
-    return {...row.recipe, cost: costResult.success ? costResult.cost : -1 }
-  })).then(results => results.filter(Boolean))
+  return Promise.all(
+    recipes.map(async (row) => {
+      const costResult = await getRecipeCost(row.recipe.id)
+      return { ...row.recipe, cost: costResult.success ? costResult.cost : -1 }
+    }),
+  ).then((results) => results.filter(Boolean))
 }
 
 const deleteRecipe = async (recipeId: string) => {
   try {
     // Delete in order to maintain foreign key constraints
     // 1. Delete all ingredient relationships for this recipe
-    await db
-      .delete(recipeIngredientSchema)
-      .where(eq(recipeIngredientSchema.parentId, recipeId))
-      .run()
+    await db.delete(recipeIngredientSchema).where(eq(recipeIngredientSchema.parentId, recipeId)).run()
 
     // 2. Delete all sub-recipe relationships where this recipe is the parent
-    await db
-      .delete(recipeSubRecipeSchema)
-      .where(eq(recipeSubRecipeSchema.parentId, recipeId))
-      .run()
+    await db.delete(recipeSubRecipeSchema).where(eq(recipeSubRecipeSchema.parentId, recipeId)).run()
 
     // 3. Delete all sub-recipe relationships where this recipe is used as a sub-recipe
-    await db
-      .delete(recipeSubRecipeSchema)
-      .where(eq(recipeSubRecipeSchema.childId, recipeId))
-      .run()
+    await db.delete(recipeSubRecipeSchema).where(eq(recipeSubRecipeSchema.childId, recipeId)).run()
 
     // 4. Finally, delete the recipe itself
-    const result = await db
-      .delete(recipeSchema)
-      .where(eq(recipeSchema.id, recipeId))
-      .run()
+    const result = await db.delete(recipeSchema).where(eq(recipeSchema.id, recipeId)).run()
 
     return result
   } catch (error) {
-    console.error('Error deleting recipe:', error)
+    log.error('Error deleting recipe:', error)
     throw error
   }
 }
@@ -418,20 +345,14 @@ const deleteIngredient = async (ingredientId: string) => {
   try {
     // Delete in order to maintain foreign key constraints
     // 1. Delete all recipe-ingredient relationships where this ingredient is used
-    await db
-      .delete(recipeIngredientSchema)
-      .where(eq(recipeIngredientSchema.childId, ingredientId))
-      .run()
+    await db.delete(recipeIngredientSchema).where(eq(recipeIngredientSchema.childId, ingredientId)).run()
 
     // 2. Finally, delete the ingredient itself
-    const result = await db
-      .delete(ingredientSchema)
-      .where(eq(ingredientSchema.id, ingredientId))
-      .run()
+    const result = await db.delete(ingredientSchema).where(eq(ingredientSchema.id, ingredientId)).run()
 
     return result
   } catch (error) {
-    console.error('Error deleting ingredient:', error)
+    log.error('Error deleting ingredient:', error)
     throw error
   }
 }
@@ -458,5 +379,5 @@ export default {
   deleteRecipe,
   deleteIngredient,
   recipeExists,
-  ingredientExists
+  ingredientExists,
 }

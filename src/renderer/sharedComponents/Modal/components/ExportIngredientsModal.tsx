@@ -1,11 +1,11 @@
 import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
-import { IngredientDTO } from '../../../../shared/recipe.types'
+import type { IngredientDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { formateDateFilename } from '../../../utilities'
-import { MODAL_ID } from '../Modal.consts'
+import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
 export interface ExportIngredientsProps {
@@ -15,9 +15,7 @@ export interface ExportIngredientsProps {
 
 const ExportIngredients = ({ ingredients }: ExportIngredientsProps) => {
   const { t } = useAppTranslation()
-  const [filename, setFilename] = useState(
-    formateDateFilename() + `_${t('ingredients')}`,
-  )
+  const [filename, setFilename] = useState(`${formateDateFilename()}_${t('ingredients')}`)
 
   const handleCancel = () => {
     activeModalSignal.value = null
@@ -25,16 +23,10 @@ const ExportIngredients = ({ ingredients }: ExportIngredientsProps) => {
 
   const handleExport = () => {
     // Create CSV content
-    const headers = [
-      t('created'),
-      t('title'),
-      t('units'),
-      t('unitCost'),
-      t('usedIn'),
-    ]
+    const headers = [t('created'), t('title'), t('units'), t('unitCost'), t('usedIn')]
     const csvContent = [
       headers.join(','),
-      ...ingredients.map(ingredient =>
+      ...ingredients.map((ingredient) =>
         [
           `"${new Date(ingredient.createdAt).toLocaleDateString()}"`,
           `"${ingredient.title}"`,
@@ -67,24 +59,19 @@ const ExportIngredients = ({ ingredients }: ExportIngredientsProps) => {
             size="small"
             label="Filename"
             value={filename}
-            onChange={e => setFilename(e.target.value)}
+            onChange={(e) => setFilename(e.target.value)}
             fullWidth
           />
 
           <Typography variant="body2" color="textSecondary">
-            {t('export')}: {ingredients.length}{' '}
-            {ingredients.length === 1 ? t('ingredient') : t('ingredients')}
+            {t('export')}: {ingredients.length} {ingredients.length === 1 ? t('ingredient') : t('ingredients')}
           </Typography>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button variant="outlined" onClick={handleCancel}>
               {t('cancel')}
             </Button>
-            <Button
-              variant="contained"
-              onClick={handleExport}
-              disabled={!filename.trim()}
-            >
+            <Button variant="contained" onClick={handleExport} disabled={!filename.trim()}>
               {t('export')} CSV
             </Button>
           </Stack>

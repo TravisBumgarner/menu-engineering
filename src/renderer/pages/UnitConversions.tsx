@@ -1,20 +1,5 @@
-import {
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from '@mui/material'
-import {
-  VOLUME_UNIT,
-  VolumeUnit,
-  WEIGHT_UNIT,
-  WeightUnit,
-} from '../../shared/units.types'
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { VOLUME_UNIT, type VolumeUnit, WEIGHT_UNIT, type WeightUnit } from '../../shared/units.types'
 import { useAppTranslation } from '../hooks/useTranslation'
 import { convertUnits } from '../utilities'
 
@@ -33,7 +18,7 @@ const VolumeConversionTable = () => {
           <TableHead>
             <TableRow>
               <TableCell></TableCell>
-              {volumeUnits.map(unit => (
+              {volumeUnits.map((unit) => (
                 <TableCell key={unit} align="right">
                   {t(`${unit}_plural`)}
                 </TableCell>
@@ -41,12 +26,12 @@ const VolumeConversionTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {volumeUnits.map(fromUnit => (
+            {volumeUnits.map((fromUnit) => (
               <TableRow key={fromUnit}>
                 <TableCell component="th" scope="row">
                   <strong>1 {t(`${fromUnit}_plural`)}</strong>
                 </TableCell>
-                {volumeUnits.map(toUnit => {
+                {volumeUnits.map((toUnit) => {
                   const conversion = convertUnits({
                     from: fromUnit,
                     to: toUnit,
@@ -55,9 +40,7 @@ const VolumeConversionTable = () => {
 
                   return (
                     <TableCell key={toUnit} align="right">
-                      {fromUnit === toUnit
-                        ? '1'
-                        : (conversion?.toFixed(4) ?? 'N/A')}
+                      {fromUnit === toUnit ? '1' : (conversion?.toFixed(4) ?? 'N/A')}
                     </TableCell>
                   )
                 })}
@@ -85,7 +68,7 @@ const WeightConversionTable = () => {
           <TableHead>
             <TableRow>
               <TableCell></TableCell>
-              {weightUnits.map(unit => (
+              {weightUnits.map((unit) => (
                 <TableCell key={unit} align="right">
                   {t(`${unit}_plural`)}
                 </TableCell>
@@ -93,12 +76,12 @@ const WeightConversionTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {weightUnits.map(fromUnit => (
+            {weightUnits.map((fromUnit) => (
               <TableRow key={fromUnit}>
                 <TableCell component="th" scope="row">
                   <strong>1 {t(`${fromUnit}_plural`)}</strong>
                 </TableCell>
-                {weightUnits.map(toUnit => {
+                {weightUnits.map((toUnit) => {
                   const conversion = convertUnits({
                     from: fromUnit,
                     to: toUnit,
@@ -107,9 +90,7 @@ const WeightConversionTable = () => {
 
                   return (
                     <TableCell key={toUnit} align="right">
-                      {fromUnit === toUnit
-                        ? '1'
-                        : (conversion?.toFixed(4) ?? 'N/A')}
+                      {fromUnit === toUnit ? '1' : (conversion?.toFixed(4) ?? 'N/A')}
                     </TableCell>
                   )
                 })}

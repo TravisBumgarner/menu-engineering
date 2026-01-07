@@ -1,14 +1,15 @@
 import { Box, Button, Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
 import { pdf } from '@react-pdf/renderer'
+import log from 'electron-log/renderer'
 import { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { RecipeDTO } from '../../../../shared/recipe.types'
+import type { RecipeDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { formateDateFilename } from '../../../utilities'
-import { MODAL_ID } from '../Modal.consts'
+import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 import RecipesPDFDocument from './RecipesPDFDocument'
 
@@ -26,9 +27,7 @@ export interface ExportRecipesProps {
 const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
   const { t } = useAppTranslation()
   const [isGenerating, setIsGenerating] = useState(false)
-  const [selectedRecipes, setSelectedRecipes] = useState<Set<string>>(
-    new Set(recipes.map(recipe => recipe.id))
-  )
+  const [selectedRecipes, setSelectedRecipes] = useState<Set<string>>(new Set(recipes.map((recipe) => recipe.id)))
   const [includeImages, setIncludeImages] = useState(true)
   const [oneFilePerRecipe, setOneFilePerRecipe] = useState(false)
 
@@ -37,7 +36,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
   }
 
   const handleSelectAll = () => {
-    setSelectedRecipes(new Set(recipes.map(recipe => recipe.id)))
+    setSelectedRecipes(new Set(recipes.map((recipe) => recipe.id)))
   }
 
   const handleSelectNone = () => {
@@ -58,9 +57,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
     setIsGenerating(true)
     try {
       // Filter selected recipes
-      const selectedRecipesList = recipes.filter(recipe =>
-        selectedRecipes.has(recipe.id)
-      )
+      const selectedRecipesList = recipes.filter((recipe) => selectedRecipes.has(recipe.id))
 
       const datePrefix = formateDateFilename()
       const pdfsToSave: Array<{ filename: string; data: Uint8Array }> = []
@@ -73,7 +70,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
             id: recipe.id,
           })
 
-          let base64Data = ""
+          let base64Data = ''
           if (includeImages && recipe.photoSrc) {
             const image = await ipcMessenger.invoke(CHANNEL.FILES.GET_PHOTO, {
               fileName: recipe.photoSrc,
@@ -81,7 +78,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
 
             if (image?.data) {
               const bytes = image.data as Uint8Array
-              let binary = ""
+              let binary = ''
               const chunkSize = 0x8000
 
               for (let i = 0; i < bytes.length; i += chunkSize) {
@@ -101,11 +98,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
 
           // Generate PDF for this recipe
           const blob = await pdf(
-            <RecipesPDFDocument
-              recipes={[recipeWithIngredients]}
-              t={t}
-              includeImages={includeImages}
-            />,
+            <RecipesPDFDocument recipes={[recipeWithIngredients]} t={t} includeImages={includeImages} />,
           ).toBlob()
 
           // Convert blob to Uint8Array
@@ -116,18 +109,18 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
           const cleanTitle = recipe.title.replace(/[^a-zA-Z0-9\-_\s]/g, '').trim()
           pdfsToSave.push({
             filename: `${datePrefix}_${cleanTitle}`,
-            data: pdfData
+            data: pdfData,
           })
         }
       } else {
         // Generate single PDF with all recipes
         const recipesWithIngredients = await Promise.all(
-          selectedRecipesList.map(async recipe => {
+          selectedRecipesList.map(async (recipe) => {
             const result = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPE, {
               id: recipe.id,
             })
 
-            let base64Data = ""
+            let base64Data = ''
             if (includeImages && recipe.photoSrc) {
               const image = await ipcMessenger.invoke(CHANNEL.FILES.GET_PHOTO, {
                 fileName: recipe.photoSrc,
@@ -135,7 +128,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
 
               if (image?.data) {
                 const bytes = image.data as Uint8Array
-                let binary = ""
+                let binary = ''
                 const chunkSize = 0x8000
 
                 for (let i = 0; i < bytes.length; i += chunkSize) {
@@ -156,11 +149,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
 
         // Generate single PDF
         const blob = await pdf(
-          <RecipesPDFDocument
-            recipes={recipesWithIngredients}
-            t={t}
-            includeImages={includeImages}
-          />,
+          <RecipesPDFDocument recipes={recipesWithIngredients} t={t} includeImages={includeImages} />,
         ).toBlob()
 
         // Convert blob to Uint8Array
@@ -169,24 +158,24 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
 
         pdfsToSave.push({
           filename: `${datePrefix}_${t('recipes')}`,
-          data: pdfData
+          data: pdfData,
         })
       }
 
       // Send all PDFs to main process for saving
       const result = await ipcMessenger.invoke(CHANNEL.FILES.EXPORT_RECIPES_PDF, {
         pdfs: pdfsToSave,
-        oneFilePerRecipe
+        oneFilePerRecipe,
       })
 
       if (!result.success) {
-        console.error('Error saving PDFs:', result.error)
+        log.error('Error saving PDFs:', result.error)
         return
       }
 
       activeModalSignal.value = null
     } catch (error) {
-      console.error('Error generating PDF:', error)
+      log.error('Error generating PDF:', error)
     } finally {
       setIsGenerating(false)
     }
@@ -199,8 +188,8 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
           <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
             <Stack>
               <Typography variant="body2" color="textSecondary">
-                {t('export')}: {selectedRecipes.size}{' '}
-                {selectedRecipes.size === 1 ? t('recipe') : t('recipes')} of {recipes.length}
+                {t('export')}: {selectedRecipes.size} {selectedRecipes.size === 1 ? t('recipe') : t('recipes')} of{' '}
+                {recipes.length}
               </Typography>
             </Stack>
             <Stack direction="row" spacing={1} marginLeft="auto">
@@ -216,9 +205,18 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
             </Stack>
           </Stack>
 
-          <Box sx={{ maxHeight: 300, overflow: 'auto', padding: SPACING.TINY.PX, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+          <Box
+            sx={{
+              maxHeight: 300,
+              overflow: 'auto',
+              padding: SPACING.TINY.PX,
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: 1,
+            }}
+          >
             <Stack spacing={SPACING.SMALL.PX}>
-              {recipes.map(recipe => (
+              {recipes.map((recipe) => (
                 <FormControlLabel
                   key={recipe.id}
                   control={
@@ -237,11 +235,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
           <Stack direction="row" spacing={3}>
             <FormControlLabel
               control={
-                <Checkbox
-                  checked={includeImages}
-                  onChange={e => setIncludeImages(e.target.checked)}
-                  size="small"
-                />
+                <Checkbox checked={includeImages} onChange={(e) => setIncludeImages(e.target.checked)} size="small" />
               }
               label={t('includeImages')}
             />
@@ -249,7 +243,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
               control={
                 <Checkbox
                   checked={oneFilePerRecipe}
-                  onChange={e => setOneFilePerRecipe(e.target.checked)}
+                  onChange={(e) => setOneFilePerRecipe(e.target.checked)}
                   size="small"
                 />
               }
@@ -258,24 +252,16 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
           </Stack>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button
-              variant="outlined"
-              onClick={handleCancel}
-              disabled={isGenerating}
-            >
+            <Button variant="outlined" onClick={handleCancel} disabled={isGenerating}>
               {t('cancel')}
             </Button>
-            <Button
-              variant="contained"
-              onClick={handleExport}
-              disabled={isGenerating || selectedRecipes.size === 0}
-            >
+            <Button variant="contained" onClick={handleExport} disabled={isGenerating || selectedRecipes.size === 0}>
               {isGenerating ? `${t('loading')}...` : `${t('export')} PDF`}
             </Button>
           </Stack>
-        </Stack >
-      </Box >
-    </DefaultModal >
+        </Stack>
+      </Box>
+    </DefaultModal>
   )
 }
 

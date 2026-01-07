@@ -5,16 +5,14 @@ import { FaBottleWater } from 'react-icons/fa6'
 import { IoMdCheckbox, IoMdSettings, IoMdWarning } from 'react-icons/io'
 import { IoInformationCircleOutline } from 'react-icons/io5'
 import { LuPartyPopper } from 'react-icons/lu'
-import { MdDeleteOutline, MdOutlinePhoto } from "react-icons/md"
-
-
-
 import {
   MdAdd,
   MdClose,
+  MdDeleteOutline,
   MdEdit,
   MdError,
   MdOutlineCheckBoxOutlineBlank,
+  MdOutlinePhoto,
 } from 'react-icons/md'
 
 export const iconMap = {

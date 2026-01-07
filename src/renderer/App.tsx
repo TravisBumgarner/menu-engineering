@@ -5,8 +5,8 @@ import Navigation from './components/Navigation'
 import Router from './components/Router'
 import './internationalization' // Initialize i18n
 import RenderModal from './sharedComponents/Modal'
-import AppThemeProvider from './styles/Theme'
 import { SPACING } from './styles/consts'
+import AppThemeProvider from './styles/Theme'
 
 const queryClient = new QueryClient()
 

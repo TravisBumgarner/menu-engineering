@@ -1,29 +1,17 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React, { useState } from 'react'
+import type React from 'react'
+import { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import {
-  IngredientDTO,
-  NewIngredientDTO,
-} from '../../../../shared/recipe.types'
-import { ALL_UNITS, AllUnits } from '../../../../shared/units.types'
+import type { IngredientDTO, NewIngredientDTO } from '../../../../shared/recipe.types'
+import { ALL_UNITS, type AllUnits } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { getUnitLabel } from '../../../utilities'
-import { MODAL_ID } from '../Modal.consts'
+import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
 export interface EditIngredientModalProps {
@@ -40,11 +28,7 @@ type FormData = {
   cost: number
 }
 
-const EditIngredientModal = ({
-  ingredient,
-  recipeId,
-  recipeTitle,
-}: EditIngredientModalProps) => {
+const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredientModalProps) => {
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
   const [formData, setFormData] = useState<FormData>({
@@ -60,7 +44,7 @@ const EditIngredientModal = ({
         id: ingredient.id,
         payload: ingredientData,
       }),
-    onSuccess: result => {
+    onSuccess: (result) => {
       if (result.success) {
         // Invalidate and refetch ingredients query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
@@ -90,22 +74,20 @@ const EditIngredientModal = ({
     })
   }
 
-  const handleInputChange =
-    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value =
-        field === 'quantity' || field === 'unitCost'
-          ? Number(e.target.value)
-          : e.target.value
-      setFormData(prev => ({
-        ...prev,
-        [field]: value,
-      }))
-    }
+  const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = field === 'quantity' || field === 'unitCost' ? Number(e.target.value) : e.target.value
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }))
+  }
+
+  const closeModal = () => {
+    activeModalSignal.value = null
+  }
 
   return (
-    <DefaultModal
-      title={`${t('editIngredient')}: ${ingredient.title}${recipeId ? ` (in ${recipeTitle})` : ''}`}
-    >
+    <DefaultModal title={`${t('editIngredient')}: ${ingredient.title}${recipeId ? ` (in ${recipeTitle})` : ''}`}>
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={SPACING.MEDIUM.PX}>
           <TextField
@@ -117,11 +99,7 @@ const EditIngredientModal = ({
             fullWidth
             placeholder="e.g. Flour, Salt, Olive Oil"
           />
-          <Stack
-            direction="row"
-            spacing={SPACING.SMALL.PX}
-            sx={{ alignItems: 'center' }}
-          >
+          <Stack direction="row" spacing={SPACING.SMALL.PX} sx={{ alignItems: 'center' }}>
             <TextField
               size="small"
               label={t('cost')}
@@ -150,11 +128,7 @@ const EditIngredientModal = ({
               <Select
                 disabled
                 value={formData.units}
-                onChange={e =>
-                  handleInputChange('units')(
-                    e as React.ChangeEvent<HTMLInputElement>,
-                  )
-                }
+                onChange={(e) => handleInputChange('units')(e as React.ChangeEvent<HTMLInputElement>)}
                 label={t('units')}
               >
                 {Object.entries(ALL_UNITS).map(([key, value]) => (
@@ -168,31 +142,18 @@ const EditIngredientModal = ({
             <Typography>=</Typography>
 
             <Typography>
-              ${(formData.cost / formData.quantity).toFixed(2)}/{' '}
-              {getUnitLabel(formData.units, 'singular')}
+              ${(formData.cost / formData.quantity).toFixed(2)}/ {getUnitLabel(formData.units, 'singular')}
             </Typography>
           </Stack>
-          <Typography
-            sx={{ marginTop: '0 !important' }}
-            variant="caption"
-            color="textSecondary"
-          >
+          <Typography sx={{ marginTop: '0 !important' }} variant="caption" color="textSecondary">
             {t('unitsHelpText')}
           </Typography>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button
-              variant="outlined"
-              type="button"
-              onClick={() => (activeModalSignal.value = null)}
-            >
+            <Button variant="outlined" type="button" onClick={closeModal}>
               {t('cancel')}
             </Button>
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={updateIngredientMutation.isPending}
-            >
+            <Button variant="contained" type="submit" disabled={updateIngredientMutation.isPending}>
               {updateIngredientMutation.isPending ? t('updating') : t('update')}
             </Button>
           </Stack>

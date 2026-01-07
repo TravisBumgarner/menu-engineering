@@ -1,4 +1,4 @@
-import { type TranslationKeys } from './types'
+import type { TranslationKeys } from './types'
 
 const SpanishTranslations: Record<TranslationKeys, string> = {
   RECIPE_EXISTS: 'La receta ya existe.',
@@ -52,7 +52,8 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   confirmDeleteRecipe: 'Confirmar Eliminar Receta',
   confirmDeleteIngredient: 'Confirmar Eliminar Ingrediente',
   deleteRecipeConfirmation: '¿Estás seguro de que quieres eliminar esta receta? Esta acción no se puede deshacer.',
-  deleteIngredientConfirmation: '¿Estás seguro de que quieres eliminar este ingrediente? Esta acción no se puede deshacer.',
+  deleteIngredientConfirmation:
+    '¿Estás seguro de que quieres eliminar este ingrediente? Esta acción no se puede deshacer.',
   editIngredient: 'Editar Ingrediente',
   editIngredients: 'Editar Ingredientes',
   addExisting: 'Agregar Existente',
@@ -113,8 +114,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   weightConversions: 'Tabla de Conversión de Peso',
   volumeConversions: 'Tabla de Conversión de Volumen',
   unitConversions: 'Conversión de Unidades',
-  conversionDisclaimer:
-    'Las conversiones son aproximadas y se basan en medidas estándar de EE.UU.',
+  conversionDisclaimer: 'Las conversiones son aproximadas y se basan en medidas estándar de EE.UU.',
 
   // Missing translations
   language: 'Idioma',
@@ -139,17 +139,14 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   exporting: 'Exportando...',
   restoring: 'Restaurando...',
   dataExportedSuccessfully: '¡Datos exportados exitosamente!',
-  dataRestoredSuccessfully:
-    '¡Datos restaurados exitosamente! Por favor reinicia la aplicación.',
+  dataRestoredSuccessfully: '¡Datos restaurados exitosamente! Por favor reinicia la aplicación.',
   failedToExportData: 'Falló al exportar datos',
   failedToRestoreData: 'Falló al restaurar datos',
   errorExportingData: 'Error exportando datos',
   errorRestoringData: 'Error restaurando datos',
   invalidBackupFile: 'Formato de archivo de copia de seguridad inválido',
-  exportDataDescription:
-    'Exporta todos tus datos o restaura desde un archivo de copia de seguridad.',
-  restoreConfirmation:
-    'Escribe "CONFIRMAR" para restaurar datos (esto eliminará todos los datos actuales)',
+  exportDataDescription: 'Exporta todos tus datos o restaura desde un archivo de copia de seguridad.',
+  restoreConfirmation: 'Escribe "CONFIRMAR" para restaurar datos (esto eliminará todos los datos actuales)',
   confirmationPlaceholder: 'Escribe CONFIRMAR aquí',
   confirmationRequired: 'Debes escribir CONFIRMAR para continuar',
   nukeDatabase: 'Eliminar Todos los Datos',
@@ -158,8 +155,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   nukeDatabaseSuccessfully: '¡Todos los datos eliminados exitosamente!',
   failedToNukeDatabase: 'Falló al eliminar base de datos',
   errorNukingDatabase: 'Error eliminando base de datos',
-  nukeDatabaseDescription:
-    'Eliminar permanentemente todas las recetas, ingredientes y relaciones.',
+  nukeDatabaseDescription: 'Eliminar permanentemente todas las recetas, ingredientes y relaciones.',
   nuking: 'Eliminando...',
 }
 

@@ -1,6 +1,7 @@
-import { app } from 'electron'
 import fs from 'node:fs'
 import path from 'node:path'
+import { app } from 'electron'
+import log from 'electron-log/main'
 
 const photosBasePath = app.isPackaged
   ? path.join(app.getPath('userData'), 'photos')
@@ -31,7 +32,7 @@ export const savePhotoBytes = (photoFileName: string, bytes: Uint8Array): boolea
     fs.writeFileSync(getPhotoPath(photoFileName), Buffer.from(bytes))
     return true
   } catch (err) {
-    console.error('Error saving photo:', err)
+    log.error('Error saving photo:', err)
     return false
   }
 }
@@ -44,7 +45,7 @@ export const deletePhoto = (photoFileName: string): boolean => {
     }
     return true
   } catch (err) {
-    console.error('Error deleting photo:', err)
+    log.error('Error deleting photo:', err)
     return false
   }
 }
@@ -54,19 +55,19 @@ export const getAllPhotos = (): { filename: string; data: Buffer }[] => {
     if (!fs.existsSync(photosBasePath)) {
       return []
     }
-    
+
     const files = fs.readdirSync(photosBasePath)
     return files
-      .filter(file => {
+      .filter((file) => {
         const stat = fs.statSync(path.join(photosBasePath, file))
         return stat.isFile()
       })
-      .map(filename => ({
+      .map((filename) => ({
         filename,
-        data: fs.readFileSync(path.join(photosBasePath, filename))
+        data: fs.readFileSync(path.join(photosBasePath, filename)),
       }))
   } catch (err) {
-    console.error('Error getting all photos:', err)
+    log.error('Error getting all photos:', err)
     return []
   }
 }
@@ -76,7 +77,7 @@ export const deleteAllPhotos = (): boolean => {
     if (!fs.existsSync(photosBasePath)) {
       return true
     }
-    
+
     const files = fs.readdirSync(photosBasePath)
     for (const file of files) {
       const filePath = path.join(photosBasePath, file)
@@ -87,7 +88,7 @@ export const deleteAllPhotos = (): boolean => {
     }
     return true
   } catch (err) {
-    console.error('Error deleting all photos:', err)
+    log.error('Error deleting all photos:', err)
     return false
   }
 }
@@ -100,7 +101,7 @@ export const savePhotosFromZipData = (photos: { filename: string; data: Buffer }
     }
     return true
   } catch (err) {
-    console.error('Error saving photos from zip:', err)
+    log.error('Error saving photos from zip:', err)
     return false
   }
 }

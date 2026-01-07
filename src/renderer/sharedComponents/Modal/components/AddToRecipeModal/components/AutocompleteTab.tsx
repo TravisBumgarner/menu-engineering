@@ -1,23 +1,15 @@
-import {
-  Box,
-  Button,
-  Autocomplete as MUIAutocomplete,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Autocomplete as MUIAutocomplete, Stack, TextField, Typography } from '@mui/material'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import Icon from '../../../../Icon'
-
 import { useMemo, useState } from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
-import { RecipeDTO } from '../../../../../../shared/recipe.types'
-import { ALL_UNITS, AllUnits } from '../../../../../../shared/units.types'
+import type { RecipeDTO } from '../../../../../../shared/recipe.types'
+import { ALL_UNITS, type AllUnits } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
+import Icon from '../../../../Icon'
 import RecipeDetails from './RecipeDetails'
 
 type Value = {
@@ -31,7 +23,7 @@ const Autocomplete = ({
   recipe,
   setTab,
 }: {
-  recipe: RecipeDTO,
+  recipe: RecipeDTO
   setTab: (tab: 'addIngredient' | 'addRecipe') => void
 }) => {
   const queryClient = useQueryClient()
@@ -43,13 +35,13 @@ const Autocomplete = ({
       const ingredients = await ipcMessenger.invoke(CHANNEL.DB.GET_INGREDIENTS)
       const recipes = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPES)
       return [
-        ...ingredients.ingredients.map(i => ({
+        ...ingredients.ingredients.map((i) => ({
           label: i.title,
           id: i.id,
           type: 'ingredient' as const,
           units: i.units,
         })),
-        ...recipes.recipes.map(r => ({
+        ...recipes.recipes.map((r) => ({
           label: r.title,
           id: r.id,
           type: 'sub-recipe' as const,
@@ -59,7 +51,7 @@ const Autocomplete = ({
     },
   })
 
-  const { data: recipeData, isLoading, isError } = useQuery({
+  const { data: recipeData } = useQuery({
     queryKey: [QUERY_KEYS.RECIPE, recipe.id],
     queryFn: async () => {
       if (!recipe.id) throw new Error(t('recipeNotFound'))
@@ -71,31 +63,23 @@ const Autocomplete = ({
     },
   })
 
-  const existingRecipeComponentIds = useMemo(
-    () => {
-      if (recipeData) {
-        return recipeData.ingredients
-          .map(i => i.id)
-          .concat(recipeData?.subRecipes.map(s => s.id))
-          .concat([recipe.id])
-      }
-      return []
-    },
-    [recipeData, recipe],
-  )
-
+  const existingRecipeComponentIds = useMemo(() => {
+    if (recipeData) {
+      return recipeData.ingredients
+        .map((i) => i.id)
+        .concat(recipeData?.subRecipes.map((s) => s.id))
+        .concat([recipe.id])
+    }
+    return []
+  }, [recipeData, recipe])
 
   const handleClose = () => {
     activeModalSignal.value = null
   }
 
-
   const [selectedAutocomplete, setSelectedAutocomplete] = useState<Value | null>(null)
 
-  const {
-    isPending: addExistingToRecipeIsLoading,
-    mutate: addExistingToRecipe,
-  } = useMutation({
+  const { isPending: addExistingToRecipeIsLoading, mutate: addExistingToRecipe } = useMutation({
     mutationFn: async (shouldClose: boolean) => {
       if (!selectedAutocomplete) {
         // Always return a Promise with the correct shape
@@ -110,7 +94,7 @@ const Autocomplete = ({
       })
       return { ...result, shouldClose }
     },
-    onSuccess: async result => {
+    onSuccess: async (result) => {
       if (result.success) {
         await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
         await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
@@ -126,7 +110,7 @@ const Autocomplete = ({
     },
   })
 
-  const handleChange = (event: unknown, value: Value | null) => {
+  const handleChange = (_event: unknown, value: Value | null) => {
     setSelectedAutocomplete(value)
   }
 
@@ -152,25 +136,15 @@ const Autocomplete = ({
               }}
             >
               <Typography>No ingredients or recipes found</Typography>
-              <Button
-                fullWidth
-                onClick={() => setTab('addIngredient')}
-                variant="outlined"
-                size="small"
-              >
+              <Button fullWidth onClick={() => setTab('addIngredient')} variant="outlined" size="small">
                 {t('addIngredient')}
               </Button>
-              <Button
-                fullWidth
-                onClick={() => setTab('addRecipe')}
-                variant="outlined"
-                size="small"
-              >
+              <Button fullWidth onClick={() => setTab('addRecipe')} variant="outlined" size="small">
                 {t('addSubRecipe')}
               </Button>
             </Box>
           }
-          getOptionDisabled={option => existingRecipeComponentIds.includes(option.id)}
+          getOptionDisabled={(option) => existingRecipeComponentIds.includes(option.id)}
           renderOption={(props, option) => {
             const { key, ...optionProps } = props
             return (
@@ -181,16 +155,15 @@ const Autocomplete = ({
               </Box>
             )
           }}
-          renderInput={params => (
-            <TextField
-              {...params}
-              size="small"
-              variant="standard"
-              placeholder={t('addExisting')}
-            />
+          renderInput={(params) => (
+            <TextField {...params} size="small" variant="standard" placeholder={t('addExisting')} />
           )}
         />
-        <RecipeDetails units={selectedAutocomplete?.units || ALL_UNITS.cups} setQuantity={setRecipeQuantity} quantity={recipeQuantity} />
+        <RecipeDetails
+          units={selectedAutocomplete?.units || ALL_UNITS.cups}
+          setQuantity={setRecipeQuantity}
+          quantity={recipeQuantity}
+        />
       </Stack>
       <Stack direction="row" spacing={SPACING.SMALL.PX} justifyContent="flex-end">
         <Button onClick={handleClose} variant="outlined" type="button" size="small">
@@ -203,7 +176,8 @@ const Autocomplete = ({
           onClick={() => addExistingToRecipe(true)}
         >
           {addExistingToRecipeIsLoading ? t('saving') : t('save')}
-        </Button>        <Button
+        </Button>{' '}
+        <Button
           variant="contained"
           size="small"
           disabled={!selectedAutocomplete || addExistingToRecipeIsLoading}

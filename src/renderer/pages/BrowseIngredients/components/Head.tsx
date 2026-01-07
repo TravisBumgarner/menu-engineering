@@ -4,8 +4,8 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
-import * as React from 'react'
-import { IngredientDTO } from '../../../../shared/recipe.types'
+import type * as React from 'react'
+import type { IngredientDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
@@ -17,10 +17,7 @@ interface HeadCell {
 }
 
 interface EnhancedTableProps {
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof IngredientDTO | 'recipeCount',
-  ) => void
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof IngredientDTO | 'recipeCount') => void
 
   order: 'asc' | 'desc'
   orderBy: string | number | symbol
@@ -82,23 +79,21 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     },
   ]
 
-  const createSortHandler =
-    (property: keyof IngredientDTO | 'recipeCount') => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property)
-    }
+  const createSortHandler = (property: keyof IngredientDTO | 'recipeCount') => (event: React.MouseEvent<unknown>) => {
+    onRequestSort(event, property)
+  }
 
   return (
     <TableHead>
       <TableRow>
-        {headCells.map(headCell => (
+        {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.align}
             sx={{ width: headCell.width }}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            {headCell.id === 'actions' ||
-              headCell.id === 'collapse' ? (
+            {headCell.id === 'actions' || headCell.id === 'collapse' ? (
               headCell.label
             ) : (
               <TableSortLabel
@@ -109,9 +104,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                 {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc'
-                      ? 'sorted descending'
-                      : 'sorted ascending'}
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </Box>
                 ) : null}
               </TableSortLabel>

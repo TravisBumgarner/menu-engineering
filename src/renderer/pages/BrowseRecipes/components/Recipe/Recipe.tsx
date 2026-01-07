@@ -47,21 +47,18 @@ const Recipe = ({ id }: { id: string }) => {
     >
       <Typography>
         {t('usedIn')}: {data.usedInRecipes.length === 0 && ` 0 ${t('recipes')}`}
-        {data.usedInRecipes.map(recipe => (
-          <Button
-            variant="text"
-            key={recipe.id}
-            onClick={() => (activeRecipeIdSignal.value = recipe.id)}
-          >
-            {recipe.title}
-          </Button>
-        ))}
+        {data.usedInRecipes.map((recipe) => {
+          const setActiveRecipe = () => {
+            activeRecipeIdSignal.value = recipe.id
+          }
+          return (
+            <Button variant="text" key={recipe.id} onClick={setActiveRecipe}>
+              {recipe.title}
+            </Button>
+          )
+        })}
       </Typography>
-      <Table
-        ingredients={data.ingredients}
-        recipe={data.recipe}
-        subRecipes={data.subRecipes}
-      />
+      <Table ingredients={data.ingredients} recipe={data.recipe} subRecipes={data.subRecipes} />
     </Box>
   )
 }

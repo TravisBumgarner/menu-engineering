@@ -14,7 +14,7 @@ const config: ForgeConfig = {
     // This is expected. Error can be ignored.
     // https://github.com/electron/forge/issues/3738#issuecomment-2692534953
     ignore: [],
-    icon: './src/assets/icon',
+    icon: './src/assets/icon.png',
     extraResource: ['./drizzle'],
     osxSign: {
       optionsForFile: () => {

@@ -3,9 +3,10 @@ import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import { useQueryClient } from '@tanstack/react-query'
+import log from 'electron-log/renderer'
 import * as React from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import { IngredientDTO } from '../../../../shared/recipe.types'
+import type { IngredientDTO } from '../../../../shared/recipe.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
@@ -15,10 +16,7 @@ import { activeModalSignal } from '../../../signals'
 import { formatCurrency, formatDisplayDate, getUnitLabel } from '../../../utilities'
 import Ingredient from './Ingredient'
 
-function Row(props: {
-  row: IngredientDTO & { recipeCount: number }
-  labelId: string
-}) {
+function Row(props: { row: IngredientDTO & { recipeCount: number }; labelId: string }) {
   const { row, labelId } = props
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
@@ -44,7 +42,17 @@ function Row(props: {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
       }
     } catch (error) {
-      console.error('Failed to delete ingredient:', error)
+      log.error('Failed to delete ingredient:', error)
+    }
+  }
+
+  const openConfirmationModal = () => {
+    activeModalSignal.value = {
+      id: MODAL_ID.CONFIRMATION_MODAL,
+      title: t('confirmDeleteIngredient'),
+      body: t('deleteIngredientConfirmation'),
+      confirmationCallback: handleDeleteIngredient,
+      showCancel: true,
     }
   }
 
@@ -55,16 +63,12 @@ function Row(props: {
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={event => {
+            onClick={(event) => {
               event.stopPropagation()
               setIsOpen(!isOpen)
             }}
           >
-            {isOpen ? (
-              <Icon name="collapseVertical" />
-            ) : (
-              <Icon name="expandVertical" />
-            )}
+            {isOpen ? <Icon name="collapseVertical" /> : <Icon name="expandVertical" />}
           </IconButton>
         </TableCell>
         <TableCell scope="row" padding="none">
@@ -75,36 +79,18 @@ function Row(props: {
         </TableCell>
         <TableCell align="left">{getUnitLabel(row.units, 'plural')}</TableCell>
         <TableCell align="right">{formatCurrency(row.unitCost)}</TableCell>
-        <TableCell align="right">
-          {row.recipeCount}
-        </TableCell>
+        <TableCell align="right">{row.recipeCount}</TableCell>
         <TableCell align="left">
           <Tooltip title={t('editIngredient')}>
             <span>
-              <IconButton
-                size="small"
-                title={t('edit')}
-                onClick={handleOpenEditModal}
-              >
+              <IconButton size="small" title={t('edit')} onClick={handleOpenEditModal}>
                 <Icon name="edit" />
               </IconButton>
             </span>
           </Tooltip>
           <Tooltip title={t('deleteIngredient')}>
             <span>
-              <IconButton
-                size="small"
-                title={t('delete')}
-                onClick={() =>
-                (activeModalSignal.value = {
-                  id: MODAL_ID.CONFIRMATION_MODAL,
-                  title: t('confirmDeleteIngredient'),
-                  body: t('deleteIngredientConfirmation'),
-                  confirmationCallback: handleDeleteIngredient,
-                  showCancel: true,
-                })
-                }
-              >
+              <IconButton size="small" title={t('delete')} onClick={openConfirmationModal}>
                 <Icon name="delete" />
               </IconButton>
             </span>

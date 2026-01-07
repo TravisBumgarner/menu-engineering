@@ -1,10 +1,6 @@
 import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
-import {
-  IngredientDTO,
-  RecipeDTO,
-  RelationDTO,
-} from '../../../../shared/recipe.types'
-import { TranslationKeys } from '../../../internationalization/types'
+import type { IngredientDTO, RecipeDTO, RelationDTO } from '../../../../shared/recipe.types'
+import type { TranslationKeys } from '../../../internationalization/types'
 
 // Create styles
 const styles = StyleSheet.create({
@@ -87,18 +83,17 @@ interface RecipesPDFDocumentProps {
 
 const RecipesPDFDocument = ({ recipes, t, includeImages = false }: RecipesPDFDocumentProps) => {
   return (
-    < Document >
+    <Document>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>{t('recipes')}</Text>
 
-        {recipes.map(recipe => (
+        {recipes.map((recipe) => (
           <View key={recipe.id} style={styles.recipe}>
             <Text style={styles.recipeTitle}>{recipe.title}</Text>
 
             <Text style={styles.recipeInfo}>
-              {t('produces')}: {recipe.produces} {recipe.units} | {t('status')}:{' '}
-              {recipe.status} |{t('usedIn')} {recipe.usedInRecipesCount}{' '}
-              {recipe.usedInRecipesCount === 1 ? t('recipe') : t('recipes')}
+              {t('produces')}: {recipe.produces} {recipe.units} | {t('status')}: {recipe.status} |{t('usedIn')}{' '}
+              {recipe.usedInRecipesCount} {recipe.usedInRecipesCount === 1 ? t('recipe') : t('recipes')}
             </Text>
 
             {includeImages && recipe.base64Data && (
@@ -107,48 +102,26 @@ const RecipesPDFDocument = ({ recipes, t, includeImages = false }: RecipesPDFDoc
               </View>
             )}
 
-
             {recipe.ingredients && recipe.ingredients.length > 0 ? (
               <View>
                 <Text style={styles.sectionTitle}>{t('ingredients')}:</Text>
 
                 <View style={styles.tableHeader}>
-                  <Text style={[styles.headerText, styles.col1]}>
-                    {t('title')}
-                  </Text>
-                  <Text style={[styles.headerText, styles.col2]}>
-                    {t('quantity')}
-                  </Text>
-                  <Text style={[styles.headerText, styles.col3]}>
-                    {t('units')}
-                  </Text>
-                  <Text style={[styles.headerText, styles.col4]}>
-                    {t('unitCost')}
-                  </Text>
-                  <Text style={[styles.headerText, styles.col5]}>
-                    {t('totalCost')}
-                  </Text>
+                  <Text style={[styles.headerText, styles.col1]}>{t('title')}</Text>
+                  <Text style={[styles.headerText, styles.col2]}>{t('quantity')}</Text>
+                  <Text style={[styles.headerText, styles.col3]}>{t('units')}</Text>
+                  <Text style={[styles.headerText, styles.col4]}>{t('unitCost')}</Text>
+                  <Text style={[styles.headerText, styles.col5]}>{t('totalCost')}</Text>
                 </View>
 
                 {recipe.ingredients.map((ingredient, idx) => (
                   <View key={idx} style={styles.tableRow}>
-                    <Text style={[styles.cellText, styles.col1]}>
-                      {ingredient.title}
-                    </Text>
-                    <Text style={[styles.cellText, styles.col2]}>
-                      {ingredient.relation.quantity}
-                    </Text>
-                    <Text style={[styles.cellText, styles.col3]}>
-                      {ingredient.relation.units}
-                    </Text>
-                    <Text style={[styles.cellText, styles.col4]}>
-                      ${ingredient.unitCost.toFixed(2)}
-                    </Text>
+                    <Text style={[styles.cellText, styles.col1]}>{ingredient.title}</Text>
+                    <Text style={[styles.cellText, styles.col2]}>{ingredient.relation.quantity}</Text>
+                    <Text style={[styles.cellText, styles.col3]}>{ingredient.relation.units}</Text>
+                    <Text style={[styles.cellText, styles.col4]}>${ingredient.unitCost.toFixed(2)}</Text>
                     <Text style={[styles.cellText, styles.col5]}>
-                      $
-                      {(
-                        ingredient.relation.quantity * ingredient.unitCost
-                      ).toFixed(2)}
+                      ${(ingredient.relation.quantity * ingredient.unitCost).toFixed(2)}
                     </Text>
                   </View>
                 ))}
@@ -165,40 +138,22 @@ const RecipesPDFDocument = ({ recipes, t, includeImages = false }: RecipesPDFDoc
                 <Text style={styles.sectionTitle}>{t('recipes')}:</Text>
 
                 <View style={styles.tableHeader}>
-                  <Text style={[styles.headerText, styles.col1]}>
-                    {t('title')}
-                  </Text>
-                  <Text style={[styles.headerText, styles.col2]}>
-                    {t('quantity')}
-                  </Text>
-                  <Text style={[styles.headerText, styles.col3]}>
-                    {t('units')}
-                  </Text>
-                  <Text style={[styles.headerText, styles.col4]}>
-                    {t('produces')}
-                  </Text>
-                  <Text style={[styles.headerText, styles.col5]}>
-                    {t('status')}
-                  </Text>
+                  <Text style={[styles.headerText, styles.col1]}>{t('title')}</Text>
+                  <Text style={[styles.headerText, styles.col2]}>{t('quantity')}</Text>
+                  <Text style={[styles.headerText, styles.col3]}>{t('units')}</Text>
+                  <Text style={[styles.headerText, styles.col4]}>{t('produces')}</Text>
+                  <Text style={[styles.headerText, styles.col5]}>{t('status')}</Text>
                 </View>
 
                 {recipe.subRecipes.map((subRecipe, idx) => (
                   <View key={idx} style={styles.tableRow}>
-                    <Text style={[styles.cellText, styles.col1]}>
-                      {subRecipe.title}
-                    </Text>
-                    <Text style={[styles.cellText, styles.col2]}>
-                      {subRecipe.relation.quantity}
-                    </Text>
-                    <Text style={[styles.cellText, styles.col3]}>
-                      {subRecipe.relation.units}
-                    </Text>
+                    <Text style={[styles.cellText, styles.col1]}>{subRecipe.title}</Text>
+                    <Text style={[styles.cellText, styles.col2]}>{subRecipe.relation.quantity}</Text>
+                    <Text style={[styles.cellText, styles.col3]}>{subRecipe.relation.units}</Text>
                     <Text style={[styles.cellText, styles.col4]}>
                       {subRecipe.produces} {subRecipe.units}
                     </Text>
-                    <Text style={[styles.cellText, styles.col5]}>
-                      {subRecipe.status}
-                    </Text>
+                    <Text style={[styles.cellText, styles.col5]}>{subRecipe.status}</Text>
                   </View>
                 ))}
               </View>
@@ -206,7 +161,7 @@ const RecipesPDFDocument = ({ recipes, t, includeImages = false }: RecipesPDFDoc
           </View>
         ))}
       </Page>
-    </Document >
+    </Document>
   )
 }
 
