@@ -31,7 +31,7 @@ export interface SettingsModalProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SettingsModal = ({ id }: SettingsModalProps) => {
+const SettingsModal = (_props: SettingsModalProps) => {
   const { t, currentLanguage, changeLanguage } = useAppTranslation()
   const [backupDirectory, setBackupDirectory] = useState<string>('')
   const [isExporting, setIsExporting] = useState(false)
