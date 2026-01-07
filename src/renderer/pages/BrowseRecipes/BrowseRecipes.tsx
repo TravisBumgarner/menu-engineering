@@ -39,7 +39,7 @@ const BrowseRecipes = () => {
 
   if (!data) {
     return <div>{t('noDataAvailable')}</div>
-  }
+  } 
 
   return <Table recipes={data.recipes} />
 }

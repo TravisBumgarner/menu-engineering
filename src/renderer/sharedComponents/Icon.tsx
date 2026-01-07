@@ -5,7 +5,8 @@ import { FaBottleWater } from 'react-icons/fa6'
 import { IoMdCheckbox, IoMdSettings, IoMdWarning } from 'react-icons/io'
 import { IoInformationCircleOutline } from 'react-icons/io5'
 import { LuPartyPopper } from 'react-icons/lu'
-import { MdOutlinePhoto } from "react-icons/md";
+import { MdDeleteOutline, MdOutlinePhoto } from "react-icons/md"
+
 
 
 import {
@@ -32,7 +33,8 @@ export const iconMap = {
   collapseVertical: BiCollapseVertical,
   details: CgDetailsMore,
   settings: IoMdSettings,
-  photo: MdOutlinePhoto
+  photo: MdOutlinePhoto,
+  delete: MdDeleteOutline,
 }
 
 const Icon = ({
