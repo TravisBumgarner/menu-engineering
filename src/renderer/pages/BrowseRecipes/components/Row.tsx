@@ -6,9 +6,13 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import { computed } from '@preact/signals-react'
 import { useSignals } from '@preact/signals-react/runtime'
+import { useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
+import { CHANNEL } from '../../../../shared/messages.types'
 import { type RecipeDTO } from '../../../../shared/recipe.types'
+import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import Photo from '../../../sharedComponents/Photo'
@@ -30,12 +34,33 @@ function RecipeRow({
 }) {
   useSignals()
   const { t } = useAppTranslation()
+  const queryClient = useQueryClient()
 
   const isOpen = computed(() => activeRecipeIdSignal.value === row.id)
 
   const opacity = computed(() =>
     activeRecipeIdSignal.value === '' ? 1 : isOpen.value ? 1 : 0.1,
   )
+
+  const handleDeleteRecipe = async () => {
+    try {
+      const response = await ipcMessenger.invoke(CHANNEL.DB.DELETE_RECIPE, {
+        id: row.id,
+      })
+
+      if (response.success) {
+        // Invalidate queries to refresh the data
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
+        // Close expanded recipe if it was the one being deleted
+        if (activeRecipeIdSignal.value === row.id) {
+          activeRecipeIdSignal.value = ''
+        }
+      }
+    } catch (error) {
+      console.error('Failed to delete recipe:', error)
+    }
+  }
 
   return (
     <React.Fragment>
@@ -69,7 +94,7 @@ function RecipeRow({
         </TableCell>
         <TableCell sx={cellSx} id={labelId} scope="row">
           <Stack direction="row" alignItems="center" spacing={1}>
-          {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
+            {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
 
             <span>{row.title}</span>
 
@@ -144,10 +169,25 @@ function RecipeRow({
               <Icon name="edit" />
             </IconButton>
           </Tooltip>
+          <Tooltip title={t('deleteRecipe')}>
+            <IconButton
+              onClick={() =>
+              (activeModalSignal.value = {
+                id: MODAL_ID.CONFIRMATION_MODAL,
+                title: t('confirmDeleteRecipe'),
+                body: t('deleteRecipeConfirmation'),
+                confirmationCallback: handleDeleteRecipe,
+                showCancel: true,
+              })
+              }
+            >
+              <Icon name="delete" />
+            </IconButton>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell sx={cellSx} style={{ padding: 0, border: 0 }} colSpan={11}>
+        <TableCell sx={cellSx} style={{ padding: 0, border: 0 }} colSpan={12}>
           <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>

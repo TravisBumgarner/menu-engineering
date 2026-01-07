@@ -380,6 +380,62 @@ const getRecipesUsingIngredient = async (ingredientId: string) => {
   })).then(results => results.filter(Boolean))
 }
 
+const deleteRecipe = async (recipeId: string) => {
+  try {
+    // Delete in order to maintain foreign key constraints
+    // 1. Delete all ingredient relationships for this recipe
+    await db
+      .delete(recipeIngredientSchema)
+      .where(eq(recipeIngredientSchema.parentId, recipeId))
+      .run()
+
+    // 2. Delete all sub-recipe relationships where this recipe is the parent
+    await db
+      .delete(recipeSubRecipeSchema)
+      .where(eq(recipeSubRecipeSchema.parentId, recipeId))
+      .run()
+
+    // 3. Delete all sub-recipe relationships where this recipe is used as a sub-recipe
+    await db
+      .delete(recipeSubRecipeSchema)
+      .where(eq(recipeSubRecipeSchema.childId, recipeId))
+      .run()
+
+    // 4. Finally, delete the recipe itself
+    const result = await db
+      .delete(recipeSchema)
+      .where(eq(recipeSchema.id, recipeId))
+      .run()
+
+    return result
+  } catch (error) {
+    console.error('Error deleting recipe:', error)
+    throw error
+  }
+}
+
+const deleteIngredient = async (ingredientId: string) => {
+  try {
+    // Delete in order to maintain foreign key constraints
+    // 1. Delete all recipe-ingredient relationships where this ingredient is used
+    await db
+      .delete(recipeIngredientSchema)
+      .where(eq(recipeIngredientSchema.childId, ingredientId))
+      .run()
+
+    // 2. Finally, delete the ingredient itself
+    const result = await db
+      .delete(ingredientSchema)
+      .where(eq(ingredientSchema.id, ingredientId))
+      .run()
+
+    return result
+  } catch (error) {
+    console.error('Error deleting ingredient:', error)
+    throw error
+  }
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -399,6 +455,8 @@ export default {
   updateRecipeRelation,
   getRecipeCost,
   getRecipesUsingIngredient,
+  deleteRecipe,
+  deleteIngredient,
   recipeExists,
   ingredientExists
 }

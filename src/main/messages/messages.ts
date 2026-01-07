@@ -209,6 +209,46 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE, async (_event, params) => {
   }
 })
 
+typedIpcMain.handle(CHANNEL.DB.DELETE_RECIPE, async (_event, params) => {
+  try {
+    // Get the recipe to check if it has a photo that needs to be deleted
+    const recipe = await queries.getRecipe(params.id)
+    
+    // Delete the recipe and all its relationships
+    const result = await queries.deleteRecipe(params.id)
+    
+    // Delete the associated photo file if it exists
+    if (recipe?.photoSrc) {
+      await deletePhoto(recipe.photoSrc)
+    }
+    
+    return {
+      success: !!result,
+    }
+  } catch (error) {
+    console.error('Error deleting recipe:', error)
+    return {
+      success: false,
+    }
+  }
+})
+
+typedIpcMain.handle(CHANNEL.DB.DELETE_INGREDIENT, async (_event, params) => {
+  try {
+    // Delete the ingredient and all its relationships
+    const result = await queries.deleteIngredient(params.id)
+    
+    return {
+      success: !!result,
+    }
+  } catch (error) {
+    console.error('Error deleting ingredient:', error)
+    return {
+      success: false,
+    }
+  }
+})
+
 typedIpcMain.handle(
   CHANNEL.DB.ADD_EXISTING_TO_RECIPE,
   async (_event, params) => {

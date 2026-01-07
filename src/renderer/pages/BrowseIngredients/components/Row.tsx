@@ -2,10 +2,15 @@ import { Collapse, Tooltip } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
+import { useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
+import { CHANNEL } from '../../../../shared/messages.types'
 import { IngredientDTO } from '../../../../shared/recipe.types'
+import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
+import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
 import { formatCurrency, formatDisplayDate, getUnitLabel } from '../../../utilities'
 import Ingredient from './Ingredient'
@@ -16,12 +21,30 @@ function Row(props: {
 }) {
   const { row, labelId } = props
   const { t } = useAppTranslation()
+  const queryClient = useQueryClient()
   const [isOpen, setIsOpen] = React.useState(false)
 
   const handleOpenEditModal = () => {
     activeModalSignal.value = {
       id: 'EDIT_INGREDIENT_MODAL',
       ingredient: row,
+    }
+  }
+
+  const handleDeleteIngredient = async () => {
+    try {
+      const response = await ipcMessenger.invoke(CHANNEL.DB.DELETE_INGREDIENT, {
+        id: row.id,
+      })
+
+      if (response.success) {
+        // Invalidate queries to refresh the data
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENTS] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INGREDIENT] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
+      }
+    } catch (error) {
+      console.error('Failed to delete ingredient:', error)
     }
   }
 
@@ -67,10 +90,29 @@ function Row(props: {
               </IconButton>
             </span>
           </Tooltip>
+          <Tooltip title={t('deleteIngredient')}>
+            <span>
+              <IconButton
+                size="small"
+                title={t('delete')}
+                onClick={() =>
+                (activeModalSignal.value = {
+                  id: MODAL_ID.CONFIRMATION_MODAL,
+                  title: t('confirmDeleteIngredient'),
+                  body: t('deleteIngredientConfirmation'),
+                  confirmationCallback: handleDeleteIngredient,
+                  showCancel: true,
+                })
+                }
+              >
+                <Icon name="delete" />
+              </IconButton>
+            </span>
+          </Tooltip>
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ padding: 0, border: 0 }} colSpan={9}>
+        <TableCell style={{ padding: 0, border: 0 }} colSpan={7}>
           <Collapse in={isOpen} timeout="auto" unmountOnExit>
             <Ingredient id={row.id} />
           </Collapse>
