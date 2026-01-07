@@ -36,6 +36,7 @@ export const CHANNEL = {
   },
   FILES: {
     GET_PHOTO: 'files:get-photo',
+    EXPORT_RECIPES_PDF: 'files:export-recipes-pdf',
   }
 } as const
 
@@ -184,6 +185,16 @@ export type Invokes = {
   [CHANNEL.FILES.GET_PHOTO]: {
     args: { fileName: string }
     result: { data: Uint8Array | null }
+  }
+  [CHANNEL.FILES.EXPORT_RECIPES_PDF]: {
+    args: { 
+      pdfs: Array<{
+        filename: string
+        data: Uint8Array
+      }>
+      oneFilePerRecipe: boolean
+    }
+    result: { success: boolean; error?: string; savedPaths?: string[] }
   }
 }
 

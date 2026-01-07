@@ -1,8 +1,7 @@
 import {
   app,
   BrowserWindow,
-  BrowserWindowConstructorOptions,
-  screen,
+  BrowserWindowConstructorOptions
 } from 'electron'
 import log from 'electron-log/main'
 import started from 'electron-squirrel-startup'
@@ -67,10 +66,6 @@ const createDailyBackup = () => {
 }
 
 const createWindow = () => {
-  const displays = screen.getAllDisplays()
-
-  const externalDisplay = displays.length > 1 ? displays[1] : null
-
   const windowOptions: BrowserWindowConstructorOptions = {
     width: 1200,
     height: 800,
@@ -81,11 +76,6 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
-  }
-
-  if (externalDisplay) {
-    windowOptions.x = externalDisplay.bounds.x + 50
-    windowOptions.y = externalDisplay.bounds.y + 50
   }
 
   const mainWindow = new BrowserWindow(windowOptions)

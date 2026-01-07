@@ -1,3 +1,5 @@
+import { dialog } from 'electron'
+import fs from 'node:fs'
 import path from 'node:path'
 import { v4 as uuidv4 } from 'uuid'
 import { ERROR_CODES } from '../../shared/errorCodes'
@@ -473,6 +475,68 @@ typedIpcMain.handle(CHANNEL.FILES.GET_PHOTO, async (_event, params) => {
     console.error('Error getting photo:', error)
     return {
       data: null,
+    }
+  }
+})
+
+typedIpcMain.handle(CHANNEL.FILES.EXPORT_RECIPES_PDF, async (_event, params) => {
+  try {
+    const savedPaths: string[] = []
+    
+    if (params.oneFilePerRecipe) {
+      // For multiple files, show a directory picker
+      const result = await dialog.showOpenDialog({
+        properties: ['openDirectory', 'createDirectory'],
+        title: 'Choose directory to save recipe PDFs'
+      })
+
+      if (result.canceled || !result.filePaths[0]) {
+        return {
+          success: false,
+          error: 'Directory selection was canceled'
+        }
+      }
+
+      const directory = result.filePaths[0]
+      
+      // Save each PDF to the directory
+      for (const pdf of params.pdfs) {
+        const filePath = path.join(directory, `${pdf.filename}.pdf`)
+        fs.writeFileSync(filePath, pdf.data)
+        savedPaths.push(filePath)
+      }
+    } else {
+      // Single file, show save dialog
+      const result = await dialog.showSaveDialog({
+        defaultPath: `${params.pdfs[0].filename}.pdf`,
+        filters: [
+          { name: 'PDF Files', extensions: ['pdf'] },
+          { name: 'All Files', extensions: ['*'] }
+        ],
+        properties: ['createDirectory']
+      })
+
+      if (result.canceled || !result.filePath) {
+        return {
+          success: false,
+          error: 'Save operation was canceled'
+        }
+      }
+
+      // Save the single PDF
+      fs.writeFileSync(result.filePath, params.pdfs[0].data)
+      savedPaths.push(result.filePath)
+    }
+    
+    return {
+      success: true,
+      savedPaths
+    }
+  } catch (error) {
+    console.error('Error in export recipes PDF:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
     }
   }
 })
