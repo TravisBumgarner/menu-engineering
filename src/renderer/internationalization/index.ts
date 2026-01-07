@@ -1,4 +1,4 @@
-// i18n.ts
+import log from 'electron-log/renderer'
 import * as i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
@@ -37,13 +37,13 @@ const getLanguageFromLocale = (): string => {
       'es-GQ',
     ]
 
-    if (spanishLocales.some(loc => locale.startsWith(loc.split('-')[0]))) {
+    if (spanishLocales.some((loc) => locale.startsWith(loc.split('-')[0]))) {
       return 'es'
     }
 
     return 'en'
   } catch (error) {
-    console.warn('Could not detect locale, defaulting to English:', error)
+    log.warn('Could not detect locale, defaulting to English:', error)
     return 'en'
   }
 }
@@ -52,7 +52,7 @@ const getStoredLanguage = (): string | null => {
   try {
     return localStorage.getItem(STORAGE_KEY)
   } catch (error) {
-    console.warn('Could not read from localStorage:', error)
+    log.warn('Could not read from localStorage:', error)
     return null
   }
 }

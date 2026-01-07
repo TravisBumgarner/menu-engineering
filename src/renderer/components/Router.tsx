@@ -9,10 +9,7 @@ export default function AppRouter() {
     <Routes>
       <Route path={ROUTES.recipes.href()} element={<BrowseRecipes />} />
       <Route path={ROUTES.ingredients.href()} element={<BrowseIngredients />} />
-      <Route
-        path={ROUTES.unitConversions.href()}
-        element={<UnitConversions />}
-      />
+      <Route path={ROUTES.unitConversions.href()} element={<UnitConversions />} />
     </Routes>
   )
 }

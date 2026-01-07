@@ -18,7 +18,7 @@ const BrowseRecipes = () => {
     queryFn: async () => {
       const response = await ipcMessenger.invoke(CHANNEL.DB.GET_RECIPES)
       return response
-    }
+    },
   })
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const BrowseRecipes = () => {
 
   if (!data) {
     return <div>{t('noDataAvailable')}</div>
-  } 
+  }
 
   return <Table recipes={data.recipes} />
 }

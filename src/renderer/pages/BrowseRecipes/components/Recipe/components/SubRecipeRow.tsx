@@ -4,10 +4,10 @@ import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import * as React from 'react'
+import type * as React from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
-import { RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
-import { AllUnits } from '../../../../../../shared/units.types'
+import type { RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
+import type { AllUnits } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
@@ -17,11 +17,7 @@ import { SPACING } from '../../../../../styles/consts'
 import { formatCurrency, formatDisplayDate } from '../../../../../utilities'
 import { ICON_SIZE } from './consts'
 
-function SubRecipeRow(props: {
-  row: RecipeDTO & { relation: RelationDTO }
-  recipeId: string
-  labelId: string
-}) {
+function SubRecipeRow(props: { row: RecipeDTO & { relation: RelationDTO }; recipeId: string; labelId: string }) {
   const { row, recipeId, labelId } = props
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
@@ -36,7 +32,7 @@ function SubRecipeRow(props: {
         units: updateData.units,
       })
     },
-    onSuccess: result => {
+    onSuccess: (result) => {
       if (result.success) {
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.RECIPES],
@@ -59,7 +55,7 @@ function SubRecipeRow(props: {
         subRecipeId: row.id,
         recipeId: recipeId,
       }),
-    onSuccess: result => {
+    onSuccess: (result) => {
       if (result.success) {
         // Invalidate and refetch the recipe query to update the sub-recipes list
         queryClient.invalidateQueries({
@@ -84,7 +80,7 @@ function SubRecipeRow(props: {
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantity = parseFloat(event.target.value)
     updateSubRecipeRelationMutation.mutate({
-      quantity: !isNaN(newQuantity) ? newQuantity : 0,
+      quantity: !Number.isNaN(newQuantity) ? newQuantity : 0,
     })
   }
 
@@ -105,59 +101,57 @@ function SubRecipeRow(props: {
   }
 
   return (
-    <React.Fragment>
-      <TableRow tabIndex={-1} key={row.id}>
-        <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
+    <TableRow tabIndex={-1} key={row.id}>
+      <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
 
-        <TableCell id={labelId} scope="row">
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Icon name="recipe" size={ICON_SIZE} /> {row.title}{' '}
-          </Box>
-        </TableCell>
-        <TableCell align="right" id={labelId} scope="row">
-          <TextField
-            size="small"
-            type="number"
-            value={row.relation?.quantity || 0}
-            onChange={handleQuantityChange}
-            variant="filled"
-            sx={{
-              '& .MuiFilledInput-input': {
-                textAlign: 'right',
-                padding: SPACING.TINY.PX,
-              },
-            }}
-          />
-        </TableCell>
-        <TableCell align="left" id={labelId} scope="row">
-          {row.units}
-        </TableCell>
-        <TableCell align="right" id={labelId} scope="row">
-          {formatCurrency(row.cost / row.produces)}
-        </TableCell>
-        <TableCell align="right" id={labelId} scope="row">
-          {formatCurrency((row.cost / row.produces) * row.relation.quantity)}
-        </TableCell>
-        <TableCell align="right">
-          <Tooltip title={t('editIngredients')}>
-            <IconButton onClick={handleEditIngredients}>
-              <Icon name="recipe" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t('editRecipe')}>
-            <IconButton onClick={handleOpenEditModal}>
-              <Icon name="edit" />
-            </IconButton>
-          </Tooltip>
+      <TableCell id={labelId} scope="row">
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Icon name="recipe" size={ICON_SIZE} /> {row.title}{' '}
+        </Box>
+      </TableCell>
+      <TableCell align="right" id={labelId} scope="row">
+        <TextField
+          size="small"
+          type="number"
+          value={row.relation?.quantity || 0}
+          onChange={handleQuantityChange}
+          variant="filled"
+          sx={{
+            '& .MuiFilledInput-input': {
+              textAlign: 'right',
+              padding: SPACING.TINY.PX,
+            },
+          }}
+        />
+      </TableCell>
+      <TableCell align="left" id={labelId} scope="row">
+        {row.units}
+      </TableCell>
+      <TableCell align="right" id={labelId} scope="row">
+        {formatCurrency(row.cost / row.produces)}
+      </TableCell>
+      <TableCell align="right" id={labelId} scope="row">
+        {formatCurrency((row.cost / row.produces) * row.relation.quantity)}
+      </TableCell>
+      <TableCell align="right">
+        <Tooltip title={t('editIngredients')}>
+          <IconButton onClick={handleEditIngredients}>
+            <Icon name="recipe" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={t('editRecipe')}>
+          <IconButton onClick={handleOpenEditModal}>
+            <Icon name="edit" />
+          </IconButton>
+        </Tooltip>
 
-          <Tooltip title={t('remove')}>
-            <IconButton onClick={handleOpenRemoveModal}>
-              <Icon name="close" />
-            </IconButton>
-          </Tooltip>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
+        <Tooltip title={t('remove')}>
+          <IconButton onClick={handleOpenRemoveModal}>
+            <Icon name="close" />
+          </IconButton>
+        </Tooltip>
+      </TableCell>
+    </TableRow>
   )
 }
 

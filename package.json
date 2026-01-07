@@ -1,7 +1,7 @@
 {
   "name": "menu-engineering",
   "productName": "Menu Engineering",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "scripts": {
@@ -28,6 +28,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@biomejs/biome": "2.3.6",
     "@electron-forge/cli": "^7.8.3",
     "@electron-forge/maker-deb": "^7.10.2",
     "@electron-forge/maker-dmg": "^7.10.2",
@@ -39,6 +40,7 @@
     "@electron-forge/plugin-vite": "^7.10.2",
     "@electron-forge/publisher-github": "^7.10.2",
     "@electron/fuses": "^1.8.0",
+    "@types/adm-zip": "^0.5.7",
     "@types/better-sqlite3": "^7.6.13",
     "@types/electron-squirrel-startup": "^1.0.2",
     "@types/react": "^19.2.2",
@@ -49,12 +51,6 @@
     "drizzle-kit": "^0.31.6",
     "electron": "38.2.2",
     "electron-rebuild": "^3.2.9",
-    "eslint": "^8.57.1",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "typescript": "^5.9.3",

@@ -8,7 +8,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
-import { IngredientDTO } from '../../../../shared/recipe.types'
+import type { IngredientDTO } from '../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
@@ -30,10 +30,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 function getComparator<Key extends keyof IngredientDTO | 'recipeCount'>(
   order: 'asc' | 'desc',
   orderBy: Key,
-): (
-  a: IngredientDTO & { recipeCount: number },
-  b: IngredientDTO & { recipeCount: number },
-) => number {
+): (a: IngredientDTO & { recipeCount: number }, b: IngredientDTO & { recipeCount: number }) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy as keyof (IngredientDTO & { recipeCount: number }))
     : (a, b) => -descendingComparator(a, b, orderBy as keyof (IngredientDTO & { recipeCount: number }))
@@ -64,22 +61,18 @@ const Table = ({
     }
   }
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof IngredientDTO | 'recipeCount',
-  ) => {
+  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof IngredientDTO | 'recipeCount') => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
   }
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage)
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
 
   const visibleRows = React.useMemo(
     () =>
@@ -93,23 +86,13 @@ const Table = ({
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <TableContainer>
-          <MuiTable
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size="medium"
-          >
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-            />
+          <MuiTable sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-checkbox-${index}`
 
-                return (
-                  <IngredientRow key={row.id} row={row} labelId={labelId} />
-                )
+                return <IngredientRow key={row.id} row={row} labelId={labelId} />
               })}
               {emptyRows > 0 && (
                 <TableRow
@@ -128,20 +111,10 @@ const Table = ({
                       gap: SPACING.MEDIUM.PX,
                     }}
                   >
-                    <Button
-                      size="small"
-                      onClick={handleOpenAddIngredientModal}
-                      fullWidth
-                      variant="outlined"
-                    >
+                    <Button size="small" onClick={handleOpenAddIngredientModal} fullWidth variant="outlined">
                       {t('addIngredient')}
                     </Button>
-                    <Button
-                      size="small"
-                      onClick={handleOpenExportIngredientsModal}
-                      fullWidth
-                      variant="outlined"
-                    >
+                    <Button size="small" onClick={handleOpenExportIngredientsModal} fullWidth variant="outlined">
                       Export CSV
                     </Button>
                   </Box>
@@ -157,9 +130,7 @@ const Table = ({
           count={ingredients.length}
           page={page}
           onPageChange={handleChangePage}
-          labelDisplayedRows={({ from, to, count }) =>
-            `${from}–${to} ${t('outOf')} ${count}`
-          }
+          labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
         />
       </Paper>
     </Box>

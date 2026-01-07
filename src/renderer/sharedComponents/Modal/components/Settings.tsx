@@ -16,12 +16,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import log from 'electron-log/renderer'
 import { useEffect, useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
+import type { IngredientDTO, RecipeDTO, RelationDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { SPACING } from '../../../styles/consts'
-import { MODAL_ID } from '../Modal.consts'
+import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
 export interface SettingsModalProps {
@@ -29,7 +31,7 @@ export interface SettingsModalProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SettingsModal = ({ id }: SettingsModalProps) => {
+const SettingsModal = (_props: SettingsModalProps) => {
   const { t, currentLanguage, changeLanguage } = useAppTranslation()
   const [backupDirectory, setBackupDirectory] = useState<string>('')
   const [isExporting, setIsExporting] = useState(false)
@@ -48,13 +50,10 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
   useEffect(() => {
     const getBackupDirectory = async () => {
       try {
-        const result = await ipcMessenger.invoke(
-          CHANNEL.APP.GET_BACKUP_DIRECTORY,
-          undefined,
-        )
+        const result = await ipcMessenger.invoke(CHANNEL.APP.GET_BACKUP_DIRECTORY, undefined)
         setBackupDirectory(result.backupDirectory)
       } catch (error) {
-        console.error('Error getting backup directory:', error)
+        log.error('Error getting backup directory:', error)
       }
     }
 
@@ -65,10 +64,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
     setIsExporting(true)
     setMessage(null)
     try {
-      const result = await ipcMessenger.invoke(
-        CHANNEL.APP.EXPORT_ALL_DATA,
-        undefined,
-      )
+      const result = await ipcMessenger.invoke(CHANNEL.APP.EXPORT_ALL_DATA, undefined)
 
       if (result.success && result.data) {
         // Create and download zip file
@@ -88,10 +84,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
         link.setAttribute('href', url)
 
         const timestamp = new Date().toISOString().split('T')[0]
-        link.setAttribute(
-          'download',
-          `menu-engineering-backup-${timestamp}.zip`,
-        )
+        link.setAttribute('download', `menu-engineering-backup-${timestamp}.zip`)
         link.style.visibility = 'hidden'
 
         document.body.appendChild(link)
@@ -121,7 +114,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
     input.type = 'file'
     input.accept = '.zip,.json'
 
-    input.onchange = async e => {
+    input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0]
       if (!file) return
 
@@ -150,13 +143,23 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
     setConfirmationText('')
 
     try {
-      let data
+      let data:
+        | string
+        | {
+            ingredients: IngredientDTO[]
+            recipes: RecipeDTO[]
+            relations: (RelationDTO & {
+              parentId: string
+              childId: string
+              type: 'ingredient' | 'sub-recipe'
+            })[]
+          }
 
       if (selectedFile.name.endsWith('.zip')) {
         // New ZIP format - convert to base64 for backend
         const arrayBuffer = await selectedFile.arrayBuffer()
         const uint8Array = new Uint8Array(arrayBuffer)
-        const binaryString = Array.from(uint8Array, byte => String.fromCharCode(byte)).join('')
+        const binaryString = Array.from(uint8Array, (byte) => String.fromCharCode(byte)).join('')
         data = btoa(binaryString)
       } else {
         // Old JSON format - parse and pass as object
@@ -208,10 +211,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
   }
 
   const handleConfirmNuke = async () => {
-    if (
-      nukeConfirmationText !== 'NUKE' &&
-      nukeConfirmationText !== 'ELIMINAR'
-    ) {
+    if (nukeConfirmationText !== 'NUKE' && nukeConfirmationText !== 'ELIMINAR') {
       setMessage({
         type: 'error',
         text: t('confirmationRequired'),
@@ -225,10 +225,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
     setNukeConfirmationText('')
 
     try {
-      const result = await ipcMessenger.invoke(
-        CHANNEL.APP.NUKE_DATABASE,
-        undefined,
-      )
+      const result = await ipcMessenger.invoke(CHANNEL.APP.NUKE_DATABASE, undefined)
 
       if (result.success) {
         window.location.reload()
@@ -241,7 +238,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
     } catch (error) {
       setMessage({
         type: 'error',
-        text: t('errorNukingDatabase') + ': ' + (error as Error).message,
+        text: `${t('errorNukingDatabase')}: ${(error as Error).message}`,
       })
     } finally {
       setIsNuking(false)
@@ -262,7 +259,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
             labelId="language-select-label"
             value={currentLanguage}
             label={t('language')}
-            onChange={e => changeLanguage(e.target.value)}
+            onChange={(e) => changeLanguage(e.target.value)}
           >
             <MenuItem value="en">English</MenuItem>
             <MenuItem value="es">Español</MenuItem>
@@ -275,11 +272,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
           <Typography variant="subtitle2" gutterBottom>
             {t('databaseBackups')}
           </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ mb: SPACING.SMALL.PX }}
-          >
+          <Typography variant="body2" color="textSecondary" sx={{ mb: SPACING.SMALL.PX }}>
             {t('backupLocation')}: {backupDirectory || t('loading')}
           </Typography>
         </Box>
@@ -290,11 +283,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
           <Typography variant="subtitle2" gutterBottom>
             {t('dataManagement')}
           </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ mb: SPACING.MEDIUM.PX }}
-          >
+          <Typography variant="body2" color="textSecondary" sx={{ mb: SPACING.MEDIUM.PX }}>
             {t('exportDataDescription')}
           </Typography>
 
@@ -332,11 +321,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
           <Typography variant="subtitle2" gutterBottom color="error">
             {t('nukeDatabase')}
           </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ mb: SPACING.MEDIUM.PX }}
-          >
+          <Typography variant="body2" color="textSecondary" sx={{ mb: SPACING.MEDIUM.PX }}>
             {t('nukeDatabaseDescription')}
           </Typography>
 
@@ -359,20 +344,16 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
         aria-labelledby="confirm-dialog-title"
         aria-describedby="confirm-dialog-description"
       >
-        <DialogTitle id="confirm-dialog-title">
-          {t('restoreFromBackup')}
-        </DialogTitle>
+        <DialogTitle id="confirm-dialog-title">{t('restoreFromBackup')}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="confirm-dialog-description">
-            {t('restoreConfirmation')}
-          </DialogContentText>
+          <DialogContentText id="confirm-dialog-description">{t('restoreConfirmation')}</DialogContentText>
           <TextField
             margin="dense"
             fullWidth
             variant="outlined"
             placeholder={t('confirmationPlaceholder')}
             value={confirmationText}
-            onChange={e => setConfirmationText(e.target.value)}
+            onChange={(e) => setConfirmationText(e.target.value)}
             sx={{ mt: 2 }}
           />
         </DialogContent>
@@ -382,8 +363,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
             onClick={handleConfirmRestore}
             color="warning"
             variant="contained"
-            disabled={!['CONFIRM', 'CONFIRMAR'].includes(confirmationText)}  // lazy lol.
-
+            disabled={!['CONFIRM', 'CONFIRMAR'].includes(confirmationText)} // lazy lol.
           >
             {t('restoreFromBackup')}
           </Button>
@@ -401,20 +381,14 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
           {t('nukeDatabase')}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="nuke-dialog-description">
-            {t('nukeDatabaseConfirmation')}
-          </DialogContentText>
+          <DialogContentText id="nuke-dialog-description">{t('nukeDatabaseConfirmation')}</DialogContentText>
           <TextField
             margin="dense"
             fullWidth
             variant="outlined"
-            placeholder={
-              currentLanguage === 'es'
-                ? 'Escribe ELIMINAR aquí'
-                : 'Type NUKE here'
-            }
+            placeholder={currentLanguage === 'es' ? 'Escribe ELIMINAR aquí' : 'Type NUKE here'}
             value={nukeConfirmationText}
-            onChange={e => setNukeConfirmationText(e.target.value)}
+            onChange={(e) => setNukeConfirmationText(e.target.value)}
             sx={{ mt: 2 }}
             color="error"
           />
@@ -425,7 +399,7 @@ const SettingsModal = ({ id }: SettingsModalProps) => {
             onClick={handleConfirmNuke}
             color="error"
             variant="contained"
-            disabled={!['NUKE', 'ELIMINAR'].includes(nukeConfirmationText)}  // lazy lol.
+            disabled={!['NUKE', 'ELIMINAR'].includes(nukeConfirmationText)} // lazy lol.
           >
             {t('nukeDatabase')}
           </Button>

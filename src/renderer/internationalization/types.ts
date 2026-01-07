@@ -1,6 +1,6 @@
-import { ERROR_CODES } from '../../shared/errorCodes';
+import type { ERROR_CODES } from '../../shared/errorCodes'
 
-export type TranslationKeys = 
+export type TranslationKeys =
   | keyof typeof ERROR_CODES
   | 'save'
   | 'add'

@@ -1,9 +1,10 @@
-import { TranslationKeys } from './types'
+import type { TranslationKeys } from './types'
+
 const EnglishTranslations: Record<TranslationKeys, string> = {
   RECIPE_EXISTS: 'Recipe already exists.',
   INGREDIENT_EXISTS: 'Ingredient already exists.',
   SOMETHING_WENT_WRONG: 'Something went wrong. Please try again.',
-  
+
   // General
   save: 'Save',
   add: 'Add',
@@ -109,8 +110,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   weightConversions: 'Weight Conversion Table',
   volumeConversions: 'Volume Conversion Table',
   unitConversions: 'Unit Conversion Tables',
-  conversionDisclaimer:
-    'Conversions are approximate and based on US standard measurements',
+  conversionDisclaimer: 'Conversions are approximate and based on US standard measurements',
 
   // Missing translations
   language: 'Language',
@@ -137,27 +137,22 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   exporting: 'Exporting...',
   restoring: 'Restoring...',
   dataExportedSuccessfully: 'Data exported successfully!',
-  dataRestoredSuccessfully:
-    'Data restored successfully! Please restart the app.',
+  dataRestoredSuccessfully: 'Data restored successfully! Please restart the app.',
   failedToExportData: 'Failed to export data',
   failedToRestoreData: 'Failed to restore data',
   errorExportingData: 'Error exporting data',
   errorRestoringData: 'Error restoring data',
   invalidBackupFile: 'Invalid backup file format',
-  exportDataDescription:
-    'Export all your data or restore from a backup file.',
-  restoreConfirmation:
-    'Type "CONFIRM" to restore data (this will delete all current data)',
+  exportDataDescription: 'Export all your data or restore from a backup file.',
+  restoreConfirmation: 'Type "CONFIRM" to restore data (this will delete all current data)',
   confirmationPlaceholder: 'Type CONFIRM here',
   confirmationRequired: 'You must type CONFIRM to proceed',
   nukeDatabase: 'Clear All Data',
-  nukeDatabaseConfirmation:
-    'Type "NUKE" to permanently delete ALL data (this cannot be undone)',
+  nukeDatabaseConfirmation: 'Type "NUKE" to permanently delete ALL data (this cannot be undone)',
   nukeDatabaseSuccessfully: 'All data cleared successfully!',
   failedToNukeDatabase: 'Failed to clear database',
   errorNukingDatabase: 'Error clearing database',
-  nukeDatabaseDescription:
-    'Permanently delete all recipes, ingredients, and relationships.',
+  nukeDatabaseDescription: 'Permanently delete all recipes, ingredients, and relationships.',
   nuking: 'Clearing...',
 }
 

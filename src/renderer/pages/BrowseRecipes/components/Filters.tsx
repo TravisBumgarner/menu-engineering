@@ -6,11 +6,11 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
+  type SelectChangeEvent,
   Switch,
 } from '@mui/material'
-import React from 'react'
-import { RECIPE_STATUS, RecipeStatus } from '../../../../shared/recipe.types'
+import type React from 'react'
+import { RECIPE_STATUS, type RecipeStatus } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { SPACING } from '../../../styles/consts'
 
@@ -41,7 +41,6 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
       filterToMenuItemsOnly: checked,
     })
   }
-  console.log(filters)
 
   return (
     <Box
@@ -59,11 +58,7 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
           value={filters.status}
           onChange={handleStatusChange}
           label={t('status')}
-          renderValue={selected =>
-            selected
-              .map(status => t(status as keyof typeof RECIPE_STATUS))
-              .join(', ')
-          }
+          renderValue={(selected) => selected.map((status) => t(status as keyof typeof RECIPE_STATUS)).join(', ')}
         >
           <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
           <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
@@ -71,9 +66,13 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
         </Select>
       </FormControl>
 
-      <FormControl size="small" >
+      <FormControl size="small">
         <FormGroup>
-          <FormControlLabel onChange={handleShowInMenuChange} control={<Switch value={filters.filterToMenuItemsOnly} />} label={t('filterToMenuItems')} />
+          <FormControlLabel
+            onChange={handleShowInMenuChange}
+            control={<Switch value={filters.filterToMenuItemsOnly} />}
+            label={t('filterToMenuItems')}
+          />
         </FormGroup>
       </FormControl>
     </Box>

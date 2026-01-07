@@ -8,12 +8,12 @@ import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import { useSignals } from '@preact/signals-react/runtime'
 import * as React from 'react'
-import { RECIPE_STATUS, RecipeDTO } from '../../../../shared/recipe.types'
+import { RECIPE_STATUS, type RecipeDTO } from '../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
-import Filters, { FilterOptions } from './Filters'
+import Filters, { type FilterOptions } from './Filters'
 import Head from './Head'
 import RecipeRow from './Row'
 
@@ -30,10 +30,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 function getComparator<Key extends keyof RecipeDTO | 'usedInRecipesCount'>(
   order: 'asc' | 'desc',
   orderBy: Key,
-): (
-  a: { [key in Key]: number | string | boolean },
-  b: { [key in Key]: number | string | boolean },
-) => number {
+): (a: { [key in Key]: number | string | boolean }, b: { [key in Key]: number | string | boolean }) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
@@ -58,16 +55,13 @@ const Table = ({
     filterToMenuItemsOnly: false,
   })
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof RecipeDTO | 'usedInRecipesCount',
-  ) => {
+  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof RecipeDTO | 'usedInRecipesCount') => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
   }
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage)
   }
 
@@ -78,7 +72,7 @@ const Table = ({
 
   // Apply filters to recipes
   const filteredRecipes = React.useMemo(() => {
-    return recipes.filter(recipe => {
+    return recipes.filter((recipe) => {
       // Filter by status
       const statusMatch = filters.status.includes(recipe.status)
 
@@ -106,10 +100,7 @@ const Table = ({
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0
-      ? Math.max(0, (1 + page) * ROWS_PER_PAGE - filteredRecipes.length)
-      : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - filteredRecipes.length) : 0
 
   const visibleRows = React.useMemo(
     () =>
@@ -123,16 +114,8 @@ const Table = ({
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
       <Filters filters={filters} onFiltersChange={handleFiltersChange} />
       <TableContainer>
-        <MuiTable
-          sx={{ minWidth: 750, tableLayout: 'fixed' }}
-          aria-labelledby="tableTitle"
-          size="medium"
-        >
-          <Head
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={handleRequestSort}
-          />
+        <MuiTable sx={{ minWidth: 750, tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="medium">
+          <Head order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
             {visibleRows.map((row, index) => {
               const labelId = `enhanced-table-checkbox-${index}`
@@ -184,9 +167,7 @@ const Table = ({
         rowsPerPageOptions={[]}
         page={page}
         onPageChange={handleChangePage}
-        labelDisplayedRows={({ from, to, count }) =>
-          `${from}–${to} ${t('outOf')} ${count}`
-        }
+        labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
       />
     </Box>
   )

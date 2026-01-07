@@ -7,11 +7,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
-import {
-  IngredientDTO,
-  RecipeDTO,
-  RelationDTO,
-} from '../../../../../../shared/recipe.types'
+import type { IngredientDTO, RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
 import { ROWS_PER_PAGE } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import Icon from '../../../../../sharedComponents/Icon'
@@ -19,7 +15,7 @@ import Message from '../../../../../sharedComponents/Message'
 import { MODAL_ID } from '../../../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../../../signals'
 import { PALETTE, SPACING } from '../../../../../styles/consts'
-import { SORTABLE_OPTIONS } from './consts'
+import type { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
 import IngredientRow from './IngredientRow'
 import SubRecipeRow from './SubRecipeRow'
@@ -37,10 +33,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 function getComparator<Key extends keyof IngredientDTO>(
   order: 'asc' | 'desc',
   orderBy: Key,
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
-) => number {
+): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
@@ -56,36 +49,30 @@ const Table = ({
   recipe: RecipeDTO
 }) => {
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
-  const [orderBy, setOrderBy] = React.useState<'title' | 'createdAt'>(
-    'createdAt',
-  )
+  const [orderBy, setOrderBy] = React.useState<'title' | 'createdAt'>('createdAt')
   const [page, setPage] = React.useState(0)
   const { t } = useAppTranslation()
 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof typeof SORTABLE_OPTIONS,
-  ) => {
+  const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof typeof SORTABLE_OPTIONS) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
   }
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage)
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
 
   const hasRows = ingredients.length + subRecipes.length > 0
 
   const visibleRows = React.useMemo(
     () =>
       [
-        ...ingredients.map(i => ({ ...i, type: 'ingredient' as const })),
-        ...subRecipes.map(s => ({ ...s, type: 'sub-recipe' as const })),
+        ...ingredients.map((i) => ({ ...i, type: 'ingredient' as const })),
+        ...subRecipes.map((s) => ({ ...s, type: 'sub-recipe' as const })),
       ]
         .sort(getComparator(order, orderBy))
         .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
@@ -96,29 +83,21 @@ const Table = ({
     activeModalSignal.value = {
       id: MODAL_ID.ADD_TO_RECIPE_MODAL,
       recipe,
-
     }
   }
-
 
   return (
     <Box sx={{ width: '100%', tableLayout: 'fixed' }}>
       <TableContainer>
         <MuiTable
           sx={{
-            backgroundColor: theme =>
-              theme.palette.mode === 'dark'
-                ? PALETTE.grayscale[700]
-                : PALETTE.grayscale[50],
+            backgroundColor: (theme) =>
+              theme.palette.mode === 'dark' ? PALETTE.grayscale[700] : PALETTE.grayscale[50],
           }}
           aria-labelledby="tableTitle"
           size="medium"
         >
-          <EnhancedTableHead
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={handleRequestSort}
-          />
+          <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
             {!hasRows && (
               <TableRow>
@@ -131,24 +110,10 @@ const Table = ({
               const labelId = `enhanced-table-checkbox-${index}`
 
               if (row.type === 'sub-recipe') {
-                return (
-                  <SubRecipeRow
-                    key={row.id}
-                    row={row}
-                    recipeId={recipe.id}
-                    labelId={labelId}
-                  />
-                )
+                return <SubRecipeRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
               }
 
-              return (
-                <IngredientRow
-                  key={row.id}
-                  row={row}
-                  recipeId={recipe.id}
-                  labelId={labelId}
-                />
-              )
+              return <IngredientRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
             })}
             {emptyRows > 0 && (
               <TableRow
@@ -183,9 +148,7 @@ const Table = ({
         rowsPerPage={ROWS_PER_PAGE}
         rowsPerPageOptions={[]}
         onPageChange={handleChangePage}
-        labelDisplayedRows={({ from, to, count }) =>
-          `${from}–${to} ${t('outOf')} ${count}`
-        }
+        labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
       />
     </Box>
   )

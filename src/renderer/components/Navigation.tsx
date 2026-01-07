@@ -11,15 +11,15 @@ import { MODAL_ID } from '../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../signals'
 import { SPACING } from '../styles/consts'
 
-const NAV_ROUTES: Array<keyof typeof ROUTES> = [
-  'recipes',
-  'ingredients',
-  'unitConversions',
-]
+const NAV_ROUTES: Array<keyof typeof ROUTES> = ['recipes', 'ingredients', 'unitConversions']
 
 const Navigation = () => {
   const location = useLocation()
   const { t } = useAppTranslation()
+
+  const handleOpenSettingsModal = () => {
+    activeModalSignal.value = { id: MODAL_ID.SETTINGS_MODAL }
+  }
 
   return (
     <AppBar position="static" color="default" elevation={1}>
@@ -38,7 +38,7 @@ const Navigation = () => {
               alignItems: 'center',
             }}
           >
-            {NAV_ROUTES.map(key => {
+            {NAV_ROUTES.map((key) => {
               const route = ROUTES[key]
               const isActive = location.pathname === route.href()
 
@@ -68,11 +68,7 @@ const Navigation = () => {
             }}
           >
             <Tooltip title={t('settings')}>
-              <Button
-                onClick={() =>
-                  (activeModalSignal.value = { id: MODAL_ID.SETTINGS_MODAL })
-                }
-              >
+              <Button onClick={handleOpenSettingsModal}>
                 <Icon name="settings" />
               </Button>
             </Tooltip>

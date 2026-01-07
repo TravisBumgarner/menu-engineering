@@ -4,8 +4,8 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
-import * as React from 'react'
-import { RecipeDTO } from '../../../../shared/recipe.types'
+import type * as React from 'react'
+import type { RecipeDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
@@ -17,10 +17,7 @@ interface HeadCell {
 }
 
 interface Props {
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof RecipeDTO | 'usedInRecipesCount',
-  ) => void
+  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof RecipeDTO | 'usedInRecipesCount') => void
   order: 'asc' | 'desc'
   orderBy: string | number | symbol
 }
@@ -79,7 +76,6 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       width: '8%',
     },
 
-
     {
       id: 'status',
       align: 'left',
@@ -118,7 +114,7 @@ function Head({ onRequestSort, order, orderBy }: Props) {
   return (
     <TableHead>
       <TableRow>
-        {headCells.map(headCell => (
+        {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.align}
@@ -126,11 +122,11 @@ function Head({ onRequestSort, order, orderBy }: Props) {
             sx={{ width: headCell.width }}
           >
             {headCell.id === 'actions' ||
-              headCell.id === 'collapse' ||
-              headCell.id === 'units' ||
-              headCell.id === 'unitCost' ||
-              headCell.id === 'totalCost' ||
-              headCell.id === 'produces' ? (
+            headCell.id === 'collapse' ||
+            headCell.id === 'units' ||
+            headCell.id === 'unitCost' ||
+            headCell.id === 'totalCost' ||
+            headCell.id === 'produces' ? (
               headCell.label
             ) : (
               <TableSortLabel
@@ -141,9 +137,7 @@ function Head({ onRequestSort, order, orderBy }: Props) {
                 {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc'
-                      ? 'sorted descending'
-                      : 'sorted ascending'}
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </Box>
                 ) : null}
               </TableSortLabel>

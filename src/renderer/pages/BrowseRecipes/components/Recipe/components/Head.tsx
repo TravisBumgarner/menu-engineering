@@ -4,31 +4,21 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
-import * as React from 'react'
+import type * as React from 'react'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import { PALETTE } from '../../../../../styles/consts'
-import { isSortable, SORTABLE_OPTIONS } from './consts'
+import { isSortable, type SORTABLE_OPTIONS } from './consts'
 
 interface HeadCell {
   disablePadding: boolean
-  id:
-    | 'title'
-    | 'cost'
-    | 'actions'
-    | 'createdAt'
-    | 'quantity'
-    | 'units'
-    | 'unitCost'
+  id: 'title' | 'cost' | 'actions' | 'createdAt' | 'quantity' | 'units' | 'unitCost'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
 }
 
 interface EnhancedTableProps {
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: 'title' | 'createdAt',
-  ) => void
+  onRequestSort: (event: React.MouseEvent<unknown>, property: 'title' | 'createdAt') => void
   order: 'asc' | 'desc'
   orderBy: string | number
 }
@@ -89,24 +79,20 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     },
   ]
 
-  const createSortHandler =
-    (property: keyof typeof SORTABLE_OPTIONS) =>
-    (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property)
-    }
+  const createSortHandler = (property: keyof typeof SORTABLE_OPTIONS) => (event: React.MouseEvent<unknown>) => {
+    onRequestSort(event, property)
+  }
 
   return (
     <TableHead>
       <TableRow>
-        {headCells.map(headCell => (
+        {headCells.map((headCell) => (
           <TableCell
             sx={{
               width: headCell.width,
 
-              backgroundColor: theme =>
-                theme.palette.mode === 'dark'
-                  ? PALETTE.grayscale[700]
-                  : PALETTE.grayscale[100],
+              backgroundColor: (theme) =>
+                theme.palette.mode === 'dark' ? PALETTE.grayscale[700] : PALETTE.grayscale[100],
             }}
             key={headCell.id}
             align={headCell.align}
@@ -121,9 +107,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                 {headCell.label}
                 {orderBy === headCell.id ? (
                   <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc'
-                      ? 'sorted descending'
-                      : 'sorted ascending'}
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </Box>
                 ) : null}
               </TableSortLabel>

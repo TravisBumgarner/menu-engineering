@@ -13,23 +13,20 @@ import {
   Typography,
 } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React, { useState } from 'react'
+import type React from 'react'
+import { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
-import {
-  NewRecipeDTO,
-  RECIPE_STATUS,
-  RecipeDTO,
-} from '../../../../shared/recipe.types'
+import { type NewRecipeDTO, RECIPE_STATUS, type RecipeDTO } from '../../../../shared/recipe.types'
 import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
-import { NewPhotoUpload } from '../../../types'
+import type { NewPhotoUpload } from '../../../types'
 import { getUnitLabel } from '../../../utilities'
 import Photo from '../../Photo'
-import { MODAL_ID } from '../Modal.consts'
+import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
 export interface EditRecipeModalProps {
@@ -56,9 +53,9 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
         ...recipeData,
         photo: recipeData.photo
           ? {
-            extension: recipeData.photo.extension,
-            bytes: new Uint8Array(await recipeData.photo.data.arrayBuffer()),
-          }
+              extension: recipeData.photo.extension,
+              bytes: new Uint8Array(await recipeData.photo.data.arrayBuffer()),
+            }
           : undefined,
       }
 
@@ -67,7 +64,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
         payload: payload,
       })
     },
-    onSuccess: result => {
+    onSuccess: (result) => {
       if (result.success) {
         // Invalidate and refetch recipes query
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
@@ -84,34 +81,39 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : undefined
-    setFormData(prev => ({
+
+    if (!file) {
+      return
+    }
+
+    setFormData((prev) => ({
       ...prev,
-      photo: { data: file!, extension: file ? file.name.split('.').pop() || '' : '' },
+      photo: { data: file, extension: file ? file.name.split('.').pop() || '' : '' },
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (_e: React.FormEvent) => {
     updateRecipeMutation.mutate(formData)
   }
 
   const handleInputChange =
-    (field: keyof NewRecipeDTO) =>
-      (
-        e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } },
-      ) => {
-        setFormData(prev => ({
-          ...prev,
-          [field]: e.target.value,
-        }))
-      }
-
-  const handleCheckboxChange =
-    (field: keyof NewRecipeDTO) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData(prev => ({
+    (field: keyof NewRecipeDTO) => (e: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } }) => {
+      setFormData((prev) => ({
         ...prev,
-        [field]: e.target.checked,
+        [field]: e.target.value,
       }))
     }
+
+  const handleCheckboxChange = (field: keyof NewRecipeDTO) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: e.target.checked,
+    }))
+  }
+
+  const closeModal = () => {
+    activeModalSignal.value = null
+  }
 
   return (
     <DefaultModal title={`${t('editRecipe')}: ${recipe.title}`}>
@@ -141,11 +143,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
               <Select
                 disabled
                 value={formData.units}
-                onChange={e =>
-                  handleInputChange('units')(
-                    e as React.ChangeEvent<HTMLInputElement>,
-                  )
-                }
+                onChange={(e) => handleInputChange('units')(e as React.ChangeEvent<HTMLInputElement>)}
                 label={t('units')}
               >
                 {Object.entries(ALL_UNITS).map(([key, value]) => (
@@ -156,64 +154,37 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
               </Select>
             </FormControl>
           </Stack>
-          <Typography
-            sx={{ marginTop: '0 !important' }}
-            variant="caption"
-            color="textSecondary"
-          >
+          <Typography sx={{ marginTop: '0 !important' }} variant="caption" color="textSecondary">
             {t('unitsHelpText')}
           </Typography>
 
           <FormControl size="small" fullWidth required>
             <InputLabel>{t('status')}</InputLabel>
-            <Select
-              value={formData.status}
-              onChange={handleInputChange('status')}
-              label={t('status')}
-            >
+            <Select value={formData.status} onChange={handleInputChange('status')} label={t('status')}>
               <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
-              <MenuItem value={RECIPE_STATUS.published}>
-                {t('published')}
-              </MenuItem>
-              <MenuItem value={RECIPE_STATUS.archived}>
-                {t('archived')}
-              </MenuItem>
+              <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
+              <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
             </Select>
           </FormControl>
 
           <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="center">
             <FormControlLabel
               sx={{ flexGrow: 1 }}
-              control={
-                <Checkbox
-                  checked={formData.showInMenu}
-                  onChange={handleCheckboxChange('showInMenu')}
-                />
-              }
+              control={<Checkbox checked={formData.showInMenu} onChange={handleCheckboxChange('showInMenu')} />}
               label={t('showInMenu')}
             />
             <Input onChange={handlePhotoChange} type="file" sx={{ flexGrow: 1 }} />
             {/* If photo exists from backend, load that. If the user has selected a new photo load that instead. */}
-            {(recipe.photoSrc && !formData.photo) && <Photo type="backend" src={recipe.photoSrc} />}
+            {recipe.photoSrc && !formData.photo && <Photo type="backend" src={recipe.photoSrc} />}
             {formData.photo && <Photo type="local" data={formData.photo.data} />}
           </Stack>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button
-              variant="outlined"
-              type="button"
-              onClick={() => (activeModalSignal.value = null)}
-            >
+            <Button variant="outlined" type="button" onClick={closeModal}>
               {t('cancel')}
             </Button>
-            <Button
-              variant="contained"
-              type="submit"
-              disabled={updateRecipeMutation.isPending}
-            >
-              {updateRecipeMutation.isPending
-                ? t('updating')
-                : t('update')}
+            <Button variant="contained" type="submit" disabled={updateRecipeMutation.isPending}>
+              {updateRecipeMutation.isPending ? t('updating') : t('update')}
             </Button>
           </Stack>
         </Stack>

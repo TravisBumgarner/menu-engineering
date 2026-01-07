@@ -1,15 +1,15 @@
+import log from 'electron-log/renderer'
 import { useTranslation } from 'react-i18next'
 import { STORAGE_KEY } from '../internationalization'
-import { TranslationKeys } from '../internationalization/types'
-
 // Import all translation keys from the type
 import englishTranslations from '../internationalization/english'
+import type { TranslationKeys } from '../internationalization/types'
 
 const setStoredLanguage = (language: string): void => {
   try {
     localStorage.setItem(STORAGE_KEY, language)
   } catch (error) {
-    console.warn('Could not write to localStorage:', error)
+    log.warn('Could not write to localStorage:', error)
   }
 }
 
@@ -25,8 +25,8 @@ const trackKeyUsage = (key: TranslationKeys) => {
 
   if (!usedKeys.has(key)) {
     usedKeys.add(key)
-    const unusedKeys = allKeys.filter(k => !usedKeys.has(k))
-    console.log('UNUSED KEYS:', unusedKeys)
+    const unusedKeys = allKeys.filter((k) => !usedKeys.has(k))
+    log.log('UNUSED KEYS:', unusedKeys)
   }
 }
 

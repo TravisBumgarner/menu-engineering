@@ -1,12 +1,6 @@
-import log from 'electron-log/renderer'
 import { t } from 'i18next'
-import {
-  VOLUME_UNIT,
-  VolumeUnit,
-  WEIGHT_UNIT,
-  WeightUnit,
-} from '../shared/units.types'
-import { TranslationKeys } from './internationalization/types'
+import { VOLUME_UNIT, type VolumeUnit, WEIGHT_UNIT, type WeightUnit } from '../shared/units.types'
+import type { TranslationKeys } from './internationalization/types'
 
 // Volume conversion factors (to milliliters)
 const VOLUME_TO_ML = {
@@ -23,14 +17,6 @@ const WEIGHT_TO_GRAMS = {
   [WEIGHT_UNIT.ounces]: 28.3495,
   [WEIGHT_UNIT.pounds]: 453.592,
 } as const
-
-export const logMessage = (message: string) => {
-  if (import.meta.env.VITE_API_URL) {
-    console.log(message)
-  } else {
-    log.info(message)
-  }
-}
 
 export const formatDisplayDate = (dateString: string) => {
   const date = new Date(dateString)
@@ -60,13 +46,11 @@ export const convertUnits = ({
 }): number | null => {
   // Check if both units are volume units
   const isVolumeConversion =
-    Object.values(VOLUME_UNIT).includes(from as VolumeUnit) &&
-    Object.values(VOLUME_UNIT).includes(to as VolumeUnit)
+    Object.values(VOLUME_UNIT).includes(from as VolumeUnit) && Object.values(VOLUME_UNIT).includes(to as VolumeUnit)
 
   // Check if both units are weight units
   const isWeightConversion =
-    Object.values(WEIGHT_UNIT).includes(from as WeightUnit) &&
-    Object.values(WEIGHT_UNIT).includes(to as WeightUnit)
+    Object.values(WEIGHT_UNIT).includes(from as WeightUnit) && Object.values(WEIGHT_UNIT).includes(to as WeightUnit)
 
   // Cannot convert between different unit types (volume to weight or vice versa)
   if (!isVolumeConversion && !isWeightConversion) {
@@ -88,11 +72,7 @@ export const convertUnits = ({
   return null
 }
 
-export const formatCurrency = (
-  amount: number,
-  locale = 'en-US',
-  currency = 'USD',
-) => {
+export const formatCurrency = (amount: number, locale = 'en-US', currency = 'USD') => {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
@@ -107,10 +87,7 @@ export const formateDateFilename = () => {
   return `${year}_${month}_${day}`
 }
 
-export const getUnitLabel = (
-  unit: string,
-  quantity: number | 'singular' | 'plural',
-) => {
+export const getUnitLabel = (unit: string, quantity: number | 'singular' | 'plural') => {
   let suffix: string
   if (quantity === 'singular') {
     suffix = '_singular'

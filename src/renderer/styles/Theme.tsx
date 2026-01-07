@@ -1,11 +1,6 @@
 import { useMediaQuery } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
-import {
-  createTheme,
-  responsiveFontSizes,
-  type ThemeOptions,
-  ThemeProvider,
-} from '@mui/material/styles'
+import { createTheme, responsiveFontSizes, type ThemeOptions, ThemeProvider } from '@mui/material/styles'
 import { useMemo } from 'react'
 import { FONT_SIZES, PALETTE, SPACING } from './consts'
 
@@ -131,9 +126,7 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
       MuiTableContainer: {
         styleOverrides: {
           root: {
-            boxShadow: isDark
-              ? `0 2px 8px rgba(0, 0, 0, 0.3)`
-              : `0 2px 8px ${PALETTE.grayscale[200]}`,
+            boxShadow: isDark ? `0 2px 8px rgba(0, 0, 0, 0.3)` : `0 2px 8px ${PALETTE.grayscale[200]}`,
             borderRadius: SPACING.SMALL.PX,
             backgroundColor: colors.surface,
           },
@@ -151,9 +144,7 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
             color: colors.text.primary,
             '&:hover': {
               borderColor: PALETTE.primary[500],
-              backgroundColor: isDark
-                ? PALETTE.primary[900]
-                : PALETTE.primary[50],
+              backgroundColor: isDark ? PALETTE.primary[900] : PALETTE.primary[50],
               color: PALETTE.primary[isDark ? 300 : 700],
             },
           },
@@ -219,9 +210,7 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
                 backgroundColor: colors.hover.light,
               },
               '&.Mui-focused': {
-                backgroundColor: isDark
-                  ? PALETTE.primary[800]
-                  : PALETTE.primary[100],
+                backgroundColor: isDark ? PALETTE.primary[800] : PALETTE.primary[100],
               },
             },
           },
@@ -260,9 +249,7 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
       MuiTooltip: {
         styleOverrides: {
           tooltip: {
-            backgroundColor: isDark
-              ? PALETTE.grayscale[700]
-              : PALETTE.grayscale[800],
+            backgroundColor: isDark ? PALETTE.grayscale[700] : PALETTE.grayscale[800],
             color: isDark ? PALETTE.grayscale[100] : PALETTE.named.white,
             fontSize: FONT_SIZES.SMALL.PX,
           },
@@ -310,10 +297,7 @@ const AppThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
 
   const theme = useMemo(
-    () =>
-      prefersDarkMode
-        ? darkThemeWithResponsiveFonts
-        : lightThemeWithResponsiveFonts,
+    () => (prefersDarkMode ? darkThemeWithResponsiveFonts : lightThemeWithResponsiveFonts),
     [prefersDarkMode],
   )
 
@@ -326,9 +310,6 @@ const AppThemeProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 // Export themes for external use
-export {
-  darkThemeWithResponsiveFonts as darkTheme,
-  lightThemeWithResponsiveFonts as lightTheme
-}
+export { darkThemeWithResponsiveFonts as darkTheme, lightThemeWithResponsiveFonts as lightTheme }
 
 export default AppThemeProvider

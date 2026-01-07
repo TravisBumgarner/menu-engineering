@@ -1,6 +1,6 @@
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { RECIPE_STATUS } from '../../shared/recipe.types'
-import { ALL_UNITS, AllUnits } from '../../shared/units.types'
+import { ALL_UNITS, type AllUnits } from '../../shared/units.types'
 
 export const recipeSchema = sqliteTable('recipes', {
   id: text('id').primaryKey(),
@@ -12,11 +12,7 @@ export const recipeSchema = sqliteTable('recipes', {
   }).notNull(),
 
   status: text('status', {
-    enum: [
-      RECIPE_STATUS.archived,
-      RECIPE_STATUS.draft,
-      RECIPE_STATUS.published,
-    ],
+    enum: [RECIPE_STATUS.archived, RECIPE_STATUS.draft, RECIPE_STATUS.published],
   }).notNull(),
   createdAt: text('created_at')
     .notNull()
