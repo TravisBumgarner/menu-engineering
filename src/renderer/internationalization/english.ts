@@ -132,7 +132,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   dataManagement: 'Data Management',
   databaseBackups: 'Database Backups',
   backupLocation: 'Backup location',
-  exportAllData: 'Export All Data (JSON)',
+  exportAllData: 'Export All Data',
   restoreFromBackup: 'Restore from Backup',
   exporting: 'Exporting...',
   restoring: 'Restoring...',
@@ -145,7 +145,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   errorRestoringData: 'Error restoring data',
   invalidBackupFile: 'Invalid backup file format',
   exportDataDescription:
-    'Export all your data as JSON or restore from a backup file.',
+    'Export all your data or restore from a backup file.',
   restoreConfirmation:
     'Type "CONFIRM" to restore data (this will delete all current data)',
   confirmationPlaceholder: 'Type CONFIRM here',

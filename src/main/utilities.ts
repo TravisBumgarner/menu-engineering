@@ -48,3 +48,59 @@ export const deletePhoto = (photoFileName: string): boolean => {
     return false
   }
 }
+
+export const getAllPhotos = (): { filename: string; data: Buffer }[] => {
+  try {
+    if (!fs.existsSync(photosBasePath)) {
+      return []
+    }
+    
+    const files = fs.readdirSync(photosBasePath)
+    return files
+      .filter(file => {
+        const stat = fs.statSync(path.join(photosBasePath, file))
+        return stat.isFile()
+      })
+      .map(filename => ({
+        filename,
+        data: fs.readFileSync(path.join(photosBasePath, filename))
+      }))
+  } catch (err) {
+    console.error('Error getting all photos:', err)
+    return []
+  }
+}
+
+export const deleteAllPhotos = (): boolean => {
+  try {
+    if (!fs.existsSync(photosBasePath)) {
+      return true
+    }
+    
+    const files = fs.readdirSync(photosBasePath)
+    for (const file of files) {
+      const filePath = path.join(photosBasePath, file)
+      const stat = fs.statSync(filePath)
+      if (stat.isFile()) {
+        fs.unlinkSync(filePath)
+      }
+    }
+    return true
+  } catch (err) {
+    console.error('Error deleting all photos:', err)
+    return false
+  }
+}
+
+export const savePhotosFromZipData = (photos: { filename: string; data: Buffer }[]): boolean => {
+  try {
+    ensurePhotosDir()
+    for (const photo of photos) {
+      fs.writeFileSync(getPhotoPath(photo.filename), photo.data)
+    }
+    return true
+  } catch (err) {
+    console.error('Error saving photos from zip:', err)
+    return false
+  }
+}

@@ -134,7 +134,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   dataManagement: 'Gestión de Datos',
   databaseBackups: 'Copias de Seguridad de Base de Datos',
   backupLocation: 'Ubicación de copia de seguridad',
-  exportAllData: 'Exportar Todos los Datos (JSON)',
+  exportAllData: 'Exportar Todos los Datos',
   restoreFromBackup: 'Restaurar desde Copia de Seguridad',
   exporting: 'Exportando...',
   restoring: 'Restaurando...',
@@ -147,7 +147,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   errorRestoringData: 'Error restaurando datos',
   invalidBackupFile: 'Formato de archivo de copia de seguridad inválido',
   exportDataDescription:
-    'Exporta todos tus datos como JSON o restaura desde un archivo de copia de seguridad.',
+    'Exporta todos tus datos o restaura desde un archivo de copia de seguridad.',
   restoreConfirmation:
     'Escribe "CONFIRMAR" para restaurar datos (esto eliminará todos los datos actuales)',
   confirmationPlaceholder: 'Escribe CONFIRMAR aquí',
