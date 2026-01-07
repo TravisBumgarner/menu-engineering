@@ -146,23 +146,25 @@ export type Invokes = {
     args: undefined
     result: {
       success: boolean
-      data?: string  // base64 encoded ZIP data
+      data?: string // base64 encoded ZIP data
       error?: string
     }
   }
   [CHANNEL.APP.RESTORE_ALL_DATA]: {
     args: {
-      data: string | {
-        ingredients: Array<IngredientDTO>
-        recipes: Array<RecipeDTO>
-        relations: Array<
-          RelationDTO & {
-            parentId: string
-            childId: string
-            type: 'ingredient' | 'sub-recipe'
+      data:
+        | string
+        | {
+            ingredients: Array<IngredientDTO>
+            recipes: Array<RecipeDTO>
+            relations: Array<
+              RelationDTO & {
+                parentId: string
+                childId: string
+                type: 'ingredient' | 'sub-recipe'
+              }
+            >
           }
-        >
-      }
     }
     result: { success: boolean; error?: string }
   }
