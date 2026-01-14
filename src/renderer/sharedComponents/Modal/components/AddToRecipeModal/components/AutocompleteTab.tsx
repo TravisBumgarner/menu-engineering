@@ -160,7 +160,7 @@ const Autocomplete = ({
           )}
         />
         <RecipeDetails
-          units={selectedAutocomplete?.units || ALL_UNITS.cups}
+          units={selectedAutocomplete?.units || ALL_UNITS.units}
           setQuantity={setRecipeQuantity}
           quantity={recipeQuantity}
         />

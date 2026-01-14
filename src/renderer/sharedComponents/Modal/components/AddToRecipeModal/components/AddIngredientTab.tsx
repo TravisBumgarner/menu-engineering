@@ -28,7 +28,7 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
   const [ingredientFormData, setIngredientFormData] = useState<FormData>({
     title: '',
     quantity: 1,
-    units: ALL_UNITS.cups,
+    units: ALL_UNITS.units,
     cost: 0,
   })
 
@@ -78,7 +78,7 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
           setIngredientFormData({
             title: '',
             quantity: 1,
-            units: ALL_UNITS.cups,
+            units: ALL_UNITS.units,
             cost: 0,
           })
           setRecipeQuantity(0)

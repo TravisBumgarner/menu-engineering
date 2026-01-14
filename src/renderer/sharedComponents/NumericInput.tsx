@@ -91,6 +91,7 @@ export const NumericInput = ({
 
   return (
     <TextField
+      size="small"
       {...textFieldProps}
       type="text"
       value={internalValue}
