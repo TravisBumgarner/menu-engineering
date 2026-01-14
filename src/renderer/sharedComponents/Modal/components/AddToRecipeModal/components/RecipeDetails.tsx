@@ -1,8 +1,9 @@
-import { Divider, Stack, TextField, Typography } from '@mui/material'
+import { Divider, Stack, Typography } from '@mui/material'
 import type { AllUnits } from '../../../../../../shared/units.types'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import { SPACING } from '../../../../../styles/consts'
 import { getUnitLabel } from '../../../../../utilities'
+import { NumericInput } from '../../../../NumericInput'
 
 const RecipeDetails = ({
   units,
@@ -14,23 +15,17 @@ const RecipeDetails = ({
   setQuantity: React.Dispatch<React.SetStateAction<number>>
 }) => {
   const { t } = useAppTranslation()
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value
-    setQuantity(Number(value))
-  }
-
   return (
     <Stack spacing={SPACING.MEDIUM.PX}>
       <Divider />
       <Stack spacing={SPACING.SMALL.PX} direction="row" sx={{ alignItems: 'center' }}>
-        <TextField
-          fullWidth
-          size="small"
+        <NumericInput
           label={t('recipeUses')}
-          value={quantity}
-          onChange={handleInputChange}
-          required
           placeholder={t('recipeUses')}
+          fullWidth
+          value={quantity}
+          onValidChange={setQuantity}
+          min={0}
         />
         <Typography>{getUnitLabel(units, quantity)}</Typography>
       </Stack>

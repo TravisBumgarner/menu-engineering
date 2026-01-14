@@ -22,6 +22,7 @@ import { ALL_UNITS } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
+import { NumericInput } from '../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import type { NewPhotoUpload } from '../../../types'
@@ -127,14 +128,14 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
             fullWidth
           />
           <Stack direction="row" spacing={SPACING.SMALL.PX}>
-            <TextField
+            <NumericInput
               size="small"
               label={t('produces')}
-              type="number"
               value={formData.produces}
-              onChange={handleInputChange('produces')}
+              onValidChange={(value) => setFormData({ ...formData, produces: value })}
               required
               fullWidth
+              min={0}
             />
             <FormControl size="small" fullWidth required>
               <InputLabel>{t('units')}</InputLabel>

@@ -1,4 +1,4 @@
-import { TextField, Tooltip } from '@mui/material'
+import { Tooltip } from '@mui/material'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
@@ -12,6 +12,7 @@ import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
+import { NumericInput } from '../../../../../sharedComponents/NumericInput'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
 import { formatCurrency, formatDisplayDate } from '../../../../../utilities'
@@ -77,10 +78,9 @@ function SubRecipeRow(props: { row: RecipeDTO & { relation: RelationDTO }; recip
     }
   }
 
-  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuantity = parseFloat(event.target.value)
+  const handleQuantityChange = (newQuantity: number) => {
     updateSubRecipeRelationMutation.mutate({
-      quantity: !Number.isNaN(newQuantity) ? newQuantity : 0,
+      quantity: newQuantity,
     })
   }
 
@@ -110,11 +110,10 @@ function SubRecipeRow(props: { row: RecipeDTO & { relation: RelationDTO }; recip
         </Box>
       </TableCell>
       <TableCell align="right" id={labelId} scope="row">
-        <TextField
+        <NumericInput
           size="small"
-          type="number"
           value={row.relation?.quantity || 0}
-          onChange={handleQuantityChange}
+          onValidChange={handleQuantityChange}
           variant="filled"
           sx={{
             '& .MuiFilledInput-input': {
@@ -122,6 +121,7 @@ function SubRecipeRow(props: { row: RecipeDTO & { relation: RelationDTO }; recip
               padding: SPACING.TINY.PX,
             },
           }}
+          min={0}
         />
       </TableCell>
       <TableCell align="left" id={labelId} scope="row">
