@@ -12,6 +12,7 @@ const VOLUME_TO_ML = {
 
 // Weight conversion factors (to grams)
 const WEIGHT_TO_GRAMS = {
+  [WEIGHT_UNIT.milligrams]: 0.001,
   [WEIGHT_UNIT.grams]: 1,
   [WEIGHT_UNIT.kilograms]: 1000,
   [WEIGHT_UNIT.ounces]: 28.3495,

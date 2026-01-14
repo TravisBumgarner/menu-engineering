@@ -28,6 +28,7 @@ import { SPACING } from '../../../styles/consts'
 import type { NewPhotoUpload } from '../../../types'
 import { getUnitLabel } from '../../../utilities'
 import Photo from '../../Photo'
+import UnitSelect from '../../UnitPicker'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -137,20 +138,11 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
               fullWidth
               min={0}
             />
-            <FormControl size="small" fullWidth required>
-              <InputLabel>{t('units')}</InputLabel>
-              <Select
-                value={formData.units}
-                onChange={(e) => handleInputChange('units')(e as React.ChangeEvent<HTMLInputElement>)}
-                label={t('units')}
-              >
-                {Object.entries(ALL_UNITS).map(([key, value]) => (
-                  <MenuItem key={key} value={value}>
-                    {getUnitLabel(value, 'plural')}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <UnitSelect
+              value={formData.units}
+              required
+              onChange={(value) => setFormData((prev) => ({ ...prev, units: value }))}
+            />
           </Stack>
           <Typography sx={{ marginTop: '0 !important' }} variant="caption" color="textSecondary">
             {t('unitsHelpText')}

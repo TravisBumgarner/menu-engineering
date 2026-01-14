@@ -73,6 +73,8 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   draft: 'Draft',
   published: 'Published',
   archived: 'Archived',
+  weight: 'Weight',
+  volume: 'Volume',
 
   // Messages
   recipeNotFound: 'Recipe not found.',
@@ -99,6 +101,8 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   gallons_plural: 'Gallons',
   cups_singular: 'Cup',
   cups_plural: 'Cups',
+  milligrams_plural: 'Milligrams',
+  milligrams_singular: 'Milligram',
   grams_singular: 'Gram',
   grams_plural: 'Grams',
   kilograms_singular: 'Kilogram',

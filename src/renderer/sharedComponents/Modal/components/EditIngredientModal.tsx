@@ -12,6 +12,7 @@ import { NumericInput } from '../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { getUnitLabel } from '../../../utilities'
+import UnitSelect from '../../UnitPicker'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -122,21 +123,12 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
               sx={{ width: '100px' }}
               min={0}
             />
-            <FormControl size="small" required sx={{ width: '150px' }}>
-              <InputLabel>{t('units')}</InputLabel>
-              <Select
-                disabled
-                value={formData.units}
-                onChange={(e) => handleInputChange('units')(e as React.ChangeEvent<HTMLInputElement>)}
-                label={t('units')}
-              >
-                {Object.entries(ALL_UNITS).map(([key, value]) => (
-                  <MenuItem key={key} value={value}>
-                    {getUnitLabel(value, 'plural')}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <UnitSelect
+              disabled
+              value={formData.units}
+              required
+              onChange={(value) => setFormData((prev) => ({ ...prev, units: value }))}
+            />
 
             <Typography>=</Typography>
 

@@ -34,6 +34,8 @@ export type TranslationKeys =
   | 'subRecipes'
   | 'mainRecipes'
   | 'country'
+  | 'weight'
+  | 'volume'
 
   // Navigation
   | 'recipes'
@@ -112,6 +114,8 @@ export type TranslationKeys =
   | 'pounds_plural'
   | 'pieces_singular'
   | 'pieces_plural'
+  | 'milligrams_singular'
+  | 'milligrams_plural'
 
   // Missing translations
   | 'language'
