@@ -126,9 +126,6 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   errorUpdatingRecipe: 'Error actualizando receta.',
   failedToUpdateIngredient: 'Falló al actualizar ingrediente.',
   errorUpdatingIngredient: 'Error actualizando ingrediente.',
-  all: 'Todos',
-  none: 'Ninguno',
-  select: 'Seleccionar',
 
   // Data Management
   dataManagement: 'Gestión de Datos',

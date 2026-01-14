@@ -1,11 +1,24 @@
-import { Box, Button, Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material'
 import { pdf } from '@react-pdf/renderer'
 import log from 'electron-log/renderer'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import type { RecipeDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
+import Icon from '../../../sharedComponents/Icon'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { formateDateFilename } from '../../../utilities'
@@ -29,7 +42,26 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
   const [isGenerating, setIsGenerating] = useState(false)
   const [selectedRecipes, setSelectedRecipes] = useState<Set<string>>(new Set(recipes.map((recipe) => recipe.id)))
   const [includeImages, setIncludeImages] = useState(true)
-  const [oneFilePerRecipe, setOneFilePerRecipe] = useState(false)
+  const [multiplePDFs, setMultiplePDFs] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  // Check if this is a single recipe export (simpler UI)
+  const isSingleRecipeExport = recipes.length === 1
+
+  // Sort recipes alphabetically by title
+  const sortedRecipes = useMemo(() => {
+    return [...recipes].sort((a, b) => a.title.localeCompare(b.title))
+  }, [recipes])
+
+  // Filter recipes based on search query
+  const filteredRecipes = useMemo(() => {
+    if (!searchQuery.trim()) return sortedRecipes
+    const query = searchQuery.toLowerCase()
+    return sortedRecipes.filter((recipe) => recipe.title.toLowerCase().includes(query))
+  }, [sortedRecipes, searchQuery])
+
+  // Disable multiple PDFs option if only one recipe is selected
+  const canUseMultiplePDFs = selectedRecipes.size > 1
 
   const handleCancel = () => {
     activeModalSignal.value = null
@@ -62,7 +94,9 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
       const datePrefix = formateDateFilename()
       const pdfsToSave: Array<{ filename: string; data: Uint8Array }> = []
 
-      if (oneFilePerRecipe) {
+      const useMultiplePDFs = multiplePDFs && canUseMultiplePDFs
+
+      if (useMultiplePDFs) {
         // Generate individual PDFs for each recipe
         for (const recipe of selectedRecipesList) {
           // Fetch detailed recipe data
@@ -105,10 +139,10 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
           const arrayBuffer = await blob.arrayBuffer()
           const pdfData = new Uint8Array(arrayBuffer)
 
-          // Clean recipe title for filename
+          // Clean recipe title for filename - format: recipeName_date
           const cleanTitle = recipe.title.replace(/[^a-zA-Z0-9\-_\s]/g, '').trim()
           pdfsToSave.push({
-            filename: `${datePrefix}_${cleanTitle}`,
+            filename: `${cleanTitle}_${datePrefix}`,
             data: pdfData,
           })
         }
@@ -156,8 +190,14 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
         const arrayBuffer = await blob.arrayBuffer()
         const pdfData = new Uint8Array(arrayBuffer)
 
+        // Format: recipeName_date (or "recipes_date" if multiple selected)
+        const filename =
+          selectedRecipesList.length === 1
+            ? `${selectedRecipesList[0].title.replace(/[^a-zA-Z0-9\-_\s]/g, '').trim()}_${datePrefix}`
+            : `${t('recipes')}_${datePrefix}`
+
         pdfsToSave.push({
-          filename: `${datePrefix}_${t('recipes')}`,
+          filename,
           data: pdfData,
         })
       }
@@ -165,7 +205,7 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
       // Send all PDFs to main process for saving
       const result = await ipcMessenger.invoke(CHANNEL.FILES.EXPORT_RECIPES_PDF, {
         pdfs: pdfsToSave,
-        oneFilePerRecipe,
+        oneFilePerRecipe: useMultiplePDFs,
       })
 
       if (!result.success) {
@@ -182,85 +222,123 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
   }
 
   return (
-    <DefaultModal title={`${t('export')}: ${t('recipes')} PDF`}>
-      <Box>
-        <Stack spacing={SPACING.MEDIUM.PX}>
-          <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-            <Stack>
-              <Typography variant="body2" color="textSecondary">
-                {t('export')}: {selectedRecipes.size} {selectedRecipes.size === 1 ? t('recipe') : t('recipes')} of{' '}
-                {recipes.length}
-              </Typography>
+    <DefaultModal
+      sx={{ height: isSingleRecipeExport ? 'auto' : '80vh' }}
+      title={isSingleRecipeExport ? `${t('export')}: ${recipes[0].title}` : `${t('export')}: ${t('recipes')} PDF`}
+    >
+      <Stack spacing={SPACING.SMALL.PX} height="100%">
+        {!isSingleRecipeExport && (
+          <>
+            <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="center" justifyContent="space-between">
+              <Stack>
+                <Typography variant="body2" color="textSecondary">
+                  {t('export')}: {selectedRecipes.size} {selectedRecipes.size === 1 ? t('recipe') : t('recipes')} of{' '}
+                  {recipes.length}
+                </Typography>
+              </Stack>
+              <Stack direction="row" spacing={SPACING.SMALL.PX} marginLeft="auto">
+                <Typography variant="body2" color="textSecondary" alignSelf="center">
+                  {t('select')}:
+                </Typography>
+                <Button size="small" variant="outlined" onClick={handleSelectAll}>
+                  {t('all')}
+                </Button>
+                <Button size="small" variant="outlined" onClick={handleSelectNone}>
+                  {t('none')}
+                </Button>
+              </Stack>
             </Stack>
-            <Stack direction="row" spacing={1} marginLeft="auto">
-              <Typography variant="body2" color="textSecondary" alignSelf="center">
-                {t('select')}:
-              </Typography>
-              <Button size="small" variant="outlined" onClick={handleSelectAll}>
-                {t('all')}
-              </Button>
-              <Button size="small" variant="outlined" onClick={handleSelectNone}>
-                {t('none')}
-              </Button>
-            </Stack>
-          </Stack>
 
-          <Box
-            sx={{
-              maxHeight: 300,
-              overflow: 'auto',
-              padding: SPACING.TINY.PX,
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: 1,
-            }}
-          >
-            <Stack spacing={SPACING.SMALL.PX}>
-              {recipes.map((recipe) => (
-                <FormControlLabel
-                  key={recipe.id}
-                  control={
-                    <Checkbox
-                      checked={selectedRecipes.has(recipe.id)}
-                      onChange={() => handleRecipeToggle(recipe.id)}
-                      size="small"
-                    />
-                  }
-                  label={recipe.title}
-                />
-              ))}
-            </Stack>
-          </Box>
-
-          <Stack direction="row" spacing={3}>
-            <FormControlLabel
-              control={
-                <Checkbox checked={includeImages} onChange={(e) => setIncludeImages(e.target.checked)} size="small" />
-              }
-              label={t('includeImages')}
+            <TextField
+              size="small"
+              placeholder={t('searchRecipes')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              fullWidth
+              slotProps={{
+                input: {
+                  endAdornment: searchQuery && (
+                    <InputAdornment position="end">
+                      <IconButton size="small" onClick={() => setSearchQuery('')} edge="end">
+                        <Icon name="close" size={18} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={oneFilePerRecipe}
-                  onChange={(e) => setOneFilePerRecipe(e.target.checked)}
-                  size="small"
-                />
-              }
-              label={t('oneFilePerRecipe')}
-            />
-          </Stack>
 
-          <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <Button variant="outlined" onClick={handleCancel} disabled={isGenerating}>
-              {t('cancel')}
-            </Button>
-            <Button variant="contained" onClick={handleExport} disabled={isGenerating || selectedRecipes.size === 0}>
-              {isGenerating ? `${t('loading')}...` : `${t('export')} PDF`}
-            </Button>
-          </Stack>
+            <Box
+              sx={{
+                overflow: 'auto',
+                padding: SPACING.TINY.PX,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1,
+                height: '100%',
+              }}
+            >
+              <Stack spacing={SPACING.TINY.PX} height="100%">
+                {filteredRecipes.map((recipe) => (
+                  <FormControlLabel
+                    key={recipe.id}
+                    control={
+                      <Checkbox
+                        checked={selectedRecipes.has(recipe.id)}
+                        onChange={() => handleRecipeToggle(recipe.id)}
+                        size="small"
+                      />
+                    }
+                    label={recipe.title}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          </>
+        )}
+
+        <Stack direction="row" spacing={3} alignItems="center">
+          <FormControlLabel
+            control={
+              <Checkbox checked={includeImages} onChange={(e) => setIncludeImages(e.target.checked)} size="small" />
+            }
+            label={t('includeImages')}
+          />
+          {!isSingleRecipeExport && (
+            <ToggleButtonGroup
+              value={multiplePDFs ? 'multiple' : 'single'}
+              exclusive
+              onChange={(_, value) => {
+                if (value !== null) {
+                  setMultiplePDFs(value === 'multiple')
+                }
+              }}
+              size="small"
+              color="primary"
+            >
+              <ToggleButton value="single" sx={{ fontWeight: multiplePDFs ? 'normal' : 'bold' }}>
+                {t('singlePDF')}
+              </ToggleButton>
+              <ToggleButton
+                value="multiple"
+                disabled={!canUseMultiplePDFs}
+                sx={{ fontWeight: multiplePDFs ? 'bold' : 'normal' }}
+              >
+                {t('multiplePDFs')}
+              </ToggleButton>
+            </ToggleButtonGroup>
+          )}
         </Stack>
-      </Box>
+
+        <Stack direction="row" spacing={2} justifyContent="flex-end">
+          <Button variant="outlined" onClick={handleCancel} disabled={isGenerating}>
+            {t('cancel')}
+          </Button>
+          <Button variant="contained" onClick={handleExport} disabled={isGenerating || selectedRecipes.size === 0}>
+            {isGenerating ? `${t('loading')}` : `${t('export')} PDF`}
+          </Button>
+        </Stack>
+      </Stack>
     </DefaultModal>
   )
 }

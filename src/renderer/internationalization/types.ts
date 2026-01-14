@@ -28,6 +28,9 @@ export type TranslationKeys =
   | 'usedIn'
   | 'includeImages'
   | 'oneFilePerRecipe'
+  | 'singlePDF'
+  | 'multiplePDFs'
+  | 'searchRecipes'
 
   // Navigation
   | 'recipes'

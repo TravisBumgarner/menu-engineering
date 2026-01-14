@@ -127,6 +127,9 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   select: 'Select',
   includeImages: 'Include Images',
   oneFilePerRecipe: 'One File Per Recipe',
+  singlePDF: 'Single PDF',
+  multiplePDFs: 'Multiple PDFs',
+  searchRecipes: 'Search recipes...',
 
   // Data Management
   dataManagement: 'Data Management',
