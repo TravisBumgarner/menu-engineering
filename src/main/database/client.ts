@@ -21,8 +21,6 @@ const sqlite = new BetterSqlite3(dbPath)
 // Create the Drizzle client
 export const db = drizzle(sqlite)
 
-Logger.info('ruda', app)
-Logger.info('ruda', app.isPackaged)
 // Run migrations automatically in production
 if (app.isPackaged) {
   Logger.info('I do run...')

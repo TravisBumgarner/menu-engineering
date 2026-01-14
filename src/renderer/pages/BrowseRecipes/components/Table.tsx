@@ -9,7 +9,8 @@ import TableRow from '@mui/material/TableRow'
 import { useSignals } from '@preact/signals-react/runtime'
 import * as React from 'react'
 import { RECIPE_STATUS, type RecipeDTO } from '../../../../shared/recipe.types'
-import { ROWS_PER_PAGE } from '../../../consts'
+import { PAGINATION } from '../../../consts'
+import { useLocalStorage } from '../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
@@ -48,12 +49,18 @@ const Table = ({
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO | 'usedInRecipesCount'>('createdAt')
   const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = useLocalStorage('browseRecipesPagination', PAGINATION.DEFAULT_ROWS_PER_PAGE)
 
   // Default filters: show draft and published, hide archived, show both in menu and not in menu
   const [filters, setFilters] = React.useState<FilterOptions>({
     status: [RECIPE_STATUS.draft, RECIPE_STATUS.published],
     filterToMenuItemsOnly: false,
   })
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPage(0)
+  }
 
   const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof RecipeDTO | 'usedInRecipesCount') => {
     const isAsc = orderBy === property && order === 'asc'
@@ -100,14 +107,15 @@ const Table = ({
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - filteredRecipes.length) : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRecipes.length) : 0
 
   const visibleRows = React.useMemo(
     () =>
       [...filteredRecipes]
+        // This isn't actually a bug. I need to overhaul this function at some point.
         .sort(getComparator(order, orderBy))
-        .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
-    [filteredRecipes, order, orderBy, page],
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [filteredRecipes, order, orderBy, page, rowsPerPage],
   )
 
   return (
@@ -159,12 +167,13 @@ const Table = ({
         </MuiTable>
       </TableContainer>
       <TablePagination
+        rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
+        onRowsPerPageChange={handleChangeRowsPerPage}
         sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
         size="small"
         component="div"
         count={filteredRecipes.length}
-        rowsPerPage={ROWS_PER_PAGE}
-        rowsPerPageOptions={[]}
+        rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}

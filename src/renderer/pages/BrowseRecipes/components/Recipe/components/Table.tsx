@@ -8,7 +8,8 @@ import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
 import type { IngredientDTO, RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
-import { ROWS_PER_PAGE } from '../../../../../consts'
+import { PAGINATION } from '../../../../../consts'
+import { useLocalStorage } from '../../../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import Icon from '../../../../../sharedComponents/Icon'
 import Message from '../../../../../sharedComponents/Message'
@@ -52,6 +53,7 @@ const Table = ({
   const [orderBy, setOrderBy] = React.useState<'title' | 'createdAt'>('createdAt')
   const [page, setPage] = React.useState(0)
   const { t } = useAppTranslation()
+  const [rowsPerPage, setRowsPerPage] = useLocalStorage('recipeDetailsPagination', PAGINATION.DEFAULT_ROWS_PER_PAGE)
 
   const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof typeof SORTABLE_OPTIONS) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -59,12 +61,17 @@ const Table = ({
     setOrderBy(property)
   }
 
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPage(0)
+  }
+
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage)
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0
 
   const hasRows = ingredients.length + subRecipes.length > 0
 
@@ -75,8 +82,8 @@ const Table = ({
         ...subRecipes.map((s) => ({ ...s, type: 'sub-recipe' as const })),
       ]
         .sort(getComparator(order, orderBy))
-        .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
-    [ingredients, subRecipes, order, orderBy, page],
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [ingredients, subRecipes, order, orderBy, page, rowsPerPage],
   )
 
   const handleAddToRecipe = () => {
@@ -144,10 +151,11 @@ const Table = ({
         size="small"
         component="div"
         count={ingredients.length}
+        rowsPerPage={rowsPerPage}
         page={page}
-        rowsPerPage={ROWS_PER_PAGE}
-        rowsPerPageOptions={[]}
+        rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
         onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
       />
     </Box>

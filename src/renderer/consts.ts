@@ -27,4 +27,7 @@ export const QUERY_KEYS = {
   PHOTO: 'photo',
 }
 
-export const ROWS_PER_PAGE = 5
+export const PAGINATION = {
+  DEFAULT_ROWS_PER_PAGE: 10 as number,
+  ROWS_PER_PAGE_OPTIONS: [10, 25, 50, 100] as readonly number[],
+} as const
