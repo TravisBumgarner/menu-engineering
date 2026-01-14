@@ -87,6 +87,13 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
           },
         },
       },
+      MuiToggleButton: {
+        styleOverrides: {
+          root: {
+            textTransform: 'none',
+          },
+        },
+      },
       MuiTableHead: {
         styleOverrides: {
           root: {

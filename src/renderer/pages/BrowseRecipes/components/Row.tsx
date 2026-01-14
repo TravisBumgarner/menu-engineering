@@ -68,6 +68,13 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
     }
   }
 
+  const openExportModal = () => {
+    activeModalSignal.value = {
+      id: MODAL_ID.EXPORT_RECIPES,
+      recipes: [row],
+    }
+  }
+
   return (
     <React.Fragment>
       <TableRow
@@ -147,8 +154,15 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
               <Icon name="edit" />
             </IconButton>
           </Tooltip>
+          <Tooltip title={`${t('export')} PDF`}>
+            <IconButton onClick={openExportModal}>
+              <Icon name="download" />
+            </IconButton>
+          </Tooltip>
           <Tooltip title={t('deleteRecipe')}>
-            <IconButton onClick={openConfirmationModal}></IconButton>
+            <IconButton onClick={openConfirmationModal}>
+              <Icon name="delete" />
+            </IconButton>
           </Tooltip>
         </TableCell>
       </TableRow>

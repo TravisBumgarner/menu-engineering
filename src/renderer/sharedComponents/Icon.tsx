@@ -9,6 +9,7 @@ import {
   MdAdd,
   MdClose,
   MdDeleteOutline,
+  MdDownload,
   MdEdit,
   MdError,
   MdOutlineCheckBoxOutlineBlank,
@@ -33,6 +34,7 @@ export const iconMap = {
   settings: IoMdSettings,
   photo: MdOutlinePhoto,
   delete: MdDeleteOutline,
+  download: MdDownload,
 }
 
 const Icon = ({

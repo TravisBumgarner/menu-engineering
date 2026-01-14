@@ -102,7 +102,7 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       align: 'center',
       disablePadding: false,
       label: '',
-      width: '10%',
+      width: '18%',
     },
   ]
 
