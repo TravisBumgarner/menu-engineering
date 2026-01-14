@@ -31,6 +31,12 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   totalCost: 'Costo Total',
   includeImages: 'Incluir Imágenes',
   oneFilePerRecipe: 'Un Archivo por Receta',
+  searchRecipes: 'Buscar recetas...',
+  all: 'Todos',
+  none: 'Ninguno',
+  singlePDF: 'PDF Único',
+  multiplePDFs: 'Múltiples PDFs',
+  select: 'Seleccionar',
 
   // Navigation
   recipes: 'Recetas',
