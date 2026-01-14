@@ -8,6 +8,7 @@ import { ALL_UNITS, type AllUnits } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
+import { NumericInput } from '../../../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
 import { getUnitLabel } from '../../../../../utilities'
@@ -141,28 +142,26 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
         />
 
         <Stack spacing={SPACING.SMALL.PX} direction="row" sx={{ alignItems: 'center' }}>
-          <TextField
+          <NumericInput
             size="small"
             label={t('cost')}
-            type="number"
             value={ingredientFormData.cost}
-            onChange={handleInputChange('cost')}
+            onValidChange={(value) => setIngredientFormData({ ...ingredientFormData, cost: value })}
             required
             sx={{ width: '100px' }}
-            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
+            min={0}
           />
 
           <Typography>/</Typography>
 
-          <TextField
+          <NumericInput
             size="small"
             label={t('quantity')}
-            type="number"
             value={ingredientFormData.quantity}
-            onChange={handleInputChange('quantity')}
+            onValidChange={(value) => setIngredientFormData({ ...ingredientFormData, quantity: value })}
             required
             sx={{ width: '100px' }}
-            slotProps={{ htmlInput: { min: 0, step: 'any' } }}
+            min={0}
           />
           <FormControl size="small" required sx={{ width: '150px' }}>
             <InputLabel>{t('units')}</InputLabel>
