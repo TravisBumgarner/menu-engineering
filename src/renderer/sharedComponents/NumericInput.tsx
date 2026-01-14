@@ -42,7 +42,9 @@ export const NumericInput = ({
     if (isValid) {
       setInternalValue(newValue)
 
-      // If we have a complete valid number, call the callback immediately
+      // If a form field is required for submission, the onBlur won't be enough to enable the submit button
+      // Therefore, if we have a complete valid number, call the callback immediately.
+
       const parsed = allowDecimals ? parseFloat(newValue) : parseInt(newValue, 10)
       if (!Number.isNaN(parsed)) {
         let validValue = parsed
