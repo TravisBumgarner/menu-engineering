@@ -20,9 +20,18 @@ const WEIGHT_TO_GRAMS = {
 
 export const formatDisplayDate = (dateString: string) => {
   const date = new Date(dateString)
-  return date.toLocaleDateString(undefined, {
+  const country = getFromLocalStorage<string>('country', 'US')
+
+  const localeMap: Record<string, string> = {
+    US: 'en-US',
+    MX: 'es-MX',
+  }
+
+  const locale = localeMap[country] || 'en-US'
+
+  return date.toLocaleDateString(locale, {
     year: 'numeric',
-    month: 'short',
+    month: 'numeric',
     day: 'numeric',
   })
 }
@@ -72,7 +81,22 @@ export const convertUnits = ({
   return null
 }
 
-export const formatCurrency = (amount: number, locale = 'en-US', currency = 'USD') => {
+export const formatCurrency = (amount: number) => {
+  const country = getFromLocalStorage<string>('country', 'US')
+
+  const localeMap: Record<string, string> = {
+    US: 'en-US',
+    MX: 'es-MX',
+  }
+
+  const currencyMap: Record<string, string> = {
+    US: 'USD',
+    MX: 'MXN',
+  }
+
+  const locale = localeMap[country] || 'en-US'
+  const currency = currencyMap[country] || 'USD'
+
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
