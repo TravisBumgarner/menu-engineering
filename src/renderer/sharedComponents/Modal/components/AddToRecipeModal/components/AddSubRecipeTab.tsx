@@ -119,7 +119,7 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
     const file = e.target.files ? e.target.files[0] : undefined
     setFormData((prev) => ({
       ...prev,
-      photo: { data: file!, extension: file ? file.name.split('.').pop() || '' : '' },
+      photo: file ? { data: file, extension: file ? file.name.split('.').pop() || '' : '' } : undefined,
     }))
   }
 
