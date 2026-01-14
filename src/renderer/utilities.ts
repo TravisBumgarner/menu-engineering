@@ -98,3 +98,35 @@ export const getUnitLabel = (unit: string, quantity: number | 'singular' | 'plur
   }
   return t(`${unit}${suffix}` as TranslationKeys)
 }
+
+/**
+ * Get a value from localStorage with type safety and fallback support
+ * @param key - The localStorage key
+ * @param fallback - The fallback value if key doesn't exist or parsing fails
+ * @returns The parsed value or fallback
+ */
+export const getFromLocalStorage = <T>(key: string, fallback: T): T => {
+  try {
+    const item = localStorage.getItem(key)
+    if (item === null) {
+      return fallback
+    }
+    return JSON.parse(item) as T
+  } catch (error) {
+    console.warn(`Failed to parse localStorage item "${key}":`, error)
+    return fallback
+  }
+}
+
+/**
+ * Set a value in localStorage with JSON serialization
+ * @param key - The localStorage key
+ * @param value - The value to store
+ */
+export const setToLocalStorage = <T>(key: string, value: T): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch (error) {
+    console.error(`Failed to set localStorage item "${key}":`, error)
+  }
+}

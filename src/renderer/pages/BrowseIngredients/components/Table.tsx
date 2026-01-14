@@ -9,7 +9,8 @@ import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import * as React from 'react'
 import type { IngredientDTO } from '../../../../shared/recipe.types'
-import { ROWS_PER_PAGE } from '../../../consts'
+import { PAGINATION } from '../../../consts'
+import { useLocalStorage } from '../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
@@ -46,6 +47,8 @@ const Table = ({
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO | 'recipeCount'>('createdAt')
   const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = useLocalStorage('browseIngredientsPagination', PAGINATION.DEFAULT_ROWS_PER_PAGE)
+
   const { t } = useAppTranslation()
 
   const handleOpenAddIngredientModal = () => {
@@ -61,6 +64,11 @@ const Table = ({
     }
   }
 
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPage(0)
+  }
+
   const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof IngredientDTO | 'recipeCount') => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
@@ -72,14 +80,12 @@ const Table = ({
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * ROWS_PER_PAGE - ingredients.length) : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0
 
   const visibleRows = React.useMemo(
     () =>
-      [...ingredients]
-        .sort(getComparator(order, orderBy))
-        .slice(page * ROWS_PER_PAGE, page * ROWS_PER_PAGE + ROWS_PER_PAGE),
-    [ingredients, order, orderBy, page],
+      [...ingredients].sort(getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [ingredients, order, orderBy, page, rowsPerPage],
   )
 
   return (
@@ -124,12 +130,13 @@ const Table = ({
           </MuiTable>
         </TableContainer>
         <TablePagination
-          rowsPerPage={ROWS_PER_PAGE}
-          rowsPerPageOptions={[]}
+          rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
           component="div"
           count={ingredients.length}
           page={page}
           onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
           labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
         />
       </Paper>
