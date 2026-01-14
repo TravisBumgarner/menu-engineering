@@ -7,7 +7,7 @@ const VOLUME_TO_ML = {
   [VOLUME_UNIT.milliliters]: 1,
   [VOLUME_UNIT.liters]: 1000,
   [VOLUME_UNIT.cups]: 236.588, // US cup
-  [VOLUME_UNIT.gallons]: 3785.41, // US gallon
+  // [VOLUME_UNIT.gallons]: 3785.41, // US gallon
 } as const
 
 // Weight conversion factors (to grams)
@@ -15,8 +15,8 @@ const WEIGHT_TO_GRAMS = {
   [WEIGHT_UNIT.milligrams]: 0.001,
   [WEIGHT_UNIT.grams]: 1,
   [WEIGHT_UNIT.kilograms]: 1000,
-  [WEIGHT_UNIT.ounces]: 28.3495,
-  [WEIGHT_UNIT.pounds]: 453.592,
+  // [WEIGHT_UNIT.ounces]: 28.3495,
+  // [WEIGHT_UNIT.pounds]: 453.592,
 } as const
 
 export const formatDisplayDate = (dateString: string) => {
