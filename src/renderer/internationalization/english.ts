@@ -60,6 +60,8 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   addSubRecipe: 'Add Sub-Recipe',
   showInMenu: 'On Menu',
   filterToMenuItems: 'Only Menu Items',
+  subRecipes: 'Sub Recipes',
+  mainRecipes: 'Recipes',
   noDetails: 'No Details',
   unitsHelpText: 'Note - Units can only be set on creation',
   usedIn: 'Used In',

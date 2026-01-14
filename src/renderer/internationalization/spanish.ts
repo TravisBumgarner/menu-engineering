@@ -67,6 +67,8 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   addSubRecipe: 'Agregar Sub-Receta',
   showInMenu: 'En Menú',
   filterToMenuItems: 'Solo platos del menú',
+  subRecipes: 'Sub Recetas',
+  mainRecipes: 'Recetas',
   noDetails: 'Sin detalles',
   unitsHelpText: 'Nota - Las unidades solo se pueden establecer al crear',
   usedIn: 'Usado en',

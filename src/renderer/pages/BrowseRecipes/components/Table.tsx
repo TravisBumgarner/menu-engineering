@@ -31,7 +31,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 function getComparator<Key extends keyof RecipeDTO | 'usedInRecipesCount'>(
   order: 'asc' | 'desc',
   orderBy: Key,
-): (a: { [key in Key]: number | string | boolean }, b: { [key in Key]: number | string | boolean }) => number {
+): (a: RecipeDTO & { usedInRecipesCount: number }, b: RecipeDTO & { usedInRecipesCount: number }) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
@@ -55,6 +55,8 @@ const Table = ({
   const [filters, setFilters] = React.useState<FilterOptions>({
     status: [RECIPE_STATUS.draft, RECIPE_STATUS.published],
     filterToMenuItemsOnly: false,
+    showSubRecipes: true,
+    showMainRecipes: true,
   })
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +91,20 @@ const Table = ({
         menuItemsOnly = recipe.showInMenu === true
       }
 
-      return statusMatch && menuItemsOnly
+      // Filter by sub recipes vs main recipes
+      const isSubRecipe = recipe.usedInRecipesCount > 0
+      const isMainRecipe = recipe.usedInRecipesCount === 0
+
+      let recipeTypeMatch = false
+      if (filters.showSubRecipes && filters.showMainRecipes) {
+        recipeTypeMatch = true
+      } else if (filters.showSubRecipes) {
+        recipeTypeMatch = isSubRecipe
+      } else if (filters.showMainRecipes) {
+        recipeTypeMatch = isMainRecipe
+      }
+
+      return statusMatch && menuItemsOnly && recipeTypeMatch
     })
   }, [recipes, filters])
 

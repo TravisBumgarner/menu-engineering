@@ -1,5 +1,7 @@
 import {
   Box,
+  Checkbox,
+  Divider,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -7,7 +9,6 @@ import {
   MenuItem,
   Select,
   type SelectChangeEvent,
-  Switch,
 } from '@mui/material'
 import type React from 'react'
 import { RECIPE_STATUS, type RecipeStatus } from '../../../../shared/recipe.types'
@@ -17,6 +18,8 @@ import { SPACING } from '../../../styles/consts'
 export interface FilterOptions {
   status: RecipeStatus[]
   filterToMenuItemsOnly: boolean
+  showSubRecipes: boolean
+  showMainRecipes: boolean
 }
 
 interface FiltersProps {
@@ -42,6 +45,20 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
     })
   }
 
+  const handleSubRecipesChange = (_event: React.SyntheticEvent<Element, Event>, checked: boolean) => {
+    onFiltersChange({
+      ...filters,
+      showSubRecipes: checked,
+    })
+  }
+
+  const handleMainRecipesChange = (_event: React.SyntheticEvent<Element, Event>, checked: boolean) => {
+    onFiltersChange({
+      ...filters,
+      showMainRecipes: checked,
+    })
+  }
+
   return (
     <Box
       sx={{
@@ -49,6 +66,7 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
         gap: 2,
         justifyContent: 'flex-end',
         padding: SPACING.SMALL.PX,
+        alignItems: 'center',
       }}
     >
       <FormControl size="small">
@@ -66,12 +84,36 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
         </Select>
       </FormControl>
 
+      <Divider orientation="vertical" flexItem />
+
       <FormControl size="small">
         <FormGroup>
           <FormControlLabel
             onChange={handleShowInMenuChange}
-            control={<Switch value={filters.filterToMenuItemsOnly} />}
+            control={<Checkbox checked={filters.filterToMenuItemsOnly} />}
             label={t('filterToMenuItems')}
+          />
+        </FormGroup>
+      </FormControl>
+
+      <Divider orientation="vertical" flexItem />
+
+      <FormControl size="small">
+        <FormGroup>
+          <FormControlLabel
+            onChange={handleSubRecipesChange}
+            control={<Checkbox checked={filters.showSubRecipes} />}
+            label={t('subRecipes')}
+          />
+        </FormGroup>
+      </FormControl>
+
+      <FormControl size="small">
+        <FormGroup>
+          <FormControlLabel
+            onChange={handleMainRecipesChange}
+            control={<Checkbox checked={filters.showMainRecipes} />}
+            label={t('mainRecipes')}
           />
         </FormGroup>
       </FormControl>
