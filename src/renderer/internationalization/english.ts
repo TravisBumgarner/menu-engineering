@@ -118,6 +118,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   language: 'Language',
   english: 'English',
   spanish: 'Spanish',
+  country: 'Country',
   errorAddingRecipe: 'Error adding recipe.',
   errorAddingSubRecipe: 'Error adding sub-recipe.',
   failedToUpdateRecipe: 'Failed to update recipe.',

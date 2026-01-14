@@ -33,6 +33,7 @@ export type TranslationKeys =
   | 'searchRecipes'
   | 'subRecipes'
   | 'mainRecipes'
+  | 'country'
 
   // Navigation
   | 'recipes'
