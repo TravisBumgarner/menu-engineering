@@ -2,8 +2,9 @@ import { useMediaQuery } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import { createTheme, responsiveFontSizes, type ThemeOptions, ThemeProvider } from '@mui/material/styles'
 import { useMemo } from 'react'
-import RobotoFont from '../../assets/Roboto-VariableFont_wdth,wght.ttf'
 import { FONT_SIZES, PALETTE, SPACING } from './consts'
+
+const RobotoFontPath = new URL('../../assets/Roboto-VariableFont_wdth,wght.ttf', import.meta.url).href
 
 export const TAB_HEIGHT = '36px' // for some reason all are needed.
 
@@ -69,7 +70,7 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
             font-style: normal;
             font-display: swap;
             font-weight: 100 900;
-            src: url(${RobotoFont}) format('truetype');
+            src: url(${RobotoFontPath}) format('truetype');
           }
           body {
             background-color: ${colors.background};
