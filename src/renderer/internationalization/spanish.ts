@@ -28,7 +28,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   created: 'Creado',
   outOf: 'de',
   unitCost: 'Costo Unitario',
-  totalCost: 'Costo Total',
+  totalCost: 'Total',
   includeImages: 'Incluir Imágenes',
   oneFilePerRecipe: 'Un Archivo por Receta',
   searchRecipes: 'Buscar recetas...',
@@ -61,7 +61,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   deleteIngredientConfirmation:
     '¿Estás seguro de que quieres eliminar este ingrediente? Esta acción no se puede deshacer.',
   editIngredient: 'Editar Ingrediente',
-  editIngredients: 'Editar Ingredientes',
+  viewRecipe: 'Ver Receta',
   addExisting: 'Agregar Existente',
   saveAndAddAnother: 'Guardar y Agregar otro',
   addSubRecipe: 'Agregar Sub-Receta',
@@ -72,7 +72,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   noDetails: 'Sin detalles',
   unitsHelpText: 'Nota - Las unidades solo se pueden establecer al crear',
   usedIn: 'Usado en',
-  addToRecipe: 'Agregar a Receta',
+  addToRecipe: 'Agregar componente',
   recipeUses: 'Receta utiliza',
   close: 'Cerrar',
 

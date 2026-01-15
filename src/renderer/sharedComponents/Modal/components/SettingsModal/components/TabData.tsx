@@ -273,11 +273,13 @@ const TabData = () => {
               onClick={handleExportData}
               disabled={isExporting || isRestoring || isNuking}
               fullWidth
+              size="small"
             >
               {isExporting ? t('exporting') : t('exportAllData')}
             </Button>
 
             <Button
+              size="small"
               variant="outlined"
               color="warning"
               onClick={handleRestoreData}
@@ -300,6 +302,7 @@ const TabData = () => {
           </Typography>
 
           <Button
+            size="small"
             variant="outlined"
             color="error"
             onClick={handleNukeDatabase}
@@ -332,8 +335,11 @@ const TabData = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelRestore}>{t('cancel')}</Button>
+          <Button size="small" onClick={handleCancelRestore}>
+            {t('cancel')}
+          </Button>
           <Button
+            size="small"
             onClick={handleConfirmRestore}
             color="warning"
             variant="contained"

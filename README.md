@@ -1,17 +1,16 @@
+
+# About
+
+Build your menu from ingredients and sub recipes, with costs calculated automatically.
+
+![Browse Recipes](docs/browse-recipes.png)
+
+![Browse Recipe](docs/browse-recipe.png)
+
+![Browse Ingredients](docs/browse-ingredients.png)
+
 # Setup
 
 1. `npm install` dependencies
 1. `npm run dev` local run
 1. `npm run db:studio` to browse SQL lite 
-
-# Gotchas
-
-- No HMR for main.ts. Need to restart debugger.
-
-# Dev Notes
-
-**Migrations**
-
-1. Add to `src/main/database/schema.ts`
-1. Generate migration `npm run db:generate`
-1. Push migration `npm run db:push`

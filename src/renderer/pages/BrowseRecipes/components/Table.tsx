@@ -1,4 +1,4 @@
-import { Button } from '@mui/material'
+import { Button, Stack } from '@mui/material'
 import Box from '@mui/material/Box'
 import MuiTable from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -14,10 +14,11 @@ import { useLocalStorage } from '../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
+import { SPACING } from '../../../styles/consts'
+import { LOCAL_STORAGE_KEYS } from '../../../utilities'
 import Filters, { type FilterOptions } from './Filters'
 import Head from './Head'
 import RecipeRow from './Row'
-import { LOCAL_STORAGE_KEYS } from '../../../utilities'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -139,10 +140,28 @@ const Table = ({
 
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <Filters filters={filters} onFiltersChange={handleFiltersChange} />
-      <TableContainer>
-        <MuiTable sx={{ minWidth: 750, tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="medium">
-          <Head order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignContent="center"
+        sx={{ paddingY: SPACING.SMALL.PX, ...(activeRecipeIdSignal.value ? { opacity: 0.1 } : {}) }}
+      >
+        <Filters filters={filters} onFiltersChange={handleFiltersChange} />
+
+        <Box>
+          <Button size="small" onClick={handleOpenExportRecipesModal} variant="outlined">
+            Export PDF
+          </Button>
+        </Box>
+      </Stack>
+      <TableContainer sx={{ boxShadow: 'none' }}>
+        <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="small">
+          <Head
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+            sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
+          />
           <TableBody>
             {visibleRows.map((row, index) => {
               const labelId = `enhanced-table-checkbox-${index}`
@@ -155,7 +174,7 @@ const Table = ({
                   height: 53 * emptyRows,
                 }}
               >
-                <TableCell colSpan={10} />
+                <TableCell colSpan={9} />
               </TableRow>
             )}
             <TableRow>
@@ -168,17 +187,6 @@ const Table = ({
                   variant="outlined"
                 >
                   {t('addRecipe')}
-                </Button>
-              </TableCell>
-              <TableCell colSpan={2}>
-                <Button
-                  size="small"
-                  sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
-                  onClick={handleOpenExportRecipesModal}
-                  fullWidth
-                  variant="outlined"
-                >
-                  Export PDF
                 </Button>
               </TableCell>
             </TableRow>

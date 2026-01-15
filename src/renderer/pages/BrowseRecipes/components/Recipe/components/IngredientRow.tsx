@@ -15,8 +15,8 @@ import Icon from '../../../../../sharedComponents/Icon'
 import { NumericInput } from '../../../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
+import { cellSx, ICON_SIZE } from '../../../../../styles/tableConsts'
 import { formatCurrency, formatDisplayDate } from '../../../../../utilities'
-import { ICON_SIZE } from './consts'
 
 function IngredientRow(props: { row: IngredientDTO & { relation: RelationDTO }; recipeId: string; labelId: string }) {
   const { row, recipeId, labelId } = props
@@ -102,45 +102,34 @@ function IngredientRow(props: { row: IngredientDTO & { relation: RelationDTO }; 
 
   return (
     <TableRow tabIndex={-1} key={row.id}>
-      <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
-      <TableCell id={labelId} scope="row">
+      <TableCell sx={cellSx}>{formatDisplayDate(row.createdAt)}</TableCell>
+      <TableCell sx={cellSx} id={labelId} scope="row">
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Icon name="ingredient" size={ICON_SIZE} /> {row.title}{' '}
+          {/* <Icon name="ingredient" size={ICON_SIZE} /> */}
+          {row.title}{' '}
         </Box>{' '}
       </TableCell>
-      <TableCell align="right" id={labelId} scope="row">
-        <NumericInput
-          size="small"
-          value={row.relation.quantity}
-          onValidChange={handleQuantityChange}
-          variant="filled"
-          sx={{
-            '& .MuiFilledInput-input': {
-              textAlign: 'right',
-              padding: SPACING.TINY.PX,
-            },
-          }}
-          min={0}
-        />
+      <TableCell sx={cellSx} align="right" id={labelId} scope="row">
+        <NumericInput size="small" value={row.relation.quantity} onValidChange={handleQuantityChange} min={0} />
       </TableCell>
-      <TableCell align="left" id={labelId} scope="row">
+      <TableCell sx={cellSx} align="left" id={labelId} scope="row">
         {row.units}
       </TableCell>
-      <TableCell align="right" id={labelId} scope="row">
+      <TableCell sx={cellSx} align="right" id={labelId} scope="row">
         {formatCurrency(row.unitCost)}
       </TableCell>
-      <TableCell align="right" id={labelId} scope="row">
+      <TableCell sx={cellSx} align="right" id={labelId} scope="row">
         {formatCurrency(relationCost)}
       </TableCell>
-      <TableCell align="right">
+      <TableCell sx={cellSx} align="right">
         <Tooltip title={t('editIngredient')}>
-          <IconButton onClick={handleOpenEditModal}>
-            <Icon name="edit" />
+          <IconButton size="small" onClick={handleOpenEditModal}>
+            <Icon size={ICON_SIZE} name="edit" />
           </IconButton>
         </Tooltip>
         <Tooltip title={t('remove')}>
-          <IconButton onClick={handleOpenRemoveModal}>
-            <Icon name="close" />
+          <IconButton size="small" onClick={handleOpenRemoveModal}>
+            <Icon size={ICON_SIZE} name="close" />
           </IconButton>
         </Tooltip>
       </TableCell>

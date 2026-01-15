@@ -13,6 +13,8 @@ import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
+import { cellSx, ICON_SIZE } from '../../../styles/tableConsts'
+
 import { formatCurrency, formatDisplayDate, getUnitLabel } from '../../../utilities'
 import Ingredient from './Ingredient'
 
@@ -59,7 +61,7 @@ function Row(props: { row: IngredientDTO & { recipeCount: number }; labelId: str
   return (
     <React.Fragment>
       <TableRow tabIndex={-1} key={row.id}>
-        <TableCell>
+        <TableCell sx={cellSx}>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -68,30 +70,40 @@ function Row(props: { row: IngredientDTO & { recipeCount: number }; labelId: str
               setIsOpen(!isOpen)
             }}
           >
-            {isOpen ? <Icon name="collapseVertical" /> : <Icon name="expandVertical" />}
+            {isOpen ? (
+              <Icon size={ICON_SIZE} name="collapseVertical" />
+            ) : (
+              <Icon size={ICON_SIZE} name="expandVertical" />
+            )}
           </IconButton>
         </TableCell>
-        <TableCell scope="row" padding="none">
+        <TableCell sx={cellSx} scope="row">
           {formatDisplayDate(row.createdAt)}
         </TableCell>
-        <TableCell id={labelId} scope="row" padding="none">
+        <TableCell sx={cellSx} id={labelId} scope="row">
           {row.title}
         </TableCell>
-        <TableCell align="left">{getUnitLabel(row.units, 'plural')}</TableCell>
-        <TableCell align="right">{formatCurrency(row.unitCost)}</TableCell>
-        <TableCell align="right">{row.recipeCount}</TableCell>
-        <TableCell align="left">
+        <TableCell sx={cellSx} align="left">
+          {getUnitLabel(row.units, 'plural')}
+        </TableCell>
+        <TableCell sx={cellSx} align="right">
+          {formatCurrency(row.unitCost)}
+        </TableCell>
+        <TableCell sx={cellSx} align="right">
+          {row.recipeCount}
+        </TableCell>
+        <TableCell sx={cellSx} align="right">
           <Tooltip title={t('editIngredient')}>
             <span>
               <IconButton size="small" title={t('edit')} onClick={handleOpenEditModal}>
-                <Icon name="edit" />
+                <Icon size={ICON_SIZE} name="edit" />
               </IconButton>
             </span>
           </Tooltip>
           <Tooltip title={t('deleteIngredient')}>
             <span>
               <IconButton size="small" title={t('delete')} onClick={openConfirmationModal}>
-                <Icon name="delete" />
+                <Icon size={ICON_SIZE} name="delete" />
               </IconButton>
             </span>
           </Tooltip>

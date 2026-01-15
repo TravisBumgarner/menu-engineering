@@ -1,3 +1,4 @@
+import type { SxProps } from '@mui/material'
 import Box from '@mui/material/Box'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
@@ -9,7 +10,6 @@ import type { RecipeDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
-  disablePadding: boolean
   id: keyof RecipeDTO | 'actions' | 'collapse' | 'unitCost' | 'usedInRecipesCount' | 'totalCost'
   label: string
   align: 'left' | 'right' | 'center'
@@ -20,89 +20,81 @@ interface Props {
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof RecipeDTO | 'usedInRecipesCount') => void
   order: 'asc' | 'desc'
   orderBy: string | number | symbol
+  sx?: SxProps
 }
 
-function Head({ onRequestSort, order, orderBy }: Props) {
+function Head({ onRequestSort, order, orderBy, sx }: Props) {
   const { t } = useAppTranslation()
 
   const headCells: readonly HeadCell[] = [
     {
       id: 'collapse',
       align: 'left',
-      disablePadding: true,
       label: '',
-      width: '4%',
+      width: '25px',
     },
     {
       id: 'createdAt',
       align: 'left',
-      disablePadding: true,
       label: t('created'),
-      width: '12%',
+      width: '75px',
     },
     {
       id: 'title',
       align: 'left',
-      disablePadding: true,
-      label: t('recipeName'),
+      label: t('title'),
       width: '20%',
     },
     {
-      id: 'totalCost',
-      align: 'left',
-      disablePadding: false,
-      label: t('totalCost'),
-      width: '10%',
-    },
-    {
-      id: 'produces',
-      align: 'right',
-      disablePadding: false,
-      label: t('produces'),
-      width: '12%',
-    },
-    {
-      id: 'units',
-      align: 'left',
-      disablePadding: false,
-      label: '',
-      width: '10%',
-    },
-    {
-      id: 'unitCost',
-      align: 'left',
-      disablePadding: true,
-      label: t('unitCost'),
-      width: '8%',
-    },
-
-    {
       id: 'status',
       align: 'left',
-      disablePadding: false,
       label: t('status'),
       width: '10%',
     },
     {
       id: 'showInMenu',
       align: 'left',
-      disablePadding: false,
       label: t('showInMenu'),
-      width: '12%',
+      width: '90px',
     },
     {
-      id: 'usedInRecipesCount',
-      align: 'left',
-      disablePadding: false,
-      label: t('usedIn'),
+      id: 'totalCost',
+      align: 'right',
+      label: t('totalCost'),
       width: '10%',
     },
     {
+      id: 'produces',
+      align: 'right',
+      label: t('produces'),
+      width: '12%',
+    },
+    // {
+    //   id: 'units',
+    //   align: 'left',
+
+    //   label: '',
+    //   width: '10%',
+    // },
+    {
+      id: 'unitCost',
+      align: 'right',
+      label: t('unitCost'),
+      width: '10%',
+    },
+
+    // {
+    //   id: 'usedInRecipesCount',
+    //   align: 'left',
+
+    //   label: t('usedIn'),
+    //   width: '10%',
+    // },
+    {
       id: 'actions',
       align: 'center',
-      disablePadding: false,
       label: '',
-      width: '18%',
+      width: '90px',
     },
   ]
 
@@ -112,20 +104,19 @@ function Head({ onRequestSort, order, orderBy }: Props) {
     }
 
   return (
-    <TableHead>
+    <TableHead sx={sx}>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.align}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width }}
+            sx={{ width: headCell.width, border: 'none' }}
           >
             {headCell.id === 'actions' ||
             headCell.id === 'collapse' ||
-            headCell.id === 'units' ||
-            headCell.id === 'unitCost' ||
             headCell.id === 'totalCost' ||
+            headCell.id === 'unitCost' ||
             headCell.id === 'produces' ? (
               headCell.label
             ) : (

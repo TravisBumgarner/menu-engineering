@@ -40,42 +40,42 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       align: 'left',
       disablePadding: true,
       label: t('title'),
-      width: '20%',
+      width: '30%',
     },
     {
       id: 'quantity',
       align: 'right',
       disablePadding: true,
       label: t('quantity'),
-      width: '10%',
+      width: '75px',
     },
     {
       id: 'units',
       align: 'left',
       disablePadding: true,
       label: t('units'),
-      width: '3%',
+      width: '30px',
     },
     {
       id: 'unitCost',
       align: 'right',
       disablePadding: true,
       label: t('unitCost'),
-      width: '8%',
+      width: '15%',
     },
     {
       id: 'cost',
       align: 'right',
       disablePadding: true,
       label: t('totalCost'),
-      width: '10%',
+      width: '15%',
     },
     {
       id: 'actions',
-      align: 'center',
+      align: 'right',
       disablePadding: false,
       label: '',
-      width: '15%',
+      width: '30%',
     },
   ]
 
@@ -90,9 +90,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           <TableCell
             sx={{
               width: headCell.width,
-
-              backgroundColor: (theme) =>
-                theme.palette.mode === 'dark' ? PALETTE.grayscale[700] : PALETTE.grayscale[100],
+              border: 'none',
             }}
             key={headCell.id}
             align={headCell.align}

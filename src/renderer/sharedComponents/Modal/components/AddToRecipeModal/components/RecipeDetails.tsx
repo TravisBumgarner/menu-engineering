@@ -20,6 +20,7 @@ const RecipeDetails = ({
       <Divider />
       <Stack spacing={SPACING.SMALL.PX} direction="row" sx={{ alignItems: 'center' }}>
         <NumericInput
+          size="small"
           label={t('recipeUses')}
           placeholder={t('recipeUses')}
           fullWidth

@@ -1,4 +1,4 @@
-import { Stack, type SxProps, Tooltip } from '@mui/material'
+import { alpha, Stack, Tooltip } from '@mui/material'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
@@ -18,7 +18,8 @@ import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import Photo from '../../../sharedComponents/Photo'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
-import { FONT_SIZES, SPACING } from '../../../styles/consts'
+import { SPACING } from '../../../styles/consts'
+import { cellSx, ICON_SIZE } from '../../../styles/tableConsts'
 import { formatCurrency, formatDisplayDate, getUnitLabel } from '../../../utilities'
 import Recipe from './Recipe'
 
@@ -84,6 +85,8 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
           '& > *': {
             opacity: opacity.value,
           },
+          fontWeight: isOpen.value ? 'bold' : 'normal',
+          backgroundColor: (theme) => (isOpen.value ? alpha(theme.palette.primary.main, 0.2) : undefined),
         }}
       >
         <TableCell>
@@ -95,79 +98,60 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
               activeRecipeIdSignal.value = isOpen.value ? '' : row.id
             }}
           >
-            {isOpen.value ? <Icon name="collapseVertical" /> : <Icon name="expandVertical" />}
+            {isOpen.value ? (
+              <Icon size={ICON_SIZE} name="collapseVertical" />
+            ) : (
+              <Icon size={ICON_SIZE} name="expandVertical" />
+            )}
           </IconButton>
         </TableCell>
-        <TableCell sx={cellSx} id={labelId} scope="row">
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} id={labelId} scope="row">
           {formatDisplayDate(row.createdAt)}
         </TableCell>
-        <TableCell sx={cellSx} id={labelId} scope="row">
-          <Stack direction="row" alignItems="center" spacing={1}>
-            {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
-
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} id={labelId} scope="row">
+      <Stack direction="row" alignItems="center" spacing={SPACING.TINY.PX}>
             <span>{row.title}</span>
+            {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
           </Stack>
         </TableCell>
-        <TableCell align="right" id={labelId} scope="row" sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
-          {formatCurrency(row.cost)}
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="left">
+          {t(row.status)}
         </TableCell>
-        <TableCell sx={cellSx} align="right">
-          {row.produces}
-        </TableCell>
-        <TableCell sx={cellSx} align="left">
-          {getUnitLabel(row.units, 'plural')}
-        </TableCell>
-        <TableCell align="right" id={labelId} scope="row" sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
-          {formatCurrency(row.cost / row.produces)}
-        </TableCell>
-
-        <TableCell sx={cellSx} align="left">
-          <Typography
-            variant="body2"
-            sx={{
-              width: '100%',
-              textAlign: 'center',
-              padding: `${SPACING.TINY.PX} ${SPACING.SMALL.PX}`,
-              borderRadius: 1,
-              bgcolor:
-                row.status === 'published' ? 'success.light' : row.status === 'draft' ? 'warning.light' : 'error.light',
-              color:
-                row.status === 'published'
-                  ? 'success.contrastText'
-                  : row.status === 'draft'
-                    ? 'warning.contrastText'
-                    : 'error.contrastText',
-            }}
-          >
-            {t(row.status)}
-          </Typography>
-        </TableCell>
-        <TableCell sx={cellSx} align="left">
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="left">
           <Typography variant="body2">{row.showInMenu ? t('yes') : t('no')}</Typography>
         </TableCell>
-        <TableCell sx={cellSx} align="left">
-          {row.usedInRecipesCount}
+        <TableCell align="right" id={labelId} scope="row" sx={{ ...cellSx, ...cellSxActive(isOpen.value) }}>
+          {formatCurrency(row.cost)}
         </TableCell>
-        <TableCell sx={cellSx} align="center">
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="right">
+          {row.produces} {getUnitLabel(row.units, 'plural')}
+        </TableCell>
+        <TableCell align="right" id={labelId} scope="row" sx={{ ...cellSx, ...cellSxActive(isOpen.value) }}>
+          {formatCurrency(row.cost / row.produces)}
+        </TableCell>
+        {/* <TableCell sx={{...cellSx, ...cellSxActive(isOpen.value)}} align="left">
+          {row.usedInRecipesCount}
+        </TableCell> */}
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="right">
           <Tooltip title={t('editRecipe')}>
-            <IconButton onClick={openEditModal}>
-              <Icon name="edit" />
+            <IconButton size="small" onClick={openEditModal}>
+              <Icon size={ICON_SIZE} name="edit" />
             </IconButton>
           </Tooltip>
           <Tooltip title={`${t('export')} PDF`}>
-            <IconButton onClick={openExportModal}>
-              <Icon name="download" />
+            <IconButton size="small" onClick={openExportModal}>
+              <Icon size={ICON_SIZE} name="download" />
             </IconButton>
           </Tooltip>
           <Tooltip title={t('deleteRecipe')}>
-            <IconButton onClick={openConfirmationModal}>
-              <Icon name="delete" />
+            <IconButton size="small" onClick={openConfirmationModal}>
+              <Icon size={ICON_SIZE} name="delete" />
             </IconButton>
           </Tooltip>
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell sx={cellSx} style={{ padding: 0, border: 0 }} colSpan={12}>
+      <TableRow sx={{ backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.1) }}>
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} style={{ padding: 0, border: 0 }} colSpan={9}>
           <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>
@@ -177,8 +161,8 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
   )
 }
 
-const cellSx: SxProps = {
-  fontSize: FONT_SIZES.MEDIUM.PX,
-}
+const cellSxActive = (isActive: boolean) => ({
+  fontWeight: isActive ? 'bold' : 'normal',
+})
 
 export default RecipeRow

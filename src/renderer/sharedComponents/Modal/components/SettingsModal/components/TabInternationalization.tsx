@@ -19,8 +19,8 @@ const TabInternationalization = () => {
 
   return (
     <Box>
-      <Stack direction="row" spacing={SPACING.MEDIUM.PX}>
-        <FormControl fullWidth>
+      <Stack direction="column" spacing={SPACING.MEDIUM.PX}>
+        <FormControl size="small" fullWidth>
           <InputLabel id="language-select-label">{t('language')}</InputLabel>
           <Select
             labelId="language-select-label"
@@ -33,7 +33,7 @@ const TabInternationalization = () => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth>
+        <FormControl size="small" fullWidth>
           <InputLabel id="country-select-label">{t('country')}</InputLabel>
           <Select
             labelId="country-select-label"

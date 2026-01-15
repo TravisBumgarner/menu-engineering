@@ -12,10 +12,8 @@ import { PAGINATION } from '../../../../../consts'
 import { useLocalStorage } from '../../../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import Icon from '../../../../../sharedComponents/Icon'
-import Message from '../../../../../sharedComponents/Message'
 import { MODAL_ID } from '../../../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../../../signals'
-import { PALETTE, SPACING } from '../../../../../styles/consts'
 import { LOCAL_STORAGE_KEYS } from '../../../../../utilities'
 import type { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
@@ -77,8 +75,6 @@ const Table = ({
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0
 
-  const hasRows = ingredients.length + subRecipes.length > 0
-
   const visibleRows = React.useMemo(
     () =>
       [
@@ -99,24 +95,10 @@ const Table = ({
 
   return (
     <Box sx={{ width: '100%', tableLayout: 'fixed' }}>
-      <TableContainer>
-        <MuiTable
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'dark' ? PALETTE.grayscale[700] : PALETTE.grayscale[50],
-          }}
-          aria-labelledby="tableTitle"
-          size="medium"
-        >
+      <TableContainer sx={{ boxShadow: 'none' }}>
+        <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="medium">
           <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
-            {!hasRows && (
-              <TableRow>
-                <TableCell colSpan={8} sx={{ border: 0, paddingBottom: 0 }}>
-                  <Message color="info" message={t('noDetails')} />
-                </TableCell>
-              </TableRow>
-            )}
             {visibleRows.map((row, index) => {
               const labelId = `enhanced-table-checkbox-${index}`
 
@@ -136,7 +118,7 @@ const Table = ({
               </TableRow>
             )}
             <TableRow>
-              <TableCell sx={{ padding: SPACING.MEDIUM.PX }} colSpan={8}>
+              <TableCell colSpan={8}>
                 <Button
                   fullWidth
                   size="small"

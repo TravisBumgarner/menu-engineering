@@ -3,6 +3,7 @@ import path from 'node:path'
 import zlib from 'node:zlib'
 import AdmZip from 'adm-zip'
 import { dialog } from 'electron'
+import log from 'electron-log/main'
 import { v4 as uuidv4 } from 'uuid'
 import { ERROR_CODES } from '../../shared/errorCodes'
 import { CHANNEL } from '../../shared/messages.types'
@@ -10,7 +11,6 @@ import type { RelationDTO } from '../../shared/recipe.types'
 import queries from '../database/queries'
 import { deleteAllPhotos, deletePhoto, getAllPhotos, getPhotoBytes, savePhotosFromZipData } from '../utilities'
 import { typedIpcMain } from './index'
-import log from 'electron-log/main'
 
 const checkIfComponentExists = async (title: string) => {
   const recipeExists = await queries.recipeExists(title)
@@ -408,6 +408,7 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
             }))
           }
         } catch (gzipError) {
+          console.log(gzipError)
           throw new Error('Invalid backup file format')
         }
       }

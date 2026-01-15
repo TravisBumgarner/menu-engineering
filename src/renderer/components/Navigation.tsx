@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material'
+import { alpha, IconButton, Tooltip } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -22,8 +22,8 @@ const Navigation = () => {
   }
 
   return (
-    <AppBar position="static" color="default" elevation={1}>
-      <Toolbar>
+    <AppBar position="static" color="default" elevation={0}>
+      <Toolbar variant="dense">
         <Box
           sx={{
             display: 'flex',
@@ -34,7 +34,7 @@ const Navigation = () => {
           <Box
             sx={{
               display: 'flex',
-              gap: SPACING.MEDIUM.PX,
+              gap: SPACING.SMALL.PX,
               alignItems: 'center',
             }}
           >
@@ -48,11 +48,12 @@ const Navigation = () => {
                   key={key}
                   component={RouterLink}
                   to={route.href()}
-                  variant={isActive ? 'contained' : 'text'}
                   color={isActive ? 'primary' : 'inherit'}
                   sx={{
                     minWidth: 'auto',
-                    px: 2,
+                    backgroundColor: (theme) => (isActive ? alpha(theme.palette.primary.main, 0.1) : 'transparent'),
+                    border: '1px solid',
+                    borderColor: (theme) => (isActive ? alpha(theme.palette.primary.main, 0.3) : 'transparent'),
                   }}
                 >
                   {t(key)}
@@ -68,9 +69,9 @@ const Navigation = () => {
             }}
           >
             <Tooltip title={t('settings')}>
-              <Button onClick={handleOpenSettingsModal}>
+              <IconButton onClick={handleOpenSettingsModal}>
                 <Icon name="settings" />
-              </Button>
+              </IconButton>
             </Tooltip>
           </Box>
         </Box>
