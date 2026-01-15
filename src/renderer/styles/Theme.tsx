@@ -2,6 +2,7 @@ import { useMediaQuery } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import { createTheme, responsiveFontSizes, type ThemeOptions, ThemeProvider } from '@mui/material/styles'
 import { useMemo } from 'react'
+import RobotoFont from '../../assets/Roboto-VariableFont_wdth,wght.ttf'
 import { FONT_SIZES, PALETTE, SPACING } from './consts'
 
 export const TAB_HEIGHT = '36px' // for some reason all are needed.
@@ -29,6 +30,7 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
 
   return {
     typography: {
+      fontFamily: 'Roboto, sans-serif',
       h1: {
         fontSize: FONT_SIZES.HUGE.PX,
         fontWeight: 900,
@@ -61,12 +63,19 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
     },
     components: {
       MuiCssBaseline: {
-        styleOverrides: {
-          body: {
-            backgroundColor: colors.background,
-            color: colors.text.primary,
-          },
-        },
+        styleOverrides: `
+          @font-face {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-display: swap;
+            font-weight: 100 900;
+            src: url(${RobotoFont}) format('truetype');
+          }
+          body {
+            background-color: ${colors.background};
+            color: ${colors.text.primary};
+          }
+        `,
       },
       MuiTable: {
         styleOverrides: {
