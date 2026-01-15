@@ -110,10 +110,10 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   milliliters_abbreviated: 'ml',
   gallons_singular: 'Galón',
   gallons_plural: 'Galones',
-  gallons_abbreviated: 'gal',
+  gallons_abbreviated: 'Gl',
   cups_singular: 'Taza',
   cups_plural: 'Tazas',
-  cups_abbreviated: 'taza',
+  cups_abbreviated: 'Tz',
   milligrams_singular: 'Miligramo',
   milligrams_plural: 'Miligramos',
   milligrams_abbreviated: 'mg',
@@ -131,7 +131,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   pounds_abbreviated: 'lb',
   pieces_singular: 'Pieza',
   pieces_plural: 'Piezas',
-  pieces_abbreviated: 'pc',
+  pieces_abbreviated: 'Pz',
   weight: 'Peso',
   volume: 'Volumen',
   weightConversions: 'Tabla de Conversión de Peso',
@@ -186,7 +186,8 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   weightUnits: 'Unidades de Peso',
   genericUnits: 'Unidades Genéricas',
   changeSelectedUnits: 'Cambiar unidades seleccionadas',
-  modifyUnitsInPreferences: "Las unidades se pueden modificar en la pestaña 'Preferencias de Unidades' de Configuraciones.",
+  modifyUnitsInPreferences:
+    "Las unidades se pueden modificar en la pestaña 'Preferencias de Unidades' de Configuraciones.",
 }
 
 export default SpanishTranslations

@@ -2,6 +2,14 @@ import { t } from 'i18next'
 import { VOLUME_UNIT, type VolumeUnit, WEIGHT_UNIT, type WeightUnit } from '../shared/units.types'
 import type { TranslationKeys } from './internationalization/types'
 
+export const LOCAL_STORAGE_KEYS = {
+  UNIT_PREFERENCES_KEY: 'UNIT_PREFERENCES_KEY',
+  COUNTRY: 'COUNTRY',
+  BROWSE_INGREDIENTS_PAGINATION: 'BROWSE_INGREDIENTS_PAGINATION',
+  BROWSE_RECIPES_PAGINATION: 'BROWSE_RECIPES_PAGINATION',
+  RECIPE_DETAILS_PAGINATION: 'RECIPE_DETAILS_PAGINATION',
+} as const
+
 // Volume conversion factors (to milliliters)
 const VOLUME_TO_ML = {
   [VOLUME_UNIT.milliliters]: 1,
@@ -21,7 +29,7 @@ const WEIGHT_TO_GRAMS = {
 
 export const formatDisplayDate = (dateString: string) => {
   const date = new Date(dateString)
-  const country = getFromLocalStorage<string>('country', 'US')
+  const country = getFromLocalStorage<string>(LOCAL_STORAGE_KEYS.COUNTRY, 'US')
 
   const localeMap: Record<string, string> = {
     US: 'en-US',
@@ -83,7 +91,7 @@ export const convertUnits = ({
 }
 
 export const formatCurrency = (amount: number) => {
-  const country = getFromLocalStorage<string>('country', 'US')
+  const country = getFromLocalStorage<string>(LOCAL_STORAGE_KEYS.COUNTRY, 'US')
 
   const localeMap: Record<string, string> = {
     US: 'en-US',
@@ -130,7 +138,7 @@ export const getUnitLabel = (unit: string, quantity: number | 'singular' | 'plur
  * @param fallback - The fallback value if key doesn't exist or parsing fails
  * @returns The parsed value or fallback
  */
-export const getFromLocalStorage = <T>(key: string, fallback: T): T => {
+export const getFromLocalStorage = <T>(key: keyof typeof LOCAL_STORAGE_KEYS, fallback: T): T => {
   try {
     const item = localStorage.getItem(key)
     if (item === null) {
@@ -148,7 +156,7 @@ export const getFromLocalStorage = <T>(key: string, fallback: T): T => {
  * @param key - The localStorage key
  * @param value - The value to store
  */
-export const setToLocalStorage = <T>(key: string, value: T): void => {
+export const setToLocalStorage = <T>(key: keyof typeof LOCAL_STORAGE_KEYS, value: T): void => {
   try {
     localStorage.setItem(key, JSON.stringify(value))
   } catch (error) {

@@ -1,14 +1,11 @@
 import { Button, FormControl, Popover, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { useState } from 'react'
-import { type AllUnits, GENERIC_UNIT, VOLUME_UNIT, WEIGHT_UNIT } from '../../shared/units.types'
+import { type AllUnits, GENERIC_UNIT, type UnitPreferences, VOLUME_UNIT, WEIGHT_UNIT } from '../../shared/units.types'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { useAppTranslation } from '../hooks/useTranslation'
 import { SPACING } from '../styles/consts'
-import {
-  DEFAULT_UNIT_PREFERENCES,
-  UNIT_PREFERENCES_KEY,
-  type UnitPreferences,
-} from './Modal/components/SettingsModal/components/TabUnitPreferences'
+import { LOCAL_STORAGE_KEYS } from '../utilities'
+import { DEFAULT_UNIT_PREFERENCES } from './Modal/components/SettingsModal/components/TabUnitPreferences'
 
 interface UnitSelectProps {
   value: AllUnits
@@ -21,7 +18,10 @@ interface UnitSelectProps {
 const UnitSelect = ({ value, onChange, required = false, fullWidth = false, disabled = false }: UnitSelectProps) => {
   const { t } = useAppTranslation()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const [unitPreferences] = useLocalStorage<UnitPreferences>(UNIT_PREFERENCES_KEY, DEFAULT_UNIT_PREFERENCES)
+  const [unitPreferences] = useLocalStorage<UnitPreferences>(
+    LOCAL_STORAGE_KEYS.UNIT_PREFERENCES_KEY,
+    DEFAULT_UNIT_PREFERENCES,
+  )
 
   const open = Boolean(anchorEl)
 

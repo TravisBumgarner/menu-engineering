@@ -27,3 +27,10 @@ export const ALL_UNITS = {
   ...GENERIC_UNIT,
 } as const
 export type AllUnits = keyof typeof ALL_UNITS
+
+export interface UnitPreferences {
+  volume: string[]
+  weight: string[]
+  generic: string[]
+}
+

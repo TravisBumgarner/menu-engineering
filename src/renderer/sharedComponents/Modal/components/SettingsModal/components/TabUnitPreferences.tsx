@@ -1,15 +1,16 @@
 import { Box, Checkbox, Divider, FormControlLabel, FormGroup, Stack, Typography } from '@mui/material'
-import { type AllUnits, GENERIC_UNIT, VOLUME_UNIT, WEIGHT_UNIT } from '../../../../../../shared/units.types'
+import {
+  type AllUnits,
+  GENERIC_UNIT,
+  type UnitPreferences,
+  VOLUME_UNIT,
+  WEIGHT_UNIT,
+} from '../../../../../../shared/units.types'
 import { useLocalStorage } from '../../../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import { SPACING } from '../../../../../styles/consts'
+import { LOCAL_STORAGE_KEYS } from '../../../../../utilities'
 import UnitConversions from './UnitConversions'
-
-export interface UnitPreferences {
-  volume: string[]
-  weight: string[]
-  generic: string[]
-}
 
 export const DEFAULT_UNIT_PREFERENCES: UnitPreferences = {
   volume: Object.keys(VOLUME_UNIT),
@@ -17,12 +18,10 @@ export const DEFAULT_UNIT_PREFERENCES: UnitPreferences = {
   generic: Object.keys(GENERIC_UNIT),
 }
 
-export const UNIT_PREFERENCES_KEY = 'unitPreferences'
-
 const TabUnitPreferences = () => {
   const { t } = useAppTranslation()
   const [unitPreferences, setUnitPreferences] = useLocalStorage<UnitPreferences>(
-    UNIT_PREFERENCES_KEY,
+    LOCAL_STORAGE_KEYS.UNIT_PREFERENCES_KEY,
     DEFAULT_UNIT_PREFERENCES,
   )
 

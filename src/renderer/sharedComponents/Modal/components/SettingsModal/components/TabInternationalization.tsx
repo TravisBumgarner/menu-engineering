@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react'
 import { useLocalStorage } from '../../../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import { SPACING } from '../../../../../styles/consts'
+import { LOCAL_STORAGE_KEYS } from '../../../../../utilities'
 
 const TabInternationalization = () => {
   const { t, currentLanguage, changeLanguage } = useAppTranslation()
-  const [country, setCountry] = useLocalStorage<string>('country', 'US')
+  const [country, setCountry] = useLocalStorage<string>(LOCAL_STORAGE_KEYS.COUNTRY, 'US')
   const [initialCountry] = useState(country)
 
   // Reload the app when country changes
