@@ -14,10 +14,10 @@ import { useLocalStorage } from '../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
+import { LOCAL_STORAGE_KEYS } from '../../../utilities'
 import Filters, { type FilterOptions } from './Filters'
 import Head from './Head'
 import RecipeRow from './Row'
-import { LOCAL_STORAGE_KEYS } from '../../../utilities'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -141,7 +141,7 @@ const Table = ({
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
       <Filters filters={filters} onFiltersChange={handleFiltersChange} />
       <TableContainer>
-        <MuiTable sx={{ minWidth: 750, tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="medium">
+        <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="small">
           <Head order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
             {visibleRows.map((row, index) => {
@@ -159,7 +159,7 @@ const Table = ({
               </TableRow>
             )}
             <TableRow>
-              <TableCell colSpan={9}>
+              <TableCell colSpan={8}>
                 <Button
                   size="small"
                   sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}

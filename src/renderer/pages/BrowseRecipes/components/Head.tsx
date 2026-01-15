@@ -44,7 +44,7 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       id: 'title',
       align: 'left',
       disablePadding: true,
-      label: t('recipeName'),
+      label: t('title'),
       width: '20%',
     },
     {
@@ -90,19 +90,19 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       label: t('showInMenu'),
       width: '12%',
     },
-    {
-      id: 'usedInRecipesCount',
-      align: 'left',
-      disablePadding: false,
-      label: t('usedIn'),
-      width: '10%',
-    },
+    // {
+    //   id: 'usedInRecipesCount',
+    //   align: 'left',
+    //   disablePadding: false,
+    //   label: t('usedIn'),
+    //   width: '10%',
+    // },
     {
       id: 'actions',
       align: 'center',
       disablePadding: false,
       label: '',
-      width: '18%',
+      width: '90px',
     },
   ]
 

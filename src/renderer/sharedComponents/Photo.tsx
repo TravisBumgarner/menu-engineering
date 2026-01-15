@@ -21,16 +21,28 @@ type BackendPhoto = {
   type: 'backend'
 }
 
+const SHARED_WIDTH = '300px'
+const SHARED_HEIGHT = '300px'
+
 const LocalPhoto = (props: { data: File }) => {
   return (
     <HtmlTooltip
-      placement="top"
+      placement="right"
       title={
-        <img
-          src={URL.createObjectURL(props.data)}
-          alt="Final dish"
-          style={{ display: 'block', padding: 0, margin: 0, maxWidth: '200px', maxHeight: '200px', objectFit: 'cover' }}
-        />
+        <div style={{ width: SHARED_WIDTH, height: SHARED_HEIGHT }}>
+          <img
+            src={URL.createObjectURL(props.data)}
+            alt="Final dish"
+            style={{
+              display: 'block',
+              padding: 0,
+              margin: 0,
+              maxWidth: SHARED_WIDTH,
+              maxHeight: SHARED_HEIGHT,
+              objectFit: 'contain',
+            }}
+          />
+        </div>
       }
     >
       <span>
@@ -51,28 +63,30 @@ const BackendPhoto = (props: { src: string }) => {
 
   return (
     <HtmlTooltip
-      placement="top"
+      placement="right"
       title={
-        isLoading ? (
-          'Loading...'
-        ) : isError ? (
-          `Error: ${error}`
-        ) : data ? (
-          <img
-            src={data}
-            alt="Final dish"
-            style={{
-              display: 'block',
-              padding: 0,
-              margin: 0,
-              maxWidth: '200px',
-              maxHeight: '200px',
-              objectFit: 'cover',
-            }}
-          />
-        ) : (
-          'No Photo'
-        )
+        <div style={{ width: SHARED_WIDTH, height: SHARED_HEIGHT }}>
+          {isLoading ? (
+            'Loading...'
+          ) : isError ? (
+            `Error: ${error}`
+          ) : data ? (
+            <img
+              src={data}
+              alt="Final dish"
+              style={{
+                display: 'block',
+                padding: 0,
+                margin: 0,
+                maxWidth: SHARED_WIDTH,
+                maxHeight: SHARED_HEIGHT,
+                objectFit: 'contain',
+              }}
+            />
+          ) : (
+            'No Photo'
+          )}
+        </div>
       }
     >
       <span>

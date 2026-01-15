@@ -95,20 +95,23 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
               activeRecipeIdSignal.value = isOpen.value ? '' : row.id
             }}
           >
-            {isOpen.value ? <Icon name="collapseVertical" /> : <Icon name="expandVertical" />}
+            {isOpen.value ? (
+              <Icon size={ICON_SIZE} name="collapseVertical" />
+            ) : (
+              <Icon size={ICON_SIZE} name="expandVertical" />
+            )}
           </IconButton>
         </TableCell>
         <TableCell sx={cellSx} id={labelId} scope="row">
           {formatDisplayDate(row.createdAt)}
         </TableCell>
         <TableCell sx={cellSx} id={labelId} scope="row">
-          <Stack direction="row" alignItems="center" spacing={1}>
-            {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
-
+          <Stack direction="row" alignItems="center" spacing={SPACING.TINY.PX}>
             <span>{row.title}</span>
+            {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
           </Stack>
         </TableCell>
-        <TableCell align="right" id={labelId} scope="row" sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
+        <TableCell align="right" id={labelId} scope="row" sx={cellSx}>
           {formatCurrency(row.cost)}
         </TableCell>
         <TableCell sx={cellSx} align="right">
@@ -117,51 +120,32 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
         <TableCell sx={cellSx} align="left">
           {getUnitLabel(row.units, 'plural')}
         </TableCell>
-        <TableCell align="right" id={labelId} scope="row" sx={{ padding: `0 ${SPACING.TINY.PX}` }}>
+        <TableCell align="right" id={labelId} scope="row" sx={cellSx}>
           {formatCurrency(row.cost / row.produces)}
         </TableCell>
-
         <TableCell sx={cellSx} align="left">
-          <Typography
-            variant="body2"
-            sx={{
-              width: '100%',
-              textAlign: 'center',
-              padding: `${SPACING.TINY.PX} ${SPACING.SMALL.PX}`,
-              borderRadius: 1,
-              bgcolor:
-                row.status === 'published' ? 'success.light' : row.status === 'draft' ? 'warning.light' : 'error.light',
-              color:
-                row.status === 'published'
-                  ? 'success.contrastText'
-                  : row.status === 'draft'
-                    ? 'warning.contrastText'
-                    : 'error.contrastText',
-            }}
-          >
-            {t(row.status)}
-          </Typography>
+          {t(row.status)}
         </TableCell>
         <TableCell sx={cellSx} align="left">
           <Typography variant="body2">{row.showInMenu ? t('yes') : t('no')}</Typography>
         </TableCell>
-        <TableCell sx={cellSx} align="left">
+        {/* <TableCell sx={cellSx} align="left">
           {row.usedInRecipesCount}
-        </TableCell>
-        <TableCell sx={cellSx} align="center">
+        </TableCell> */}
+        <TableCell sx={cellSx} align="right">
           <Tooltip title={t('editRecipe')}>
-            <IconButton onClick={openEditModal}>
-              <Icon name="edit" />
+            <IconButton size="small" onClick={openEditModal}>
+              <Icon size={ICON_SIZE} name="edit" />
             </IconButton>
           </Tooltip>
           <Tooltip title={`${t('export')} PDF`}>
-            <IconButton onClick={openExportModal}>
-              <Icon name="download" />
+            <IconButton size="small" onClick={openExportModal}>
+              <Icon size={ICON_SIZE} name="download" />
             </IconButton>
           </Tooltip>
           <Tooltip title={t('deleteRecipe')}>
-            <IconButton onClick={openConfirmationModal}>
-              <Icon name="delete" />
+            <IconButton size="small" onClick={openConfirmationModal}>
+              <Icon size={ICON_SIZE} name="delete" />
             </IconButton>
           </Tooltip>
         </TableCell>
@@ -177,8 +161,10 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
   )
 }
 
+const ICON_SIZE = 16
+
 const cellSx: SxProps = {
-  fontSize: FONT_SIZES.MEDIUM.PX,
+  fontSize: FONT_SIZES.SMALL.PX,
 }
 
 export default RecipeRow

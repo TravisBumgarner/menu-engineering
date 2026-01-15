@@ -28,7 +28,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   created: 'Creado',
   outOf: 'de',
   unitCost: 'Costo Unitario',
-  totalCost: 'Costo Total',
+  totalCost: 'Total',
   includeImages: 'Incluir Imágenes',
   oneFilePerRecipe: 'Un Archivo por Receta',
   searchRecipes: 'Buscar recetas...',

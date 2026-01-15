@@ -23,7 +23,7 @@ const Navigation = () => {
 
   return (
     <AppBar position="static" color="default" elevation={1}>
-      <Toolbar>
+      <Toolbar variant="dense">
         <Box
           sx={{
             display: 'flex',

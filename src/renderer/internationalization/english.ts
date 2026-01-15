@@ -28,7 +28,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   created: 'Created',
   outOf: 'of',
   unitCost: 'Unit Cost',
-  totalCost: 'Total Cost',
+  totalCost: 'Total',
   addToRecipe: 'Add to Recipe',
   recipeUses: 'Recipe uses',
   close: 'Close',
