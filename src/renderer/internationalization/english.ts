@@ -123,6 +123,8 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   english: 'English',
   spanish: 'Spanish',
   country: 'Country',
+  internationalization: 'Internationalization',
+  data: 'Data',
   errorAddingRecipe: 'Error adding recipe.',
   errorAddingSubRecipe: 'Error adding sub-recipe.',
   failedToUpdateRecipe: 'Failed to update recipe.',

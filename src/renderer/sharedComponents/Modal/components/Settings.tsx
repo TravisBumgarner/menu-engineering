@@ -13,6 +13,8 @@ import {
   MenuItem,
   Select,
   Stack,
+  Tab,
+  Tabs,
   TextField,
   Typography,
 } from '@mui/material'
@@ -49,6 +51,7 @@ const SettingsModal = (_props: SettingsModalProps) => {
   const [nukeConfirmationText, setNukeConfirmationText] = useState('')
   const [isNuking, setIsNuking] = useState(false)
   const [initialCountry] = useState(country)
+  const [activeTab, setActiveTab] = useState(0)
 
   useEffect(() => {
     const getBackupDirectory = async () => {
@@ -261,105 +264,132 @@ const SettingsModal = (_props: SettingsModalProps) => {
   }
 
   return (
-    <DefaultModal title={t('settings')}>
-      <Box sx={{ minWidth: 300, pt: SPACING.SMALL.PX }}>
-        <Stack direction="row" spacing={SPACING.MEDIUM.PX}>
-          <FormControl fullWidth>
-            <InputLabel id="language-select-label">{t('language')}</InputLabel>
-            <Select
-              labelId="language-select-label"
-              value={currentLanguage}
-              label={t('language')}
-              onChange={(e) => changeLanguage(e.target.value)}
-            >
-              <MenuItem value="en">English</MenuItem>
-              <MenuItem value="es">Español</MenuItem>
-            </Select>
-          </FormControl>
+    <DefaultModal title={t('settings')} sx={{ height: '600px' }}>
+      <Box sx={{ minWidth: 500, pt: SPACING.SMALL.PX }}>
+        <Tabs
+          value={activeTab}
+          onChange={(_e, newValue) => setActiveTab(newValue)}
+          sx={{ borderBottom: 1, borderColor: 'divider', mb: SPACING.MEDIUM.PX }}
+        >
+          <Tab label={t('internationalization')} />
+          <Tab label={'Data'} />
+          <Tab label={'Recipes'} />
+        </Tabs>
 
-          <FormControl fullWidth>
-            <InputLabel id="country-select-label">{t('country')}</InputLabel>
-            <Select
-              labelId="country-select-label"
-              value={country}
-              label={t('country')}
-              onChange={(e) => setCountry(e.target.value)}
-            >
-              <MenuItem value="US">United States</MenuItem>
-              <MenuItem value="MX">Mexico</MenuItem>
-            </Select>
-          </FormControl>
-        </Stack>
+        {activeTab === 0 && (
+          <Box>
+            <Stack direction="row" spacing={SPACING.MEDIUM.PX}>
+              <FormControl fullWidth>
+                <InputLabel id="language-select-label">{t('language')}</InputLabel>
+                <Select
+                  labelId="language-select-label"
+                  value={currentLanguage}
+                  label={t('language')}
+                  onChange={(e) => changeLanguage(e.target.value)}
+                >
+                  <MenuItem value="en">English</MenuItem>
+                  <MenuItem value="es">Español</MenuItem>
+                </Select>
+              </FormControl>
 
-        <Divider sx={{ my: SPACING.MEDIUM.PX }} />
+              <FormControl fullWidth>
+                <InputLabel id="country-select-label">{t('country')}</InputLabel>
+                <Select
+                  labelId="country-select-label"
+                  value={country}
+                  label={t('country')}
+                  onChange={(e) => setCountry(e.target.value)}
+                >
+                  <MenuItem value="US">United States</MenuItem>
+                  <MenuItem value="MX">Mexico</MenuItem>
+                </Select>
+              </FormControl>
+            </Stack>
+          </Box>
+        )}
 
-        <Box sx={{ mt: SPACING.MEDIUM.PX }}>
-          <Typography variant="subtitle2" gutterBottom>
-            {t('databaseBackups')}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: SPACING.SMALL.PX }}>
-            {t('backupLocation')}: {backupDirectory || t('loading')}
-          </Typography>
-        </Box>
+        {activeTab === 1 && (
+          <Box>
+            <Box sx={{ mt: SPACING.MEDIUM.PX }}>
+              <Typography variant="subtitle2" gutterBottom>
+                {t('databaseBackups')}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: SPACING.SMALL.PX }}>
+                {t('backupLocation')}: {backupDirectory || t('loading')}
+              </Typography>
+            </Box>
 
-        <Divider sx={{ my: SPACING.MEDIUM.PX }} />
+            <Divider sx={{ my: SPACING.MEDIUM.PX }} />
 
-        <Box sx={{ mt: SPACING.MEDIUM.PX }}>
-          <Typography variant="subtitle2" gutterBottom>
-            {t('dataManagement')}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: SPACING.MEDIUM.PX }}>
-            {t('exportDataDescription')}
-          </Typography>
+            <Box sx={{ mt: SPACING.MEDIUM.PX }}>
+              <Typography variant="subtitle2" gutterBottom>
+                {t('dataManagement')}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: SPACING.MEDIUM.PX }}>
+                {t('exportDataDescription')}
+              </Typography>
 
-          {message && (
-            <Alert severity={message.type} sx={{ mb: SPACING.MEDIUM.PX }}>
-              {message.text}
-            </Alert>
-          )}
+              {message && (
+                <Alert severity={message.type} sx={{ mb: SPACING.MEDIUM.PX }}>
+                  {message.text}
+                </Alert>
+              )}
 
-          <Stack spacing={SPACING.SMALL.PX}>
-            <Button
-              variant="outlined"
-              onClick={handleExportData}
-              disabled={isExporting || isRestoring || isNuking}
-              fullWidth
-            >
-              {isExporting ? t('exporting') : t('exportAllData')}
-            </Button>
+              <Stack spacing={SPACING.SMALL.PX}>
+                <Button
+                  variant="outlined"
+                  onClick={handleExportData}
+                  disabled={isExporting || isRestoring || isNuking}
+                  fullWidth
+                >
+                  {isExporting ? t('exporting') : t('exportAllData')}
+                </Button>
 
-            <Button
-              variant="outlined"
-              color="warning"
-              onClick={handleRestoreData}
-              disabled={isExporting || isRestoring || isNuking}
-              fullWidth
-            >
-              {isRestoring ? t('restoring') : t('restoreFromBackup')}
-            </Button>
-          </Stack>
-        </Box>
+                <Button
+                  variant="outlined"
+                  color="warning"
+                  onClick={handleRestoreData}
+                  disabled={isExporting || isRestoring || isNuking}
+                  fullWidth
+                >
+                  {isRestoring ? t('restoring') : t('restoreFromBackup')}
+                </Button>
+              </Stack>
+            </Box>
 
-        <Divider sx={{ my: SPACING.MEDIUM.PX }} />
+            <Divider sx={{ my: SPACING.MEDIUM.PX }} />
 
-        <Box sx={{ mt: SPACING.MEDIUM.PX }}>
-          <Typography variant="subtitle2" gutterBottom color="error">
-            {t('nukeDatabase')}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: SPACING.MEDIUM.PX }}>
-            {t('nukeDatabaseDescription')}
-          </Typography>
+            <Box sx={{ mt: SPACING.MEDIUM.PX }}>
+              <Typography variant="subtitle2" gutterBottom color="error">
+                {t('nukeDatabase')}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: SPACING.MEDIUM.PX }}>
+                {t('nukeDatabaseDescription')}
+              </Typography>
 
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={handleNukeDatabase}
-            disabled={isExporting || isRestoring || isNuking}
-            fullWidth
-          >
-            {isNuking ? t('nuking') : t('nukeDatabase')}
-          </Button>
-        </Box>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleNukeDatabase}
+                disabled={isExporting || isRestoring || isNuking}
+                fullWidth
+              >
+                {isNuking ? t('nuking') : t('nukeDatabase')}
+              </Button>
+            </Box>
+          </Box>
+        )}
+
+        {activeTab === 2 && (
+          <Box sx={{ mt: SPACING.MEDIUM.PX }}>
+            <Typography variant="subtitle2" gutterBottom>
+              {t('recipes')}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {'Recipe settings coming soon.'}
+            </Typography>
+          </Box>
+        )}
       </Box>
 
       {/* Confirmation Dialog */}

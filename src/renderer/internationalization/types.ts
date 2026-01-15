@@ -36,6 +36,8 @@ export type TranslationKeys =
   | 'country'
   | 'weight'
   | 'volume'
+  | 'internationalization'
+  | 'data'
 
   // Navigation
   | 'recipes'
