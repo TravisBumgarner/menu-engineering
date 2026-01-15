@@ -95,5 +95,7 @@ export const SPACING = {
 } as const
 
 export const Z_INDICES = {
+  RECIPES_TABLE_BACKDROP: 100,
+  RECIPES_TABLE: 101,
   MODAL: 500,
 }

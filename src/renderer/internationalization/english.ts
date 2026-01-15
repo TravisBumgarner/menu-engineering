@@ -29,7 +29,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   outOf: 'of',
   unitCost: 'Unit Cost',
   totalCost: 'Total',
-  addToRecipe: 'Add to Recipe',
+  addToRecipe: 'Add component',
   recipeUses: 'Recipe uses',
   close: 'Close',
   // Navigation

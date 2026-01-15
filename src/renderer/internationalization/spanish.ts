@@ -72,7 +72,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   noDetails: 'Sin detalles',
   unitsHelpText: 'Nota - Las unidades solo se pueden establecer al crear',
   usedIn: 'Usado en',
-  addToRecipe: 'Agregar a Receta',
+  addToRecipe: 'Agregar componente',
   recipeUses: 'Receta utiliza',
   close: 'Cerrar',
 

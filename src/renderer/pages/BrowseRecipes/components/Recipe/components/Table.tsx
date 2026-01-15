@@ -12,10 +12,9 @@ import { PAGINATION } from '../../../../../consts'
 import { useLocalStorage } from '../../../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import Icon from '../../../../../sharedComponents/Icon'
-import Message from '../../../../../sharedComponents/Message'
 import { MODAL_ID } from '../../../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../../../signals'
-import { PALETTE, SPACING } from '../../../../../styles/consts'
+import { Z_INDICES } from '../../../../../styles/consts'
 import { LOCAL_STORAGE_KEYS } from '../../../../../utilities'
 import type { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
@@ -77,8 +76,6 @@ const Table = ({
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0
 
-  const hasRows = ingredients.length + subRecipes.length > 0
-
   const visibleRows = React.useMemo(
     () =>
       [
@@ -98,71 +95,70 @@ const Table = ({
   }
 
   return (
-    <Box sx={{ width: '100%', tableLayout: 'fixed' }}>
-      <TableContainer sx={{ boxShadow: 'none' }}>
-        <MuiTable
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'dark' ? PALETTE.grayscale[700] : PALETTE.grayscale[50],
-          }}
-          aria-labelledby="tableTitle"
-          size="medium"
-        >
-          <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
-          <TableBody>
-            {!hasRows && (
+    <>
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: Z_INDICES.RECIPES_TABLE_BACKDROP,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      />
+      <Box sx={{ width: '100%', tableLayout: 'fixed', position: 'relative', zIndex: Z_INDICES.RECIPES_TABLE }}>
+        <TableContainer sx={{ boxShadow: 'none', backgroundColor: 'background.paper' }}>
+          <MuiTable aria-labelledby="tableTitle" size="medium">
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+            <TableBody>
+              {visibleRows.map((row, index) => {
+                const labelId = `enhanced-table-checkbox-${index}`
+
+                if (row.type === 'sub-recipe') {
+                  return <SubRecipeRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
+                }
+
+                return <IngredientRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
+              })}
+              {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: 53 * emptyRows,
+                  }}
+                >
+                  <TableCell colSpan={7} />
+                </TableRow>
+              )}
               <TableRow>
-                <TableCell colSpan={8} sx={{ border: 0, paddingBottom: 0 }}>
-                  <Message color="info" message={t('noDetails')} />
+                <TableCell colSpan={8}>
+                  <Button
+                    fullWidth
+                    size="small"
+                    variant="outlined"
+                    onClick={handleAddToRecipe}
+                    startIcon={<Icon name="add" />}
+                  >
+                    {t('addToRecipe')}
+                  </Button>
                 </TableCell>
               </TableRow>
-            )}
-            {visibleRows.map((row, index) => {
-              const labelId = `enhanced-table-checkbox-${index}`
-
-              if (row.type === 'sub-recipe') {
-                return <SubRecipeRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
-              }
-
-              return <IngredientRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
-            })}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={7} />
-              </TableRow>
-            )}
-            <TableRow>
-              <TableCell sx={{ padding: SPACING.MEDIUM.PX }} colSpan={8}>
-                <Button
-                  fullWidth
-                  size="small"
-                  variant="outlined"
-                  onClick={handleAddToRecipe}
-                  startIcon={<Icon name="add" />}
-                >
-                  {t('addToRecipe')}
-                </Button>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </MuiTable>
-      </TableContainer>
-      <TablePagination
-        size="small"
-        component="div"
-        count={ingredients.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
-      />
-    </Box>
+            </TableBody>
+          </MuiTable>
+        </TableContainer>
+        <TablePagination
+          size="small"
+          component="div"
+          count={ingredients.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
+        />
+      </Box>
+    </>
   )
 }
 
