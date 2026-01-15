@@ -9,7 +9,6 @@ import type { RecipeDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
-  disablePadding: boolean
   id: keyof RecipeDTO | 'actions' | 'collapse' | 'unitCost' | 'usedInRecipesCount' | 'totalCost'
   label: string
   align: 'left' | 'right' | 'center'
@@ -29,78 +28,69 @@ function Head({ onRequestSort, order, orderBy }: Props) {
     {
       id: 'collapse',
       align: 'left',
-      disablePadding: true,
       label: '',
-      width: '4%',
+      width: '25px',
     },
     {
       id: 'createdAt',
       align: 'left',
-      disablePadding: true,
       label: t('created'),
-      width: '12%',
+      width: '75px',
     },
     {
       id: 'title',
       align: 'left',
-      disablePadding: true,
       label: t('title'),
       width: '20%',
     },
     {
       id: 'totalCost',
-      align: 'left',
-      disablePadding: false,
+      align: 'right',
       label: t('totalCost'),
       width: '10%',
     },
     {
       id: 'produces',
       align: 'right',
-      disablePadding: false,
       label: t('produces'),
       width: '12%',
     },
-    {
-      id: 'units',
-      align: 'left',
-      disablePadding: false,
-      label: '',
-      width: '10%',
-    },
+    // {
+    //   id: 'units',
+    //   align: 'left',
+
+    //   label: '',
+    //   width: '10%',
+    // },
     {
       id: 'unitCost',
-      align: 'left',
-      disablePadding: true,
+      align: 'right',
       label: t('unitCost'),
-      width: '8%',
+      width: '10%',
     },
 
     {
       id: 'status',
       align: 'left',
-      disablePadding: false,
       label: t('status'),
       width: '10%',
     },
     {
       id: 'showInMenu',
       align: 'left',
-      disablePadding: false,
       label: t('showInMenu'),
-      width: '12%',
+      width: '90px',
     },
     // {
     //   id: 'usedInRecipesCount',
     //   align: 'left',
-    //   disablePadding: false,
+
     //   label: t('usedIn'),
     //   width: '10%',
     // },
     {
       id: 'actions',
       align: 'center',
-      disablePadding: false,
       label: '',
       width: '90px',
     },
@@ -119,13 +109,12 @@ function Head({ onRequestSort, order, orderBy }: Props) {
             key={headCell.id}
             align={headCell.align}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width }}
+            sx={{ width: headCell.width, border: 'none' }}
           >
             {headCell.id === 'actions' ||
             headCell.id === 'collapse' ||
-            headCell.id === 'units' ||
-            headCell.id === 'unitCost' ||
             headCell.id === 'totalCost' ||
+            headCell.id === 'unitCost' ||
             headCell.id === 'produces' ? (
               headCell.label
             ) : (

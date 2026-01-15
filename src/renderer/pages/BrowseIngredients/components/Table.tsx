@@ -1,4 +1,4 @@
-import { Button } from '@mui/material'
+import { Button, Stack } from '@mui/material'
 import Box from '@mui/material/Box'
 import Paper from '@mui/material/Paper'
 import MuiTable from '@mui/material/Table'
@@ -93,57 +93,61 @@ const Table = ({
   )
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <TableContainer>
-          <MuiTable sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
-            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`
+    <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <Stack direction="row" justifyContent="space-between" alignContent="center" sx={{ paddingY: SPACING.SMALL.PX }}>
+        <Box />
+        <Box>
+          <Button size="small" onClick={handleOpenExportIngredientsModal} variant="outlined">
+            Export CSV
+          </Button>
+        </Box>
+      </Stack>
 
-                return <IngredientRow key={row.id} row={row} labelId={labelId} />
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
+      <TableContainer sx={{ boxShadow: 'none' }}>
+        <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="small">
+          <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+          <TableBody>
+            {visibleRows.map((row, index) => {
+              const labelId = `enhanced-table-checkbox-${index}`
+
+              return <IngredientRow key={row.id} row={row} labelId={labelId} />
+            })}
+            {emptyRows > 0 && (
+              <TableRow
+                style={{
+                  height: 53 * emptyRows,
+                }}
+              >
+                <TableCell colSpan={8} />
+              </TableRow>
+            )}
+            <TableRow>
+              <TableCell colSpan={8}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: SPACING.MEDIUM.PX,
                   }}
                 >
-                  <TableCell colSpan={8} />
-                </TableRow>
-              )}
-              <TableRow>
-                <TableCell colSpan={8} sx={{ padding: SPACING.MEDIUM.PX }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      gap: SPACING.MEDIUM.PX,
-                    }}
-                  >
-                    <Button size="small" onClick={handleOpenAddIngredientModal} fullWidth variant="outlined">
-                      {t('addIngredient')}
-                    </Button>
-                    <Button size="small" onClick={handleOpenExportIngredientsModal} fullWidth variant="outlined">
-                      Export CSV
-                    </Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </MuiTable>
-        </TableContainer>
-        <TablePagination
-          rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
-          component="div"
-          count={ingredients.length}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
-        />
-      </Paper>
+                  <Button size="small" onClick={handleOpenAddIngredientModal} fullWidth variant="outlined">
+                    {t('addIngredient')}
+                  </Button>
+                </Box>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </MuiTable>
+      </TableContainer>
+      <TablePagination
+        rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
+        component="div"
+        count={ingredients.length}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
+      />
     </Box>
   )
 }

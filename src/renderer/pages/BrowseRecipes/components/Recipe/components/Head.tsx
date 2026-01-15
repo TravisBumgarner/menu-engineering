@@ -90,9 +90,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           <TableCell
             sx={{
               width: headCell.width,
-
-              backgroundColor: (theme) =>
-                theme.palette.mode === 'dark' ? PALETTE.grayscale[700] : PALETTE.grayscale[100],
+              border: 'none',
             }}
             key={headCell.id}
             align={headCell.align}

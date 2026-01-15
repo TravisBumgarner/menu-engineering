@@ -26,7 +26,7 @@ const VolumeConversionTable = ({ enabledUnits }: { enabledUnits: string[] }) => 
       <Typography variant="body1" gutterBottom>
         {t('volumeConversions')}
       </Typography>
-      <TableContainer>
+      <TableContainer sx={{ boxShadow: 'none' }}>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -76,7 +76,7 @@ const WeightConversionTable = ({ enabledUnits }: { enabledUnits: string[] }) => 
       <Typography variant="body1" gutterBottom>
         {t('weightConversions')}
       </Typography>
-      <TableContainer>
+      <TableContainer sx={{ boxShadow: 'none' }}>
         <Table size="small" sx={{ width: '100%' }}>
           <TableHead>
             <TableRow>

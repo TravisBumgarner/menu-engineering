@@ -99,7 +99,7 @@ const Table = ({
 
   return (
     <Box sx={{ width: '100%', tableLayout: 'fixed' }}>
-      <TableContainer>
+      <TableContainer sx={{ boxShadow: 'none' }}>
         <MuiTable
           sx={{
             backgroundColor: (theme) =>

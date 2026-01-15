@@ -55,7 +55,6 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
       sx={{
         display: 'flex',
         justifyContent: 'flex-end',
-        padding: SPACING.SMALL.PX,
         alignItems: 'center',
         gap: SPACING.SMALL.PX,
       }}

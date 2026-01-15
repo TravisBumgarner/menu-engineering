@@ -9,7 +9,6 @@ import type { IngredientDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
-  disablePadding: boolean
   id: keyof IngredientDTO | 'actions' | 'recipeCount' | 'collapse'
   label: string
   align: 'left' | 'right' | 'center'
@@ -31,49 +30,42 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     {
       id: 'collapse',
       align: 'left',
-      disablePadding: true,
       label: '',
-      width: '5%',
+      width: '25px',
     },
     {
       id: 'createdAt',
       align: 'left',
-      disablePadding: true,
       label: t('created'),
-      width: '10%',
+      width: '75px',
     },
     {
       id: 'title',
       align: 'left',
-      disablePadding: true,
       label: t('title'),
       width: '20%',
     },
     {
       id: 'units',
       align: 'left',
-      disablePadding: false,
       label: t('units'),
-      width: '10%',
+      width: '20%',
     },
     {
       id: 'unitCost',
       align: 'right',
-      disablePadding: false,
-      width: '15%',
+      width: '20%',
       label: t('unitCost'),
     },
     {
       id: 'recipeCount',
-      align: 'left',
-      disablePadding: false,
-      width: '10%',
+      align: 'right',
+      width: '20%',
       label: t('usedIn'),
     },
     {
       id: 'actions',
-      align: 'left',
-      disablePadding: false,
+      align: 'right',
       width: '20%',
       label: '',
     },
@@ -90,7 +82,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
           <TableCell
             key={headCell.id}
             align={headCell.align}
-            sx={{ width: headCell.width }}
+            sx={{ width: headCell.width, border: 'none' }}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             {headCell.id === 'actions' || headCell.id === 'collapse' ? (

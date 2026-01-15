@@ -115,10 +115,7 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
           {formatCurrency(row.cost)}
         </TableCell>
         <TableCell sx={cellSx} align="right">
-          {row.produces}
-        </TableCell>
-        <TableCell sx={cellSx} align="left">
-          {getUnitLabel(row.units, 'plural')}
+          {row.produces} {getUnitLabel(row.units, 'plural')}
         </TableCell>
         <TableCell align="right" id={labelId} scope="row" sx={cellSx}>
           {formatCurrency(row.cost / row.produces)}
@@ -151,7 +148,7 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell sx={cellSx} style={{ padding: 0, border: 0 }} colSpan={12}>
+        <TableCell sx={cellSx} style={{ padding: 0, border: 0 }} colSpan={9}>
           <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>
