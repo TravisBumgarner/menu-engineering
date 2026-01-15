@@ -14,6 +14,7 @@ import { SPACING } from '../../../styles/consts'
 import { getUnitLabel } from '../../../utilities'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
+import UnitSelect from '../../UnitPicker'
 
 export interface AddIngredientModalProps {
   id: typeof MODAL_ID.ADD_INGREDIENT_MODAL
@@ -152,20 +153,11 @@ const AddIngredientModal = (_props: AddIngredientModalProps) => {
               sx={{ width: '100px' }}
               min={0}
             />
-            <FormControl size="small" required sx={{ width: '150px' }}>
-              <InputLabel>{t('units')}</InputLabel>
-              <Select
-                value={ingredientFormData.units}
-                onChange={(e) => handleInputChange('units')(e as React.ChangeEvent<HTMLInputElement>)}
-                label={t('units')}
-              >
-                {Object.entries(ALL_UNITS).map(([key, value]) => (
-                  <MenuItem key={key} value={value}>
-                    {getUnitLabel(value, 2)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <UnitSelect
+              value={ingredientFormData.units}
+              required
+              onChange={(value) => setIngredientFormData((prev) => ({ ...prev, units: value }))}
+            />
 
             <Typography>=</Typography>
 

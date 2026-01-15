@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getFromLocalStorage, setToLocalStorage } from '../utilities'
+import { getFromLocalStorage, type LOCAL_STORAGE_KEYS, setToLocalStorage } from '../utilities'
 
 /**
  * A React hook for managing localStorage state with automatic synchronization
@@ -7,7 +7,10 @@ import { getFromLocalStorage, setToLocalStorage } from '../utilities'
  * @param defaultValue - The default value if key doesn't exist
  * @returns A tuple of [value, setValue] similar to useState
  */
-export const useLocalStorage = <T>(key: string, defaultValue: T): [T, (value: T | ((prev: T) => T)) => void] => {
+export const useLocalStorage = <T>(
+  key: keyof typeof LOCAL_STORAGE_KEYS,
+  defaultValue: T,
+): [T, (value: T | ((prev: T) => T)) => void] => {
   // Initialize state with value from localStorage or default
   const [storedValue, setStoredValue] = useState<T>(() => {
     return getFromLocalStorage(key, defaultValue)

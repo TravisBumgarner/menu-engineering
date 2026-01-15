@@ -11,11 +11,6 @@ export const ROUTES = {
     label: t('ingredients'),
     target: '_self',
   },
-  unitConversions: {
-    href: () => '/unit-conversions',
-    label: t('unitConversions'),
-    target: '_self',
-  },
 } as const
 
 export const QUERY_KEYS = {

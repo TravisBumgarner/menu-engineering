@@ -8,33 +8,20 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   TextField,
   Typography,
 } from '@mui/material'
 import log from 'electron-log/renderer'
 import { useEffect, useState } from 'react'
-import { CHANNEL } from '../../../../shared/messages.types'
-import type { IngredientDTO, RecipeDTO, RelationDTO } from '../../../../shared/recipe.types'
-import { useLocalStorage } from '../../../hooks/useLocalStorage'
-import { useAppTranslation } from '../../../hooks/useTranslation'
-import ipcMessenger from '../../../ipcMessenger'
-import { SPACING } from '../../../styles/consts'
-import type { MODAL_ID } from '../Modal.consts'
-import DefaultModal from './DefaultModal'
+import { CHANNEL } from '../../../../../../shared/messages.types'
+import type { IngredientDTO, RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
+import { useAppTranslation } from '../../../../../hooks/useTranslation'
+import ipcMessenger from '../../../../../ipcMessenger'
+import { SPACING } from '../../../../../styles/consts'
 
-export interface SettingsModalProps {
-  id: typeof MODAL_ID.SETTINGS_MODAL
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SettingsModal = (_props: SettingsModalProps) => {
-  const { t, currentLanguage, changeLanguage } = useAppTranslation()
-  const [country, setCountry] = useLocalStorage<string>('country', 'US')
+const TabData = () => {
+  const { t, currentLanguage } = useAppTranslation()
   const [backupDirectory, setBackupDirectory] = useState<string>('')
   const [isExporting, setIsExporting] = useState(false)
   const [isRestoring, setIsRestoring] = useState(false)
@@ -48,7 +35,6 @@ const SettingsModal = (_props: SettingsModalProps) => {
   const [showNukeDialog, setShowNukeDialog] = useState(false)
   const [nukeConfirmationText, setNukeConfirmationText] = useState('')
   const [isNuking, setIsNuking] = useState(false)
-  const [initialCountry] = useState(country)
 
   useEffect(() => {
     const getBackupDirectory = async () => {
@@ -62,13 +48,6 @@ const SettingsModal = (_props: SettingsModalProps) => {
 
     getBackupDirectory()
   }, [])
-
-  // Reload the app when country changes
-  useEffect(() => {
-    if (country !== initialCountry) {
-      window.location.reload()
-    }
-  }, [country, initialCountry])
 
   const handleExportData = async () => {
     setIsExporting(true)
@@ -261,38 +240,8 @@ const SettingsModal = (_props: SettingsModalProps) => {
   }
 
   return (
-    <DefaultModal title={t('settings')}>
-      <Box sx={{ minWidth: 300, pt: SPACING.SMALL.PX }}>
-        <Stack direction="row" spacing={SPACING.MEDIUM.PX}>
-          <FormControl fullWidth>
-            <InputLabel id="language-select-label">{t('language')}</InputLabel>
-            <Select
-              labelId="language-select-label"
-              value={currentLanguage}
-              label={t('language')}
-              onChange={(e) => changeLanguage(e.target.value)}
-            >
-              <MenuItem value="en">English</MenuItem>
-              <MenuItem value="es">Español</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <InputLabel id="country-select-label">{t('country')}</InputLabel>
-            <Select
-              labelId="country-select-label"
-              value={country}
-              label={t('country')}
-              onChange={(e) => setCountry(e.target.value)}
-            >
-              <MenuItem value="US">United States</MenuItem>
-              <MenuItem value="MX">Mexico</MenuItem>
-            </Select>
-          </FormControl>
-        </Stack>
-
-        <Divider sx={{ my: SPACING.MEDIUM.PX }} />
-
+    <>
+      <Box>
         <Box sx={{ mt: SPACING.MEDIUM.PX }}>
           <Typography variant="subtitle2" gutterBottom>
             {t('databaseBackups')}
@@ -388,7 +337,7 @@ const SettingsModal = (_props: SettingsModalProps) => {
             onClick={handleConfirmRestore}
             color="warning"
             variant="contained"
-            disabled={!['CONFIRM', 'CONFIRMAR'].includes(confirmationText)} // lazy lol.
+            disabled={!['CONFIRM', 'CONFIRMAR'].includes(confirmationText)}
           >
             {t('restoreFromBackup')}
           </Button>
@@ -424,14 +373,14 @@ const SettingsModal = (_props: SettingsModalProps) => {
             onClick={handleConfirmNuke}
             color="error"
             variant="contained"
-            disabled={!['NUKE', 'ELIMINAR'].includes(nukeConfirmationText)} // lazy lol.
+            disabled={!['NUKE', 'ELIMINAR'].includes(nukeConfirmationText)}
           >
             {t('nukeDatabase')}
           </Button>
         </DialogActions>
       </Dialog>
-    </DefaultModal>
+    </>
   )
 }
 
-export default SettingsModal
+export default TabData

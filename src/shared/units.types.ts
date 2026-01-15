@@ -1,14 +1,15 @@
 export const VOLUME_UNIT = {
+  cups: 'cups',
+  gallons: 'gallons',
   liters: 'liters',
   milliliters: 'milliliters',
-  gallons: 'gallons',
-  cups: 'cups',
 } as const
 export type VolumeUnit = keyof typeof VOLUME_UNIT
 
 export const WEIGHT_UNIT = {
   grams: 'grams',
   kilograms: 'kilograms',
+  milligrams: 'milligrams',
   ounces: 'ounces',
   pounds: 'pounds',
 } as const
@@ -26,3 +27,10 @@ export const ALL_UNITS = {
   ...GENERIC_UNIT,
 } as const
 export type AllUnits = keyof typeof ALL_UNITS
+
+export interface UnitPreferences {
+  volume: string[]
+  weight: string[]
+  generic: string[]
+}
+

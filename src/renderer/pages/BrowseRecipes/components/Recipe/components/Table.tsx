@@ -16,6 +16,7 @@ import Message from '../../../../../sharedComponents/Message'
 import { MODAL_ID } from '../../../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../../../signals'
 import { PALETTE, SPACING } from '../../../../../styles/consts'
+import { LOCAL_STORAGE_KEYS } from '../../../../../utilities'
 import type { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
 import IngredientRow from './IngredientRow'
@@ -53,7 +54,10 @@ const Table = ({
   const [orderBy, setOrderBy] = React.useState<'title' | 'createdAt'>('createdAt')
   const [page, setPage] = React.useState(0)
   const { t } = useAppTranslation()
-  const [rowsPerPage, setRowsPerPage] = useLocalStorage('recipeDetailsPagination', PAGINATION.DEFAULT_ROWS_PER_PAGE)
+  const [rowsPerPage, setRowsPerPage] = useLocalStorage(
+    LOCAL_STORAGE_KEYS.RECIPE_DETAILS_PAGINATION,
+    PAGINATION.DEFAULT_ROWS_PER_PAGE,
+  )
 
   const handleRequestSort = (_event: React.MouseEvent<unknown>, property: keyof typeof SORTABLE_OPTIONS) => {
     const isAsc = orderBy === property && order === 'asc'

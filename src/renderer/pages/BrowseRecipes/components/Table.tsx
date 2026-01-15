@@ -17,6 +17,7 @@ import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
 import Filters, { type FilterOptions } from './Filters'
 import Head from './Head'
 import RecipeRow from './Row'
+import { LOCAL_STORAGE_KEYS } from '../../../utilities'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -49,7 +50,10 @@ const Table = ({
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO | 'usedInRecipesCount'>('createdAt')
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = useLocalStorage('browseRecipesPagination', PAGINATION.DEFAULT_ROWS_PER_PAGE)
+  const [rowsPerPage, setRowsPerPage] = useLocalStorage(
+    LOCAL_STORAGE_KEYS.BROWSE_RECIPES_PAGINATION,
+    PAGINATION.DEFAULT_ROWS_PER_PAGE,
+  )
 
   // Default filters: show draft and published, hide archived, show both in menu and not in menu
   const [filters, setFilters] = React.useState<FilterOptions>({

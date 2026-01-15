@@ -12,6 +12,7 @@ import { NumericInput } from '../../../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
 import { getUnitLabel } from '../../../../../utilities'
+import UnitSelect from '../../../../UnitPicker'
 import RecipeDetails from './RecipeDetails'
 
 type FormData = {
@@ -163,20 +164,10 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
             sx={{ width: '100px' }}
             min={0}
           />
-          <FormControl size="small" required sx={{ width: '150px' }}>
-            <InputLabel>{t('units')}</InputLabel>
-            <Select
-              value={ingredientFormData.units}
-              onChange={(e) => handleInputChange('units')(e as React.ChangeEvent<HTMLInputElement>)}
-              label={t('units')}
-            >
-              {Object.entries(ALL_UNITS).map(([key, value]) => (
-                <MenuItem key={key} value={value}>
-                  {getUnitLabel(value, 2)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <UnitSelect
+            value={ingredientFormData.units}
+            onChange={(units) => setIngredientFormData({ ...ingredientFormData, units })}
+          />
 
           <Typography>=</Typography>
 

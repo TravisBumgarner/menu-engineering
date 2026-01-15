@@ -15,6 +15,7 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
+import { LOCAL_STORAGE_KEYS } from '../../../utilities'
 import EnhancedTableHead from './Head'
 import IngredientRow from './Row'
 
@@ -47,7 +48,10 @@ const Table = ({
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof IngredientDTO | 'recipeCount'>('createdAt')
   const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = useLocalStorage('browseIngredientsPagination', PAGINATION.DEFAULT_ROWS_PER_PAGE)
+  const [rowsPerPage, setRowsPerPage] = useLocalStorage(
+    LOCAL_STORAGE_KEYS.BROWSE_INGREDIENTS_PAGINATION,
+    PAGINATION.DEFAULT_ROWS_PER_PAGE,
+  )
 
   const { t } = useAppTranslation()
 
