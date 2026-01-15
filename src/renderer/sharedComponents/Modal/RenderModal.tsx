@@ -9,7 +9,7 @@ import EditIngredientModal, { type EditIngredientModalProps } from './components
 import EditRecipeModal, { type EditRecipeModalProps } from './components/EditRecipeModal'
 import ExportIngredients, { type ExportIngredientsProps } from './components/ExportIngredientsModal'
 import ExportRecipes, { type ExportRecipesProps } from './components/ExportRecipesModal'
-import SettingsModal, { type SettingsModalProps } from './components/Settings'
+import SettingsModal, { type SettingsModalProps } from './components/SettingsModal/SettingsModal'
 import { MODAL_ID } from './Modal.consts'
 
 export type ActiveModal =

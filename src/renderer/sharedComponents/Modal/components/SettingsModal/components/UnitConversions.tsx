@@ -1,26 +1,39 @@
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
-import { VOLUME_UNIT, type VolumeUnit, WEIGHT_UNIT, type WeightUnit } from '../../shared/units.types'
-import { useAppTranslation } from '../hooks/useTranslation'
-import { convertUnits } from '../utilities'
+import {
+  Box,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material'
+import { VOLUME_UNIT, type VolumeUnit, WEIGHT_UNIT, type WeightUnit } from '../../../../../../shared/units.types'
+import { useAppTranslation } from '../../../../../hooks/useTranslation'
+import { SPACING } from '../../../../../styles/consts'
+import { convertUnits } from '../../../../../utilities'
+import type { UnitPreferences } from './TabUnitPreferences'
 
-const VolumeConversionTable = () => {
+const VolumeConversionTable = ({ enabledUnits }: { enabledUnits: string[] }) => {
   const { t } = useAppTranslation()
 
-  const volumeUnits = Object.keys(VOLUME_UNIT) as VolumeUnit[]
+  const volumeUnits = (Object.keys(VOLUME_UNIT) as VolumeUnit[]).filter((unit) => enabledUnits.includes(unit))
 
   return (
-    <Box sx={{ mb: 4 }}>
-      <Typography variant="h6" component="h2" gutterBottom>
+    <>
+      <Typography variant="body1" gutterBottom>
         {t('volumeConversions')}
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell></TableCell>
               {volumeUnits.map((unit) => (
                 <TableCell key={unit} align="right">
-                  {t(`${unit}_plural`)}
+                  {t(`${unit}_abbreviated`)}
                 </TableCell>
               ))}
             </TableRow>
@@ -29,7 +42,7 @@ const VolumeConversionTable = () => {
             {volumeUnits.map((fromUnit) => (
               <TableRow key={fromUnit}>
                 <TableCell component="th" scope="row">
-                  <strong>1 {t(`${fromUnit}_plural`)}</strong>
+                  <strong>1 {t(`${fromUnit}_abbreviated`)}</strong>
                 </TableCell>
                 {volumeUnits.map((toUnit) => {
                   const conversion = convertUnits({
@@ -49,28 +62,28 @@ const VolumeConversionTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Box>
+    </>
   )
 }
 
-const WeightConversionTable = () => {
+const WeightConversionTable = ({ enabledUnits }: { enabledUnits: string[] }) => {
   const { t } = useAppTranslation()
 
-  const weightUnits = Object.keys(WEIGHT_UNIT) as WeightUnit[]
+  const weightUnits = (Object.keys(WEIGHT_UNIT) as WeightUnit[]).filter((unit) => enabledUnits.includes(unit))
 
   return (
-    <Box sx={{ mb: 4 }}>
-      <Typography variant="h6" component="h2" gutterBottom>
+    <>
+      <Typography variant="body1" gutterBottom>
         {t('weightConversions')}
       </Typography>
-      <TableContainer component={Paper}>
-        <Table size="small">
+      <TableContainer>
+        <Table size="small" sx={{ width: '100%' }}>
           <TableHead>
             <TableRow>
               <TableCell></TableCell>
               {weightUnits.map((unit) => (
                 <TableCell key={unit} align="right">
-                  {t(`${unit}_plural`)}
+                  {t(`${unit}_abbreviated`)}
                 </TableCell>
               ))}
             </TableRow>
@@ -79,7 +92,7 @@ const WeightConversionTable = () => {
             {weightUnits.map((fromUnit) => (
               <TableRow key={fromUnit}>
                 <TableCell component="th" scope="row">
-                  <strong>1 {t(`${fromUnit}_plural`)}</strong>
+                  <strong>1 {t(`${fromUnit}_abbreviated`)}</strong>
                 </TableCell>
                 {weightUnits.map((toUnit) => {
                   const conversion = convertUnits({
@@ -99,26 +112,16 @@ const WeightConversionTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Box>
+    </>
   )
 }
 
-const UnitConversions = () => {
-  const { t } = useAppTranslation()
-
+const UnitConversions = ({ unitPreferences }: { unitPreferences: UnitPreferences }) => {
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        {t('unitConversions')}
-      </Typography>
-
-      <VolumeConversionTable />
-      <WeightConversionTable />
-
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-        * {t('conversionDisclaimer')}
-      </Typography>
-    </Box>
+    <Stack spacing={SPACING.MEDIUM.PX} sx={{ flexGrow: 1 }}>
+      <VolumeConversionTable enabledUnits={unitPreferences.volume} />
+      <WeightConversionTable enabledUnits={unitPreferences.weight} />
+    </Stack>
   )
 }
 

@@ -11,7 +11,7 @@ import { MODAL_ID } from '../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../signals'
 import { SPACING } from '../styles/consts'
 
-const NAV_ROUTES: Array<keyof typeof ROUTES> = ['recipes', 'ingredients', 'unitConversions']
+const NAV_ROUTES: Array<keyof typeof ROUTES> = ['recipes', 'ingredients']
 
 const Navigation = () => {
   const location = useLocation()

@@ -1,17 +1,17 @@
 export const VOLUME_UNIT = {
+  cups: 'cups',
+  gallons: 'gallons',
   liters: 'liters',
   milliliters: 'milliliters',
-  // gallons: 'gallons',
-  cups: 'cups',
 } as const
 export type VolumeUnit = keyof typeof VOLUME_UNIT
 
 export const WEIGHT_UNIT = {
-  milligrams: 'milligrams',
   grams: 'grams',
   kilograms: 'kilograms',
-  // ounces: 'ounces',
-  // pounds: 'pounds',
+  milligrams: 'milligrams',
+  ounces: 'ounces',
+  pounds: 'pounds',
 } as const
 export type WeightUnit = keyof typeof WEIGHT_UNIT
 

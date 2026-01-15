@@ -93,30 +93,41 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   // Units
   units_singular: 'Unit',
   units_plural: 'Units',
+  units_abbreviated: 'unit',
   liters_singular: 'Liter',
   liters_plural: 'Liters',
+  liters_abbreviated: 'L',
   milliliters_singular: 'Milliliter',
   milliliters_plural: 'Milliliters',
+  milliliters_abbreviated: 'ml',
   gallons_singular: 'Gallon',
   gallons_plural: 'Gallons',
+  gallons_abbreviated: 'gal',
   cups_singular: 'Cup',
   cups_plural: 'Cups',
+  cups_abbreviated: 'cup',
   milligrams_plural: 'Milligrams',
   milligrams_singular: 'Milligram',
+  milligrams_abbreviated: 'mg',
   grams_singular: 'Gram',
   grams_plural: 'Grams',
+  grams_abbreviated: 'g',
   kilograms_singular: 'Kilogram',
   kilograms_plural: 'Kilograms',
+  kilograms_abbreviated: 'kg',
   ounces_singular: 'Ounce',
   ounces_plural: 'Ounces',
+  ounces_abbreviated: 'oz',
   pounds_singular: 'Pound',
   pounds_plural: 'Pounds',
+  pounds_abbreviated: 'lb',
   pieces_singular: 'Piece',
   pieces_plural: 'Pieces',
+  pieces_abbreviated: 'pc',
+
   weightConversions: 'Weight Conversion Table',
   volumeConversions: 'Volume Conversion Table',
   unitConversions: 'Unit Conversion Tables',
-  conversionDisclaimer: 'Conversions are approximate and based on US standard measurements',
 
   // Missing translations
   language: 'Language',
@@ -166,6 +177,14 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   errorNukingDatabase: 'Error clearing database',
   nukeDatabaseDescription: 'Permanently delete all recipes, ingredients, and relationships.',
   nuking: 'Clearing...',
+
+  // Unit Preferences
+  unitPreferences: 'Unit Preferences',
+  volumeUnits: 'Volume Units',
+  weightUnits: 'Weight Units',
+  genericUnits: 'Generic Units',
+  changeSelectedUnits: 'Change selected units',
+  modifyUnitsInPreferences: "Units can be modified in the 'Unit Preferences' tab of Settings.",
 }
 
 export default EnglishTranslations
