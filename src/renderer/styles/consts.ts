@@ -87,7 +87,7 @@ export const SPACING = {
   HUGE: {
     PX: '48px',
     INT: 48,
-  },
+},
   OMNIPRESENT: {
     PX: '128px',
     INT: 128,
@@ -95,7 +95,5 @@ export const SPACING = {
 } as const
 
 export const Z_INDICES = {
-  RECIPES_TABLE_BACKDROP: 100,
-  RECIPES_TABLE: 101,
   MODAL: 500,
 }

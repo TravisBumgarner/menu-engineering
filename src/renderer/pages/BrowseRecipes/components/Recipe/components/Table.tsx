@@ -14,7 +14,6 @@ import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import Icon from '../../../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../../../signals'
-import { Z_INDICES } from '../../../../../styles/consts'
 import { LOCAL_STORAGE_KEYS } from '../../../../../utilities'
 import type { SORTABLE_OPTIONS } from './consts'
 import EnhancedTableHead from './Head'
@@ -95,70 +94,57 @@ const Table = ({
   }
 
   return (
-    <>
-      <Box
-        sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: Z_INDICES.RECIPES_TABLE_BACKDROP,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        }}
-      />
-      <Box sx={{ width: '100%', tableLayout: 'fixed', position: 'relative', zIndex: Z_INDICES.RECIPES_TABLE }}>
-        <TableContainer sx={{ boxShadow: 'none', backgroundColor: 'background.paper' }}>
-          <MuiTable aria-labelledby="tableTitle" size="medium">
-            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                const labelId = `enhanced-table-checkbox-${index}`
+    <Box sx={{ width: '100%', tableLayout: 'fixed' }}>
+      <TableContainer sx={{ boxShadow: 'none' }}>
+        <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="medium">
+          <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+          <TableBody>
+            {visibleRows.map((row, index) => {
+              const labelId = `enhanced-table-checkbox-${index}`
 
-                if (row.type === 'sub-recipe') {
-                  return <SubRecipeRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
-                }
+              if (row.type === 'sub-recipe') {
+                return <SubRecipeRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
+              }
 
-                return <IngredientRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={7} />
-                </TableRow>
-              )}
-              <TableRow>
-                <TableCell colSpan={8}>
-                  <Button
-                    fullWidth
-                    size="small"
-                    variant="outlined"
-                    onClick={handleAddToRecipe}
-                    startIcon={<Icon name="add" />}
-                  >
-                    {t('addToRecipe')}
-                  </Button>
-                </TableCell>
+              return <IngredientRow key={row.id} row={row} recipeId={recipe.id} labelId={labelId} />
+            })}
+            {emptyRows > 0 && (
+              <TableRow
+                style={{
+                  height: 53 * emptyRows,
+                }}
+              >
+                <TableCell colSpan={7} />
               </TableRow>
-            </TableBody>
-          </MuiTable>
-        </TableContainer>
-        <TablePagination
-          size="small"
-          component="div"
-          count={ingredients.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
-        />
-      </Box>
-    </>
+            )}
+            <TableRow>
+              <TableCell colSpan={8}>
+                <Button
+                  fullWidth
+                  size="small"
+                  variant="outlined"
+                  onClick={handleAddToRecipe}
+                  startIcon={<Icon name="add" />}
+                >
+                  {t('addToRecipe')}
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </MuiTable>
+      </TableContainer>
+      <TablePagination
+        size="small"
+        component="div"
+        count={ingredients.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
+      />
+    </Box>
   )
 }
 

@@ -61,7 +61,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   deleteIngredientConfirmation:
     '¿Estás seguro de que quieres eliminar este ingrediente? Esta acción no se puede deshacer.',
   editIngredient: 'Editar Ingrediente',
-  editIngredients: 'Editar Ingredientes',
+  viewRecipe: 'Ver Receta',
   addExisting: 'Agregar Existente',
   saveAndAddAnother: 'Guardar y Agregar otro',
   addSubRecipe: 'Agregar Sub-Receta',

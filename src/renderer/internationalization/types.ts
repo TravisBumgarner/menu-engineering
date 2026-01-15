@@ -62,7 +62,7 @@ export type TranslationKeys =
   | 'deleteRecipeConfirmation'
   | 'deleteIngredientConfirmation'
   | 'editIngredient'
-  | 'editIngredients'
+  | 'viewRecipe'
   | 'addExisting'
   | 'saveAndAddAnother'
   | 'addSubRecipe'

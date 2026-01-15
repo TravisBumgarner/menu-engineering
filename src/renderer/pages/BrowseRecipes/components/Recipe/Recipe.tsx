@@ -5,7 +5,7 @@ import { QUERY_KEYS } from '../../../../consts'
 import { useAppTranslation } from '../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../ipcMessenger'
 import { activeRecipeIdSignal } from '../../../../signals'
-import { SPACING } from '../../../../styles/consts'
+import { FONT_SIZES, SPACING } from '../../../../styles/consts'
 import Table from './components/Table'
 
 const Recipe = ({ id }: { id: string }) => {
@@ -45,14 +45,14 @@ const Recipe = ({ id }: { id: string }) => {
         padding: SPACING.SMALL.PX,
       }}
     >
-      <Typography>
+      <Typography sx={{ fontSize: FONT_SIZES.SMALL.PX, marginBottom: SPACING.SMALL.PX }}>
         {t('usedIn')}: {data.usedInRecipes.length === 0 && ` 0 ${t('recipes')}`}
         {data.usedInRecipes.map((recipe) => {
           const setActiveRecipe = () => {
             activeRecipeIdSignal.value = recipe.id
           }
           return (
-            <Button variant="text" key={recipe.id} onClick={setActiveRecipe}>
+            <Button size="small" key={recipe.id} onClick={setActiveRecipe}>
               {recipe.title}
             </Button>
           )

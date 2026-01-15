@@ -140,23 +140,28 @@ const Table = ({
 
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <Stack direction="row" justifyContent="space-between" alignContent="center" sx={{ paddingY: SPACING.SMALL.PX }}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignContent="center"
+        sx={{ paddingY: SPACING.SMALL.PX, ...(activeRecipeIdSignal.value ? { opacity: 0.1 } : {}) }}
+      >
         <Filters filters={filters} onFiltersChange={handleFiltersChange} />
 
         <Box>
-          <Button
-            size="small"
-            sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
-            onClick={handleOpenExportRecipesModal}
-            variant="outlined"
-          >
+          <Button size="small" onClick={handleOpenExportRecipesModal} variant="outlined">
             Export PDF
           </Button>
         </Box>
       </Stack>
       <TableContainer sx={{ boxShadow: 'none' }}>
         <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="small">
-          <Head order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+          <Head
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={handleRequestSort}
+            sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
+          />
           <TableBody>
             {visibleRows.map((row, index) => {
               const labelId = `enhanced-table-checkbox-${index}`

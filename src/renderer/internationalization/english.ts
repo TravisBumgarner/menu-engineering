@@ -54,7 +54,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   deleteRecipeConfirmation: 'Are you sure you want to delete this recipe? This action cannot be undone.',
   deleteIngredientConfirmation: 'Are you sure you want to delete this ingredient? This action cannot be undone.',
   editIngredient: 'Edit Ingredient',
-  editIngredients: 'Edit Ingredients',
+  viewRecipe: 'View Recipe',
   addExisting: 'Add Existing',
   saveAndAddAnother: 'Save & Add another',
   addSubRecipe: 'Add Sub-Recipe',

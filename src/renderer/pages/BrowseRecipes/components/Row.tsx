@@ -1,4 +1,4 @@
-import { Stack, type SxProps, Tooltip } from '@mui/material'
+import { alpha, Stack, Tooltip } from '@mui/material'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
@@ -18,7 +18,8 @@ import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import Photo from '../../../sharedComponents/Photo'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
-import { FONT_SIZES, SPACING } from '../../../styles/consts'
+import { SPACING } from '../../../styles/consts'
+import { cellSx, ICON_SIZE } from '../../../styles/tableConsts'
 import { formatCurrency, formatDisplayDate, getUnitLabel } from '../../../utilities'
 import Recipe from './Recipe'
 
@@ -84,6 +85,8 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
           '& > *': {
             opacity: opacity.value,
           },
+          fontWeight: isOpen.value ? 'bold' : 'normal',
+          backgroundColor: (theme) => (isOpen.value ? alpha(theme.palette.primary.main, 0.2) : undefined),
         }}
       >
         <TableCell>
@@ -102,34 +105,34 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
             )}
           </IconButton>
         </TableCell>
-        <TableCell sx={cellSx} id={labelId} scope="row">
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} id={labelId} scope="row">
           {formatDisplayDate(row.createdAt)}
         </TableCell>
-        <TableCell sx={cellSx} id={labelId} scope="row">
-          <Stack direction="row" alignItems="center" spacing={SPACING.TINY.PX}>
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} id={labelId} scope="row">
+      <Stack direction="row" alignItems="center" spacing={SPACING.TINY.PX}>
             <span>{row.title}</span>
             {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
           </Stack>
         </TableCell>
-        <TableCell align="right" id={labelId} scope="row" sx={cellSx}>
-          {formatCurrency(row.cost)}
-        </TableCell>
-        <TableCell sx={cellSx} align="right">
-          {row.produces} {getUnitLabel(row.units, 'plural')}
-        </TableCell>
-        <TableCell align="right" id={labelId} scope="row" sx={cellSx}>
-          {formatCurrency(row.cost / row.produces)}
-        </TableCell>
-        <TableCell sx={cellSx} align="left">
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="left">
           {t(row.status)}
         </TableCell>
-        <TableCell sx={cellSx} align="left">
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="left">
           <Typography variant="body2">{row.showInMenu ? t('yes') : t('no')}</Typography>
         </TableCell>
-        {/* <TableCell sx={cellSx} align="left">
+        <TableCell align="right" id={labelId} scope="row" sx={{ ...cellSx, ...cellSxActive(isOpen.value) }}>
+          {formatCurrency(row.cost)}
+        </TableCell>
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="right">
+          {row.produces} {getUnitLabel(row.units, 'plural')}
+        </TableCell>
+        <TableCell align="right" id={labelId} scope="row" sx={{ ...cellSx, ...cellSxActive(isOpen.value) }}>
+          {formatCurrency(row.cost / row.produces)}
+        </TableCell>
+        {/* <TableCell sx={{...cellSx, ...cellSxActive(isOpen.value)}} align="left">
           {row.usedInRecipesCount}
         </TableCell> */}
-        <TableCell sx={cellSx} align="right">
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="right">
           <Tooltip title={t('editRecipe')}>
             <IconButton size="small" onClick={openEditModal}>
               <Icon size={ICON_SIZE} name="edit" />
@@ -147,8 +150,8 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
           </Tooltip>
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell sx={cellSx} style={{ padding: 0, border: 0 }} colSpan={9}>
+      <TableRow sx={{ backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.1) }}>
+        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} style={{ padding: 0, border: 0 }} colSpan={9}>
           <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
             <Recipe id={row.id} />
           </Collapse>
@@ -158,10 +161,8 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
   )
 }
 
-const ICON_SIZE = 16
-
-const cellSx: SxProps = {
-  fontSize: FONT_SIZES.SMALL.PX,
-}
+const cellSxActive = (isActive: boolean) => ({
+  fontWeight: isActive ? 'bold' : 'normal',
+})
 
 export default RecipeRow

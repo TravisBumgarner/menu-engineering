@@ -4,7 +4,6 @@ import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import type * as React from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import type { RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
 import type { AllUnits } from '../../../../../../shared/units.types'
@@ -13,10 +12,11 @@ import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
 import { NumericInput } from '../../../../../sharedComponents/NumericInput'
+import Photo from '../../../../../sharedComponents/Photo'
 import { activeModalSignal, activeRecipeIdSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
+import { cellSx, ICON_SIZE } from '../../../../../styles/tableConsts'
 import { formatCurrency, formatDisplayDate } from '../../../../../utilities'
-import { ICON_SIZE } from './consts'
 
 function SubRecipeRow(props: { row: RecipeDTO & { relation: RelationDTO }; recipeId: string; labelId: string }) {
   const { row, recipeId, labelId } = props
@@ -102,52 +102,40 @@ function SubRecipeRow(props: { row: RecipeDTO & { relation: RelationDTO }; recip
 
   return (
     <TableRow tabIndex={-1} key={row.id}>
-      <TableCell>{formatDisplayDate(row.createdAt)}</TableCell>
+      <TableCell sx={cellSx}>{formatDisplayDate(row.createdAt)}</TableCell>
 
-      <TableCell id={labelId} scope="row">
+      <TableCell sx={cellSx} id={labelId} scope="row">
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Icon name="recipe" size={ICON_SIZE} /> {row.title}{' '}
+          {/* <Icon name="recipe" size={ICON_SIZE} />  */}
+          {row.title} {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
         </Box>
       </TableCell>
-      <TableCell align="right" id={labelId} scope="row">
-        <NumericInput
-          size="small"
-          value={row.relation?.quantity || 0}
-          onValidChange={handleQuantityChange}
-          variant="filled"
-          sx={{
-            '& .MuiFilledInput-input': {
-              textAlign: 'right',
-              padding: SPACING.TINY.PX,
-            },
-          }}
-          min={0}
-        />
+      <TableCell sx={cellSx} align="right" id={labelId} scope="row">
+        <NumericInput size="small" value={row.relation?.quantity || 0} onValidChange={handleQuantityChange} min={0} />
       </TableCell>
-      <TableCell align="left" id={labelId} scope="row">
+      <TableCell sx={cellSx} align="left" id={labelId} scope="row">
         {row.units}
       </TableCell>
-      <TableCell align="right" id={labelId} scope="row">
+      <TableCell sx={cellSx} align="right" id={labelId} scope="row">
         {formatCurrency(row.cost / row.produces)}
       </TableCell>
-      <TableCell align="right" id={labelId} scope="row">
+      <TableCell sx={cellSx} align="right" id={labelId} scope="row">
         {formatCurrency((row.cost / row.produces) * row.relation.quantity)}
       </TableCell>
-      <TableCell align="right">
-        <Tooltip title={t('editIngredients')}>
-          <IconButton onClick={handleEditIngredients}>
-            <Icon name="recipe" />
+      <TableCell sx={cellSx} align="right">
+        <Tooltip title={t('viewRecipe')}>
+          <IconButton size="small" onClick={handleEditIngredients}>
+            <Icon size={ICON_SIZE} name="recipe" />
           </IconButton>
         </Tooltip>
         <Tooltip title={t('editRecipe')}>
-          <IconButton onClick={handleOpenEditModal}>
-            <Icon name="edit" />
+          <IconButton size="small" onClick={handleOpenEditModal}>
+            <Icon size={ICON_SIZE} name="edit" />
           </IconButton>
         </Tooltip>
-
         <Tooltip title={t('remove')}>
-          <IconButton onClick={handleOpenRemoveModal}>
-            <Icon name="close" />
+          <IconButton size="small" onClick={handleOpenRemoveModal}>
+            <Icon size={ICON_SIZE} name="close" />
           </IconButton>
         </Tooltip>
       </TableCell>

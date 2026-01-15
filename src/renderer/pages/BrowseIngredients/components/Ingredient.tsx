@@ -5,7 +5,7 @@ import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import Link from '../../../sharedComponents/Link'
-import { SPACING } from '../../../styles/consts'
+import { FONT_SIZES, SPACING } from '../../../styles/consts'
 
 const Ingredient = ({ id }: { id: string }) => {
   const { t } = useAppTranslation()
@@ -44,7 +44,7 @@ const Ingredient = ({ id }: { id: string }) => {
         padding: SPACING.SMALL.PX,
       }}
     >
-      <Typography>
+      <Typography sx={{ fontSize: FONT_SIZES.SMALL.PX }}>
         {t('usedIn')}
         {': '}
         {data.usedInRecipes.length === 0 && ` 0 ${t('recipes')}`}

@@ -1,4 +1,4 @@
-import { Collapse, type SxProps, Tooltip } from '@mui/material'
+import { Collapse, Tooltip } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
@@ -13,7 +13,8 @@ import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
-import { FONT_SIZES } from '../../../styles/consts'
+import { cellSx, ICON_SIZE } from '../../../styles/tableConsts'
+
 import { formatCurrency, formatDisplayDate, getUnitLabel } from '../../../utilities'
 import Ingredient from './Ingredient'
 
@@ -117,12 +118,6 @@ function Row(props: { row: IngredientDTO & { recipeCount: number }; labelId: str
       </TableRow>
     </React.Fragment>
   )
-}
-
-const ICON_SIZE = 16
-
-const cellSx: SxProps = {
-  fontSize: FONT_SIZES.SMALL.PX,
 }
 
 export default Row

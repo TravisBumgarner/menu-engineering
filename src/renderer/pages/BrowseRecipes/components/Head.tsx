@@ -1,3 +1,4 @@
+import type { SxProps } from '@mui/material'
 import Box from '@mui/material/Box'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
@@ -19,9 +20,10 @@ interface Props {
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof RecipeDTO | 'usedInRecipesCount') => void
   order: 'asc' | 'desc'
   orderBy: string | number | symbol
+  sx?: SxProps
 }
 
-function Head({ onRequestSort, order, orderBy }: Props) {
+function Head({ onRequestSort, order, orderBy, sx }: Props) {
   const { t } = useAppTranslation()
 
   const headCells: readonly HeadCell[] = [
@@ -42,6 +44,18 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       align: 'left',
       label: t('title'),
       width: '20%',
+    },
+    {
+      id: 'status',
+      align: 'left',
+      label: t('status'),
+      width: '10%',
+    },
+    {
+      id: 'showInMenu',
+      align: 'left',
+      label: t('showInMenu'),
+      width: '90px',
     },
     {
       id: 'totalCost',
@@ -69,18 +83,6 @@ function Head({ onRequestSort, order, orderBy }: Props) {
       width: '10%',
     },
 
-    {
-      id: 'status',
-      align: 'left',
-      label: t('status'),
-      width: '10%',
-    },
-    {
-      id: 'showInMenu',
-      align: 'left',
-      label: t('showInMenu'),
-      width: '90px',
-    },
     // {
     //   id: 'usedInRecipesCount',
     //   align: 'left',
@@ -102,7 +104,7 @@ function Head({ onRequestSort, order, orderBy }: Props) {
     }
 
   return (
-    <TableHead>
+    <TableHead sx={sx}>
       <TableRow>
         {headCells.map((headCell) => (
           <TableCell
