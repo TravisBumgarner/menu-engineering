@@ -13,7 +13,7 @@ const config: ForgeConfig = {
     //"You have set packagerConfig.ignore, the Electron Forge Vite plugin normally sets this automatically."
     // This is expected. Error can be ignored.
     // https://github.com/electron/forge/issues/3738#issuecomment-2692534953
-    ignore: [],
+    ignore: [/node_modules\/(?!(better-sqlite3|bindings|file-uri-to-path)\/)/],
     icon: './src/assets/icon',
     extraResource: ['./drizzle'],
     osxSign: {
@@ -59,22 +59,10 @@ const config: ForgeConfig = {
         },
       ],
     }),
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
-    // Commented out temporarily due to plugin conflict with VitePlugin
-    // new FusesPlugin({
-    //   version: FuseVersion.V1,
-    //   [FuseV1Options.RunAsNode]: false,
-    //   [FuseV1Options.EnableCookieEncryption]: true,
-    //   [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
-    //   [FuseV1Options.EnableNodeCliInspectArguments]: false,
-    //   [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
-    //   [FuseV1Options.OnlyLoadAppFromAsar]: true,
-    // }),
   ],
   hooks: {
     postPackage: async (_forgeConfig, options: { outputPaths: string[]; platform: string; arch: string }) => {
-      if (options.platform === 'darwin') {
+      if (options.platform === 'darwin' && !process.env.NO_SIGN) {
         const { notarize } = await import('@electron/notarize')
         const appPath = `${options.outputPaths[0]}/Menu Engineering.app`
         await notarize({
