@@ -187,3 +187,7 @@ export type TranslationKeys =
   | 'whatsNew'
   | 'gotIt'
   | 'welcomeToVersion'
+  | 'changelogNew'
+  | 'changelogImproved'
+  | 'changelogFixed'
+

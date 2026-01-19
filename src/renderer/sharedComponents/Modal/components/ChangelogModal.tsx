@@ -1,5 +1,5 @@
 import { Box, Button, Chip, Divider, List, ListItem, Stack, Typography } from '@mui/material'
-import { CHANGELOG, type ChangelogEntry } from '../../../../shared/changelog'
+import { CHANGELOG, type ChangeCategory } from '../../../../shared/changelog'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
@@ -13,10 +13,11 @@ export interface ChangelogModalProps {
 }
 
 const ChangelogModal = (props: ChangelogModalProps) => {
-  const { t } = useAppTranslation()
+  const { t, currentLanguage } = useAppTranslation()
   const entries = props.showLatestOnly ? [CHANGELOG[0]] : CHANGELOG
+  const lang = currentLanguage === 'es' ? 'es' : 'en'
 
-  const getCategoryColor = (category: ChangelogEntry['changes'][0]['category']): 'success' | 'info' | 'warning' => {
+  const getCategoryColor = (category: ChangeCategory): 'success' | 'info' | 'warning' => {
     switch (category) {
       case 'New':
         return 'success'
@@ -24,6 +25,17 @@ const ChangelogModal = (props: ChangelogModalProps) => {
         return 'info'
       case 'Fixed':
         return 'warning'
+    }
+  }
+
+  const getCategoryLabel = (category: ChangeCategory): string => {
+    switch (category) {
+      case 'New':
+        return t('changelogNew')
+      case 'Improved':
+        return t('changelogImproved')
+      case 'Fixed':
+        return t('changelogFixed')
     }
   }
 
@@ -58,12 +70,12 @@ const ChangelogModal = (props: ChangelogModalProps) => {
                   <ListItem key={changeIdx} disableGutters sx={{ alignItems: 'flex-start' }}>
                     <Stack direction="row" spacing={SPACING.SMALL.PX}>
                       <Chip
-                        label={change.category}
+                        label={getCategoryLabel(change.category)}
                         color={getCategoryColor(change.category)}
                         size="small"
                         sx={{ minWidth: 80 }}
                       />
-                      <Typography variant="body2">{change.description}</Typography>
+                      <Typography variant="body2">{change.description[lang]}</Typography>
                     </Stack>
                   </ListItem>
                 ))}

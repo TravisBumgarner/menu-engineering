@@ -1,9 +1,14 @@
+export type ChangeCategory = 'New' | 'Improved' | 'Fixed'
+
 export interface ChangelogEntry {
   version: string
   date: string
   changes: {
-    category: 'New' | 'Improved' | 'Fixed'
-    description: string
+    category: ChangeCategory
+    description: {
+      en: string
+      es: string
+    }
   }[]
 }
 
@@ -14,7 +19,10 @@ export const CHANGELOG: ChangelogEntry[] = [
     changes: [
       {
         category: 'New',
-        description: 'Added changelog to track updates.',
+        description: {
+          en: 'Added changelog to track updates.',
+          es: 'Se agregó registro de cambios para seguir las actualizaciones.',
+        },
       },
     ],
   },

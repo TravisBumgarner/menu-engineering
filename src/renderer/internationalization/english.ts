@@ -191,6 +191,9 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   whatsNew: "What's New",
   gotIt: 'Got it!',
   welcomeToVersion: 'Welcome to version',
+  changelogNew: 'New',
+  changelogImproved: 'Improved',
+  changelogFixed: 'Fixed',
 }
 
 export default EnglishTranslations

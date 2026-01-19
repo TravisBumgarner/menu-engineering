@@ -194,6 +194,9 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   whatsNew: 'Novedades',
   gotIt: 'Entendido',
   welcomeToVersion: 'Bienvenido a la versión',
+  changelogNew: 'Nuevo',
+  changelogImproved: 'Mejorado',
+  changelogFixed: 'Corregido',
 }
 
 export default SpanishTranslations
