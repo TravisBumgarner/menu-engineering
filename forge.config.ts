@@ -1,4 +1,7 @@
+import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerDMG } from '@electron-forge/maker-dmg'
+import { MakerRpm } from '@electron-forge/maker-rpm'
+import { MakerSquirrel } from '@electron-forge/maker-squirrel'
 import { MakerZIP } from '@electron-forge/maker-zip'
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives'
 import { VitePlugin } from '@electron-forge/plugin-vite'
@@ -16,23 +19,27 @@ const config: ForgeConfig = {
     ignore: [/node_modules\/(?!(better-sqlite3|bindings|file-uri-to-path)\/)/],
     icon: './src/assets/icon',
     extraResource: ['./drizzle'],
-    osxSign: {
-      optionsForFile: () => {
-        return {
-          hardenedRuntime: true,
-          entitlements: 'entitlements.plist',
-        }
-      },
-    },
+    osxSign:
+      process.env.SHOULD_APPLE_SIGN === '1'
+        ? {
+            identity: process.env.APPLE_IDENTITY,
+            optionsForFile: () => {
+              return {
+                hardenedRuntime: true,
+                entitlements: 'entitlements.plist',
+              }
+            },
+          }
+        : undefined,
   },
 
   rebuildConfig: {},
   makers: [
-    // new MakerSquirrel({}),
+    new MakerSquirrel({}),
     new MakerDMG({}),
     new MakerZIP({}, ['darwin']),
-    // new MakerRpm({}),
-    // new MakerDeb({}),
+    new MakerRpm({}),
+    new MakerDeb({}),
   ],
   plugins: [
     ...(process.env.NODE_ENV === 'production' ? [new AutoUnpackNativesPlugin({})] : []),
@@ -62,7 +69,7 @@ const config: ForgeConfig = {
   ],
   hooks: {
     postPackage: async (_forgeConfig, options: { outputPaths: string[]; platform: string; arch: string }) => {
-      if (options.platform === 'darwin' && !process.env.NO_SIGN) {
+      if (options.platform === 'darwin' && process.env.SHOULD_APPLE_SIGN === '1') {
         const { notarize } = await import('@electron/notarize')
         const appPath = `${options.outputPaths[0]}/Menu Engineering.app`
         await notarize({
