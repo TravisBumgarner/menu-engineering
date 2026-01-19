@@ -181,3 +181,13 @@ export type TranslationKeys =
   | 'genericUnits'
   | 'changeSelectedUnits'
   | 'modifyUnitsInPreferences'
+
+  // Changelog
+  | 'changelog'
+  | 'whatsNew'
+  | 'gotIt'
+  | 'welcomeToVersion'
+  | 'changelogNew'
+  | 'changelogImproved'
+  | 'changelogFixed'
+

@@ -188,6 +188,15 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   changeSelectedUnits: 'Cambiar unidades seleccionadas',
   modifyUnitsInPreferences:
     "Las unidades se pueden modificar en la pestaña 'Preferencias de Unidades' de Configuraciones.",
+
+  // Changelog
+  changelog: 'Registro de cambios',
+  whatsNew: 'Novedades',
+  gotIt: 'Entendido',
+  welcomeToVersion: 'Bienvenido a la versión',
+  changelogNew: 'Nuevo',
+  changelogImproved: 'Mejorado',
+  changelogFixed: 'Corregido',
 }
 
 export default SpanishTranslations
