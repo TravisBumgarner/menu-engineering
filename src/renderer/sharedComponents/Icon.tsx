@@ -12,6 +12,7 @@ import {
   MdDownload,
   MdEdit,
   MdError,
+  MdHistory,
   MdOutlineCheckBoxOutlineBlank,
   MdOutlinePhoto,
 } from 'react-icons/md'
@@ -35,6 +36,7 @@ export const iconMap = {
   photo: MdOutlinePhoto,
   delete: MdDeleteOutline,
   download: MdDownload,
+  history: MdHistory,
 }
 
 const Icon = ({

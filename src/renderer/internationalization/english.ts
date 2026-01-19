@@ -185,6 +185,12 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   genericUnits: 'Generic Units',
   changeSelectedUnits: 'Change selected units',
   modifyUnitsInPreferences: "Units can be modified in the 'Unit Preferences' tab of Settings.",
+
+  // Changelog
+  changelog: 'Changelog',
+  whatsNew: "What's New",
+  gotIt: 'Got it!',
+  welcomeToVersion: 'Welcome to version',
 }
 
 export default EnglishTranslations

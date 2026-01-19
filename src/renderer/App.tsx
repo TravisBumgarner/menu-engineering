@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import Router from './components/Router'
+import useShowChangelog from './hooks/useShowChangelog'
 import './internationalization' // Initialize i18n
 import RenderModal from './sharedComponents/Modal'
 import { SPACING } from './styles/consts'
@@ -11,6 +12,8 @@ import AppThemeProvider from './styles/Theme'
 const queryClient = new QueryClient()
 
 function App() {
+  useShowChangelog()
+
   return (
     <>
       <Navigation />
