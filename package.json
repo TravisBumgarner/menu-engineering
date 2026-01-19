@@ -7,9 +7,10 @@
   "scripts": {
     "dev": "electron-forge start",
     "open-output": "open out",
-    "package-and-no-sign": "NODE_ENV=production NO_SIGN=1 electron-forge package && open out",
-    "make": "NODE_ENV=production dotenv -e .env -- electron-forge make && open out",
-    "publish": "NODE_ENV=production dotenv -e .env -- electron-forge publish && open out",
+    "package": "SHOULD_APPLE_SIGN=0 electron-forge package && open out",
+    "make": "SHOULD_APPLE_SIGN=1 dotenv -e .env -- electron-forge make && open out",
+    "publish-mac": "SHOULD_APPLE_SIGN=1 dotenv -e .env -- electron-forge publish && open out",
+    "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "db:generate": "drizzle-kit generate",
     "db:apply": "drizzle-kit push",

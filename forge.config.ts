@@ -16,14 +16,18 @@ const config: ForgeConfig = {
     ignore: [/node_modules\/(?!(better-sqlite3|bindings|file-uri-to-path)\/)/],
     icon: './src/assets/icon',
     extraResource: ['./drizzle'],
-    osxSign: {
-      optionsForFile: () => {
-        return {
-          hardenedRuntime: true,
-          entitlements: 'entitlements.plist',
-        }
-      },
-    },
+    osxSign:
+      process.env.SHOULD_APPLE_SIGN === '1'
+        ? {
+            identity: process.env.APPLE_IDENTITY,
+            optionsForFile: () => {
+              return {
+                hardenedRuntime: true,
+                entitlements: 'entitlements.plist',
+              }
+            },
+          }
+        : undefined,
   },
 
   rebuildConfig: {},
@@ -62,7 +66,7 @@ const config: ForgeConfig = {
   ],
   hooks: {
     postPackage: async (_forgeConfig, options: { outputPaths: string[]; platform: string; arch: string }) => {
-      if (options.platform === 'darwin' && !process.env.NO_SIGN) {
+      if (options.platform === 'darwin' && process.env.SHOULD_APPLE_SIGN === '1') {
         const { notarize } = await import('@electron/notarize')
         const appPath = `${options.outputPaths[0]}/Menu Engineering.app`
         await notarize({
