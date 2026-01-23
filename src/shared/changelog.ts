@@ -14,6 +14,19 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.2.2',
+    date: '2026-01-23T12:00:00',
+    changes: [
+      {
+        category: 'Fixed',
+        description: {
+          en: 'Fixed issue with app not loading on macOS',
+          es: 'Se corrigió un problema con la carga de la aplicación en macOS.',
+        },
+      },
+    ],
+  },
+  {
     version: '1.2.1',
     date: '2026-01-19T12:00:00',
     changes: [
