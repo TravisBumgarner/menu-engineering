@@ -192,3 +192,15 @@ export type TranslationKeys =
   | 'changelogImproved'
   | 'changelogFixed'
 
+  // Unit Change Confirmation Modal
+  | 'unitChangeConfirmTitle'
+  | 'unitChangeWarningTitle'
+  | 'unitChangeItemInfo'
+  | 'unitCostConversionPreview'
+  | 'unitChangeRecipeCompatibleInfo'
+  | 'unitChangeWarning'
+  | 'unitChangeIncompatibleIngredientInfo'
+  | 'unitChangeIncompatibleRecipeInfo'
+  | 'unitChangeAffectedItems'
+  | 'unitChangeAndMore'
+  | 'unitChangeConfirmButton'

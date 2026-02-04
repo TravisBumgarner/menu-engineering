@@ -195,6 +195,19 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   changelogNew: 'New',
   changelogImproved: 'Improved',
   changelogFixed: 'Fixed',
+
+  // Unit Change Confirmation Modal
+  unitChangeConfirmTitle: 'Confirm Unit Change',
+  unitChangeWarningTitle: 'Unit Change Warning',
+  unitChangeItemInfo: 'Change "{{itemName}}" from {{fromUnit}} to {{toUnit}}?',
+  unitCostConversionPreview: 'Unit cost will be converted:',
+  unitChangeRecipeCompatibleInfo: 'The produces value will remain unchanged.',
+  unitChangeWarning: 'Incompatible unit change',
+  unitChangeIncompatibleIngredientInfo: 'The quantity will be reset to 0 in all recipes using this ingredient.',
+  unitChangeIncompatibleRecipeInfo: 'The quantity will be reset to 0 in all recipes using this as a sub-recipe.',
+  unitChangeAffectedItems: 'Affected recipes ({{count}}):',
+  unitChangeAndMore: '...and {{count}} more',
+  unitChangeConfirmButton: 'Change Units',
 }
 
 export default EnglishTranslations

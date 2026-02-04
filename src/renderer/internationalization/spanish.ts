@@ -198,6 +198,21 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   changelogNew: 'Nuevo',
   changelogImproved: 'Mejorado',
   changelogFixed: 'Corregido',
+
+  // Unit Change Confirmation Modal
+  unitChangeConfirmTitle: 'Confirmar Cambio de Unidad',
+  unitChangeWarningTitle: 'Advertencia de Cambio de Unidad',
+  unitChangeItemInfo: '¿Cambiar "{{itemName}}" de {{fromUnit}} a {{toUnit}}?',
+  unitCostConversionPreview: 'El costo unitario se convertirá:',
+  unitChangeRecipeCompatibleInfo: 'El valor de producción permanecerá sin cambios.',
+  unitChangeWarning: 'Cambio de unidad incompatible',
+  unitChangeIncompatibleIngredientInfo:
+    'La cantidad se restablecerá a 0 en todas las recetas que usan este ingrediente.',
+  unitChangeIncompatibleRecipeInfo:
+    'La cantidad se restablecerá a 0 en todas las recetas que usan esto como sub-receta.',
+  unitChangeAffectedItems: 'Recetas afectadas ({{count}}):',
+  unitChangeAndMore: '...y {{count}} más',
+  unitChangeConfirmButton: 'Cambiar Unidades',
 }
 
 export default SpanishTranslations

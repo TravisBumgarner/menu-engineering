@@ -11,6 +11,9 @@ import EditRecipeModal, { type EditRecipeModalProps } from './components/EditRec
 import ExportIngredients, { type ExportIngredientsProps } from './components/ExportIngredientsModal'
 import ExportRecipes, { type ExportRecipesProps } from './components/ExportRecipesModal'
 import SettingsModal, { type SettingsModalProps } from './components/SettingsModal/SettingsModal'
+import UnitChangeConfirmationModal, {
+  type UnitChangeConfirmationModalProps,
+} from './components/UnitChangeConfirmationModal'
 import { MODAL_ID } from './Modal.consts'
 
 export type ActiveModal =
@@ -24,6 +27,7 @@ export type ActiveModal =
   | ExportRecipesProps
   | AddToRecipeModalProps
   | ChangelogModalProps
+  | UnitChangeConfirmationModalProps
 
 export type ModalId = (typeof MODAL_ID)[keyof typeof MODAL_ID]
 
@@ -53,6 +57,8 @@ const RenderModal: FC = () => {
       return <AddToRecipeModal {...activeModalSignal.value} />
     case MODAL_ID.CHANGELOG_MODAL:
       return <ChangelogModal {...activeModalSignal.value} />
+    case MODAL_ID.UNIT_CHANGE_CONFIRMATION_MODAL:
+      return <UnitChangeConfirmationModal {...activeModalSignal.value} />
     default:
       return null
   }
