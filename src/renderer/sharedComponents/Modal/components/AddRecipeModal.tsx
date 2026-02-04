@@ -18,7 +18,7 @@ import type React from 'react'
 import { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { type NewRecipeDTO, RECIPE_STATUS } from '../../../../shared/recipe.types'
-import { ALL_UNITS } from '../../../../shared/units.types'
+import type { UnitPreferences } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
@@ -26,28 +26,37 @@ import { NumericInput } from '../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import type { NewPhotoUpload } from '../../../types'
-import { getUnitLabel } from '../../../utilities'
+import { getFirstEnabledUnit, getFromLocalStorage, LOCAL_STORAGE_KEYS } from '../../../utilities'
 import Photo from '../../Photo'
 import UnitSelect from '../../UnitPicker'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
+import { DEFAULT_UNIT_PREFERENCES } from './SettingsModal/components/TabUnitPreferences'
 
 export interface AddRecipeModalProps {
   id: typeof MODAL_ID.ADD_RECIPE_MODAL
+}
+
+const getDefaultUnit = () => {
+  const unitPreferences = getFromLocalStorage<UnitPreferences>(
+    LOCAL_STORAGE_KEYS.UNIT_PREFERENCES_KEY,
+    DEFAULT_UNIT_PREFERENCES,
+  )
+  return getFirstEnabledUnit(unitPreferences)
 }
 
 const AddRecipeModal = (_props: AddRecipeModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
 
-  const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>({
+  const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>(() => ({
     title: '',
     produces: 0,
-    units: ALL_UNITS.units,
+    units: getDefaultUnit(),
     status: RECIPE_STATUS.draft,
     showInMenu: false,
     photo: undefined,
-  })
+  }))
 
   const handleClose = () => {
     activeModalSignal.value = null
