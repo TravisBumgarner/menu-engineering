@@ -131,6 +131,12 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
             title: recipe.title,
           })) ?? []
 
+        // If ingredient isn't used anywhere, no need to show warning
+        if (affectedItems.length === 0) {
+          performUpdate()
+          return
+        }
+
         activeModalSignal.value = {
           id: MODAL_ID.UNIT_CHANGE_CONFIRMATION_MODAL,
           itemType: 'ingredient',

@@ -112,6 +112,17 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
     if (unitChanged) {
       // Show confirmation modal
       const isCompatible = areUnitsCompatible(originalUnit, formData.units)
+      const affectedItems =
+        recipeData?.usedInRecipes?.map((parentRecipe) => ({
+          id: parentRecipe.id,
+          title: parentRecipe.title,
+        })) ?? []
+
+      // If recipe isn't used anywhere, no need to show any confirmation
+      if (affectedItems.length === 0) {
+        performUpdate()
+        return
+      }
 
       if (isCompatible) {
         // For compatible changes, show simple confirmation (produces not modified)
@@ -133,12 +144,6 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
         }
       } else {
         // For incompatible changes, show warning with affected parent recipes
-        const affectedItems =
-          recipeData?.usedInRecipes?.map((parentRecipe) => ({
-            id: parentRecipe.id,
-            title: parentRecipe.title,
-          })) ?? []
-
         activeModalSignal.value = {
           id: MODAL_ID.UNIT_CHANGE_CONFIRMATION_MODAL,
           itemType: 'recipe',
