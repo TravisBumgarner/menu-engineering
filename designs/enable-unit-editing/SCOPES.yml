@@ -92,7 +92,7 @@ tasks:
       - All translation keys added to English and Spanish files
     depends_on: []
     effort: 2
-    status: implementing
+    status: completed
 
   - id: 4
     github_issue: 51
