@@ -1,6 +1,5 @@
 import { Button, Stack } from '@mui/material'
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
 import MuiTable from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -16,6 +15,7 @@ import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { LOCAL_STORAGE_KEYS } from '../../../utilities'
+import Filters, { type FilterOptions } from './Filters'
 import EnhancedTableHead from './Head'
 import IngredientRow from './Row'
 
@@ -52,8 +52,25 @@ const Table = ({
     LOCAL_STORAGE_KEYS.BROWSE_INGREDIENTS_PAGINATION,
     PAGINATION.DEFAULT_ROWS_PER_PAGE,
   )
+  const [filters, setFilters] = React.useState<FilterOptions>({
+    searchQuery: '',
+  })
 
   const { t } = useAppTranslation()
+
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters)
+    setPage(0)
+  }
+
+  // Apply filters to ingredients
+  const filteredIngredients = React.useMemo(() => {
+    return ingredients.filter((ingredient) => {
+      const searchMatch =
+        filters.searchQuery === '' || ingredient.title.toLowerCase().includes(filters.searchQuery.toLowerCase())
+      return searchMatch
+    })
+  }, [ingredients, filters])
 
   const handleOpenAddIngredientModal = () => {
     activeModalSignal.value = {
@@ -84,18 +101,20 @@ const Table = ({
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ingredients.length) : 0
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredIngredients.length) : 0
 
   const visibleRows = React.useMemo(
     () =>
-      [...ingredients].sort(getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [ingredients, order, orderBy, page, rowsPerPage],
+      [...filteredIngredients]
+        .sort(getComparator(order, orderBy))
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [filteredIngredients, order, orderBy, page, rowsPerPage],
   )
 
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
       <Stack direction="row" justifyContent="space-between" alignContent="center" sx={{ paddingY: SPACING.SMALL.PX }}>
-        <Box />
+        <Filters filters={filters} onFiltersChange={handleFiltersChange} />
         <Box>
           <Button size="small" onClick={handleOpenExportIngredientsModal} variant="outlined">
             Export CSV
@@ -142,7 +161,7 @@ const Table = ({
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
         component="div"
-        count={ingredients.length}
+        count={filteredIngredients.length}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}

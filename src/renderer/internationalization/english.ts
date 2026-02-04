@@ -150,6 +150,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   singlePDF: 'Single PDF',
   multiplePDFs: 'Multiple PDFs',
   searchRecipes: 'Search recipes...',
+  searchIngredients: 'Search ingredients...',
 
   // Data Management
   dataManagement: 'Data Management',
