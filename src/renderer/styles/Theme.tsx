@@ -172,14 +172,23 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
             },
           },
           contained: {
+            '&:disabled': {
+              backgroundColor: colors.border.light,
+              color: colors.text.secondary,
+            },
+          },
+          containedPrimary: {
             backgroundColor: PALETTE.primary[500],
             color: PALETTE.named.white,
             '&:hover': {
               backgroundColor: PALETTE.primary[600],
             },
-            '&:disabled': {
-              backgroundColor: colors.border.light,
-              color: colors.text.secondary,
+          },
+          containedError: {
+            backgroundColor: PALETTE.error[500],
+            color: PALETTE.named.white,
+            '&:hover': {
+              backgroundColor: PALETTE.error[600],
             },
           },
           text: {
