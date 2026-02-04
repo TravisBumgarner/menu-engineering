@@ -394,8 +394,13 @@ const getIngredientRelationCount = async (ingredientId: string) => {
  * @returns The number of affected sub-recipe relations
  */
 const resetSubRecipeRelationQuantities = async (recipeId: string) => {
-  // Stub: will be implemented in ralph-code phase
-  return 0
+  const result = await db
+    .update(recipeSubRecipeSchema)
+    .set({ quantity: 0, updatedAt: new Date().toISOString() })
+    .where(eq(recipeSubRecipeSchema.childId, recipeId))
+    .run()
+
+  return result.changes
 }
 
 /**
@@ -404,8 +409,12 @@ const resetSubRecipeRelationQuantities = async (recipeId: string) => {
  * @returns The number of parent recipes using this recipe as a sub-recipe
  */
 const getSubRecipeRelationCount = async (recipeId: string) => {
-  // Stub: will be implemented in ralph-code phase
-  return 0
+  const result = await db
+    .select({ count: count() })
+    .from(recipeSubRecipeSchema)
+    .where(eq(recipeSubRecipeSchema.childId, recipeId))
+
+  return result[0]?.count ?? 0
 }
 
 export default {
