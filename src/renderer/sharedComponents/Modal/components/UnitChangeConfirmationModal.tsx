@@ -105,15 +105,15 @@ const UnitChangeConfirmationModal = ({
           <>
             <Box
               sx={{
-                backgroundColor: 'warning.light',
+                backgroundColor: 'error.light',
                 padding: SPACING.SMALL.PX,
                 borderRadius: 1,
               }}
             >
-              <Typography variant="body2" fontWeight="bold" color="warning.dark">
+              <Typography variant="body2" fontWeight="bold" color="error.contrastText">
                 {t('unitChangeWarning')}
               </Typography>
-              <Typography variant="body2" color="warning.dark">
+              <Typography variant="body2" color="error.contrastText">
                 {itemType === 'ingredient'
                   ? t('unitChangeIncompatibleIngredientInfo')
                   : t('unitChangeIncompatibleRecipeInfo')}
@@ -155,7 +155,7 @@ const UnitChangeConfirmationModal = ({
           <Button variant="outlined" color="primary" onClick={handleCancel}>
             {t('cancel')}
           </Button>
-          <Button variant="contained" color={isCompatible ? 'primary' : 'warning'} onClick={handleConfirm}>
+          <Button variant="contained" color={isCompatible ? 'primary' : 'error'} onClick={handleConfirm}>
             {t('unitChangeConfirmButton')}
           </Button>
         </Box>
