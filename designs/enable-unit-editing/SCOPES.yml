@@ -135,4 +135,4 @@ tasks:
       - Backend resets sub-recipe quantities for incompatible changes
     depends_on: [2, 3]
     effort: 2
-    status: scoped
+    status: implementing
