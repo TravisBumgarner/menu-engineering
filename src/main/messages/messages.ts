@@ -168,10 +168,64 @@ typedIpcMain.handle(CHANNEL.DB.REMOVE_SUB_RECIPE_FROM_RECIPE, async (_event, par
 })
 
 typedIpcMain.handle(CHANNEL.DB.UPDATE_INGREDIENT, async (_event, params) => {
+  const { areUnitsCompatible, convertUnits } = await import('../../shared/unitConversion.js')
+
+  // Check if units are being changed
+  if (params.payload.units !== undefined) {
+    const currentIngredient = await queries.getIngredient(params.id)
+    if (!currentIngredient) {
+      return {
+        success: false,
+        wasConverted: false,
+        affectedRecipeCount: 0,
+      }
+    }
+
+    const oldUnits = currentIngredient.units
+    const newUnits = params.payload.units
+
+    // Units are changing
+    if (oldUnits !== newUnits) {
+      const compatible = areUnitsCompatible(oldUnits, newUnits)
+
+      if (compatible) {
+        // Convert unitCost if a new unitCost wasn't explicitly provided
+        if (params.payload.unitCost === undefined) {
+          const convertedCost = convertUnits({
+            from: oldUnits,
+            to: newUnits,
+            value: currentIngredient.unitCost,
+          })
+          if (convertedCost !== null) {
+            params.payload.unitCost = convertedCost
+          }
+        }
+
+        const result = await queries.updateIngredient(params.id, params.payload)
+        return {
+          success: !!result,
+          wasConverted: true,
+          affectedRecipeCount: 0,
+        }
+      } else {
+        // Incompatible units - reset all relation quantities
+        const affectedRecipeCount = await queries.resetIngredientRelationQuantities(params.id)
+        const result = await queries.updateIngredient(params.id, params.payload)
+        return {
+          success: !!result,
+          wasConverted: false,
+          affectedRecipeCount,
+        }
+      }
+    }
+  }
+
+  // No unit change, just update normally
   const result = await queries.updateIngredient(params.id, params.payload)
   return {
-    type: 'update_ingredient',
     success: !!result,
+    wasConverted: false,
+    affectedRecipeCount: 0,
   }
 })
 

@@ -357,6 +357,36 @@ const deleteIngredient = async (ingredientId: string) => {
   }
 }
 
+/**
+ * Reset the quantity to 0 for all recipe-ingredient relationships where this ingredient is used.
+ * This is called when an ingredient's units change to an incompatible type.
+ * @param ingredientId - The ingredient whose relation quantities should be reset
+ * @returns The number of affected recipe-ingredient relations
+ */
+const resetIngredientRelationQuantities = async (ingredientId: string) => {
+  const result = await db
+    .update(recipeIngredientSchema)
+    .set({ quantity: 0, updatedAt: new Date().toISOString() })
+    .where(eq(recipeIngredientSchema.childId, ingredientId))
+    .run()
+
+  return result.changes
+}
+
+/**
+ * Get the count of recipes using a specific ingredient
+ * @param ingredientId - The ingredient to check
+ * @returns The number of recipes using this ingredient
+ */
+const getIngredientRelationCount = async (ingredientId: string) => {
+  const result = await db
+    .select({ count: count() })
+    .from(recipeIngredientSchema)
+    .where(eq(recipeIngredientSchema.childId, ingredientId))
+
+  return result[0]?.count ?? 0
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -380,4 +410,6 @@ export default {
   deleteIngredient,
   recipeExists,
   ingredientExists,
+  resetIngredientRelationQuantities,
+  getIngredientRelationCount,
 }
