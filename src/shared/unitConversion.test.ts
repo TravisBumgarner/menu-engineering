@@ -105,6 +105,7 @@ describe('convertUnits', () => {
     it('returns the same value when from and to are the same', () => {
       expect(convertUnits({ from: 'cups', to: 'cups', value: 5 })).toBe(5)
       expect(convertUnits({ from: 'grams', to: 'grams', value: 100 })).toBe(100)
+      expect(convertUnits({ from: 'units', to: 'units', value: 10 })).toBe(10)
     })
   })
 
