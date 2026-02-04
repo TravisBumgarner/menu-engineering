@@ -65,7 +65,7 @@ export type Invokes = {
   }
   [CHANNEL.DB.UPDATE_RECIPE]: {
     args: { id: string; payload: Partial<NewRecipeDTO & NewPhotoUploadDTO> }
-    result: { success: boolean }
+    result: { success: boolean; affectedRecipeCount: number }
   }
   [CHANNEL.DB.DELETE_RECIPE]: {
     args: { id: string }

@@ -230,10 +230,13 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_INGREDIENT, async (_event, params) => {
 })
 
 typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE, async (_event, params) => {
+  const { areUnitsCompatible } = await import('../../shared/unitConversion.js')
+
   const recipe = await queries.getRecipe(params.id)
   if (!recipe) {
     return {
       success: false,
+      affectedRecipeCount: 0,
     }
   }
 
@@ -244,9 +247,39 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE, async (_event, params) => {
     await deletePhoto(recipe.photoSrc)
   }
 
+  // Check if units are being changed
+  if (params.payload.units !== undefined) {
+    const oldUnits = recipe.units
+    const newUnits = params.payload.units
+
+    // Units are changing
+    if (oldUnits !== newUnits) {
+      const compatible = areUnitsCompatible(oldUnits, newUnits)
+
+      if (compatible) {
+        // Compatible units - just update, do NOT modify produces value
+        const result = await queries.updateRecipe(params.id, { ...params.payload, photoSrc: fileName })
+        return {
+          success: !!result,
+          affectedRecipeCount: 0,
+        }
+      } else {
+        // Incompatible units - reset all sub-recipe relation quantities where this recipe is a child
+        const affectedRecipeCount = await queries.resetSubRecipeRelationQuantities(params.id)
+        const result = await queries.updateRecipe(params.id, { ...params.payload, photoSrc: fileName })
+        return {
+          success: !!result,
+          affectedRecipeCount,
+        }
+      }
+    }
+  }
+
+  // No unit change, just update normally
   const result = await queries.updateRecipe(params.id, { ...params.payload, photoSrc: fileName })
   return {
     success: !!result,
+    affectedRecipeCount: 0,
   }
 })
 
