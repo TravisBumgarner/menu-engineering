@@ -1,0 +1,138 @@
+project: Enable Unit Editing with Conversion
+repo: travisbumgarner/menu-engineering
+design_file: null  # No formal design file - scoped from user requirements
+scoping_date: 2026-02-04
+
+milestones:
+  - number: 1
+    title: "1. Enable Unit Editing with Conversion"
+    description: |
+      Add the ability to edit units on ingredients and recipes, with automatic
+      conversion for compatible units and quantity reset warnings for incompatible changes.
+
+      Compatible units (same category):
+      - Volume ↔ Volume (cups, liters, milliliters, gallons)
+      - Weight ↔ Weight (grams, kg, mg, ounces, pounds)
+      - Generic ↔ Generic (units)
+
+      Incompatible units (cross-category):
+      - Volume ↔ Weight
+      - Volume ↔ Generic
+      - Weight ↔ Generic
+    branch:
+      working: 48-enable-unit-editing
+      base: main
+
+tasks:
+  - id: 1
+    github_issue: 48
+    milestone: 1
+    title: Add backend support for ingredient unit changes
+    description: |
+      Add backend support for changing an ingredient's units. When the unit changes:
+      - **Compatible units** (same category): Convert `unitCost` automatically
+      - **Incompatible units** (cross-category): Reset `quantity` to 0 in all recipe-ingredient relationships
+
+      Implementation:
+      1. Add `resetIngredientRelationQuantities` query function
+      2. Add/move unit conversion logic to shared location accessible by main process
+      3. Update UPDATE_INGREDIENT handler to accept units and handle conversion/reset
+      4. Return metadata about changes for UI feedback
+    acceptance_criteria:
+      - New `resetIngredientRelationQuantities` query function resets quantities for all recipe-ingredient relations
+      - UPDATE_INGREDIENT handler accepts `units` in payload
+      - Handler converts `unitCost` when units are compatible (volume↔volume, weight↔weight)
+      - Handler resets relation quantities when units are incompatible (including generic↔anything)
+      - Handler returns `{ success, wasConverted, affectedRecipeCount }` for UI feedback
+    depends_on: []
+    effort: 2
+    status: completed
+
+  - id: 2
+    github_issue: 49
+    milestone: 1
+    title: Add backend support for recipe unit changes
+    description: |
+      Add backend support for changing a recipe's units. When the unit changes:
+      - **Compatible units**: Allow change, NO modification to `produces` value
+      - **Incompatible units**: Reset `quantity` to 0 in all sub-recipe relationships where this recipe is used
+
+      Implementation:
+      1. Add `resetSubRecipeRelationQuantities` query function
+      2. Add `areUnitsCompatible` helper (reuse from task 1)
+      3. Update UPDATE_RECIPE handler to process unit changes
+      4. Return metadata about changes for UI feedback
+    acceptance_criteria:
+      - New `resetSubRecipeRelationQuantities` query function resets quantities where this recipe is a child
+      - UPDATE_RECIPE handler processes unit changes
+      - Handler does NOT modify `produces` value
+      - Handler resets sub-recipe quantities when units are incompatible
+      - Generic unit changes (units↔anything) are treated as incompatible
+    depends_on: [1]
+    effort: 2
+    status: scoped
+
+  - id: 3
+    github_issue: 50
+    milestone: 1
+    title: Create UnitChangeConfirmationModal component
+    description: |
+      Create a reusable modal component that displays confirmation/warning messages
+      when a user changes units. Handles two scenarios:
+
+      1. **Compatible change**: Show conversion preview (for ingredients: old→new unitCost)
+      2. **Incompatible change**: Show warning with list of affected recipes/sub-recipes
+
+      The modal should follow existing patterns (DefaultModal, SPACING, etc.)
+    acceptance_criteria:
+      - Modal component created with TypeScript types
+      - Modal displays conversion preview for compatible ingredient changes
+      - Modal displays warning with affected items list for incompatible changes
+      - Modal registered in Modal.consts.ts and RenderModal.tsx
+      - All translation keys added to English and Spanish files
+    depends_on: []
+    effort: 2
+    status: scoped
+
+  - id: 4
+    github_issue: 51
+    milestone: 1
+    title: Enable unit editing in EditIngredientModal
+    description: |
+      Enable users to edit the unit on an existing ingredient:
+      - Remove `disabled` prop from UnitSelect
+      - Track original vs new unit
+      - On submit with unit change, show UnitChangeConfirmationModal
+      - Pass converted unitCost or affected recipes list based on compatibility
+      - Remove/update help text about units only being set on creation
+    acceptance_criteria:
+      - UnitSelect is no longer disabled
+      - Changing to compatible unit shows conversion preview modal
+      - Changing to incompatible unit shows warning modal with affected recipes
+      - Cancel reverts unit selection, Confirm submits change
+      - Backend receives and processes unit change correctly
+    depends_on: [1, 3]
+    effort: 2
+    status: scoped
+
+  - id: 5
+    github_issue: 52
+    milestone: 1
+    title: Enable unit editing in EditRecipeModal
+    description: |
+      Enable users to edit the unit on an existing recipe:
+      - Remove `disabled` prop from UnitSelect
+      - Track original vs new unit
+      - On submit with unit change, show UnitChangeConfirmationModal
+      - For compatible: simple confirmation (produces not modified)
+      - For incompatible: warning with list of parent recipes affected
+      - Remove/update help text about units only being set on creation
+    acceptance_criteria:
+      - UnitSelect is no longer disabled
+      - Changing to compatible unit shows simple confirmation modal
+      - Changing to incompatible unit shows warning with affected parent recipes
+      - `produces` value is NOT modified during unit change
+      - Backend resets sub-recipe quantities for incompatible changes
+    depends_on: [2, 3]
+    effort: 2
+    status: scoped

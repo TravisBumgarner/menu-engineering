@@ -1,14 +1,9 @@
 import { t } from 'i18next'
-import {
-  type AllUnits,
-  GENERIC_UNIT,
-  type UnitPreferences,
-  VOLUME_UNIT,
-  type VolumeUnit,
-  WEIGHT_UNIT,
-  type WeightUnit,
-} from '../shared/units.types'
+import { type AllUnits, GENERIC_UNIT, type UnitPreferences } from '../shared/units.types'
 import type { TranslationKeys } from './internationalization/types'
+
+// Re-export convertUnits from shared module for renderer usage
+export { convertUnits } from '../shared/unitConversion'
 
 export const LOCAL_STORAGE_KEYS = {
   UNIT_PREFERENCES_KEY: 'UNIT_PREFERENCES_KEY',
@@ -17,23 +12,6 @@ export const LOCAL_STORAGE_KEYS = {
   BROWSE_RECIPES_PAGINATION: 'BROWSE_RECIPES_PAGINATION',
   RECIPE_DETAILS_PAGINATION: 'RECIPE_DETAILS_PAGINATION',
   CHANGELOG_LAST_SEEN_VERSION: 'CHANGELOG_LAST_SEEN_VERSION',
-} as const
-
-// Volume conversion factors (to milliliters)
-const VOLUME_TO_ML = {
-  [VOLUME_UNIT.milliliters]: 1,
-  [VOLUME_UNIT.liters]: 1000,
-  [VOLUME_UNIT.cups]: 236.588, // US cup
-  [VOLUME_UNIT.gallons]: 3785.41, // US gallon
-} as const
-
-// Weight conversion factors (to grams)
-const WEIGHT_TO_GRAMS = {
-  [WEIGHT_UNIT.milligrams]: 0.001,
-  [WEIGHT_UNIT.grams]: 1,
-  [WEIGHT_UNIT.kilograms]: 1000,
-  [WEIGHT_UNIT.ounces]: 28.3495,
-  [WEIGHT_UNIT.pounds]: 453.592,
 } as const
 
 export const formatDisplayDate = (dateString: string) => {
@@ -52,51 +30,6 @@ export const formatDisplayDate = (dateString: string) => {
     month: 'numeric',
     day: 'numeric',
   })
-}
-
-/**
- * Convert between different units of measurement
- * @param params - Conversion parameters
- * @param params.from - Source unit
- * @param params.to - Target unit
- * @param params.value - Value to convert
- * @returns Converted value or null if conversion is not possible
- */
-export const convertUnits = ({
-  from,
-  to,
-  value,
-}: {
-  from: VolumeUnit | WeightUnit
-  to: VolumeUnit | WeightUnit
-  value: number
-}): number | null => {
-  // Check if both units are volume units
-  const isVolumeConversion =
-    Object.values(VOLUME_UNIT).includes(from as VolumeUnit) && Object.values(VOLUME_UNIT).includes(to as VolumeUnit)
-
-  // Check if both units are weight units
-  const isWeightConversion =
-    Object.values(WEIGHT_UNIT).includes(from as WeightUnit) && Object.values(WEIGHT_UNIT).includes(to as WeightUnit)
-
-  // Cannot convert between different unit types (volume to weight or vice versa)
-  if (!isVolumeConversion && !isWeightConversion) {
-    return null
-  }
-
-  if (isVolumeConversion) {
-    const fromML = VOLUME_TO_ML[from as VolumeUnit]
-    const toML = VOLUME_TO_ML[to as VolumeUnit]
-    return (value * fromML) / toML
-  }
-
-  if (isWeightConversion) {
-    const fromGrams = WEIGHT_TO_GRAMS[from as WeightUnit]
-    const toGrams = WEIGHT_TO_GRAMS[to as WeightUnit]
-    return (value * fromGrams) / toGrams
-  }
-
-  return null
 }
 
 export const formatCurrency = (amount: number) => {

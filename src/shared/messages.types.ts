@@ -99,7 +99,7 @@ export type Invokes = {
   }
   [CHANNEL.DB.UPDATE_INGREDIENT]: {
     args: { id: string; payload: Partial<NewIngredientDTO> }
-    result: { success: boolean }
+    result: { success: boolean; wasConverted: boolean; affectedRecipeCount: number }
   }
   [CHANNEL.DB.REMOVE_INGREDIENT_FROM_RECIPE]: {
     args: { ingredientId: string; recipeId: string }

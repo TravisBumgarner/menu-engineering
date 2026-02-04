@@ -11,11 +11,13 @@
     "make": "SHOULD_APPLE_SIGN=1 dotenv -e .env -- electron-forge make && open out",
     "publish-mac": "SHOULD_APPLE_SIGN=1 dotenv -e .env -- electron-forge publish && open out",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx .",
+    "lint": "biome check .",
     "db:generate": "drizzle-kit generate",
     "db:apply": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "keywords": [],
@@ -55,7 +57,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "typescript": "^5.9.3",
-    "vite": "^7.1.9"
+    "vite": "^7.1.9",
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
