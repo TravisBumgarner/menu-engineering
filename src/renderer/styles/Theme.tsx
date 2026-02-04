@@ -61,6 +61,12 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
         primary: colors.text.primary,
         secondary: colors.text.secondary,
       },
+      error: {
+        main: PALETTE.error[500],
+        light: PALETTE.error[isDark ? 800 : 100],
+        dark: PALETTE.error[700],
+        contrastText: isDark ? PALETTE.error[100] : PALETTE.error[900],
+      },
     },
     components: {
       MuiCssBaseline: {
