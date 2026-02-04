@@ -1,10 +1,11 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Box, Button, Stack, TextField, Typography } from '@mui/material'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type React from 'react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import type { IngredientDTO, NewIngredientDTO } from '../../../../shared/recipe.types'
-import { ALL_UNITS, type AllUnits } from '../../../../shared/units.types'
+import { areUnitsCompatible, convertUnits } from '../../../../shared/unitConversion'
+import type { AllUnits } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
@@ -13,7 +14,7 @@ import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { getUnitLabel } from '../../../utilities'
 import UnitSelect from '../../UnitPicker'
-import type { MODAL_ID } from '../Modal.consts'
+import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
 export interface EditIngredientModalProps {
@@ -33,11 +34,19 @@ type FormData = {
 const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredientModalProps) => {
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
+  const originalUnit = ingredient.units
+
   const [formData, setFormData] = useState<FormData>({
     title: ingredient.title,
     quantity: 1,
     units: ingredient.units,
     cost: ingredient.unitCost,
+  })
+
+  // Fetch ingredient data to get usedInRecipes for the confirmation modal
+  const { data: ingredientData } = useQuery({
+    queryKey: [QUERY_KEYS.INGREDIENT, ingredient.id],
+    queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_INGREDIENT, { id: ingredient.id }),
   })
 
   const updateIngredientMutation = useMutation({
@@ -68,12 +77,84 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
     },
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const performUpdate = useCallback(() => {
     updateIngredientMutation.mutate({
       title: formData.title,
       unitCost: formData.cost / formData.quantity,
+      units: formData.units,
     })
+  }, [formData, updateIngredientMutation])
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    const unitChanged = formData.units !== originalUnit
+
+    if (unitChanged) {
+      // Show confirmation modal
+      const isCompatible = areUnitsCompatible(originalUnit, formData.units)
+      const currentUnitCost = formData.cost / formData.quantity
+
+      if (isCompatible) {
+        // For compatible changes, show conversion preview
+        const convertedUnitCost = convertUnits({
+          from: originalUnit,
+          to: formData.units,
+          value: currentUnitCost,
+        })
+
+        activeModalSignal.value = {
+          id: MODAL_ID.UNIT_CHANGE_CONFIRMATION_MODAL,
+          itemType: 'ingredient',
+          itemName: ingredient.title,
+          fromUnit: originalUnit,
+          toUnit: formData.units,
+          isCompatible: true,
+          originalUnitCost: currentUnitCost,
+          convertedUnitCost: convertedUnitCost ?? currentUnitCost,
+          onConfirm: performUpdate,
+          onCancel: () => {
+            // Revert unit selection and reopen this modal
+            activeModalSignal.value = {
+              id: MODAL_ID.EDIT_INGREDIENT_MODAL,
+              ingredient,
+              recipeId,
+              recipeTitle,
+            }
+          },
+        }
+      } else {
+        // For incompatible changes, show warning with affected recipes
+        const affectedItems =
+          ingredientData?.usedInRecipes?.map((recipe) => ({
+            id: recipe.id,
+            title: recipe.title,
+          })) ?? []
+
+        activeModalSignal.value = {
+          id: MODAL_ID.UNIT_CHANGE_CONFIRMATION_MODAL,
+          itemType: 'ingredient',
+          itemName: ingredient.title,
+          fromUnit: originalUnit,
+          toUnit: formData.units,
+          isCompatible: false,
+          affectedItems,
+          onConfirm: performUpdate,
+          onCancel: () => {
+            // Revert unit selection and reopen this modal
+            activeModalSignal.value = {
+              id: MODAL_ID.EDIT_INGREDIENT_MODAL,
+              ingredient,
+              recipeId,
+              recipeTitle,
+            }
+          },
+        }
+      }
+    } else {
+      // No unit change, just update
+      performUpdate()
+    }
   }
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +205,6 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
               min={0}
             />
             <UnitSelect
-              disabled
               value={formData.units}
               required
               onChange={(value) => setFormData((prev) => ({ ...prev, units: value }))}
@@ -136,9 +216,6 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
               ${(formData.cost / formData.quantity).toFixed(2)}/ {getUnitLabel(formData.units, 'singular')}
             </Typography>
           </Stack>
-          <Typography sx={{ marginTop: '0 !important' }} variant="caption" color="textSecondary">
-            {t('unitsHelpText')}
-          </Typography>
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button variant="outlined" type="button" onClick={closeModal}>
