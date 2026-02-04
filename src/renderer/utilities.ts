@@ -1,5 +1,13 @@
 import { t } from 'i18next'
-import { VOLUME_UNIT, type VolumeUnit, WEIGHT_UNIT, type WeightUnit } from '../shared/units.types'
+import {
+  type AllUnits,
+  GENERIC_UNIT,
+  type UnitPreferences,
+  VOLUME_UNIT,
+  type VolumeUnit,
+  WEIGHT_UNIT,
+  type WeightUnit,
+} from '../shared/units.types'
 import type { TranslationKeys } from './internationalization/types'
 
 export const LOCAL_STORAGE_KEYS = {
@@ -131,6 +139,26 @@ export const getUnitLabel = (unit: string, quantity: number | 'singular' | 'plur
     suffix = quantity === 1 ? '_singular' : '_plural'
   }
   return t(`${unit}${suffix}` as TranslationKeys)
+}
+
+/**
+ * Get the first enabled unit from user preferences
+ * @param unitPreferences - The user's unit preferences
+ * @returns The first enabled unit
+ */
+export const getFirstEnabledUnit = (unitPreferences: UnitPreferences): AllUnits => {
+  // Return first enabled unit in order: generic, volume, weight
+  if (unitPreferences.generic.length > 0) {
+    return unitPreferences.generic[0] as AllUnits
+  }
+  if (unitPreferences.volume.length > 0) {
+    return unitPreferences.volume[0] as AllUnits
+  }
+  if (unitPreferences.weight.length > 0) {
+    return unitPreferences.weight[0] as AllUnits
+  }
+  // Fallback (should never happen as settings prevent deselecting all)
+  return GENERIC_UNIT.units
 }
 
 /**

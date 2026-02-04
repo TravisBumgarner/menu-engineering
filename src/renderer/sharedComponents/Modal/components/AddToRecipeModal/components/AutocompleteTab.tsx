@@ -3,13 +3,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import type { RecipeDTO } from '../../../../../../shared/recipe.types'
-import { ALL_UNITS, type AllUnits } from '../../../../../../shared/units.types'
+import type { AllUnits, UnitPreferences } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
+import { getFirstEnabledUnit, getFromLocalStorage, LOCAL_STORAGE_KEYS } from '../../../../../utilities'
 import Icon from '../../../../Icon'
+import { DEFAULT_UNIT_PREFERENCES } from '../../SettingsModal/components/TabUnitPreferences'
 import RecipeDetails from './RecipeDetails'
 
 type Value = {
@@ -160,7 +162,12 @@ const Autocomplete = ({
           )}
         />
         <RecipeDetails
-          units={selectedAutocomplete?.units || ALL_UNITS.units}
+          units={
+            selectedAutocomplete?.units ||
+            getFirstEnabledUnit(
+              getFromLocalStorage<UnitPreferences>(LOCAL_STORAGE_KEYS.UNIT_PREFERENCES_KEY, DEFAULT_UNIT_PREFERENCES),
+            )
+          }
           setQuantity={setRecipeQuantity}
           quantity={recipeQuantity}
         />

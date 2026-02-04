@@ -4,17 +4,18 @@ import type React from 'react'
 import { useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import type { NewIngredientDTO } from '../../../../shared/recipe.types'
-import { ALL_UNITS, type AllUnits } from '../../../../shared/units.types'
+import { type AllUnits, type UnitPreferences } from '../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import { NumericInput } from '../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
-import { getUnitLabel } from '../../../utilities'
+import { getFirstEnabledUnit, getFromLocalStorage, getUnitLabel, LOCAL_STORAGE_KEYS } from '../../../utilities'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 import UnitSelect from '../../UnitPicker'
+import { DEFAULT_UNIT_PREFERENCES } from './SettingsModal/components/TabUnitPreferences'
 
 export interface AddIngredientModalProps {
   id: typeof MODAL_ID.ADD_INGREDIENT_MODAL
@@ -27,15 +28,23 @@ type FormData = {
   cost: number
 }
 
+const getDefaultUnit = () => {
+  const unitPreferences = getFromLocalStorage<UnitPreferences>(
+    LOCAL_STORAGE_KEYS.UNIT_PREFERENCES_KEY,
+    DEFAULT_UNIT_PREFERENCES,
+  )
+  return getFirstEnabledUnit(unitPreferences)
+}
+
 const AddIngredientModal = (_props: AddIngredientModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
-  const [ingredientFormData, setIngredientFormData] = useState<FormData>({
+  const [ingredientFormData, setIngredientFormData] = useState<FormData>(() => ({
     title: '',
     quantity: 1,
-    units: ALL_UNITS.cups,
+    units: getDefaultUnit(),
     cost: 0,
-  })
+  }))
 
   const addIngredientMutation = useMutation({
     mutationFn: ({
@@ -73,7 +82,7 @@ const AddIngredientModal = (_props: AddIngredientModalProps) => {
           setIngredientFormData({
             title: '',
             quantity: 1,
-            units: ALL_UNITS.cups,
+            units: getDefaultUnit(),
             cost: 0,
           })
         }

@@ -1,18 +1,19 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
+import { Box, Button, Stack, TextField, Typography } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type React from 'react'
 import { useState } from 'react'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import type { NewIngredientDTO, RecipeDTO } from '../../../../../../shared/recipe.types'
-import { ALL_UNITS, type AllUnits } from '../../../../../../shared/units.types'
+import type { AllUnits, UnitPreferences } from '../../../../../../shared/units.types'
 import { QUERY_KEYS } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import { NumericInput } from '../../../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
-import { getUnitLabel } from '../../../../../utilities'
+import { getFirstEnabledUnit, getFromLocalStorage, getUnitLabel, LOCAL_STORAGE_KEYS } from '../../../../../utilities'
 import UnitSelect from '../../../../UnitPicker'
+import { DEFAULT_UNIT_PREFERENCES } from '../../SettingsModal/components/TabUnitPreferences'
 import RecipeDetails from './RecipeDetails'
 
 type FormData = {
@@ -22,16 +23,24 @@ type FormData = {
   cost: number
 }
 
+const getDefaultUnit = () => {
+  const unitPreferences = getFromLocalStorage<UnitPreferences>(
+    LOCAL_STORAGE_KEYS.UNIT_PREFERENCES_KEY,
+    DEFAULT_UNIT_PREFERENCES,
+  )
+  return getFirstEnabledUnit(unitPreferences)
+}
+
 const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
   const { t } = useAppTranslation()
   const [recipeQuantity, setRecipeQuantity] = useState<number>(0)
   const queryClient = useQueryClient()
-  const [ingredientFormData, setIngredientFormData] = useState<FormData>({
+  const [ingredientFormData, setIngredientFormData] = useState<FormData>(() => ({
     title: '',
     quantity: 1,
-    units: ALL_UNITS.cups,
+    units: getDefaultUnit(),
     cost: 0,
-  })
+  }))
 
   const addIngredientMutation = useMutation({
     mutationFn: ({
@@ -79,7 +88,7 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
           setIngredientFormData({
             title: '',
             quantity: 1,
-            units: ALL_UNITS.cups,
+            units: getDefaultUnit(),
             cost: 0,
           })
           setRecipeQuantity(0)
