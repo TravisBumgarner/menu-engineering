@@ -11,7 +11,7 @@
     "make": "SHOULD_APPLE_SIGN=1 dotenv -e .env -- electron-forge make && open out",
     "publish-mac": "SHOULD_APPLE_SIGN=1 dotenv -e .env -- electron-forge publish && open out",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx .",
+    "lint": "biome check .",
     "db:generate": "drizzle-kit generate",
     "db:apply": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
