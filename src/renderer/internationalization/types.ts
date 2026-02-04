@@ -31,6 +31,7 @@ export type TranslationKeys =
   | 'singlePDF'
   | 'multiplePDFs'
   | 'searchRecipes'
+  | 'searchIngredients'
   | 'subRecipes'
   | 'mainRecipes'
   | 'country'

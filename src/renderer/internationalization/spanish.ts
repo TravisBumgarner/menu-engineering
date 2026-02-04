@@ -32,6 +32,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   includeImages: 'Incluir Imágenes',
   oneFilePerRecipe: 'Un Archivo por Receta',
   searchRecipes: 'Buscar recetas...',
+  searchIngredients: 'Buscar ingredientes...',
   all: 'Todos',
   none: 'Ninguno',
   singlePDF: 'PDF Único',

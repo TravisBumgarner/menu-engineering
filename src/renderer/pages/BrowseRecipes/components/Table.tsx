@@ -62,6 +62,7 @@ const Table = ({
     filterToMenuItemsOnly: false,
     showSubRecipes: true,
     showMainRecipes: true,
+    searchQuery: '',
   })
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +88,10 @@ const Table = ({
   // Apply filters to recipes
   const filteredRecipes = React.useMemo(() => {
     return recipes.filter((recipe) => {
+      // Filter by search query
+      const searchMatch =
+        filters.searchQuery === '' || recipe.title.toLowerCase().includes(filters.searchQuery.toLowerCase())
+
       // Filter by status
       const statusMatch = filters.status.includes(recipe.status)
 
@@ -109,7 +114,7 @@ const Table = ({
         recipeTypeMatch = isMainRecipe
       }
 
-      return statusMatch && menuItemsOnly && recipeTypeMatch
+      return searchMatch && statusMatch && menuItemsOnly && recipeTypeMatch
     })
   }, [recipes, filters])
 

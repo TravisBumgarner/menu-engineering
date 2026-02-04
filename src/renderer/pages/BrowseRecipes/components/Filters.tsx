@@ -1,7 +1,18 @@
-import { Box, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, type SxProps } from '@mui/material'
+import {
+  Box,
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  InputAdornment,
+  type SxProps,
+  TextField,
+} from '@mui/material'
 import type React from 'react'
 import { RECIPE_STATUS, type RecipeStatus } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import Icon from '../../../sharedComponents/Icon'
 import { SPACING } from '../../../styles/consts'
 
 export interface FilterOptions {
@@ -9,6 +20,7 @@ export interface FilterOptions {
   filterToMenuItemsOnly: boolean
   showSubRecipes: boolean
   showMainRecipes: boolean
+  searchQuery: string
 }
 
 interface FiltersProps {
@@ -50,6 +62,13 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
     })
   }
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onFiltersChange({
+      ...filters,
+      searchQuery: event.target.value,
+    })
+  }
+
   return (
     <Box
       sx={{
@@ -59,6 +78,26 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
         gap: SPACING.SMALL.PX,
       }}
     >
+      <TextField
+        size="small"
+        placeholder={t('searchRecipes')}
+        value={filters.searchQuery}
+        onChange={handleSearchChange}
+        variant="outlined"
+        sx={{ minWidth: 200 }}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <Icon name="search" size={18} />
+              </InputAdornment>
+            ),
+          },
+        }}
+      />
+
+      <Divider orientation="vertical" flexItem />
+
       <FormControl size="small">
         <FormGroup row>
           <FormControlLabel
