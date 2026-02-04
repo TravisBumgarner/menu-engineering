@@ -139,11 +139,6 @@ const UnitChangeConfirmationModal = ({
                   {affectedItems.slice(0, 5).map((item) => (
                     <Typography component="li" variant="body2" key={item.id}>
                       {item.title}
-                      {item.quantity !== undefined && (
-                        <>
-                          : {formatQuantity(item.quantity)} {fromUnitAbbrev} → 0
-                        </>
-                      )}
                     </Typography>
                   ))}
                   {affectedItems.length > 5 && (
