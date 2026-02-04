@@ -81,7 +81,7 @@ export type Invokes = {
       recipe: RecipeDTO | null
       ingredients: Array<IngredientDTO & { relation: RelationDTO }>
       subRecipes: Array<RecipeDTO & { relation: RelationDTO }>
-      usedInRecipes: Array<RecipeDTO>
+      usedInRecipes: Array<RecipeDTO & { relationQuantity: number; relationUnits: AllUnits }>
     }
   }
   [CHANNEL.DB.ADD_INGREDIENT]: {
@@ -117,7 +117,7 @@ export type Invokes = {
     args: { id: string }
     result: {
       ingredient: IngredientDTO | null
-      usedInRecipes: Array<RecipeDTO>
+      usedInRecipes: Array<RecipeDTO & { relationQuantity: number; relationUnits: AllUnits }>
     }
   }
   [CHANNEL.DB.GET_INGREDIENTS]: {

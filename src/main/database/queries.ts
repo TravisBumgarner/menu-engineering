@@ -289,6 +289,8 @@ const getRecipesUsingSubRecipe = async (subRecipeId: string) => {
   const recipes = await db
     .select({
       recipe: recipeSchema,
+      relationQuantity: recipeSubRecipeSchema.quantity,
+      relationUnits: recipeSubRecipeSchema.units,
     })
     .from(recipeSubRecipeSchema)
     .where(eq(recipeSubRecipeSchema.childId, subRecipeId))
@@ -297,7 +299,12 @@ const getRecipesUsingSubRecipe = async (subRecipeId: string) => {
   return Promise.all(
     recipes.map(async (row) => {
       const costResult = await getRecipeCost(row.recipe.id)
-      return { ...row.recipe, cost: costResult.success ? costResult.cost : -1 }
+      return {
+        ...row.recipe,
+        cost: costResult.success ? costResult.cost : -1,
+        relationQuantity: row.relationQuantity,
+        relationUnits: row.relationUnits,
+      }
     }),
   ).then((results) => results.filter(Boolean))
 }
@@ -306,6 +313,8 @@ const getRecipesUsingIngredient = async (ingredientId: string) => {
   const recipes = await db
     .select({
       recipe: recipeSchema,
+      relationQuantity: recipeIngredientSchema.quantity,
+      relationUnits: recipeIngredientSchema.units,
     })
     .from(recipeIngredientSchema)
     .where(eq(recipeIngredientSchema.childId, ingredientId))
@@ -314,7 +323,12 @@ const getRecipesUsingIngredient = async (ingredientId: string) => {
   return Promise.all(
     recipes.map(async (row) => {
       const costResult = await getRecipeCost(row.recipe.id)
-      return { ...row.recipe, cost: costResult.success ? costResult.cost : -1 }
+      return {
+        ...row.recipe,
+        cost: costResult.success ? costResult.cost : -1,
+        relationQuantity: row.relationQuantity,
+        relationUnits: row.relationUnits,
+      }
     }),
   ).then((results) => results.filter(Boolean))
 }
@@ -374,6 +388,52 @@ const resetIngredientRelationQuantities = async (ingredientId: string) => {
 }
 
 /**
+ * Convert quantities for all recipe-ingredient relationships where this ingredient is used.
+ * This is called when an ingredient's units change to a compatible type.
+ * @param ingredientId - The ingredient whose relation quantities should be converted
+ * @param fromUnits - The original units
+ * @param toUnits - The new units
+ * @param convertFn - Function to convert values between units
+ * @returns The number of affected recipe-ingredient relations
+ */
+const convertIngredientRelationQuantities = async (
+  ingredientId: string,
+  fromUnits: AllUnits,
+  toUnits: AllUnits,
+  convertFn: (params: { from: AllUnits; to: AllUnits; value: number }) => number | null,
+) => {
+  // Get all relations for this ingredient
+  const relations = await db
+    .select()
+    .from(recipeIngredientSchema)
+    .where(eq(recipeIngredientSchema.childId, ingredientId))
+
+  let convertedCount = 0
+  for (const relation of relations) {
+    const convertedQuantity = convertFn({
+      from: fromUnits,
+      to: toUnits,
+      value: relation.quantity,
+    })
+
+    if (convertedQuantity !== null) {
+      await db
+        .update(recipeIngredientSchema)
+        .set({
+          quantity: convertedQuantity,
+          units: toUnits,
+          updatedAt: new Date().toISOString(),
+        })
+        .where(eq(recipeIngredientSchema.id, relation.id))
+        .run()
+      convertedCount++
+    }
+  }
+
+  return convertedCount
+}
+
+/**
  * Get the count of recipes using a specific ingredient
  * @param ingredientId - The ingredient to check
  * @returns The number of recipes using this ingredient
@@ -417,6 +477,52 @@ const getSubRecipeRelationCount = async (recipeId: string) => {
   return result[0]?.count ?? 0
 }
 
+/**
+ * Convert quantities for all sub-recipe relationships where this recipe is used as a child.
+ * This is called when a recipe's units change to a compatible type.
+ * @param recipeId - The recipe whose sub-recipe relation quantities should be converted
+ * @param fromUnits - The original units
+ * @param toUnits - The new units
+ * @param convertFn - Function to convert values between units
+ * @returns The number of affected sub-recipe relations
+ */
+const convertSubRecipeRelationQuantities = async (
+  recipeId: string,
+  fromUnits: AllUnits,
+  toUnits: AllUnits,
+  convertFn: (params: { from: AllUnits; to: AllUnits; value: number }) => number | null,
+) => {
+  // Get all relations where this recipe is used as a sub-recipe
+  const relations = await db
+    .select()
+    .from(recipeSubRecipeSchema)
+    .where(eq(recipeSubRecipeSchema.childId, recipeId))
+
+  let convertedCount = 0
+  for (const relation of relations) {
+    const convertedQuantity = convertFn({
+      from: fromUnits,
+      to: toUnits,
+      value: relation.quantity,
+    })
+
+    if (convertedQuantity !== null) {
+      await db
+        .update(recipeSubRecipeSchema)
+        .set({
+          quantity: convertedQuantity,
+          units: toUnits,
+          updatedAt: new Date().toISOString(),
+        })
+        .where(eq(recipeSubRecipeSchema.id, relation.id))
+        .run()
+      convertedCount++
+    }
+  }
+
+  return convertedCount
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -441,7 +547,9 @@ export default {
   recipeExists,
   ingredientExists,
   resetIngredientRelationQuantities,
+  convertIngredientRelationQuantities,
   getIngredientRelationCount,
   resetSubRecipeRelationQuantities,
+  convertSubRecipeRelationQuantities,
   getSubRecipeRelationCount,
 }

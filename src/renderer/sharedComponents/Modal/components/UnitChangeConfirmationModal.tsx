@@ -5,10 +5,19 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { AllUnits } from '../../../../shared/units.types'
 import { activeModalSignal } from '../../../signals'
-import { SPACING } from '../../../styles/consts'
+import { FORMATTING, SPACING } from '../../../styles/consts'
 import { formatCurrency, getUnitLabel } from '../../../utilities'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
+
+export interface AffectedItem {
+  id: string
+  title: string
+  /** Current quantity in the relation */
+  quantity?: number
+  /** Converted quantity (for compatible changes) */
+  convertedQuantity?: number
+}
 
 export interface UnitChangeConfirmationModalProps {
   id: typeof MODAL_ID.UNIT_CHANGE_CONFIRMATION_MODAL
@@ -26,8 +35,8 @@ export interface UnitChangeConfirmationModalProps {
   convertedUnitCost?: number
   /** For compatible ingredient changes: the original unit cost */
   originalUnitCost?: number
-  /** For incompatible changes: list of affected items (recipes or parent recipes) */
-  affectedItems?: Array<{ id: string; title: string }>
+  /** List of affected items (recipes or parent recipes) with optional quantity info */
+  affectedItems?: AffectedItem[]
   /** Callback when user confirms the change */
   onConfirm: () => void
   /** Callback when user cancels */
@@ -60,8 +69,12 @@ const UnitChangeConfirmationModal = ({
 
   const fromUnitLabel = getUnitLabel(fromUnit, 'plural')
   const toUnitLabel = getUnitLabel(toUnit, 'plural')
+  const fromUnitAbbrev = getUnitLabel(fromUnit, 'singular')
+  const toUnitAbbrev = getUnitLabel(toUnit, 'singular')
 
   const title = isCompatible ? t('unitChangeConfirmTitle') : t('unitChangeWarningTitle')
+
+  const formatQuantity = (qty: number) => qty.toFixed(FORMATTING.COST_DECIMAL_PLACES)
 
   return (
     <DefaultModal title={title}>
@@ -71,7 +84,7 @@ const UnitChangeConfirmationModal = ({
           {t('unitChangeItemInfo', { itemName, fromUnit: fromUnitLabel, toUnit: toUnitLabel })}
         </Typography>
 
-        {/* Compatible change - show conversion preview */}
+        {/* Compatible change - show conversion preview for unit cost */}
         {isCompatible &&
           itemType === 'ingredient' &&
           convertedUnitCost !== undefined &&
@@ -98,6 +111,33 @@ const UnitChangeConfirmationModal = ({
           <Typography variant="body2" color="text.secondary">
             {t('unitChangeRecipeCompatibleInfo')}
           </Typography>
+        )}
+
+        {/* Compatible change - show quantity conversions for affected items */}
+        {isCompatible && affectedItems && affectedItems.length > 0 && (
+          <Box>
+            <Typography variant="body2" fontWeight="bold">
+              {t('unitChangeAffectedItems', { count: affectedItems.length })}
+            </Typography>
+            <Box component="ul" sx={{ margin: 0, paddingLeft: SPACING.MEDIUM.PX }}>
+              {affectedItems.slice(0, 5).map((item) => (
+                <Typography component="li" variant="body2" key={item.id}>
+                  {item.title}
+                  {item.quantity !== undefined && item.convertedQuantity !== undefined && (
+                    <>
+                      : {formatQuantity(item.quantity)} {fromUnitAbbrev} → {formatQuantity(item.convertedQuantity)}{' '}
+                      {toUnitAbbrev}
+                    </>
+                  )}
+                </Typography>
+              ))}
+              {affectedItems.length > 5 && (
+                <Typography component="li" variant="body2" color="text.secondary">
+                  {t('unitChangeAndMore', { count: affectedItems.length - 5 })}
+                </Typography>
+              )}
+            </Box>
+          </Box>
         )}
 
         {/* Incompatible change - show warning and affected items */}
@@ -129,6 +169,11 @@ const UnitChangeConfirmationModal = ({
                   {affectedItems.slice(0, 5).map((item) => (
                     <Typography component="li" variant="body2" key={item.id}>
                       {item.title}
+                      {item.quantity !== undefined && (
+                        <>
+                          : {formatQuantity(item.quantity)} {fromUnitAbbrev} → 0
+                        </>
+                      )}
                     </Typography>
                   ))}
                   {affectedItems.length > 5 && (

@@ -17,7 +17,7 @@ import type React from 'react'
 import { useCallback, useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { type NewRecipeDTO, RECIPE_STATUS, type RecipeDTO } from '../../../../shared/recipe.types'
-import { areUnitsCompatible } from '../../../../shared/unitConversion'
+import { areUnitsCompatible, convertUnits } from '../../../../shared/unitConversion'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
@@ -112,11 +112,25 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
     if (unitChanged) {
       // Show confirmation modal
       const isCompatible = areUnitsCompatible(originalUnit, formData.units)
+
+      // Build affected items with quantity info
       const affectedItems =
-        recipeData?.usedInRecipes?.map((parentRecipe) => ({
-          id: parentRecipe.id,
-          title: parentRecipe.title,
-        })) ?? []
+        recipeData?.usedInRecipes?.map((parentRecipe) => {
+          const convertedQuantity = isCompatible
+            ? convertUnits({
+                from: originalUnit,
+                to: formData.units,
+                value: parentRecipe.relationQuantity,
+              })
+            : null
+
+          return {
+            id: parentRecipe.id,
+            title: parentRecipe.title,
+            quantity: parentRecipe.relationQuantity,
+            convertedQuantity: convertedQuantity ?? undefined,
+          }
+        }) ?? []
 
       // If recipe isn't used anywhere, no need to show any confirmation
       if (affectedItems.length === 0) {
@@ -125,7 +139,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
       }
 
       if (isCompatible) {
-        // For compatible changes, show simple confirmation (produces not modified)
+        // For compatible changes, show quantity conversion preview
         activeModalSignal.value = {
           id: MODAL_ID.UNIT_CHANGE_CONFIRMATION_MODAL,
           itemType: 'recipe',
@@ -133,6 +147,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
           fromUnit: originalUnit,
           toUnit: formData.units,
           isCompatible: true,
+          affectedItems,
           onConfirm: performUpdate,
           onCancel: () => {
             // Revert unit selection and reopen this modal
