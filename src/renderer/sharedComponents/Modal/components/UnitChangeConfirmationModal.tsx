@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import type { AllUnits } from '../../../../shared/units.types'
 import { activeModalSignal } from '../../../signals'
 import { FORMATTING, SPACING } from '../../../styles/consts'
-import { formatCurrency, getUnitLabel } from '../../../utilities'
+import { getUnitLabel } from '../../../utilities'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -49,8 +49,6 @@ const UnitChangeConfirmationModal = ({
   fromUnit,
   toUnit,
   isCompatible,
-  convertedUnitCost,
-  originalUnitCost,
   affectedItems,
   onConfirm,
   onCancel,
@@ -84,34 +82,6 @@ const UnitChangeConfirmationModal = ({
           {t('unitChangeItemInfo', { itemName, fromUnit: fromUnitLabel, toUnit: toUnitLabel })}
         </Typography>
 
-        {/* Compatible change - show conversion preview for unit cost */}
-        {isCompatible &&
-          itemType === 'ingredient' &&
-          convertedUnitCost !== undefined &&
-          originalUnitCost !== undefined && (
-            <Box
-              sx={{
-                backgroundColor: 'action.hover',
-                padding: SPACING.SMALL.PX,
-                borderRadius: 1,
-              }}
-            >
-              <Typography variant="body2" color="text.secondary">
-                {t('unitCostConversionPreview')}
-              </Typography>
-              <Typography variant="body1">
-                {formatCurrency(originalUnitCost)} / {fromUnitLabel} → {formatCurrency(convertedUnitCost)} /{' '}
-                {toUnitLabel}
-              </Typography>
-            </Box>
-          )}
-
-        {/* Compatible recipe change - simple confirmation */}
-        {isCompatible && itemType === 'recipe' && (
-          <Typography variant="body2" color="text.secondary">
-            {t('unitChangeRecipeCompatibleInfo')}
-          </Typography>
-        )}
 
         {/* Compatible change - show quantity conversions for affected items */}
         {isCompatible && affectedItems && affectedItems.length > 0 && (
