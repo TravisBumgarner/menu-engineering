@@ -113,7 +113,7 @@ tasks:
       - Backend receives and processes unit change correctly
     depends_on: [1, 3]
     effort: 2
-    status: scoped
+    status: implementing
 
   - id: 5
     github_issue: 52
