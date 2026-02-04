@@ -1,6 +1,7 @@
 import { Document, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import type { IngredientDTO, RecipeDTO, RelationDTO } from '../../../../shared/recipe.types'
 import type { TranslationKeys } from '../../../internationalization/types'
+import { FORMATTING } from '../../../styles/consts'
 
 // Create styles
 const styles = StyleSheet.create({
@@ -119,9 +120,9 @@ const RecipesPDFDocument = ({ recipes, t, includeImages = false }: RecipesPDFDoc
                     <Text style={[styles.cellText, styles.col1]}>{ingredient.title}</Text>
                     <Text style={[styles.cellText, styles.col2]}>{ingredient.relation.quantity}</Text>
                     <Text style={[styles.cellText, styles.col3]}>{ingredient.relation.units}</Text>
-                    <Text style={[styles.cellText, styles.col4]}>${ingredient.unitCost.toFixed(2)}</Text>
+                    <Text style={[styles.cellText, styles.col4]}>${ingredient.unitCost.toFixed(FORMATTING.COST_DECIMAL_PLACES)}</Text>
                     <Text style={[styles.cellText, styles.col5]}>
-                      ${(ingredient.relation.quantity * ingredient.unitCost).toFixed(2)}
+                      ${(ingredient.relation.quantity * ingredient.unitCost).toFixed(FORMATTING.COST_DECIMAL_PLACES)}
                     </Text>
                   </View>
                 ))}

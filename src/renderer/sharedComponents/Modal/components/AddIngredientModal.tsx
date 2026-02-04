@@ -11,7 +11,7 @@ import ipcMessenger from '../../../ipcMessenger'
 import { NumericInput } from '../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
-import { getFirstEnabledUnit, getFromLocalStorage, getUnitLabel, LOCAL_STORAGE_KEYS } from '../../../utilities'
+import { formatCurrency, getFirstEnabledUnit, getFromLocalStorage, getUnitLabel, LOCAL_STORAGE_KEYS } from '../../../utilities'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 import UnitSelect from '../../UnitPicker'
@@ -171,7 +171,7 @@ const AddIngredientModal = (_props: AddIngredientModalProps) => {
             <Typography>=</Typography>
 
             <Typography>
-              ${(ingredientFormData.cost / ingredientFormData.quantity).toFixed(2)}/{' '}
+              {formatCurrency(ingredientFormData.cost / ingredientFormData.quantity)}/{' '}
               {getUnitLabel(ingredientFormData.units, 1)}
             </Typography>
           </Stack>

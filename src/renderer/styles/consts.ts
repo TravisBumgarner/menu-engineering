@@ -110,3 +110,8 @@ export const SPACING = {
 export const Z_INDICES = {
   MODAL: 500,
 }
+
+export const FORMATTING = {
+  /** Number of decimal places for currency/cost display */
+  COST_DECIMAL_PLACES: 4,
+} as const

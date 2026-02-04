@@ -11,7 +11,7 @@ import ipcMessenger from '../../../../../ipcMessenger'
 import { NumericInput } from '../../../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../../../signals'
 import { SPACING } from '../../../../../styles/consts'
-import { getFirstEnabledUnit, getFromLocalStorage, getUnitLabel, LOCAL_STORAGE_KEYS } from '../../../../../utilities'
+import { formatCurrency, getFirstEnabledUnit, getFromLocalStorage, getUnitLabel, LOCAL_STORAGE_KEYS } from '../../../../../utilities'
 import UnitSelect from '../../../../UnitPicker'
 import { DEFAULT_UNIT_PREFERENCES } from '../../SettingsModal/components/TabUnitPreferences'
 import RecipeDetails from './RecipeDetails'
@@ -181,7 +181,7 @@ const AddIngredientTab = ({ recipe }: { recipe: RecipeDTO }) => {
           <Typography>=</Typography>
 
           <Typography>
-            ${(ingredientFormData.cost / ingredientFormData.quantity).toFixed(2)}/{' '}
+            {formatCurrency(ingredientFormData.cost / ingredientFormData.quantity)}/{' '}
             {getUnitLabel(ingredientFormData.units, 1)}
           </Typography>
         </Stack>
