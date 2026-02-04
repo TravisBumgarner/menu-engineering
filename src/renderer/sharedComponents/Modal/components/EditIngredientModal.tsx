@@ -12,7 +12,7 @@ import ipcMessenger from '../../../ipcMessenger'
 import { NumericInput } from '../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
-import { getUnitLabel } from '../../../utilities'
+import { formatCurrency, getUnitLabel } from '../../../utilities'
 import UnitSelect from '../../UnitPicker'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
@@ -131,6 +131,12 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
             title: recipe.title,
           })) ?? []
 
+        // If ingredient isn't used anywhere, no need to show warning
+        if (affectedItems.length === 0) {
+          performUpdate()
+          return
+        }
+
         activeModalSignal.value = {
           id: MODAL_ID.UNIT_CHANGE_CONFIRMATION_MODAL,
           itemType: 'ingredient',
@@ -213,7 +219,7 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
             <Typography>=</Typography>
 
             <Typography>
-              ${(formData.cost / formData.quantity).toFixed(2)}/ {getUnitLabel(formData.units, 'singular')}
+              {formatCurrency(formData.cost / formData.quantity)}/ {getUnitLabel(formData.units, 'singular')}
             </Typography>
           </Stack>
 

@@ -1,6 +1,7 @@
 import { t } from 'i18next'
 import { type AllUnits, GENERIC_UNIT, type UnitPreferences } from '../shared/units.types'
 import type { TranslationKeys } from './internationalization/types'
+import { FORMATTING } from './styles/consts'
 
 // Re-export convertUnits from shared module for renderer usage
 export { convertUnits } from '../shared/unitConversion'
@@ -51,6 +52,8 @@ export const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: FORMATTING.COST_DECIMAL_PLACES,
   }).format(amount)
 }
 
