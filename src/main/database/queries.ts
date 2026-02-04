@@ -387,6 +387,27 @@ const getIngredientRelationCount = async (ingredientId: string) => {
   return result[0]?.count ?? 0
 }
 
+/**
+ * Reset the quantity to 0 for all sub-recipe relationships where this recipe is used as a child.
+ * This is called when a recipe's units change to an incompatible type.
+ * @param recipeId - The recipe whose sub-recipe relation quantities should be reset
+ * @returns The number of affected sub-recipe relations
+ */
+const resetSubRecipeRelationQuantities = async (recipeId: string) => {
+  // Stub: will be implemented in ralph-code phase
+  return 0
+}
+
+/**
+ * Get the count of parent recipes using a specific recipe as a sub-recipe
+ * @param recipeId - The recipe to check
+ * @returns The number of parent recipes using this recipe as a sub-recipe
+ */
+const getSubRecipeRelationCount = async (recipeId: string) => {
+  // Stub: will be implemented in ralph-code phase
+  return 0
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -412,4 +433,6 @@ export default {
   ingredientExists,
   resetIngredientRelationQuantities,
   getIngredientRelationCount,
+  resetSubRecipeRelationQuantities,
+  getSubRecipeRelationCount,
 }
