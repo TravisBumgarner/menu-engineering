@@ -135,6 +135,21 @@ const Table = ({
     }
   }
 
+  // When a recipe is selected (e.g. via "Used In"), jump to its page
+  React.useEffect(() => {
+    const activeId = activeRecipeIdSignal.value
+    if (!activeId) return
+
+    const sortedRecipes = [...filteredRecipes].sort(getComparator(order, orderBy))
+    const index = sortedRecipes.findIndex((r) => r.id === activeId)
+    if (index === -1) return
+
+    const targetPage = Math.floor(index / rowsPerPage)
+    if (targetPage !== page) {
+      setPage(targetPage)
+    }
+  }, [activeRecipeIdSignal.value, filteredRecipes, order, orderBy, rowsPerPage, page])
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRecipes.length) : 0
 
