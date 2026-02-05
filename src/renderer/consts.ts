@@ -11,6 +11,9 @@ export const ROUTES = {
     label: t('ingredients'),
     target: '_self',
   },
+  recipeDetail: {
+    href: (id: string) => `/recipe/${id}`,
+  },
 } as const
 
 export const QUERY_KEYS = {

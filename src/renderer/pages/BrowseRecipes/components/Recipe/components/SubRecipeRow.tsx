@@ -4,17 +4,17 @@ import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import type { RecipeDTO, RelationDTO } from '../../../../../../shared/recipe.types'
 import type { AllUnits } from '../../../../../../shared/units.types'
-import { QUERY_KEYS } from '../../../../../consts'
+import { QUERY_KEYS, ROUTES } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
 import { NumericInput } from '../../../../../sharedComponents/NumericInput'
 import Photo from '../../../../../sharedComponents/Photo'
-import { activeModalSignal, activeRecipeIdSignal } from '../../../../../signals'
-import { SPACING } from '../../../../../styles/consts'
+import { activeModalSignal } from '../../../../../signals'
 import { cellSx, ICON_SIZE } from '../../../../../styles/tableConsts'
 import { formatCurrency, formatDisplayDate } from '../../../../../utilities'
 
@@ -22,6 +22,7 @@ function SubRecipeRow(props: { row: RecipeDTO & { relation: RelationDTO }; recip
   const { row, recipeId, labelId } = props
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
+  const navigate = useNavigate()
 
   const updateSubRecipeRelationMutation = useMutation({
     mutationFn: (updateData: { quantity?: number; units?: AllUnits }) => {
@@ -84,8 +85,8 @@ function SubRecipeRow(props: { row: RecipeDTO & { relation: RelationDTO }; recip
     })
   }
 
-  const handleEditIngredients = () => {
-    activeRecipeIdSignal.value = row.id
+  const handleViewRecipe = () => {
+    navigate(ROUTES.recipeDetail.href(row.id))
   }
 
   const handleOpenRemoveModal = () => {
@@ -124,7 +125,7 @@ function SubRecipeRow(props: { row: RecipeDTO & { relation: RelationDTO }; recip
       </TableCell>
       <TableCell sx={cellSx} align="right">
         <Tooltip title={t('viewRecipe')}>
-          <IconButton size="small" onClick={handleEditIngredients}>
+          <IconButton size="small" onClick={handleViewRecipe}>
             <Icon size={ICON_SIZE} name="recipe" />
           </IconButton>
         </Tooltip>

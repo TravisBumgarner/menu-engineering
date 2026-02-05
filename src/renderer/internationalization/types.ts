@@ -206,3 +206,6 @@ export type TranslationKeys =
 
   // Warnings
   | 'recipeHasZeroQuantity'
+
+  // Recipe Detail Page
+  | 'backToRecipes'

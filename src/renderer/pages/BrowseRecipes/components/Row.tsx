@@ -1,27 +1,23 @@
-import { alpha, Stack, Tooltip } from '@mui/material'
-import Collapse from '@mui/material/Collapse'
+import { Stack, Tooltip } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
-import { computed } from '@preact/signals-react'
-import { useSignals } from '@preact/signals-react/runtime'
 import { useQueryClient } from '@tanstack/react-query'
 import log from 'electron-log/renderer'
-import * as React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CHANNEL } from '../../../../shared/messages.types'
 import type { RecipeDTO } from '../../../../shared/recipe.types'
-import { QUERY_KEYS } from '../../../consts'
+import { QUERY_KEYS, ROUTES } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import Photo from '../../../sharedComponents/Photo'
-import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
+import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { cellSx, ICON_SIZE } from '../../../styles/tableConsts'
 import { formatCurrency, formatDisplayDate, getUnitLabel } from '../../../utilities'
-import Recipe from './Recipe'
 
 function RecipeRow({
   row,
@@ -30,13 +26,9 @@ function RecipeRow({
   row: RecipeDTO & { usedInRecipesCount: number; hasZeroQuantity: boolean }
   labelId: string
 }) {
-  useSignals()
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
-
-  const isOpen = computed(() => activeRecipeIdSignal.value === row.id)
-
-  const opacity = computed(() => (activeRecipeIdSignal.value === '' ? 1 : isOpen.value ? 1 : 0.1))
+  const navigate = useNavigate()
 
   const handleDeleteRecipe = async () => {
     try {
@@ -45,13 +37,8 @@ function RecipeRow({
       })
 
       if (response.success) {
-        // Invalidate queries to refresh the data
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPES] })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.RECIPE] })
-        // Close expanded recipe if it was the one being deleted
-        if (activeRecipeIdSignal.value === row.id) {
-          activeRecipeIdSignal.value = ''
-        }
       }
     } catch (error) {
       log.error('Failed to delete recipe:', error)
@@ -82,100 +69,62 @@ function RecipeRow({
     }
   }
 
+  const handleNavigateToRecipe = () => {
+    navigate(ROUTES.recipeDetail.href(row.id))
+  }
+
   return (
-    <React.Fragment>
-      <TableRow
-        tabIndex={-1}
-        key={row.id}
-        sx={{
-          '& > *': {
-            opacity: opacity.value,
-          },
-          fontWeight: isOpen.value ? 'bold' : 'normal',
-          backgroundColor: (theme) => (isOpen.value ? alpha(theme.palette.primary.main, 0.2) : undefined),
-        }}
-      >
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={(event) => {
-              event.stopPropagation()
-              activeRecipeIdSignal.value = isOpen.value ? '' : row.id
-            }}
-          >
-            {isOpen.value ? (
-              <Icon size={ICON_SIZE} name="collapseVertical" />
-            ) : (
-              <Icon size={ICON_SIZE} name="expandVertical" />
-            )}
+    <TableRow tabIndex={-1} key={row.id} hover sx={{ cursor: 'pointer' }} onClick={handleNavigateToRecipe}>
+      <TableCell sx={cellSx} id={labelId} scope="row">
+        {formatDisplayDate(row.createdAt)}
+      </TableCell>
+      <TableCell sx={cellSx} id={labelId} scope="row">
+        <Stack direction="row" alignItems="center" spacing={SPACING.TINY.PX}>
+          <span>{row.title}</span>
+          {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
+          {row.hasZeroQuantity ? (
+            <Tooltip title={t('recipeHasZeroQuantity')}>
+              <span>
+                <Icon name="warning" />
+              </span>
+            </Tooltip>
+          ) : null}
+        </Stack>
+      </TableCell>
+      <TableCell sx={cellSx} align="left">
+        {t(row.status)}
+      </TableCell>
+      <TableCell sx={cellSx} align="left">
+        <Typography variant="body2">{row.showInMenu ? t('yes') : t('no')}</Typography>
+      </TableCell>
+      <TableCell align="right" id={labelId} scope="row" sx={cellSx}>
+        {formatCurrency(row.cost)}
+      </TableCell>
+      <TableCell sx={cellSx} align="right">
+        {row.produces} {getUnitLabel(row.units, 'plural')}
+      </TableCell>
+      <TableCell align="right" id={labelId} scope="row" sx={cellSx}>
+        {formatCurrency(row.cost / row.produces)}
+      </TableCell>
+      <TableCell sx={cellSx} align="right" onClick={(e) => e.stopPropagation()}>
+        <Tooltip title={t('editRecipe')}>
+          <IconButton size="small" onClick={openEditModal}>
+            <Icon size={ICON_SIZE} name="edit" />
           </IconButton>
-        </TableCell>
-        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} id={labelId} scope="row">
-          {formatDisplayDate(row.createdAt)}
-        </TableCell>
-        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} id={labelId} scope="row">
-          <Stack direction="row" alignItems="center" spacing={SPACING.TINY.PX}>
-            <span>{row.title}</span>
-            {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
-            {row.hasZeroQuantity ? (
-              <Tooltip title={t('recipeHasZeroQuantity')}>
-                <span>
-                  <Icon name="warning" />
-                </span>
-              </Tooltip>
-            ) : null}
-          </Stack>
-        </TableCell>
-        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="left">
-          {t(row.status)}
-        </TableCell>
-        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="left">
-          <Typography variant="body2">{row.showInMenu ? t('yes') : t('no')}</Typography>
-        </TableCell>
-        <TableCell align="right" id={labelId} scope="row" sx={{ ...cellSx, ...cellSxActive(isOpen.value) }}>
-          {formatCurrency(row.cost)}
-        </TableCell>
-        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="right">
-          {row.produces} {getUnitLabel(row.units, 'plural')}
-        </TableCell>
-        <TableCell align="right" id={labelId} scope="row" sx={{ ...cellSx, ...cellSxActive(isOpen.value) }}>
-          {formatCurrency(row.cost / row.produces)}
-        </TableCell>
-        {/* <TableCell sx={{...cellSx, ...cellSxActive(isOpen.value)}} align="left">
-          {row.usedInRecipesCount}
-        </TableCell> */}
-        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="right">
-          <Tooltip title={t('editRecipe')}>
-            <IconButton size="small" onClick={openEditModal}>
-              <Icon size={ICON_SIZE} name="edit" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={`${t('export')} PDF`}>
-            <IconButton size="small" onClick={openExportModal}>
-              <Icon size={ICON_SIZE} name="download" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t('deleteRecipe')}>
-            <IconButton size="small" onClick={openConfirmationModal}>
-              <Icon size={ICON_SIZE} name="delete" />
-            </IconButton>
-          </Tooltip>
-        </TableCell>
-      </TableRow>
-      <TableRow sx={{ backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.1) }}>
-        <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} style={{ padding: 0, border: 0 }} colSpan={9}>
-          <Collapse in={isOpen.value} timeout="auto" unmountOnExit>
-            <Recipe id={row.id} />
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
+        </Tooltip>
+        <Tooltip title={`${t('export')} PDF`}>
+          <IconButton size="small" onClick={openExportModal}>
+            <Icon size={ICON_SIZE} name="download" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={t('deleteRecipe')}>
+          <IconButton size="small" onClick={openConfirmationModal}>
+            <Icon size={ICON_SIZE} name="delete" />
+          </IconButton>
+        </Tooltip>
+      </TableCell>
+    </TableRow>
   )
 }
-
-const cellSxActive = (isActive: boolean) => ({
-  fontWeight: isActive ? 'bold' : 'normal',
-})
 
 export default RecipeRow

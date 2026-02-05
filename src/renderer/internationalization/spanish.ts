@@ -215,6 +215,9 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
 
   // Warnings
   recipeHasZeroQuantity: 'La receta contiene ingredientes o sub-recetas con cantidad 0',
+
+  // Recipe Detail Page
+  backToRecipes: 'Volver a Recetas',
 }
 
 export default SpanishTranslations

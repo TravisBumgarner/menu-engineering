@@ -210,6 +210,9 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
 
   // Warnings
   recipeHasZeroQuantity: 'Recipe contains ingredients or sub-recipes with quantity 0',
+
+  // Recipe Detail Page
+  backToRecipes: 'Back to Recipes',
 }
 
 export default EnglishTranslations

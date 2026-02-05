@@ -1,15 +1,16 @@
 import { Box, Button, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { CHANNEL } from '../../../../../shared/messages.types'
-import { QUERY_KEYS } from '../../../../consts'
+import { QUERY_KEYS, ROUTES } from '../../../../consts'
 import { useAppTranslation } from '../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../ipcMessenger'
-import { activeRecipeIdSignal } from '../../../../signals'
 import { FONT_SIZES, SPACING } from '../../../../styles/consts'
 import Table from './components/Table'
 
 const Recipe = ({ id }: { id: string }) => {
   const { t } = useAppTranslation()
+  const navigate = useNavigate()
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.RECIPE, id],
@@ -47,16 +48,11 @@ const Recipe = ({ id }: { id: string }) => {
     >
       <Typography sx={{ fontSize: FONT_SIZES.SMALL.PX, marginBottom: SPACING.SMALL.PX }}>
         {t('usedIn')}: {data.usedInRecipes.length === 0 && ` 0 ${t('recipes')}`}
-        {data.usedInRecipes.map((recipe) => {
-          const setActiveRecipe = () => {
-            activeRecipeIdSignal.value = recipe.id
-          }
-          return (
-            <Button size="small" key={recipe.id} onClick={setActiveRecipe}>
-              {recipe.title}
-            </Button>
-          )
-        })}
+        {data.usedInRecipes.map((recipe) => (
+          <Button size="small" key={recipe.id} onClick={() => navigate(ROUTES.recipeDetail.href(recipe.id))}>
+            {recipe.title}
+          </Button>
+        ))}
       </Typography>
       <Table ingredients={data.ingredients} recipe={data.recipe} subRecipes={data.subRecipes} />
     </Box>

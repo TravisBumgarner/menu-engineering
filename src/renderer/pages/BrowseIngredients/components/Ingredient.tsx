@@ -49,7 +49,7 @@ const Ingredient = ({ id }: { id: string }) => {
         {': '}
         {data.usedInRecipes.length === 0 && ` 0 ${t('recipes')}`}
         {data.usedInRecipes.map((recipe) => (
-          <Link key={recipe.id} to={`/?activeRecipeId=${recipe.id}`}>
+          <Link key={recipe.id} to={`/recipe/${recipe.id}`}>
             {recipe.title}
           </Link>
         ))}

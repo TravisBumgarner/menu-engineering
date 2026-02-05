@@ -14,7 +14,6 @@ import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
 import { NumericInput } from '../../../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../../../signals'
-import { SPACING } from '../../../../../styles/consts'
 import { cellSx, ICON_SIZE } from '../../../../../styles/tableConsts'
 import { formatCurrency, formatDisplayDate } from '../../../../../utilities'
 

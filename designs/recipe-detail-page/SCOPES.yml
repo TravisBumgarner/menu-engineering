@@ -1,0 +1,82 @@
+project: Recipe Detail Page
+repo: TravisBumgarner/menu-engineering
+design_file: null  # Scoped from user requirements
+scoping_date: 2026-02-05
+
+milestones:
+  - number: 1
+    title: "1. Recipe Detail Page"
+    description: |
+      Add a dedicated /recipe/:id page and replace the inline expand/collapse
+      pattern in BrowseRecipes with navigation to it. Remove opacity dimming
+      and activeRecipeIdSignal.
+    branch:
+      working: 61-recipe-detail-page
+      base: main
+
+tasks:
+  - id: 1
+    github_issue: 61
+    milestone: 1
+    title: Add route and create RecipeDetail page
+    description: |
+      Create a new page at `/recipe/:id` with:
+      - Route registered in consts.ts and Router.tsx
+      - Recipe header: title, photo, status, show in menu, produces, total cost, unit cost
+      - Ingredients/sub-recipes table (reuse existing Recipe/components/Table.tsx)
+      - "Used In" section with links to `/recipe/:parentId`
+      - Action buttons: Edit, Export PDF, Delete, Back to list
+      - Loading, error, and not-found states
+      - All text uses translation keys (en + es)
+    acceptance_criteria:
+      - /recipe/:id route is registered in consts.ts and Router.tsx
+      - Page renders recipe header with title, photo, status, cost info, and produces
+      - Page renders ingredients/sub-recipes table reusing existing table component
+      - "Used In" section shows links to other recipe detail pages
+      - Action buttons work (Edit, Export PDF, Delete, Back to list)
+      - Handles loading, error, and not-found states
+      - All visible text uses translation keys
+    depends_on: []
+    effort: 3
+    status: scoped
+
+  - id: 2
+    github_issue: 62
+    milestone: 1
+    title: Replace inline recipe expand with page navigation
+    description: |
+      Update BrowseRecipes so clicking a recipe navigates to `/recipe/:id`
+      instead of expanding inline.
+
+      In Row.tsx: remove expand/collapse IconButton, Collapse component,
+      second TableRow, isOpen/opacity computed signals, Recipe import.
+      Make row clickable or add view button to navigate.
+
+      In Table.tsx: remove all opacity conditionals tied to activeRecipeIdSignal,
+      remove the page-jump useEffect, remove activeRecipeIdSignal import.
+    acceptance_criteria:
+      - Clicking a recipe row navigates to /recipe/:id
+      - No inline expand/collapse behavior remains
+      - No opacity dimming on any table elements
+      - Action buttons (edit, export, delete) still work from the row
+    depends_on: [1]
+    effort: 2
+    status: scoped
+
+  - id: 3
+    github_issue: 63
+    milestone: 1
+    title: Update "Used In" links and remove activeRecipeIdSignal
+    description: |
+      Update Ingredient.tsx "Used In" links from `/?activeRecipeId=` to
+      `/recipe/:id`. Remove activeRecipeId query param handling from
+      BrowseRecipes.tsx. Remove activeRecipeIdSignal from signals.ts.
+      Verify no remaining references in the codebase.
+    acceptance_criteria:
+      - Ingredient "Used In" links navigate to /recipe/:id
+      - activeRecipeIdSignal is removed from signals.ts
+      - No remaining imports or references to activeRecipeIdSignal
+      - activeRecipeId query param handling removed from BrowseRecipes
+    depends_on: [2]
+    effort: 1
+    status: scoped

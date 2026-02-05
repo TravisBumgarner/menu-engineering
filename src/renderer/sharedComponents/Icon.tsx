@@ -7,6 +7,7 @@ import { LuApple, LuPartyPopper } from 'react-icons/lu'
 
 import {
   MdAdd,
+  MdArrowBack,
   MdClose,
   MdDeleteOutline,
   MdDownload,
@@ -39,6 +40,7 @@ export const iconMap = {
   download: MdDownload,
   history: MdHistory,
   search: MdSearch,
+  arrowBack: MdArrowBack,
 }
 
 const Icon = ({
