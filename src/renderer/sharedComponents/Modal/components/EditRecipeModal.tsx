@@ -162,6 +162,17 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
     if (unitChanged) {
       // Show confirmation modal
       const isCompatible = areUnitsCompatible(originalUnit, formData.units)
+      const affectedItems =
+        recipeData?.usedInRecipes?.map((parentRecipe) => ({
+          id: parentRecipe.id,
+          title: parentRecipe.title,
+        })) ?? []
+
+      // If recipe isn't used anywhere, no need to show any confirmation
+      if (affectedItems.length === 0) {
+        performUpdate()
+        return
+      }
 
       // Build affected items with quantity info
       const affectedItems =
