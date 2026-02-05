@@ -165,14 +165,11 @@ const AddRecipeForm = ({ parentRecipe }: { parentRecipe: RecipeDTO }) => {
             value={formData.produces}
             onValidChange={(value) => setFormData({ ...formData, produces: value })}
             required
-            fullWidth
+            sx={{ flexGrow: 1 }}
             min={0}
           />
           <UnitSelect value={formData.units} onChange={(units) => setFormData({ ...formData, units })} />
         </Stack>
-        <Typography sx={{ marginTop: '0 !important' }} variant="caption" color="textSecondary">
-          {t('unitsHelpText')}
-        </Typography>
         <FormControl size="small" fullWidth required>
           <InputLabel>{t('status')}</InputLabel>
           <Select value={formData.status} onChange={handleInputChange('status')} label={t('status')}>

@@ -4,7 +4,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  Input,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -14,21 +14,50 @@ import {
 } from '@mui/material'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type React from 'react'
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { type NewRecipeDTO, RECIPE_STATUS, type RecipeDTO } from '../../../../shared/recipe.types'
 import { areUnitsCompatible, convertUnits } from '../../../../shared/unitConversion'
 import { QUERY_KEYS } from '../../../consts'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
+import Icon from '../../../sharedComponents/Icon'
 import { NumericInput } from '../../../sharedComponents/NumericInput'
+import { uint8ArrayToObjectUrl } from '../../../sharedComponents/Photo'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import type { NewPhotoUpload } from '../../../types'
-import Photo from '../../Photo'
 import UnitSelect from '../../UnitPicker'
 import { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
+
+const PhotoThumbnail = ({ src }: { src: string }) => {
+  const { data, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.PHOTO, src],
+    queryFn: async () => {
+      const response = await ipcMessenger.invoke(CHANNEL.FILES.GET_PHOTO, { fileName: src })
+      return response.data ? uint8ArrayToObjectUrl(response.data) : null
+    },
+  })
+
+  if (isLoading) {
+    return (
+      <Typography variant="caption" color="textSecondary">
+        Loading...
+      </Typography>
+    )
+  }
+
+  if (!data) {
+    return (
+      <Typography variant="caption" color="textSecondary">
+        No photo
+      </Typography>
+    )
+  }
+
+  return <img src={data} alt="Recipe" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+}
 
 export interface EditRecipeModalProps {
   id: typeof MODAL_ID.EDIT_RECIPE_MODAL
@@ -38,6 +67,7 @@ export interface EditRecipeModalProps {
 const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const originalUnit = recipe.units
 
   const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>({
@@ -48,6 +78,7 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
     showInMenu: recipe.showInMenu,
     photo: undefined,
   })
+  const [removeExistingPhoto, setRemoveExistingPhoto] = useState(false)
 
   // Fetch recipe data to get usedInRecipes (parent recipes) for the confirmation modal
   const { data: recipeData } = useQuery({
@@ -56,15 +87,20 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
   })
 
   const updateRecipeMutation = useMutation({
-    mutationFn: async (recipeData: Partial<NewRecipeDTO & NewPhotoUpload>) => {
-      const payload = {
-        ...recipeData,
-        photo: recipeData.photo
+    mutationFn: async (data: { formData: Partial<NewRecipeDTO & NewPhotoUpload>; removePhoto: boolean }) => {
+      const payload: Record<string, unknown> = {
+        ...data.formData,
+        photo: data.formData.photo
           ? {
-              extension: recipeData.photo.extension,
-              bytes: new Uint8Array(await recipeData.photo.data.arrayBuffer()),
+              extension: data.formData.photo.extension,
+              bytes: new Uint8Array(await data.formData.photo.data.arrayBuffer()),
             }
           : undefined,
+      }
+
+      // If removing photo, explicitly set photoSrc to null
+      if (data.removePhoto && !data.formData.photo) {
+        payload.photoSrc = null
       }
 
       return await ipcMessenger.invoke(CHANNEL.DB.UPDATE_RECIPE, {
@@ -88,8 +124,8 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
   })
 
   const performUpdate = useCallback(() => {
-    updateRecipeMutation.mutate(formData)
-  }, [formData, updateRecipeMutation])
+    updateRecipeMutation.mutate({ formData, removePhoto: removeExistingPhoto })
+  }, [formData, removeExistingPhoto, updateRecipeMutation])
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : undefined
@@ -100,8 +136,22 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
 
     setFormData((prev) => ({
       ...prev,
-      photo: { data: file, extension: file ? file.name.split('.').pop() || '' : '' },
+      photo: { data: file, extension: file.name.split('.').pop() || '' },
     }))
+    setRemoveExistingPhoto(false)
+  }
+
+  const handleRemovePhoto = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setFormData((prev) => ({ ...prev, photo: undefined }))
+    setRemoveExistingPhoto(true)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  const handlePhotoAreaClick = () => {
+    fileInputRef.current?.click()
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -206,52 +256,138 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
     <DefaultModal title={`${t('editRecipe')}: ${recipe.title}`}>
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={SPACING.MEDIUM.PX}>
-          <TextField
-            size="small"
-            label={t('title')}
-            value={formData.title}
-            onChange={handleInputChange('title')}
-            required
-            fullWidth
-          />
           <Stack direction="row" spacing={SPACING.MEDIUM.PX}>
-            <NumericInput
-              size="small"
-              label={t('produces')}
-              value={formData.produces}
-              onValidChange={(value) => setFormData({ ...formData, produces: value })}
-              required
-              fullWidth
-              min={0}
-            />
-            <UnitSelect
-              value={formData.units}
-              required
-              onChange={(value) => setFormData((prev) => ({ ...prev, units: value }))}
-            />
+            {/* Left column: Photo and On Menu */}
+            <Stack spacing={SPACING.MEDIUM.PX} sx={{ width: 200 }}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                style={{ display: 'none' }}
+              />
+              <Box
+                onClick={handlePhotoAreaClick}
+                sx={{
+                  width: 200,
+                  height: 200,
+                  border: '1px dashed',
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  '&:hover': {
+                    borderColor: 'primary.main',
+                    '& .remove-photo-btn': {
+                      opacity: 1,
+                    },
+                  },
+                }}
+              >
+                {formData.photo ? (
+                  <>
+                    <img
+                      src={URL.createObjectURL(formData.photo.data)}
+                      alt="Recipe"
+                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                    />
+                    <IconButton
+                      className="remove-photo-btn"
+                      onClick={handleRemovePhoto}
+                      size="small"
+                      sx={{
+                        position: 'absolute',
+                        top: 4,
+                        right: 4,
+                        opacity: 0,
+                        transition: 'opacity 0.2s',
+                        backgroundColor: 'background.paper',
+                        '&:hover': {
+                          backgroundColor: 'error.light',
+                          color: 'error.contrastText',
+                        },
+                      }}
+                    >
+                      <Icon name="close" size={16} />
+                    </IconButton>
+                  </>
+                ) : recipe.photoSrc && !removeExistingPhoto ? (
+                  <>
+                    <PhotoThumbnail src={recipe.photoSrc} />
+                    <IconButton
+                      className="remove-photo-btn"
+                      onClick={handleRemovePhoto}
+                      size="small"
+                      sx={{
+                        position: 'absolute',
+                        top: 4,
+                        right: 4,
+                        opacity: 0,
+                        transition: 'opacity 0.2s',
+                        backgroundColor: 'background.paper',
+                        '&:hover': {
+                          backgroundColor: 'error.light',
+                          color: 'error.contrastText',
+                        },
+                      }}
+                    >
+                      <Icon name="close" size={16} />
+                    </IconButton>
+                  </>
+                ) : (
+                  <Typography variant="caption" color="textSecondary">
+                    Click to add photo
+                  </Typography>
+                )}
+              </Box>
+            </Stack>
+
+            {/* Right column: Other fields */}
+            <Stack spacing={SPACING.MEDIUM.PX} sx={{ flex: 1, minWidth: 0 }}>
+              <TextField
+                size="small"
+                label={t('title')}
+                value={formData.title}
+                onChange={handleInputChange('title')}
+                required
+                fullWidth
+              />
+              <Stack direction="row" spacing={SPACING.SMALL.PX}>
+                <NumericInput
+                  size="small"
+                  label={t('produces')}
+                  value={formData.produces}
+                  onValidChange={(value) => setFormData({ ...formData, produces: value })}
+                  required
+                  sx={{ flexGrow: 1 }}
+                  min={0}
+                />
+                <UnitSelect
+                  value={formData.units}
+                  required
+                  onChange={(value) => setFormData((prev) => ({ ...prev, units: value }))}
+                />
+              </Stack>
+              <FormControl size="small" fullWidth required>
+                <InputLabel>{t('status')}</InputLabel>
+                <Select value={formData.status} onChange={handleInputChange('status')} label={t('status')}>
+                  <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
+                  <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
+                  <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControlLabel
+                control={<Checkbox checked={formData.showInMenu} onChange={handleCheckboxChange('showInMenu')} />}
+                label={t('showInMenu')}
+              />
+            </Stack>
           </Stack>
 
-          <FormControl size="small" fullWidth required>
-            <InputLabel>{t('status')}</InputLabel>
-            <Select value={formData.status} onChange={handleInputChange('status')} label={t('status')}>
-              <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
-              <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
-              <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
-            </Select>
-          </FormControl>
-
-          <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="center">
-            <FormControlLabel
-              sx={{ flexGrow: 1 }}
-              control={<Checkbox checked={formData.showInMenu} onChange={handleCheckboxChange('showInMenu')} />}
-              label={t('showInMenu')}
-            />
-            <Input onChange={handlePhotoChange} type="file" sx={{ flexGrow: 1 }} />
-            {/* If photo exists from backend, load that. If the user has selected a new photo load that instead. */}
-            {recipe.photoSrc && !formData.photo && <Photo type="backend" src={recipe.photoSrc} />}
-            {formData.photo && <Photo type="local" data={formData.photo.data} />}
-          </Stack>
-
+          {/* Bottom: Buttons */}
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button variant="outlined" type="button" onClick={closeModal}>
               {t('cancel')}

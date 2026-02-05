@@ -23,7 +23,13 @@ import { cellSx, ICON_SIZE } from '../../../styles/tableConsts'
 import { formatCurrency, formatDisplayDate, getUnitLabel } from '../../../utilities'
 import Recipe from './Recipe'
 
-function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: number }; labelId: string }) {
+function RecipeRow({
+  row,
+  labelId,
+}: {
+  row: RecipeDTO & { usedInRecipesCount: number; hasZeroQuantity: boolean }
+  labelId: string
+}) {
   useSignals()
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
@@ -109,9 +115,16 @@ function RecipeRow({ row, labelId }: { row: RecipeDTO & { usedInRecipesCount: nu
           {formatDisplayDate(row.createdAt)}
         </TableCell>
         <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} id={labelId} scope="row">
-      <Stack direction="row" alignItems="center" spacing={SPACING.TINY.PX}>
+          <Stack direction="row" alignItems="center" spacing={SPACING.TINY.PX}>
             <span>{row.title}</span>
             {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
+            {row.hasZeroQuantity ? (
+              <Tooltip title={t('recipeHasZeroQuantity')}>
+                <span>
+                  <Icon name="warning" />
+                </span>
+              </Tooltip>
+            ) : null}
           </Stack>
         </TableCell>
         <TableCell sx={{ ...cellSx, ...cellSxActive(isOpen.value) }} align="left">

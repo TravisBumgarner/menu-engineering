@@ -25,6 +25,26 @@ const addRecipe = async (recipeData: NewRecipeDTO & { photoSrc?: RecipeDTO['phot
   return newId
 }
 
+const hasRecipeZeroQuantity = async (recipeId: string): Promise<boolean> => {
+  const ingredients = await db
+    .select({ quantity: recipeIngredientSchema.quantity })
+    .from(recipeIngredientSchema)
+    .where(eq(recipeIngredientSchema.parentId, recipeId))
+    .all()
+
+  if (ingredients.some((i) => i.quantity === 0)) {
+    return true
+  }
+
+  const subRecipes = await db
+    .select({ quantity: recipeSubRecipeSchema.quantity })
+    .from(recipeSubRecipeSchema)
+    .where(eq(recipeSubRecipeSchema.parentId, recipeId))
+    .all()
+
+  return subRecipes.some((s) => s.quantity === 0)
+}
+
 const getRecipes = async () => {
   const rows = await db
     .select({
@@ -39,11 +59,13 @@ const getRecipes = async () => {
   return Promise.all(
     rows.map(async (row) => {
       const costResult = await getRecipeCost(row.recipe.id)
+      const hasZeroQuantity = await hasRecipeZeroQuantity(row.recipe.id)
 
       return {
         ...row.recipe,
         usedInRecipesCount: row.usedInRecipesCount,
         cost: costResult.success ? costResult.cost : null,
+        hasZeroQuantity,
       }
     }),
   )

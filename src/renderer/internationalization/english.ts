@@ -63,7 +63,6 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   subRecipes: 'Sub Recipes',
   mainRecipes: 'Recipes',
   noDetails: 'No Details',
-  unitsHelpText: 'Note - Units can only be set on creation',
   usedIn: 'Used In',
 
   // Form Labels and Placeholders
@@ -208,6 +207,9 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   unitChangeAffectedItems: 'Affected recipes ({{count}}):',
   unitChangeAndMore: '...and {{count}} more',
   unitChangeConfirmButton: 'Change Units',
+
+  // Warnings
+  recipeHasZeroQuantity: 'Recipe contains ingredients or sub-recipes with quantity 0',
 }
 
 export default EnglishTranslations

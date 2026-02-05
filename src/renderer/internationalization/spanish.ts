@@ -71,7 +71,6 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   subRecipes: 'Sub Recetas',
   mainRecipes: 'Recetas',
   noDetails: 'Sin detalles',
-  unitsHelpText: 'Nota - Las unidades solo se pueden establecer al crear',
   usedIn: 'Usado en',
   addToRecipe: 'Agregar componente',
   recipeUses: 'Receta utiliza',
@@ -213,6 +212,9 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   unitChangeAffectedItems: 'Recetas afectadas ({{count}}):',
   unitChangeAndMore: '...y {{count}} más',
   unitChangeConfirmButton: 'Cambiar Unidades',
+
+  // Warnings
+  recipeHasZeroQuantity: 'La receta contiene ingredientes o sub-recetas con cantidad 0',
 }
 
 export default SpanishTranslations
