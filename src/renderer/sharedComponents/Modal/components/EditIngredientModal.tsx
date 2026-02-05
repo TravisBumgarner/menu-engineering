@@ -95,6 +95,31 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
       const isCompatible = areUnitsCompatible(originalUnit, formData.units)
       const currentUnitCost = formData.cost / formData.quantity
 
+      // Build affected items with quantity info
+      const affectedItems =
+        ingredientData?.usedInRecipes?.map((recipe) => {
+          const convertedQuantity = isCompatible
+            ? convertUnits({
+                from: originalUnit,
+                to: formData.units,
+                value: recipe.relationQuantity,
+              })
+            : null
+
+          return {
+            id: recipe.id,
+            title: recipe.title,
+            quantity: recipe.relationQuantity,
+            convertedQuantity: convertedQuantity ?? undefined,
+          }
+        }) ?? []
+
+      // If ingredient isn't used anywhere, no need to show modal
+      if (affectedItems.length === 0) {
+        performUpdate()
+        return
+      }
+
       if (isCompatible) {
         // For compatible changes, show conversion preview
         const convertedUnitCost = convertUnits({
@@ -112,6 +137,7 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
           isCompatible: true,
           originalUnitCost: currentUnitCost,
           convertedUnitCost: convertedUnitCost ?? currentUnitCost,
+          affectedItems,
           onConfirm: performUpdate,
           onCancel: () => {
             // Revert unit selection and reopen this modal
@@ -125,18 +151,6 @@ const EditIngredientModal = ({ ingredient, recipeId, recipeTitle }: EditIngredie
         }
       } else {
         // For incompatible changes, show warning with affected recipes
-        const affectedItems =
-          ingredientData?.usedInRecipes?.map((recipe) => ({
-            id: recipe.id,
-            title: recipe.title,
-          })) ?? []
-
-        // If ingredient isn't used anywhere, no need to show warning
-        if (affectedItems.length === 0) {
-          performUpdate()
-          return
-        }
-
         activeModalSignal.value = {
           id: MODAL_ID.UNIT_CHANGE_CONFIRMATION_MODAL,
           itemType: 'ingredient',

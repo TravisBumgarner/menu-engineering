@@ -33,7 +33,10 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 function getComparator<Key extends keyof RecipeDTO | 'usedInRecipesCount'>(
   order: 'asc' | 'desc',
   orderBy: Key,
-): (a: RecipeDTO & { usedInRecipesCount: number }, b: RecipeDTO & { usedInRecipesCount: number }) => number {
+): (
+  a: RecipeDTO & { usedInRecipesCount: number; hasZeroQuantity: boolean },
+  b: RecipeDTO & { usedInRecipesCount: number; hasZeroQuantity: boolean },
+) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
@@ -44,6 +47,7 @@ const Table = ({
 }: {
   recipes: (RecipeDTO & {
     usedInRecipesCount: number
+    hasZeroQuantity: boolean
   })[]
 }) => {
   useSignals()

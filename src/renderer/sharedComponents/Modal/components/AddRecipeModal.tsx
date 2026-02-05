@@ -4,7 +4,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  Input,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -15,7 +15,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import log from 'electron-log/renderer'
 import type React from 'react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { CHANNEL } from '../../../../shared/messages.types'
 import { type NewRecipeDTO, RECIPE_STATUS } from '../../../../shared/recipe.types'
 import type { UnitPreferences } from '../../../../shared/units.types'
@@ -27,7 +27,7 @@ import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import type { NewPhotoUpload } from '../../../types'
 import { getFirstEnabledUnit, getFromLocalStorage, LOCAL_STORAGE_KEYS } from '../../../utilities'
-import Photo from '../../Photo'
+import Icon from '../../Icon'
 import UnitSelect from '../../UnitPicker'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
@@ -48,6 +48,7 @@ const getDefaultUnit = () => {
 const AddRecipeModal = (_props: AddRecipeModalProps) => {
   const { t } = useAppTranslation()
   const queryClient = useQueryClient()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>(() => ({
     title: '',
@@ -116,10 +117,24 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : undefined
-    setFormData((prev) => ({
-      ...prev,
-      photo: { data: file!, extension: file ? file.name.split('.').pop() || '' : '' },
-    }))
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        photo: { data: file, extension: file.name.split('.').pop() || '' },
+      }))
+    }
+  }
+
+  const handleRemovePhoto = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setFormData((prev) => ({ ...prev, photo: undefined }))
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  const handlePhotoAreaClick = () => {
+    fileInputRef.current?.click()
   }
 
   const preventSubmit =
@@ -129,51 +144,115 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
     <DefaultModal title={t('addNewRecipe')}>
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={SPACING.MEDIUM.PX}>
-          <TextField
-            size="small"
-            label={t('title')}
-            value={formData.title}
-            onChange={handleInputChange('title')}
-            required
-            fullWidth
-          />
-          <Stack direction="row" spacing={SPACING.SMALL.PX}>
-            <NumericInput
-              size="small"
-              label={t('produces')}
-              value={formData.produces}
-              onValidChange={(value) => setFormData({ ...formData, produces: value })}
-              required
-              fullWidth
-              min={0}
-            />
-            <UnitSelect
-              value={formData.units}
-              required
-              onChange={(value) => setFormData((prev) => ({ ...prev, units: value }))}
-            />
-          </Stack>
-          <Typography sx={{ marginTop: '0 !important' }} variant="caption" color="textSecondary">
-            {t('unitsHelpText')}
-          </Typography>
-          <FormControl size="small" fullWidth required>
-            <InputLabel>{t('status')}</InputLabel>
-            <Select value={formData.status} onChange={handleInputChange('status')} label={t('status')}>
-              <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
-              <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
-              <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
-            </Select>
-          </FormControl>
+          <Stack direction="row" spacing={SPACING.MEDIUM.PX}>
+            {/* Left column: Photo and On Menu */}
+            <Stack spacing={SPACING.MEDIUM.PX} sx={{ width: 200 }}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                style={{ display: 'none' }}
+              />
+              <Box
+                onClick={handlePhotoAreaClick}
+                sx={{
+                  width: 200,
+                  height: 200,
+                  border: '1px dashed',
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  '&:hover': {
+                    borderColor: 'primary.main',
+                    '& .remove-photo-btn': {
+                      opacity: 1,
+                    },
+                  },
+                }}
+              >
+                {formData.photo ? (
+                  <>
+                    <img
+                      src={URL.createObjectURL(formData.photo.data)}
+                      alt="Recipe"
+                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                    />
+                    <IconButton
+                      className="remove-photo-btn"
+                      onClick={handleRemovePhoto}
+                      size="small"
+                      sx={{
+                        position: 'absolute',
+                        top: 4,
+                        right: 4,
+                        opacity: 0,
+                        transition: 'opacity 0.2s',
+                        backgroundColor: 'background.paper',
+                        '&:hover': {
+                          backgroundColor: 'error.light',
+                          color: 'error.contrastText',
+                        },
+                      }}
+                    >
+                      <Icon name="close" size={16} />
+                    </IconButton>
+                  </>
+                ) : (
+                  <Typography variant="caption" color="textSecondary">
+                    Click to add photo
+                  </Typography>
+                )}
+              </Box>
+            </Stack>
 
-          <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="center">
-            <FormControlLabel
-              sx={{ flexGrow: 1 }}
-              control={<Checkbox checked={formData.showInMenu} onChange={handleCheckboxChange('showInMenu')} />}
-              label={t('showInMenu')}
-            />
-            <Input onChange={handlePhotoChange} type="file" sx={{ flexGrow: 1 }} />
-            {formData.photo && <Photo type="local" data={formData.photo.data} />}
+            {/* Right column: Other fields */}
+            <Stack spacing={SPACING.MEDIUM.PX} sx={{ flex: 1, minWidth: 0 }}>
+              <TextField
+                size="small"
+                label={t('title')}
+                value={formData.title}
+                onChange={handleInputChange('title')}
+                required
+                fullWidth
+              />
+              <Stack direction="row" spacing={SPACING.SMALL.PX}>
+                <NumericInput
+                  size="small"
+                  label={t('produces')}
+                  value={formData.produces}
+                  onValidChange={(value) => setFormData({ ...formData, produces: value })}
+                  required
+                  sx={{ flexGrow: 1 }}
+                  min={0}
+                />
+                <UnitSelect
+                  value={formData.units}
+                  required
+                  onChange={(value) => setFormData((prev) => ({ ...prev, units: value }))}
+                />
+              </Stack>
+              <FormControl size="small" fullWidth required>
+                <InputLabel>{t('status')}</InputLabel>
+                <Select value={formData.status} onChange={handleInputChange('status')} label={t('status')}>
+                  <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
+                  <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
+                  <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControlLabel
+                control={<Checkbox checked={formData.showInMenu} onChange={handleCheckboxChange('showInMenu')} />}
+                label={t('showInMenu')}
+              />
+            </Stack>
           </Stack>
+
+          {/* Bottom: Buttons */}
           <Stack direction="row" spacing={2} justifyContent="flex-end">
             <Button onClick={handleClose} variant="outlined" type="button">
               {t('close')}

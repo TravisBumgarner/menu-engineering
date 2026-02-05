@@ -201,11 +201,19 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_INGREDIENT, async (_event, params) => {
           }
         }
 
+        // Convert all relation quantities in recipes using this ingredient
+        const affectedRecipeCount = await queries.convertIngredientRelationQuantities(
+          params.id,
+          oldUnits,
+          newUnits,
+          convertUnits,
+        )
+
         const result = await queries.updateIngredient(params.id, params.payload)
         return {
           success: !!result,
           wasConverted: true,
-          affectedRecipeCount: 0,
+          affectedRecipeCount,
         }
       } else {
         // Incompatible units - reset all relation quantities
@@ -230,7 +238,7 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_INGREDIENT, async (_event, params) => {
 })
 
 typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE, async (_event, params) => {
-  const { areUnitsCompatible } = await import('../../shared/unitConversion.js')
+  const { areUnitsCompatible, convertUnits } = await import('../../shared/unitConversion.js')
 
   const recipe = await queries.getRecipe(params.id)
   if (!recipe) {
@@ -257,11 +265,18 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE, async (_event, params) => {
       const compatible = areUnitsCompatible(oldUnits, newUnits)
 
       if (compatible) {
-        // Compatible units - just update, do NOT modify produces value
+        // Compatible units - convert sub-recipe relation quantities, do NOT modify produces value
+        const affectedRecipeCount = await queries.convertSubRecipeRelationQuantities(
+          params.id,
+          oldUnits,
+          newUnits,
+          convertUnits,
+        )
+
         const result = await queries.updateRecipe(params.id, { ...params.payload, photoSrc: fileName })
         return {
           success: !!result,
-          affectedRecipeCount: 0,
+          affectedRecipeCount,
         }
       } else {
         // Incompatible units - reset all sub-recipe relation quantities where this recipe is a child

@@ -37,7 +37,13 @@ const UnitSelect = ({ value, onChange, required = false, fullWidth = false, disa
 
   return (
     <FormControl size="small" fullWidth={fullWidth} required={required}>
-      <Button disabled={disabled} variant="outlined" size="medium" onClick={(e) => setAnchorEl(e.currentTarget)}>
+      <Button
+        disabled={disabled}
+        variant="outlined"
+        size="small"
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        sx={{ height: '40px' }}
+      >
         {t(`${value}_abbreviated`)}
       </Button>
 

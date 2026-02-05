@@ -68,7 +68,6 @@ export type TranslationKeys =
   | 'saveAndAddAnother'
   | 'addSubRecipe'
   | 'showInMenu'
-  | 'unitsHelpText'
   | 'filterToMenuItems'
   | 'addToRecipe'
   | 'recipeUses'
@@ -204,3 +203,6 @@ export type TranslationKeys =
   | 'unitChangeAffectedItems'
   | 'unitChangeAndMore'
   | 'unitChangeConfirmButton'
+
+  // Warnings
+  | 'recipeHasZeroQuantity'
