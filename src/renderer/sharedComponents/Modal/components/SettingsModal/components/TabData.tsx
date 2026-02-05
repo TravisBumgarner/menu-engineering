@@ -168,10 +168,7 @@ const TabData = () => {
       })
 
       if (result.success) {
-        setMessage({
-          type: 'success',
-          text: t('dataRestoredSuccessfully'),
-        })
+        window.location.reload()
       } else {
         setMessage({
           type: 'error',
