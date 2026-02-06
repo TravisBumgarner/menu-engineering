@@ -6,14 +6,13 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
-import { useSignals } from '@preact/signals-react/runtime'
 import * as React from 'react'
 import { RECIPE_STATUS, type RecipeDTO } from '../../../../shared/recipe.types'
 import { PAGINATION } from '../../../consts'
 import { useLocalStorage } from '../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
-import { activeModalSignal, activeRecipeIdSignal } from '../../../signals'
+import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { LOCAL_STORAGE_KEYS } from '../../../utilities'
 import Filters, { type FilterOptions } from './Filters'
@@ -50,7 +49,6 @@ const Table = ({
     hasZeroQuantity: boolean
   })[]
 }) => {
-  useSignals()
   const { t } = useAppTranslation()
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO | 'usedInRecipesCount'>('createdAt')
@@ -135,21 +133,6 @@ const Table = ({
     }
   }
 
-  // When a recipe is selected (e.g. via "Used In"), jump to its page
-  React.useEffect(() => {
-    const activeId = activeRecipeIdSignal.value
-    if (!activeId) return
-
-    const sortedRecipes = [...filteredRecipes].sort(getComparator(order, orderBy))
-    const index = sortedRecipes.findIndex((r) => r.id === activeId)
-    if (index === -1) return
-
-    const targetPage = Math.floor(index / rowsPerPage)
-    if (targetPage !== page) {
-      setPage(targetPage)
-    }
-  }, [activeRecipeIdSignal.value, filteredRecipes, order, orderBy, rowsPerPage, page])
-
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRecipes.length) : 0
 
@@ -164,12 +147,7 @@ const Table = ({
 
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignContent="center"
-        sx={{ paddingY: SPACING.SMALL.PX, ...(activeRecipeIdSignal.value ? { opacity: 0.1 } : {}) }}
-      >
+      <Stack direction="row" justifyContent="space-between" alignContent="center" sx={{ paddingY: SPACING.SMALL.PX }}>
         <Filters filters={filters} onFiltersChange={handleFiltersChange} />
 
         <Box>
@@ -180,12 +158,7 @@ const Table = ({
       </Stack>
       <TableContainer sx={{ boxShadow: 'none' }}>
         <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="small">
-          <Head
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={handleRequestSort}
-            sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
-          />
+          <Head order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
             {visibleRows.map((row, index) => {
               const labelId = `enhanced-table-checkbox-${index}`
@@ -198,18 +171,12 @@ const Table = ({
                   height: 53 * emptyRows,
                 }}
               >
-                <TableCell colSpan={9} />
+                <TableCell colSpan={8} />
               </TableRow>
             )}
             <TableRow>
-              <TableCell colSpan={9}>
-                <Button
-                  size="small"
-                  sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
-                  onClick={handleAddRecipe}
-                  fullWidth
-                  variant="outlined"
-                >
+              <TableCell colSpan={8}>
+                <Button size="small" onClick={handleAddRecipe} fullWidth variant="outlined">
                   {t('addRecipe')}
                 </Button>
               </TableCell>
@@ -220,7 +187,6 @@ const Table = ({
       <TablePagination
         rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        sx={activeRecipeIdSignal.value ? { opacity: 0.1 } : {}}
         size="small"
         component="div"
         count={filteredRecipes.length}

@@ -6,7 +6,6 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import { visuallyHidden } from '@mui/utils'
 import type * as React from 'react'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
-import { PALETTE } from '../../../../../styles/consts'
 import { isSortable, type SORTABLE_OPTIONS } from './consts'
 
 interface HeadCell {

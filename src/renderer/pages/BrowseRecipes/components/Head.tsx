@@ -28,12 +28,6 @@ function Head({ onRequestSort, order, orderBy, sx }: Props) {
 
   const headCells: readonly HeadCell[] = [
     {
-      id: 'collapse',
-      align: 'left',
-      label: '',
-      width: '25px',
-    },
-    {
       id: 'createdAt',
       align: 'left',
       label: t('created'),

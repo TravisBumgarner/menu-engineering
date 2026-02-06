@@ -1,28 +1,27 @@
 import { Tooltip } from '@mui/material'
-import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CHANNEL } from '../../../../../../shared/messages.types'
 import type { IngredientDTO, RelationDTO } from '../../../../../../shared/recipe.types'
 import type { AllUnits } from '../../../../../../shared/units.types'
-import { QUERY_KEYS } from '../../../../../consts'
+import { QUERY_KEYS, ROUTES } from '../../../../../consts'
 import { useAppTranslation } from '../../../../../hooks/useTranslation'
 import ipcMessenger from '../../../../../ipcMessenger'
 import Icon from '../../../../../sharedComponents/Icon'
 import { NumericInput } from '../../../../../sharedComponents/NumericInput'
 import { activeModalSignal } from '../../../../../signals'
-import { SPACING } from '../../../../../styles/consts'
 import { cellSx, ICON_SIZE } from '../../../../../styles/tableConsts'
 import { formatCurrency, formatDisplayDate } from '../../../../../utilities'
 
 function IngredientRow(props: { row: IngredientDTO & { relation: RelationDTO }; recipeId: string; labelId: string }) {
   const { row, recipeId, labelId } = props
-  // const [open, setOpen] = React.useState(false)
   const queryClient = useQueryClient()
   const { t } = useAppTranslation()
+  const navigate = useNavigate()
 
   const removeIngredientMutation = useMutation({
     mutationFn: () =>
@@ -100,16 +99,17 @@ function IngredientRow(props: { row: IngredientDTO & { relation: RelationDTO }; 
     })
   }
 
+  const handleNavigateToIngredient = () => {
+    navigate(ROUTES.ingredientDetail.href(row.id))
+  }
+
   return (
-    <TableRow tabIndex={-1} key={row.id}>
+    <TableRow tabIndex={-1} key={row.id} hover sx={{ cursor: 'pointer' }} onClick={handleNavigateToIngredient}>
       <TableCell sx={cellSx}>{formatDisplayDate(row.createdAt)}</TableCell>
       <TableCell sx={cellSx} id={labelId} scope="row">
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {/* <Icon name="ingredient" size={ICON_SIZE} /> */}
-          {row.title}{' '}
-        </Box>{' '}
+        {row.title}
       </TableCell>
-      <TableCell sx={cellSx} align="right" id={labelId} scope="row">
+      <TableCell sx={cellSx} align="right" id={labelId} scope="row" onClick={(e) => e.stopPropagation()}>
         <NumericInput size="small" value={row.relation.quantity} onValidChange={handleQuantityChange} min={0} />
       </TableCell>
       <TableCell sx={cellSx} align="left" id={labelId} scope="row">
@@ -121,7 +121,7 @@ function IngredientRow(props: { row: IngredientDTO & { relation: RelationDTO }; 
       <TableCell sx={cellSx} align="right" id={labelId} scope="row">
         {formatCurrency(relationCost)}
       </TableCell>
-      <TableCell sx={cellSx} align="right">
+      <TableCell sx={cellSx} align="right" onClick={(e) => e.stopPropagation()}>
         <Tooltip title={t('editIngredient')}>
           <IconButton size="small" onClick={handleOpenEditModal}>
             <Icon size={ICON_SIZE} name="edit" />

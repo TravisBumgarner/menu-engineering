@@ -7,6 +7,7 @@ import { LuApple, LuPartyPopper } from 'react-icons/lu'
 
 import {
   MdAdd,
+  MdArrowBack,
   MdClose,
   MdDeleteOutline,
   MdDownload,
@@ -15,6 +16,8 @@ import {
   MdHistory,
   MdOutlineCheckBoxOutlineBlank,
   MdOutlinePhoto,
+  MdOutlinePushPin,
+  MdPushPin,
   MdSearch,
 } from 'react-icons/md'
 
@@ -39,6 +42,9 @@ export const iconMap = {
   download: MdDownload,
   history: MdHistory,
   search: MdSearch,
+  arrowBack: MdArrowBack,
+  pin: MdPushPin,
+  pinOutline: MdOutlinePushPin,
 }
 
 const Icon = ({

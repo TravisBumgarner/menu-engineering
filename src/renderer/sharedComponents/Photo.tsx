@@ -1,9 +1,9 @@
+import { Box, Modal, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import { CHANNEL } from '../../shared/messages.types'
 import { QUERY_KEYS } from '../consts'
 import ipcMessenger from '../ipcMessenger'
-import HtmlTooltip from './HtmlTooltip'
-import Icon from './Icon'
 
 export const uint8ArrayToObjectUrl = (bytes: Uint8Array, mime = 'image/jpeg') => {
   const copy = new Uint8Array(bytes) // forces ArrayBuffer
@@ -21,39 +21,50 @@ type BackendPhoto = {
   type: 'backend'
 }
 
-const SHARED_WIDTH = '300px'
-const SHARED_HEIGHT = '300px'
+const THUMBNAIL_SIZE = '100px'
+
+const imgStyle: React.CSSProperties = {
+  display: 'block',
+  maxWidth: THUMBNAIL_SIZE,
+  maxHeight: THUMBNAIL_SIZE,
+  objectFit: 'cover',
+  borderRadius: '4px',
+  cursor: 'pointer',
+}
+
+const Lightbox = ({ src, onClose }: { src: string; onClose: () => void }) => {
+  return (
+    <Modal open onClose={onClose} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+      <img
+        src={src}
+        alt="Final dish"
+        style={{
+          maxWidth: '80vw',
+          maxHeight: '80vh',
+          objectFit: 'contain',
+          borderRadius: '8px',
+          outline: 'none',
+        }}
+      />
+    </Modal>
+  )
+}
 
 const LocalPhoto = (props: { data: File }) => {
+  const [open, setOpen] = useState(false)
+  const url = URL.createObjectURL(props.data)
+
   return (
-    <HtmlTooltip
-      placement="right"
-      title={
-        <div style={{ width: SHARED_WIDTH, height: SHARED_HEIGHT }}>
-          <img
-            src={URL.createObjectURL(props.data)}
-            alt="Final dish"
-            style={{
-              display: 'block',
-              padding: 0,
-              margin: 0,
-              maxWidth: SHARED_WIDTH,
-              maxHeight: SHARED_HEIGHT,
-              objectFit: 'contain',
-            }}
-          />
-        </div>
-      }
-    >
-      <span>
-        <Icon name="photo" />
-      </span>
-    </HtmlTooltip>
+    <>
+      <img src={url} alt="Final dish" style={imgStyle} onClick={() => setOpen(true)} />
+      {open && <Lightbox src={url} onClose={() => setOpen(false)} />}
+    </>
   )
 }
 
 const BackendPhoto = (props: { src: string }) => {
-  const { data, isLoading, isError, error } = useQuery({
+  const [open, setOpen] = useState(false)
+  const { data, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.PHOTO, props.src],
     queryFn: async () => {
       const response = await ipcMessenger.invoke(CHANNEL.FILES.GET_PHOTO, { fileName: props.src })
@@ -61,38 +72,23 @@ const BackendPhoto = (props: { src: string }) => {
     },
   })
 
+  if (isLoading) {
+    return (
+      <Box sx={{ width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Typography variant="body2" color="text.secondary">...</Typography>
+      </Box>
+    )
+  }
+
+  if (isError || !data) {
+    return null
+  }
+
   return (
-    <HtmlTooltip
-      placement="right"
-      title={
-        <div style={{ width: SHARED_WIDTH, height: SHARED_HEIGHT }}>
-          {isLoading ? (
-            'Loading...'
-          ) : isError ? (
-            `Error: ${error}`
-          ) : data ? (
-            <img
-              src={data}
-              alt="Final dish"
-              style={{
-                display: 'block',
-                padding: 0,
-                margin: 0,
-                maxWidth: SHARED_WIDTH,
-                maxHeight: SHARED_HEIGHT,
-                objectFit: 'contain',
-              }}
-            />
-          ) : (
-            'No Photo'
-          )}
-        </div>
-      }
-    >
-      <span>
-        <Icon name="photo" />
-      </span>
-    </HtmlTooltip>
+    <>
+      <img src={data} alt="Final dish" style={imgStyle} onClick={() => setOpen(true)} />
+      {open && <Lightbox src={data} onClose={() => setOpen(false)} />}
+    </>
   )
 }
 

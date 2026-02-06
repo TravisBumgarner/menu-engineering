@@ -210,6 +210,22 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
 
   // Warnings
   recipeHasZeroQuantity: 'Recipe contains ingredients or sub-recipes with quantity 0',
+
+  // Recent Items Sidebar
+  recentItems: 'Recent',
+  pinnedItems: 'Pinned',
+  pinRecipe: 'Pin recipe',
+  unpinRecipe: 'Unpin recipe',
+  noRecentItems: 'No recent recipes',
+  clearAll: 'Clear all',
+  removeFromRecent: 'Remove',
+
+  // Recipe Detail Page
+  backToRecipes: 'Back to Recipes',
+
+  // Ingredient Detail Page
+  backToIngredients: 'Back to Ingredients',
+  viewIngredient: 'View Ingredient',
 }
 
 export default EnglishTranslations

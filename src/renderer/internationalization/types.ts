@@ -206,3 +206,19 @@ export type TranslationKeys =
 
   // Warnings
   | 'recipeHasZeroQuantity'
+
+  // Recent Items Sidebar
+  | 'recentItems'
+  | 'pinnedItems'
+  | 'pinRecipe'
+  | 'unpinRecipe'
+  | 'noRecentItems'
+  | 'clearAll'
+  | 'removeFromRecent'
+
+  // Recipe Detail Page
+  | 'backToRecipes'
+
+  // Ingredient Detail Page
+  | 'backToIngredients'
+  | 'viewIngredient'
