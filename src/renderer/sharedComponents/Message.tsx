@@ -34,19 +34,19 @@ const Message = ({
   return (
     <Box
       sx={{
-        padding: SPACING.MEDIUM.PX,
-        margin: includeVerticalMargin ? `${SPACING.LARGE.PX} 0` : 0,
+        padding: SPACING.MD.PX,
+        margin: includeVerticalMargin ? `${SPACING.LG.PX} 0` : 0,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         flexGrow: 1,
-        gap: SPACING.MEDIUM.PX,
+        gap: SPACING.SM.PX,
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Box>{icon}</Box>
-        <Typography sx={{ marginLeft: SPACING.SMALL.PX }} variant="h5" color={'info.main'}>
+        <Typography sx={{ marginLeft: SPACING.XS.PX }} variant="h5" color={'info.main'}>
           {message}
         </Typography>
       </Box>

@@ -146,8 +146,8 @@ const Table = ({
   )
 
   return (
-    <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <Stack direction="row" justifyContent="space-between" alignContent="center" sx={{ paddingY: SPACING.SMALL.PX }}>
+    <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Stack direction="row" justifyContent="space-between" alignContent="center" sx={{ paddingY: SPACING.XS.PX, flexShrink: 0 }}>
         <Filters filters={filters} onFiltersChange={handleFiltersChange} />
 
         <Box>
@@ -156,7 +156,7 @@ const Table = ({
           </Button>
         </Box>
       </Stack>
-      <TableContainer sx={{ boxShadow: 'none' }}>
+      <TableContainer sx={{ boxShadow: 'none', flex: 1, overflow: 'auto' }}>
         <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="small">
           <Head order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
@@ -165,25 +165,14 @@ const Table = ({
 
               return <RecipeRow key={row.id} row={row} labelId={labelId} />
             })}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={8} />
-              </TableRow>
-            )}
-            <TableRow>
-              <TableCell colSpan={8}>
-                <Button size="small" onClick={handleAddRecipe} fullWidth variant="outlined">
-                  {t('addRecipe')}
-                </Button>
-              </TableCell>
-            </TableRow>
           </TableBody>
         </MuiTable>
       </TableContainer>
+      <Box sx={{ flexShrink: 0, py: SPACING.XS.PX }}>
+        <Button size="small" onClick={handleAddRecipe} fullWidth variant="outlined">
+          {t('addRecipe')}
+        </Button>
+      </Box>
       <TablePagination
         rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
         onRowsPerPageChange={handleChangeRowsPerPage}
@@ -194,6 +183,7 @@ const Table = ({
         page={page}
         onPageChange={handleChangePage}
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
+        sx={{ flexShrink: 0 }}
       />
     </Box>
   )

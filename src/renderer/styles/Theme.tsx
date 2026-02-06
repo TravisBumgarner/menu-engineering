@@ -11,21 +11,22 @@ export const TAB_HEIGHT = '36px' // for some reason all are needed.
 // Base theme options shared between light and dark
 const getThemeOptions = (isDark: boolean): ThemeOptions => {
   const colors = {
-    background: isDark ? PALETTE.grayscale[900] : PALETTE.named.white,
-    surface: isDark ? PALETTE.grayscale[800] : PALETTE.named.white,
+    // Two-tone: background is tinted, surface (cards/tables) is clean
+    background: isDark ? PALETTE.grayscale[900] : PALETTE.grayscale[50],
+    surface: isDark ? PALETTE.grayscale[850] : PALETTE.named.white,
     text: {
       primary: isDark ? PALETTE.grayscale[100] : PALETTE.grayscale[800],
-      secondary: isDark ? PALETTE.grayscale[300] : PALETTE.grayscale[600],
-      tertiary: isDark ? PALETTE.grayscale[400] : PALETTE.grayscale[700],
+      secondary: isDark ? PALETTE.grayscale[400] : PALETTE.grayscale[500],
+      tertiary: isDark ? PALETTE.grayscale[300] : PALETTE.grayscale[600],
     },
     border: {
-      light: isDark ? PALETTE.grayscale[700] : PALETTE.grayscale[200],
-      medium: isDark ? PALETTE.grayscale[600] : PALETTE.grayscale[300],
-      dark: isDark ? PALETTE.grayscale[500] : PALETTE.grayscale[400],
+      light: isDark ? PALETTE.grayscale[800] : PALETTE.grayscale[100],
+      medium: isDark ? PALETTE.grayscale[700] : PALETTE.grayscale[200],
+      dark: isDark ? PALETTE.grayscale[600] : PALETTE.grayscale[300],
     },
     hover: {
-      light: isDark ? PALETTE.grayscale[800] : PALETTE.grayscale[100],
-      medium: isDark ? PALETTE.grayscale[700] : PALETTE.grayscale[50],
+      light: isDark ? PALETTE.grayscale[800] : PALETTE.grayscale[50],
+      medium: isDark ? PALETTE.grayscale[850] : PALETTE.grayscale[50],
     },
   }
 
@@ -34,21 +35,35 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
       fontFamily: 'Roboto, sans-serif',
       h1: {
         fontSize: FONT_SIZES.HUGE.PX,
-        fontWeight: 900,
+        fontWeight: 700,
+        letterSpacing: '-0.02em',
       },
       h2: {
         fontSize: FONT_SIZES.LARGE.PX,
-        fontWeight: 900,
+        fontWeight: 600,
+        letterSpacing: '-0.01em',
       },
       h3: {
         fontSize: FONT_SIZES.MEDIUM.PX,
-        fontWeight: 900,
+        fontWeight: 600,
+      },
+      h5: {
+        fontWeight: 600,
+        letterSpacing: '-0.01em',
       },
       body1: {
         fontSize: FONT_SIZES.MEDIUM.PX,
+        lineHeight: 1.6,
       },
       body2: {
         fontSize: FONT_SIZES.SMALL.PX,
+        lineHeight: 1.5,
+      },
+      caption: {
+        fontSize: '11px',
+        fontWeight: 500,
+        letterSpacing: '0.03em',
+        textTransform: 'uppercase' as const,
       },
     },
     palette: {
@@ -61,12 +76,21 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
         primary: colors.text.primary,
         secondary: colors.text.secondary,
       },
+      primary: {
+        main: PALETTE.primary[500],
+        light: PALETTE.primary[300],
+        dark: PALETTE.primary[700],
+      },
       error: {
         main: PALETTE.error[500],
         light: PALETTE.error[isDark ? 800 : 100],
         dark: PALETTE.error[700],
         contrastText: isDark ? PALETTE.error[100] : PALETTE.error[900],
       },
+      divider: colors.border.light,
+    },
+    shape: {
+      borderRadius: 8,
     },
     components: {
       MuiCssBaseline: {
@@ -82,6 +106,20 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
             background-color: ${colors.background};
             color: ${colors.text.primary};
           }
+          ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+          }
+          ::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          ::-webkit-scrollbar-thumb {
+            background: ${colors.border.medium};
+            border-radius: 3px;
+          }
+          ::-webkit-scrollbar-thumb:hover {
+            background: ${colors.border.dark};
+          }
         `,
       },
       MuiTable: {
@@ -89,8 +127,8 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
           root: {
             borderCollapse: 'separate',
             borderSpacing: 0,
-            border: `1px solid ${colors.border.light}`,
-            borderRadius: SPACING.SMALL.PX,
+            border: 'none',
+            borderRadius: '8px',
             overflow: 'hidden',
             backgroundColor: colors.surface,
           },
@@ -100,6 +138,7 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
         styleOverrides: {
           root: {
             textTransform: 'none',
+            fontWeight: 500,
           },
         },
       },
@@ -113,35 +152,43 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
       MuiTableHead: {
         styleOverrides: {
           root: {
-            backgroundColor: colors.hover.medium,
+            backgroundColor: 'transparent',
           },
         },
       },
       MuiTableCell: {
         styleOverrides: {
           root: {
-            borderTop: `1px solid ${colors.border.light}`,
-            borderBottom: '0px',
-            padding: `${SPACING.TINY.PX}`,
-            fontSize: FONT_SIZES.SMALL.PX,
+            borderTop: 'none',
+            borderBottom: `1px solid ${colors.border.light}`,
+            padding: `${SPACING.XS.PX} ${SPACING.SM.PX}`,
+            fontSize: '13px',
             color: colors.text.primary,
           },
           head: {
-            backgroundColor: colors.hover.medium,
+            backgroundColor: 'transparent',
             fontWeight: 600,
-            color: colors.text.primary,
-            borderBottom: `2px solid ${colors.border.medium}`,
+            fontSize: '11px',
+            color: colors.text.secondary,
+            borderBottom: `1px solid ${colors.border.medium}`,
+            padding: `${SPACING.XXS.PX} ${SPACING.SM.PX}`,
+            letterSpacing: '0.04em',
+            textTransform: 'uppercase',
           },
           body: {
-            color: colors.text.tertiary,
+            color: colors.text.primary,
           },
         },
       },
       MuiTableRow: {
         styleOverrides: {
           root: {
+            transition: 'background-color 0.15s ease',
             '&:last-child td': {
               borderBottom: 'none',
+            },
+            '&:hover': {
+              backgroundColor: isDark ? PALETTE.grayscale[800] : PALETTE.grayscale[50],
             },
           },
         },
@@ -149,26 +196,37 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
       MuiTableContainer: {
         styleOverrides: {
           root: {
-            boxShadow: isDark ? `0 2px 8px rgba(0, 0, 0, 0.3)` : `0 2px 8px ${PALETTE.grayscale[200]}`,
-            borderRadius: SPACING.SMALL.PX,
+            boxShadow: 'none',
+            borderRadius: '8px',
             backgroundColor: colors.surface,
+            border: `1px solid ${colors.border.light}`,
           },
         },
       },
       MuiButton: {
         styleOverrides: {
           root: {
-            borderRadius: SPACING.TINY.PX,
+            borderRadius: '6px',
             textTransform: 'none',
             fontWeight: 500,
+            fontSize: '13px',
+            padding: `6px ${SPACING.SM.PX}`,
+            boxShadow: 'none',
+            '&:hover': {
+              boxShadow: 'none',
+            },
+          },
+          sizeSmall: {
+            padding: `4px ${SPACING.XS.PX}`,
+            fontSize: '12px',
           },
           outlined: {
             borderColor: colors.border.medium,
             color: colors.text.primary,
             '&:hover': {
-              borderColor: PALETTE.primary[500],
+              borderColor: PALETTE.primary[400],
               backgroundColor: isDark ? PALETTE.primary[900] : PALETTE.primary[50],
-              color: PALETTE.primary[isDark ? 300 : 700],
+              color: PALETTE.primary[isDark ? 300 : 600],
             },
           },
           contained: {
@@ -192,7 +250,7 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
             },
           },
           text: {
-            color: colors.text.tertiary,
+            color: colors.text.secondary,
             '&:hover': {
               backgroundColor: colors.hover.light,
               color: colors.text.primary,
@@ -205,18 +263,23 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
           root: {
             '& .MuiOutlinedInput-root': {
               backgroundColor: colors.surface,
+              borderRadius: '6px',
+              fontSize: '13px',
               '& fieldset': {
                 borderColor: colors.border.medium,
+                borderWidth: '1px',
               },
               '&:hover fieldset': {
                 borderColor: colors.border.dark,
               },
               '&.Mui-focused fieldset': {
-                borderColor: PALETTE.primary[500],
+                borderColor: PALETTE.primary[400],
+                borderWidth: '1.5px',
               },
             },
             '& .MuiInputLabel-root': {
               color: colors.text.secondary,
+              fontSize: '13px',
               '&.Mui-focused': {
                 color: PALETTE.primary[500],
               },
@@ -237,12 +300,13 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
           listbox: {
             backgroundColor: colors.surface,
             '& .MuiAutocomplete-option': {
+              fontSize: '13px',
               color: colors.text.primary,
               '&:hover': {
                 backgroundColor: colors.hover.light,
               },
               '&.Mui-focused': {
-                backgroundColor: isDark ? PALETTE.primary[800] : PALETTE.primary[100],
+                backgroundColor: isDark ? PALETTE.primary[800] : PALETTE.primary[50],
               },
             },
           },
@@ -271,6 +335,8 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
         styleOverrides: {
           root: {
             color: colors.text.secondary,
+            borderRadius: '6px',
+            transition: 'all 0.15s ease',
             '&:hover': {
               backgroundColor: colors.hover.light,
               color: colors.text.primary,
@@ -282,8 +348,11 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
         styleOverrides: {
           tooltip: {
             backgroundColor: isDark ? PALETTE.grayscale[700] : PALETTE.grayscale[800],
-            color: isDark ? PALETTE.grayscale[100] : PALETTE.named.white,
-            fontSize: FONT_SIZES.SMALL.PX,
+            color: PALETTE.named.white,
+            fontSize: '11px',
+            fontWeight: 500,
+            borderRadius: '4px',
+            padding: '4px 8px',
           },
         },
       },
@@ -292,23 +361,102 @@ const getThemeOptions = (isDark: boolean): ThemeOptions => {
           root: {
             backgroundColor: colors.surface,
             color: colors.text.primary,
+            borderRadius: '8px',
+          },
+        },
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            fontWeight: 500,
+            fontSize: '11px',
+            height: '24px',
+          },
+          sizeSmall: {
+            height: '22px',
+            fontSize: '11px',
+          },
+        },
+      },
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: colors.surface,
+            borderBottom: `1px solid ${colors.border.light}`,
+            borderRadius: 0,
+          },
+        },
+      },
+      MuiToolbar: {
+        styleOverrides: {
+          dense: {
+            minHeight: '44px',
+            paddingLeft: SPACING.SM.PX,
+            paddingRight: SPACING.SM.PX,
           },
         },
       },
       MuiLink: {
         styleOverrides: {
           root: {
-            color: PALETTE.primary[isDark ? 400 : 600],
+            color: PALETTE.primary[isDark ? 400 : 500],
             textDecoration: 'none',
+            fontWeight: 500,
             '&:hover': {
-              color: PALETTE.primary[isDark ? 300 : 700],
+              color: PALETTE.primary[isDark ? 300 : 600],
               textDecoration: 'underline',
             },
             '&:visited': {
-              color: PALETTE.primary[isDark ? 500 : 700],
+              color: PALETTE.primary[isDark ? 500 : 600],
             },
             '&:active': {
-              color: PALETTE.primary[isDark ? 200 : 800],
+              color: PALETTE.primary[isDark ? 200 : 700],
+            },
+          },
+        },
+      },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: '4px',
+            transition: 'all 0.15s ease',
+            '&.Mui-selected': {
+              backgroundColor: isDark ? PALETTE.primary[900] : PALETTE.primary[50],
+              '&:hover': {
+                backgroundColor: isDark ? PALETTE.primary[800] : PALETTE.primary[100],
+              },
+            },
+          },
+        },
+      },
+      MuiTablePagination: {
+        styleOverrides: {
+          root: {
+            fontSize: '12px',
+            color: colors.text.secondary,
+            borderTop: `1px solid ${colors.border.light}`,
+          },
+          selectLabel: {
+            fontSize: '12px',
+          },
+          displayedRows: {
+            fontSize: '12px',
+          },
+        },
+      },
+      MuiDivider: {
+        styleOverrides: {
+          root: {
+            borderColor: colors.border.light,
+          },
+        },
+      },
+      MuiCheckbox: {
+        styleOverrides: {
+          root: {
+            color: colors.border.dark,
+            '&.Mui-checked': {
+              color: PALETTE.primary[500],
             },
           },
         },

@@ -75,7 +75,7 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
         display: 'flex',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        gap: SPACING.SMALL.PX,
+        gap: SPACING.XS.PX,
       }}
     >
       <TextField

@@ -42,7 +42,7 @@ const RecipeDetail = () => {
 
   if (!id || (!isLoading && (!data || !data.recipe))) {
     return (
-      <Box sx={{ padding: SPACING.MEDIUM.PX }}>
+      <Box>
         <Button startIcon={<Icon name="arrowBack" size={16} />} onClick={() => navigate(ROUTES.recipes.href())}>
           {t('backToRecipes')}
         </Button>
@@ -53,7 +53,7 @@ const RecipeDetail = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ padding: SPACING.MEDIUM.PX }}>
+      <Box>
         <Typography>{t('loading')}</Typography>
       </Box>
     )
@@ -61,7 +61,7 @@ const RecipeDetail = () => {
 
   if (isError) {
     return (
-      <Box sx={{ padding: SPACING.MEDIUM.PX }}>
+      <Box>
         <Button startIcon={<Icon name="arrowBack" size={16} />} onClick={() => navigate(ROUTES.recipes.href())}>
           {t('backToRecipes')}
         </Button>
@@ -110,9 +110,9 @@ const RecipeDetail = () => {
   }
 
   return (
-    <Box sx={{ padding: SPACING.MEDIUM.PX, height: '100%', overflow: 'auto' }}>
+    <Box sx={{ height: '100%', overflow: 'auto' }}>
       {/* Header */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: SPACING.MEDIUM.PX }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: SPACING.SM.PX }}>
         <Button
           size="small"
           startIcon={<Icon name="arrowBack" size={16} />}
@@ -120,7 +120,7 @@ const RecipeDetail = () => {
         >
           {t('backToRecipes')}
         </Button>
-        <Stack direction="row" spacing={SPACING.TINY.PX}>
+        <Stack direction="row" spacing={SPACING.XXXS.PX}>
           <Tooltip title={t('editRecipe')}>
             <IconButton size="small" onClick={handleEdit}>
               <Icon size={ICON_SIZE} name="edit" />
@@ -140,32 +140,42 @@ const RecipeDetail = () => {
       </Stack>
 
       {/* Recipe summary */}
-      <Stack direction="row" spacing={SPACING.MEDIUM.PX} sx={{ mb: SPACING.MEDIUM.PX }}>
+      <Box
+        sx={{
+          mb: SPACING.MD.PX,
+          p: SPACING.SM.PX,
+          backgroundColor: 'background.paper',
+          borderRadius: '8px',
+          border: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+      <Stack direction="row" spacing={SPACING.SM.PX}>
         {recipe.photoSrc && (
-          <Box sx={{ mr: SPACING.SMALL.PX }}>
+          <Box>
             <Photo type="backend" src={recipe.photoSrc} />
           </Box>
         )}
 
         <Box sx={{ flex: 1 }}>
-          <Stack direction="row" spacing={SPACING.SMALL.PX} alignItems="center" sx={{ mb: SPACING.SMALL.PX }}>
+          <Stack direction="row" spacing={SPACING.XXS.PX} alignItems="center" sx={{ mb: SPACING.XS.PX }}>
             <Typography variant="h5">{recipe.title}</Typography>
-            <Chip label={t(recipe.status)} size="small" />
+            <Chip label={t(recipe.status)} size="small" variant="outlined" />
             {recipe.showInMenu && <Chip label={t('showInMenu')} size="small" color="primary" variant="outlined" />}
           </Stack>
 
-          <Stack direction="row" spacing={SPACING.MEDIUM.PX} sx={{ mb: SPACING.SMALL.PX }}>
+          <Stack direction="row" spacing={SPACING.LG.PX} sx={{ mb: SPACING.XXS.PX }}>
             <Box>
               <Typography variant="caption" color="text.secondary">{t('produces')}</Typography>
-              <Typography variant="body2">{recipe.produces} {getUnitLabel(recipe.units, 'plural')}</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 500 }}>{recipe.produces} {getUnitLabel(recipe.units, 'plural')}</Typography>
             </Box>
             <Box>
               <Typography variant="caption" color="text.secondary">{t('totalCost')}</Typography>
-              <Typography variant="body2">{formatCurrency(recipe.cost)}</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 500 }}>{formatCurrency(recipe.cost)}</Typography>
             </Box>
             <Box>
               <Typography variant="caption" color="text.secondary">{t('unitCost')}</Typography>
-              <Typography variant="body2">{formatCurrency(unitCost)}</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 500 }}>{formatCurrency(unitCost)}</Typography>
             </Box>
           </Stack>
 
@@ -184,6 +194,7 @@ const RecipeDetail = () => {
           )}
         </Box>
       </Stack>
+      </Box>
 
       {/* Ingredients & Sub-recipes table */}
       <Table ingredients={data.ingredients} recipe={recipe} subRecipes={data.subRecipes} />

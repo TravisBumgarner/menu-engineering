@@ -76,7 +76,7 @@ const UnitChangeConfirmationModal = ({
 
   return (
     <DefaultModal title={title}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: SPACING.MEDIUM.PX }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: SPACING.SM.PX }}>
         {/* Item info */}
         <Typography variant="body1">
           {t('unitChangeItemInfo', { itemName, fromUnit: fromUnitLabel, toUnit: toUnitLabel })}
@@ -89,7 +89,7 @@ const UnitChangeConfirmationModal = ({
             <Typography variant="body2" fontWeight="bold">
               {t('unitChangeAffectedItems', { count: affectedItems.length })}
             </Typography>
-            <Box component="ul" sx={{ margin: 0, paddingLeft: SPACING.MEDIUM.PX }}>
+            <Box component="ul" sx={{ margin: 0, paddingLeft: SPACING.SM.PX }}>
               {affectedItems.slice(0, 5).map((item) => (
                 <Typography component="li" variant="body2" key={item.id}>
                   {item.title}
@@ -116,7 +116,7 @@ const UnitChangeConfirmationModal = ({
             <Box
               sx={{
                 backgroundColor: 'error.light',
-                padding: SPACING.SMALL.PX,
+                padding: SPACING.XS.PX,
                 borderRadius: 1,
               }}
             >
@@ -135,7 +135,7 @@ const UnitChangeConfirmationModal = ({
                 <Typography variant="body2" fontWeight="bold">
                   {t('unitChangeAffectedItems', { count: affectedItems.length })}
                 </Typography>
-                <Box component="ul" sx={{ margin: 0, paddingLeft: SPACING.MEDIUM.PX }}>
+                <Box component="ul" sx={{ margin: 0, paddingLeft: SPACING.SM.PX }}>
                   {affectedItems.slice(0, 5).map((item) => (
                     <Typography component="li" variant="body2" key={item.id}>
                       {item.title}
@@ -156,10 +156,10 @@ const UnitChangeConfirmationModal = ({
         <Box
           sx={{
             display: 'flex',
-            gap: SPACING.SMALL.PX,
+            gap: SPACING.XXS.PX,
             flexDirection: 'row',
             justifyContent: 'flex-end',
-            marginTop: SPACING.SMALL.PX,
+            marginTop: SPACING.XS.PX,
           }}
         >
           <Button variant="outlined" color="primary" onClick={handleCancel}>

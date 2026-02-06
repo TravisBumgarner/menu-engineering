@@ -129,7 +129,7 @@ const AddIngredientModal = (_props: AddIngredientModalProps) => {
   return (
     <DefaultModal title={t('addNewIngredient')}>
       <Box component="form">
-        <Stack spacing={SPACING.MEDIUM.PX}>
+        <Stack spacing={SPACING.SM.PX}>
           <TextField
             size="small"
             label={t('ingredientName')}
@@ -140,7 +140,7 @@ const AddIngredientModal = (_props: AddIngredientModalProps) => {
             placeholder={t('ingredientNamePlaceholder')}
           />
 
-          <Stack spacing={SPACING.SMALL.PX} direction="row" sx={{ alignItems: 'center' }}>
+          <Stack spacing={SPACING.XS.PX} direction="row" sx={{ alignItems: 'center' }}>
             <NumericInput
               size="small"
               label={t('cost')}
@@ -176,7 +176,7 @@ const AddIngredientModal = (_props: AddIngredientModalProps) => {
             </Typography>
           </Stack>
 
-          <Stack direction="row" spacing={2} justifyContent="flex-end">
+          <Stack direction="row" spacing={SPACING.XS.PX} justifyContent="flex-end">
             <Button variant="outlined" type="button" onClick={closeModal}>
               {t('close')}
             </Button>

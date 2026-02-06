@@ -45,9 +45,6 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
   const [multiplePDFs, setMultiplePDFs] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Check if this is a single recipe export (simpler UI)
-  const isSingleRecipeExport = recipes.length === 1
-
   // Sort recipes alphabetically by title
   const sortedRecipes = useMemo(() => {
     return [...recipes].sort((a, b) => a.title.localeCompare(b.title))
@@ -223,114 +220,108 @@ const ExportRecipes = ({ recipes }: ExportRecipesProps) => {
 
   return (
     <DefaultModal
-      sx={{ height: isSingleRecipeExport ? 'auto' : '80vh' }}
-      title={isSingleRecipeExport ? `${t('export')}: ${recipes[0].title}` : `${t('export')}: ${t('recipes')} PDF`}
+      sx={{ height: '80vh' }}
+      title={`${t('export')}: ${t('recipes')} PDF`}
     >
-      <Stack spacing={SPACING.SMALL.PX} height="100%">
-        {!isSingleRecipeExport && (
-          <>
-            <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="center" justifyContent="space-between">
-              <Stack>
-                <Typography variant="body2" color="textSecondary">
-                  {t('export')}: {selectedRecipes.size} {selectedRecipes.size === 1 ? t('recipe') : t('recipes')} of{' '}
-                  {recipes.length}
-                </Typography>
-              </Stack>
-              <Stack direction="row" spacing={SPACING.SMALL.PX} marginLeft="auto">
-                <Typography variant="body2" color="textSecondary" alignSelf="center">
-                  {t('select')}:
-                </Typography>
-                <Button size="small" variant="outlined" onClick={handleSelectAll}>
-                  {t('all')}
-                </Button>
-                <Button size="small" variant="outlined" onClick={handleSelectNone}>
-                  {t('none')}
-                </Button>
-              </Stack>
-            </Stack>
+      <Stack spacing={SPACING.SMALL.PX} height="100%" sx={{ minHeight: 0 }}>
+        <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="center" justifyContent="space-between" sx={{ flexShrink: 0 }}>
+          <Typography variant="body2" color="textSecondary">
+            {t('export')}: {selectedRecipes.size} {selectedRecipes.size === 1 ? t('recipe') : t('recipes')} of{' '}
+            {recipes.length}
+          </Typography>
+          <Stack direction="row" spacing={SPACING.SMALL.PX} marginLeft="auto">
+            <Typography variant="body2" color="textSecondary" alignSelf="center">
+              {t('select')}:
+            </Typography>
+            <Button size="small" variant="outlined" onClick={handleSelectAll}>
+              {t('all')}
+            </Button>
+            <Button size="small" variant="outlined" onClick={handleSelectNone}>
+              {t('none')}
+            </Button>
+          </Stack>
+        </Stack>
 
-            <TextField
-              size="small"
-              placeholder={t('searchRecipes')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              fullWidth
-              slotProps={{
-                input: {
-                  endAdornment: searchQuery && (
-                    <InputAdornment position="end">
-                      <IconButton size="small" onClick={() => setSearchQuery('')} edge="end">
-                        <Icon name="close" size={18} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
+        <TextField
+          size="small"
+          placeholder={t('searchRecipes')}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          fullWidth
+          sx={{ flexShrink: 0 }}
+          slotProps={{
+            input: {
+              endAdornment: searchQuery && (
+                <InputAdornment position="end">
+                  <IconButton size="small" onClick={() => setSearchQuery('')} edge="end">
+                    <Icon name="close" size={18} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
 
-            <Box
-              sx={{
-                overflow: 'auto',
-                padding: SPACING.TINY.PX,
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 1,
-                height: '100%',
-              }}
-            >
-              <Stack spacing={SPACING.TINY.PX} height="100%">
-                {filteredRecipes.map((recipe) => (
-                  <FormControlLabel
-                    key={recipe.id}
-                    control={
-                      <Checkbox
-                        checked={selectedRecipes.has(recipe.id)}
-                        onChange={() => handleRecipeToggle(recipe.id)}
-                        size="small"
-                      />
-                    }
-                    label={recipe.title}
+        <Box
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            overflow: 'auto',
+            padding: SPACING.XXXS.PX,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 1,
+          }}
+        >
+          <Stack spacing={SPACING.TINY.PX}>
+            {filteredRecipes.map((recipe) => (
+              <FormControlLabel
+                key={recipe.id}
+                control={
+                  <Checkbox
+                    checked={selectedRecipes.has(recipe.id)}
+                    onChange={() => handleRecipeToggle(recipe.id)}
+                    size="small"
                   />
-                ))}
-              </Stack>
-            </Box>
-          </>
-        )}
+                }
+                label={recipe.title}
+              />
+            ))}
+          </Stack>
+        </Box>
 
-        <Stack direction="row" spacing={3} alignItems="center">
+        <Stack direction="row" spacing={3} alignItems="center" sx={{ flexShrink: 0 }}>
           <FormControlLabel
             control={
               <Checkbox checked={includeImages} onChange={(e) => setIncludeImages(e.target.checked)} size="small" />
             }
             label={t('includeImages')}
           />
-          {!isSingleRecipeExport && (
-            <ToggleButtonGroup
-              value={multiplePDFs ? 'multiple' : 'single'}
-              exclusive
-              onChange={(_, value) => {
-                if (value !== null) {
-                  setMultiplePDFs(value === 'multiple')
-                }
-              }}
-              size="small"
-              color="primary"
+          <ToggleButtonGroup
+            value={multiplePDFs ? 'multiple' : 'single'}
+            exclusive
+            onChange={(_, value) => {
+              if (value !== null) {
+                setMultiplePDFs(value === 'multiple')
+              }
+            }}
+            size="small"
+            color="primary"
+          >
+            <ToggleButton value="single" sx={{ fontWeight: multiplePDFs ? 'normal' : 'bold' }}>
+              {t('singlePDF')}
+            </ToggleButton>
+            <ToggleButton
+              value="multiple"
+              disabled={!canUseMultiplePDFs}
+              sx={{ fontWeight: multiplePDFs ? 'bold' : 'normal' }}
             >
-              <ToggleButton value="single" sx={{ fontWeight: multiplePDFs ? 'normal' : 'bold' }}>
-                {t('singlePDF')}
-              </ToggleButton>
-              <ToggleButton
-                value="multiple"
-                disabled={!canUseMultiplePDFs}
-                sx={{ fontWeight: multiplePDFs ? 'bold' : 'normal' }}
-              >
-                {t('multiplePDFs')}
-              </ToggleButton>
-            </ToggleButtonGroup>
-          )}
+              {t('multiplePDFs')}
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Stack>
 
-        <Stack direction="row" spacing={2} justifyContent="flex-end">
+        <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ flexShrink: 0 }}>
           <Button variant="outlined" onClick={handleCancel} disabled={isGenerating}>
             {t('cancel')}
           </Button>
