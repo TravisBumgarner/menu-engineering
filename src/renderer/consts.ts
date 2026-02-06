@@ -14,6 +14,9 @@ export const ROUTES = {
   recipeDetail: {
     href: (id: string) => `/recipe/${id}`,
   },
+  ingredientDetail: {
+    href: (id: string) => `/ingredient/${id}`,
+  },
 } as const
 
 export const QUERY_KEYS = {

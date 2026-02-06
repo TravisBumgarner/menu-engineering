@@ -4,6 +4,7 @@ import { useAppTranslation } from '../../../../hooks/useTranslation'
 import { SPACING } from '../../../../styles/consts'
 import type { MODAL_ID } from '../../Modal.consts'
 import DefaultModal from '../DefaultModal'
+import TabChangelog from './components/TabChangelog'
 import TabData from './components/TabData'
 import TabInternationalization from './components/TabInternationalization'
 import TabUnitPreferences from './components/TabUnitPreferences'
@@ -27,11 +28,13 @@ const SettingsModal = (_props: SettingsModalProps) => {
         <Tab label={t('unitPreferences')} />
         <Tab label={t('internationalization')} />
         <Tab label={t('data')} />
+        <Tab label={t('changelog')} />
       </Tabs>
 
       {activeTab === 0 && <TabUnitPreferences />}
       {activeTab === 1 && <TabInternationalization />}
       {activeTab === 2 && <TabData />}
+      {activeTab === 3 && <TabChangelog />}
     </DefaultModal>
   )
 }

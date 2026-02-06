@@ -16,6 +16,8 @@ import {
   MdHistory,
   MdOutlineCheckBoxOutlineBlank,
   MdOutlinePhoto,
+  MdOutlinePushPin,
+  MdPushPin,
   MdSearch,
 } from 'react-icons/md'
 
@@ -41,6 +43,8 @@ export const iconMap = {
   history: MdHistory,
   search: MdSearch,
   arrowBack: MdArrowBack,
+  pin: MdPushPin,
+  pinOutline: MdOutlinePushPin,
 }
 
 const Icon = ({

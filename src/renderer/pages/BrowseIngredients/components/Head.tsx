@@ -9,7 +9,7 @@ import type { IngredientDTO } from '../../../../shared/recipe.types'
 import { useAppTranslation } from '../../../hooks/useTranslation'
 
 interface HeadCell {
-  id: keyof IngredientDTO | 'actions' | 'recipeCount' | 'collapse'
+  id: keyof IngredientDTO | 'actions' | 'recipeCount'
   label: string
   align: 'left' | 'right' | 'center'
   width: string
@@ -27,12 +27,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   const { order, orderBy, onRequestSort } = props
 
   const headCells: readonly HeadCell[] = [
-    {
-      id: 'collapse',
-      align: 'left',
-      label: '',
-      width: '25px',
-    },
     {
       id: 'createdAt',
       align: 'left',
@@ -85,7 +79,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             sx={{ width: headCell.width, border: 'none' }}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            {headCell.id === 'actions' || headCell.id === 'collapse' ? (
+            {headCell.id === 'actions' ? (
               headCell.label
             ) : (
               <TableSortLabel

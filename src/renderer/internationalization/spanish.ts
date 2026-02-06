@@ -216,8 +216,21 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   // Warnings
   recipeHasZeroQuantity: 'La receta contiene ingredientes o sub-recetas con cantidad 0',
 
+  // Recent Items Sidebar
+  recentItems: 'Recientes',
+  pinnedItems: 'Fijados',
+  pinRecipe: 'Fijar receta',
+  unpinRecipe: 'Desfijar receta',
+  noRecentItems: 'No hay recetas recientes',
+  clearAll: 'Borrar todo',
+  removeFromRecent: 'Quitar',
+
   // Recipe Detail Page
   backToRecipes: 'Volver a Recetas',
+
+  // Ingredient Detail Page
+  backToIngredients: 'Volver a Ingredientes',
+  viewIngredient: 'Ver Ingrediente',
 }
 
 export default SpanishTranslations

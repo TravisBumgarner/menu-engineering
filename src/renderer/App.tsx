@@ -2,6 +2,7 @@ import { Box } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { MemoryRouter } from 'react-router-dom'
 import Navigation from './components/Navigation'
+import RecentItemsSidebar from './components/RecentItemsSidebar'
 import Router from './components/Router'
 import useShowChangelog from './hooks/useShowChangelog'
 import './internationalization' // Initialize i18n
@@ -19,12 +20,23 @@ function App() {
       <Navigation />
       <Box
         sx={{
-          padding: SPACING.SMALL.PX,
-          height: '100%',
-          paddingBottom: '20px', // Lazy way to ensure content is visible.
+          display: 'flex',
+          flexDirection: 'row',
+          flex: 1,
+          overflow: 'hidden',
         }}
       >
-        <Router />
+        <Box
+          sx={{
+            flex: 1,
+            padding: SPACING.SMALL.PX,
+            paddingBottom: '20px',
+            overflow: 'auto',
+          }}
+        >
+          <Router />
+        </Box>
+        <RecentItemsSidebar />
       </Box>
       <RenderModal />
     </>

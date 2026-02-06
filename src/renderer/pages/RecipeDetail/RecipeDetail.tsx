@@ -2,12 +2,15 @@ import { Box, Button, Chip, IconButton, Stack, Tooltip, Typography } from '@mui/
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import log from 'electron-log/renderer'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useEffect } from 'react'
 import { CHANNEL } from '../../../shared/messages.types'
 import { QUERY_KEYS, ROUTES } from '../../consts'
+import { useRecentItems } from '../../hooks/useRecentItems'
 import { useAppTranslation } from '../../hooks/useTranslation'
 import ipcMessenger from '../../ipcMessenger'
 import Icon from '../../sharedComponents/Icon'
 import Link from '../../sharedComponents/Link'
+import Photo from '../../sharedComponents/Photo'
 import { MODAL_ID } from '../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../signals'
 import { SPACING } from '../../styles/consts'
@@ -20,6 +23,7 @@ const RecipeDetail = () => {
   const { t } = useAppTranslation()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { addRecentItem } = useRecentItems()
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.RECIPE, id],
@@ -29,6 +33,12 @@ const RecipeDetail = () => {
     },
     enabled: !!id,
   })
+
+  useEffect(() => {
+    if (data?.recipe) {
+      addRecentItem(data.recipe.id, data.recipe.title, 'recipe')
+    }
+  }, [data?.recipe?.id, data?.recipe?.title, addRecentItem])
 
   if (!id || (!isLoading && (!data || !data.recipe))) {
     return (
@@ -130,36 +140,50 @@ const RecipeDetail = () => {
       </Stack>
 
       {/* Recipe summary */}
-      <Stack direction="row" spacing={SPACING.MEDIUM.PX} alignItems="baseline" sx={{ mb: SPACING.SMALL.PX }}>
-        <Typography variant="h5">{recipe.title}</Typography>
-        <Chip label={t(recipe.status)} size="small" />
-        {recipe.showInMenu && <Chip label={t('showInMenu')} size="small" color="primary" variant="outlined" />}
-      </Stack>
-
       <Stack direction="row" spacing={SPACING.MEDIUM.PX} sx={{ mb: SPACING.MEDIUM.PX }}>
-        <Typography variant="body2" color="textSecondary">
-          {t('produces')}: {recipe.produces} {getUnitLabel(recipe.units, 'plural')}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          {t('totalCost')}: {formatCurrency(recipe.cost)}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          {t('unitCost')}: {formatCurrency(unitCost)}
-        </Typography>
-      </Stack>
+        {recipe.photoSrc && (
+          <Box sx={{ mr: SPACING.SMALL.PX }}>
+            <Photo type="backend" src={recipe.photoSrc} />
+          </Box>
+        )}
 
-      {/* Used In */}
-      {data.usedInRecipes.length > 0 && (
-        <Typography variant="body2" sx={{ mb: SPACING.MEDIUM.PX }}>
-          {t('usedIn')}:{' '}
-          {data.usedInRecipes.map((r, i) => (
-            <span key={r.id}>
-              {i > 0 && ', '}
-              <Link to={ROUTES.recipeDetail.href(r.id)}>{r.title}</Link>
-            </span>
-          ))}
-        </Typography>
-      )}
+        <Box sx={{ flex: 1 }}>
+          <Stack direction="row" spacing={SPACING.SMALL.PX} alignItems="center" sx={{ mb: SPACING.SMALL.PX }}>
+            <Typography variant="h5">{recipe.title}</Typography>
+            <Chip label={t(recipe.status)} size="small" />
+            {recipe.showInMenu && <Chip label={t('showInMenu')} size="small" color="primary" variant="outlined" />}
+          </Stack>
+
+          <Stack direction="row" spacing={SPACING.MEDIUM.PX} sx={{ mb: SPACING.SMALL.PX }}>
+            <Box>
+              <Typography variant="caption" color="text.secondary">{t('produces')}</Typography>
+              <Typography variant="body2">{recipe.produces} {getUnitLabel(recipe.units, 'plural')}</Typography>
+            </Box>
+            <Box>
+              <Typography variant="caption" color="text.secondary">{t('totalCost')}</Typography>
+              <Typography variant="body2">{formatCurrency(recipe.cost)}</Typography>
+            </Box>
+            <Box>
+              <Typography variant="caption" color="text.secondary">{t('unitCost')}</Typography>
+              <Typography variant="body2">{formatCurrency(unitCost)}</Typography>
+            </Box>
+          </Stack>
+
+          {data.usedInRecipes.length > 0 && (
+            <Box>
+              <Typography variant="caption" color="text.secondary">{t('usedIn')}</Typography>
+              <Typography variant="body2">
+                {data.usedInRecipes.map((r, i) => (
+                  <span key={r.id}>
+                    {i > 0 && ', '}
+                    <Link to={ROUTES.recipeDetail.href(r.id)}>{r.title}</Link>
+                  </span>
+                ))}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      </Stack>
 
       {/* Ingredients & Sub-recipes table */}
       <Table ingredients={data.ingredients} recipe={recipe} subRecipes={data.subRecipes} />

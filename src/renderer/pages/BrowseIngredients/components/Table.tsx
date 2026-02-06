@@ -137,11 +137,11 @@ const Table = ({
                   height: 53 * emptyRows,
                 }}
               >
-                <TableCell colSpan={8} />
+                <TableCell colSpan={6} />
               </TableRow>
             )}
             <TableRow>
-              <TableCell colSpan={8}>
+              <TableCell colSpan={6}>
                 <Box
                   sx={{
                     display: 'flex',

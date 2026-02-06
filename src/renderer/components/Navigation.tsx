@@ -21,10 +21,6 @@ const Navigation = () => {
     activeModalSignal.value = { id: MODAL_ID.SETTINGS_MODAL }
   }
 
-  const handleOpenChangelogModal = () => {
-    activeModalSignal.value = { id: MODAL_ID.CHANGELOG_MODAL }
-  }
-
   return (
     <AppBar position="static" color="default" elevation={0}>
       <Toolbar variant="dense">
@@ -72,11 +68,6 @@ const Navigation = () => {
               alignItems: 'center',
             }}
           >
-            <Tooltip title={t('changelog')}>
-              <IconButton onClick={handleOpenChangelogModal}>
-                <Icon name="history" />
-              </IconButton>
-            </Tooltip>
             <Tooltip title={t('settings')}>
               <IconButton onClick={handleOpenSettingsModal}>
                 <Icon name="settings" />

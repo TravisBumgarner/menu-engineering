@@ -13,7 +13,6 @@ import { useAppTranslation } from '../../../hooks/useTranslation'
 import ipcMessenger from '../../../ipcMessenger'
 import Icon from '../../../sharedComponents/Icon'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
-import Photo from '../../../sharedComponents/Photo'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
 import { cellSx, ICON_SIZE } from '../../../styles/tableConsts'
@@ -81,7 +80,6 @@ function RecipeRow({
       <TableCell sx={cellSx} id={labelId} scope="row">
         <Stack direction="row" alignItems="center" spacing={SPACING.TINY.PX}>
           <span>{row.title}</span>
-          {row.photoSrc ? <Photo type="backend" src={row.photoSrc} /> : null}
           {row.hasZeroQuantity ? (
             <Tooltip title={t('recipeHasZeroQuantity')}>
               <span>
