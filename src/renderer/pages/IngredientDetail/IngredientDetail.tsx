@@ -40,21 +40,21 @@ const IngredientDetail = () => {
 
   if (!id || (!isLoading && (!data || !data.ingredient))) {
     return (
-      <Box sx={{ padding: SPACING.MEDIUM.PX }}>
+      <Box>
         <Button
           startIcon={<Icon name="arrowBack" size={16} />}
           onClick={() => navigate(ROUTES.ingredients.href())}
         >
           {t('backToIngredients')}
         </Button>
-        <Typography sx={{ mt: SPACING.MEDIUM.PX }}>{t('ingredientNotFound')}</Typography>
+        <Typography sx={{ mt: SPACING.SM.PX }}>{t('ingredientNotFound')}</Typography>
       </Box>
     )
   }
 
   if (isLoading) {
     return (
-      <Box sx={{ padding: SPACING.MEDIUM.PX }}>
+      <Box>
         <Typography>{t('loading')}</Typography>
       </Box>
     )
@@ -62,14 +62,14 @@ const IngredientDetail = () => {
 
   if (isError) {
     return (
-      <Box sx={{ padding: SPACING.MEDIUM.PX }}>
+      <Box>
         <Button
           startIcon={<Icon name="arrowBack" size={16} />}
           onClick={() => navigate(ROUTES.ingredients.href())}
         >
           {t('backToIngredients')}
         </Button>
-        <Typography sx={{ mt: SPACING.MEDIUM.PX }}>{t('errorLoadingIngredients')}</Typography>
+        <Typography sx={{ mt: SPACING.SM.PX }}>{t('errorLoadingIngredients')}</Typography>
       </Box>
     )
   }
@@ -108,9 +108,9 @@ const IngredientDetail = () => {
   }
 
   return (
-    <Box sx={{ padding: SPACING.MEDIUM.PX, height: '100%', overflow: 'auto' }}>
+    <Box sx={{ height: '100%', overflow: 'auto' }}>
       {/* Header */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: SPACING.MEDIUM.PX }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: SPACING.SM.PX }}>
         <Button
           size="small"
           startIcon={<Icon name="arrowBack" size={16} />}
@@ -133,37 +133,52 @@ const IngredientDetail = () => {
       </Stack>
 
       {/* Ingredient summary */}
-      <Typography variant="h5" sx={{ mb: SPACING.SMALL.PX }}>
-        {ingredient.title}
-      </Typography>
+      <Box
+        sx={{
+          p: SPACING.SM.PX,
+          backgroundColor: 'background.paper',
+          borderRadius: '8px',
+          border: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <Typography variant="h5" sx={{ mb: SPACING.XS.PX }}>
+          {ingredient.title}
+        </Typography>
 
-      <Stack direction="row" spacing={SPACING.MEDIUM.PX} sx={{ mb: SPACING.MEDIUM.PX }}>
-        <Typography variant="body2" color="textSecondary">
-          {t('units')}: {getUnitLabel(ingredient.units, 'plural')}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          {t('unitCost')}: {formatCurrency(ingredient.unitCost)}
-        </Typography>
-      </Stack>
+        <Stack direction="row" spacing={SPACING.LG.PX} sx={{ mb: SPACING.XS.PX }}>
+          <Box>
+            <Typography variant="caption" color="text.secondary">{t('units')}</Typography>
+            <Typography variant="body1" sx={{ fontWeight: 500 }}>{getUnitLabel(ingredient.units, 'plural')}</Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" color="text.secondary">{t('unitCost')}</Typography>
+            <Typography variant="body1" sx={{ fontWeight: 500 }}>{formatCurrency(ingredient.unitCost)}</Typography>
+          </Box>
+        </Stack>
 
-      {/* Used In */}
-      {data.usedInRecipes.length > 0 && (
-        <Typography variant="body2" sx={{ mb: SPACING.MEDIUM.PX }}>
-          {t('usedIn')}:{' '}
-          {data.usedInRecipes.map((r, i) => (
-            <span key={r.id}>
-              {i > 0 && ', '}
-              <Link to={ROUTES.recipeDetail.href(r.id)}>{r.title}</Link>
-            </span>
-          ))}
-        </Typography>
-      )}
+        {/* Used In */}
+        {data.usedInRecipes.length > 0 && (
+          <Box>
+            <Typography variant="caption" color="text.secondary">{t('usedIn')}</Typography>
+            <Typography variant="body2">
+              {data.usedInRecipes.map((r, i) => (
+                <span key={r.id}>
+                  {i > 0 && ', '}
+                  <Link to={ROUTES.recipeDetail.href(r.id)}>{r.title}</Link>
+                </span>
+              ))}
+            </Typography>
+          </Box>
+        )}
 
-      {data.usedInRecipes.length === 0 && (
-        <Typography variant="body2" color="textSecondary">
-          {t('usedIn')}: 0 {t('recipes')}
-        </Typography>
-      )}
+        {data.usedInRecipes.length === 0 && (
+          <Box>
+            <Typography variant="caption" color="text.secondary">{t('usedIn')}</Typography>
+            <Typography variant="body2">0 {t('recipes')}</Typography>
+          </Box>
+        )}
+      </Box>
     </Box>
   )
 }

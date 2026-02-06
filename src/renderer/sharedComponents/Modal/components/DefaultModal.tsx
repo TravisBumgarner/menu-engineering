@@ -32,9 +32,10 @@ const Modal: FC<ActiveModal> = ({ children, closeCallback, sx, title }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'background.paper',
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backdropFilter: 'blur(4px)',
         zIndex: Z_INDICES.MODAL,
-        padding: '5vh 0',
+        padding: SPACING.LG.PX,
         overflowY: 'auto',
         maxHeight: '100vh',
       }}
@@ -45,15 +46,17 @@ const Modal: FC<ActiveModal> = ({ children, closeCallback, sx, title }) => {
     >
       <Box
         sx={{
-          width: '600px',
+          width: '560px',
           maxWidth: '90%',
-          maxHeight: '90vh',
+          maxHeight: '85vh',
           overflow: 'auto',
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: 'background.paper',
           color: 'text.primary',
-          padding: SPACING.MEDIUM.PX,
+          padding: SPACING.MD.PX,
+          borderRadius: '12px',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08)',
 
           ...sx,
         }}
@@ -63,14 +66,17 @@ const Modal: FC<ActiveModal> = ({ children, closeCallback, sx, title }) => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            paddingBottom: SPACING.SMALL.PX,
+            paddingBottom: SPACING.SM.PX,
+            marginBottom: SPACING.SM.PX,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
           }}
         >
-          <Typography variant="h5" component="h2">
+          <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
             {title}
           </Typography>
-          <IconButton component="button" onClick={handleClose}>
-            <Icon name="close" size={24} />
+          <IconButton component="button" onClick={handleClose} size="small">
+            <Icon name="close" size={18} />
           </IconButton>
         </Box>
         {children}

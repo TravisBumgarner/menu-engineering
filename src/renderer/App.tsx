@@ -29,8 +29,7 @@ function App() {
         <Box
           sx={{
             flex: 1,
-            padding: SPACING.SMALL.PX,
-            paddingBottom: '20px',
+            padding: SPACING.MD.PX,
             overflow: 'auto',
           }}
         >

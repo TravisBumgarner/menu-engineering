@@ -134,7 +134,7 @@ const Autocomplete = ({
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: SPACING.TINY.PX,
+                gap: SPACING.XXXS.PX,
               }}
             >
               <Typography>No ingredients or recipes found</Typography>

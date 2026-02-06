@@ -43,10 +43,10 @@ const Recipe = ({ id }: { id: string }) => {
   return (
     <Box
       sx={{
-        padding: SPACING.SMALL.PX,
+        padding: SPACING.XS.PX,
       }}
     >
-      <Typography sx={{ fontSize: FONT_SIZES.SMALL.PX, marginBottom: SPACING.SMALL.PX }}>
+      <Typography sx={{ fontSize: FONT_SIZES.SMALL.PX, marginBottom: SPACING.XXS.PX }}>
         {t('usedIn')}: {data.usedInRecipes.length === 0 && ` 0 ${t('recipes')}`}
         {data.usedInRecipes.map((recipe) => (
           <Button size="small" key={recipe.id} onClick={() => navigate(ROUTES.recipeDetail.href(recipe.id))}>

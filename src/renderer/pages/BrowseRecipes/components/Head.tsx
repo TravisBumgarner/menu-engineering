@@ -31,31 +31,31 @@ function Head({ onRequestSort, order, orderBy, sx }: Props) {
       id: 'createdAt',
       align: 'left',
       label: t('created'),
-      width: '75px',
+      width: '7%',
     },
     {
       id: 'title',
       align: 'left',
       label: t('title'),
-      width: '20%',
+      width: '23%',
     },
     {
       id: 'status',
       align: 'left',
       label: t('status'),
-      width: '10%',
+      width: '8%',
     },
     {
       id: 'showInMenu',
       align: 'left',
       label: t('showInMenu'),
-      width: '90px',
+      width: '13%',
     },
     {
       id: 'totalCost',
       align: 'right',
       label: t('totalCost'),
-      width: '10%',
+      width: '12%',
     },
     {
       id: 'produces',
@@ -63,32 +63,17 @@ function Head({ onRequestSort, order, orderBy, sx }: Props) {
       label: t('produces'),
       width: '12%',
     },
-    // {
-    //   id: 'units',
-    //   align: 'left',
-
-    //   label: '',
-    //   width: '10%',
-    // },
     {
       id: 'unitCost',
       align: 'right',
       label: t('unitCost'),
-      width: '10%',
+      width: '12%',
     },
-
-    // {
-    //   id: 'usedInRecipesCount',
-    //   align: 'left',
-
-    //   label: t('usedIn'),
-    //   width: '10%',
-    // },
     {
       id: 'actions',
       align: 'center',
       label: '',
-      width: '90px',
+      width: '13%',
     },
   ]
 

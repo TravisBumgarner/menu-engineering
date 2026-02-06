@@ -49,20 +49,21 @@ const RecentItemsSidebar = () => {
   return (
     <Box
       sx={{
-        width: 200,
-        minWidth: 200,
+        width: 220,
+        minWidth: 220,
         borderLeft: 1,
         borderColor: 'divider',
         overflow: 'auto',
         display: 'flex',
         flexDirection: 'column',
+        backgroundColor: 'background.paper',
       }}
     >
       <Stack
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        sx={{ px: SPACING.SMALL.PX, pt: SPACING.SMALL.PX, pb: SPACING.TINY.PX }}
+        sx={{ px: SPACING.XS.PX, pt: SPACING.XS.PX, pb: SPACING.XXXS.PX }}
       >
         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
           {t('recentItems')}
@@ -73,7 +74,7 @@ const RecentItemsSidebar = () => {
       </Stack>
 
       {isEmpty && (
-        <Typography variant="body2" color="text.secondary" sx={{ px: SPACING.SMALL.PX, py: SPACING.SMALL.PX }}>
+        <Typography variant="body2" color="text.secondary" sx={{ px: SPACING.XS.PX, py: SPACING.XS.PX }}>
           {t('noRecentItems')}
         </Typography>
       )}
@@ -83,7 +84,7 @@ const RecentItemsSidebar = () => {
           <Typography
             variant="caption"
             color="text.secondary"
-            sx={{ px: SPACING.SMALL.PX, pt: SPACING.TINY.PX, pb: SPACING.TINY.PX, fontWeight: 600 }}
+            sx={{ px: SPACING.XS.PX, pt: SPACING.XXXS.PX, pb: SPACING.XXXS.PX, fontWeight: 600 }}
           >
             {t('pinnedItems')}
           </Typography>
@@ -93,13 +94,13 @@ const RecentItemsSidebar = () => {
                 key={item.id}
                 selected={activeId === item.id}
                 onClick={() => navigate(getItemHref(item.id, item.type))}
-                sx={{ py: SPACING.TINY.PX, px: SPACING.SMALL.PX }}
+                sx={{ py: SPACING.XXXS.PX, px: SPACING.XS.PX }}
               >
                 <Icon name={item.type === 'ingredient' ? 'ingredient' : 'recipe'} size={14} />
                 <ListItemText
                   primary={item.title}
                   primaryTypographyProps={{ noWrap: true, variant: 'body2' }}
-                  sx={{ ml: SPACING.TINY.PX }}
+                  sx={{ ml: SPACING.XXXS.PX }}
                 />
                 <Tooltip title={t('unpinRecipe')}>
                   <IconButton
@@ -108,7 +109,7 @@ const RecentItemsSidebar = () => {
                       e.stopPropagation()
                       togglePin(item.id)
                     }}
-                    sx={{ ml: SPACING.TINY.PX }}
+                    sx={{ ml: SPACING.XXXS.PX }}
                   >
                     <Icon name="pin" size={14} />
                   </IconButton>
@@ -125,12 +126,12 @@ const RecentItemsSidebar = () => {
             direction="row"
             alignItems="center"
             justifyContent="space-between"
-            sx={{ px: SPACING.SMALL.PX, pt: SPACING.TINY.PX, pb: SPACING.TINY.PX }}
+            sx={{ px: SPACING.XS.PX, pt: SPACING.XXXS.PX, pb: SPACING.XXXS.PX }}
           >
             <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
               {t('recentItems')}
             </Typography>
-            <Button size="small" onClick={clearAll} sx={{ minWidth: 0, px: SPACING.TINY.PX, fontSize: '0.7rem' }}>
+            <Button size="small" onClick={clearAll} sx={{ minWidth: 0, px: SPACING.XXXS.PX, fontSize: '0.7rem' }}>
               {t('clearAll')}
             </Button>
           </Stack>
@@ -140,13 +141,13 @@ const RecentItemsSidebar = () => {
                 key={item.id}
                 selected={activeId === item.id}
                 onClick={() => navigate(getItemHref(item.id, item.type))}
-                sx={{ py: SPACING.TINY.PX, px: SPACING.SMALL.PX }}
+                sx={{ py: SPACING.XXXS.PX, px: SPACING.XS.PX }}
               >
                 <Icon name={item.type === 'ingredient' ? 'ingredient' : 'recipe'} size={14} />
                 <ListItemText
                   primary={item.title}
                   primaryTypographyProps={{ noWrap: true, variant: 'body2' }}
-                  sx={{ ml: SPACING.TINY.PX }}
+                  sx={{ ml: SPACING.XXXS.PX }}
                 />
                 <Tooltip title={t('pinRecipe')}>
                   <IconButton
@@ -155,7 +156,7 @@ const RecentItemsSidebar = () => {
                       e.stopPropagation()
                       togglePin(item.id)
                     }}
-                    sx={{ ml: SPACING.TINY.PX }}
+                    sx={{ ml: SPACING.XXXS.PX }}
                   >
                     <Icon name="pinOutline" size={14} />
                   </IconButton>

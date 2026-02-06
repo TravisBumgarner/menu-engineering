@@ -11,7 +11,7 @@ import { MODAL_ID } from '../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../signals'
 import { SPACING } from '../styles/consts'
 
-const NAV_ROUTES: Array<keyof typeof ROUTES> = ['recipes', 'ingredients']
+const NAV_ROUTES = ['recipes', 'ingredients'] as const
 
 const Navigation = () => {
   const location = useLocation()
@@ -29,31 +29,36 @@ const Navigation = () => {
             display: 'flex',
             justifyContent: 'space-between',
             width: '100%',
+            alignItems: 'center',
           }}
         >
           <Box
             sx={{
               display: 'flex',
-              gap: SPACING.SMALL.PX,
+              gap: SPACING.XXXS.PX,
               alignItems: 'center',
             }}
           >
             {NAV_ROUTES.map((key) => {
               const route = ROUTES[key]
-              const isActive = location.pathname === route.href()
+              const href = route.href()
+              const isActive = location.pathname === href
 
               return (
                 <Button
                   size="small"
                   key={key}
                   component={RouterLink}
-                  to={route.href()}
-                  color={isActive ? 'primary' : 'inherit'}
+                  to={href}
                   sx={{
                     minWidth: 'auto',
-                    backgroundColor: (theme) => (isActive ? alpha(theme.palette.primary.main, 0.1) : 'transparent'),
-                    border: '1px solid',
-                    borderColor: (theme) => (isActive ? alpha(theme.palette.primary.main, 0.3) : 'transparent'),
+                    fontWeight: isActive ? 600 : 400,
+                    color: (theme) => isActive ? theme.palette.primary.main : theme.palette.text.secondary,
+                    backgroundColor: (theme) => (isActive ? alpha(theme.palette.primary.main, 0.08) : 'transparent'),
+                    borderRadius: '6px',
+                    '&:hover': {
+                      backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.06),
+                    },
                   }}
                 >
                   {t(key)}
@@ -61,19 +66,11 @@ const Navigation = () => {
               )
             })}
           </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              gap: SPACING.MEDIUM.PX,
-              alignItems: 'center',
-            }}
-          >
-            <Tooltip title={t('settings')}>
-              <IconButton onClick={handleOpenSettingsModal}>
-                <Icon name="settings" />
-              </IconButton>
-            </Tooltip>
-          </Box>
+          <Tooltip title={t('settings')}>
+            <IconButton size="small" onClick={handleOpenSettingsModal}>
+              <Icon name="settings" size={18} />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Toolbar>
     </AppBar>

@@ -29,7 +29,7 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
         display: 'flex',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        gap: SPACING.SMALL.PX,
+        gap: SPACING.XS.PX,
       }}
     >
       <TextField

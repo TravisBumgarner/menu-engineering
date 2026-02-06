@@ -112,8 +112,8 @@ const Table = ({
   )
 
   return (
-    <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <Stack direction="row" justifyContent="space-between" alignContent="center" sx={{ paddingY: SPACING.SMALL.PX }}>
+    <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Stack direction="row" justifyContent="space-between" alignContent="center" sx={{ paddingY: SPACING.XS.PX, flexShrink: 0 }}>
         <Filters filters={filters} onFiltersChange={handleFiltersChange} />
         <Box>
           <Button size="small" onClick={handleOpenExportIngredientsModal} variant="outlined">
@@ -122,7 +122,7 @@ const Table = ({
         </Box>
       </Stack>
 
-      <TableContainer sx={{ boxShadow: 'none' }}>
+      <TableContainer sx={{ boxShadow: 'none', flex: 1, overflow: 'auto' }}>
         <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="small">
           <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
           <TableBody>
@@ -131,32 +131,14 @@ const Table = ({
 
               return <IngredientRow key={row.id} row={row} labelId={labelId} />
             })}
-            {emptyRows > 0 && (
-              <TableRow
-                style={{
-                  height: 53 * emptyRows,
-                }}
-              >
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-            <TableRow>
-              <TableCell colSpan={6}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: SPACING.MEDIUM.PX,
-                  }}
-                >
-                  <Button size="small" onClick={handleOpenAddIngredientModal} fullWidth variant="outlined">
-                    {t('addIngredient')}
-                  </Button>
-                </Box>
-              </TableCell>
-            </TableRow>
           </TableBody>
         </MuiTable>
       </TableContainer>
+      <Box sx={{ flexShrink: 0, py: SPACING.XS.PX }}>
+        <Button size="small" onClick={handleOpenAddIngredientModal} fullWidth variant="outlined">
+          {t('addIngredient')}
+        </Button>
+      </Box>
       <TablePagination
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
@@ -166,6 +148,7 @@ const Table = ({
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
+        sx={{ flexShrink: 0 }}
       />
     </Box>
   )

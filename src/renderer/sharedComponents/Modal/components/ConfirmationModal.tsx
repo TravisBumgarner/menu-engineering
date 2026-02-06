@@ -3,6 +3,7 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { useCallback } from 'react'
 import { activeModalSignal } from '../../../signals'
+import { SPACING } from '../../../styles/consts'
 import type { MODAL_ID } from '../Modal.consts'
 import DefaultModal from './DefaultModal'
 
@@ -40,12 +41,12 @@ const ConfirmationModal = ({
 
   return (
     <DefaultModal title={title}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: SPACING.SM.PX }}>
         <Typography variant="body1">{body}</Typography>
         <Box
           sx={{
             display: 'flex',
-            gap: '10px',
+            gap: SPACING.XS.PX,
             flexDirection: 'row',
             justifyContent: 'flex-end',
           }}
