@@ -14,6 +14,19 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.4.0',
+    date: '2026-02-06T12:00:00',
+    changes: [
+      {
+        category: 'Improved',
+        description: {
+          en: 'Redesigned UI with new color palette, typography, and spacing system.',
+          es: 'Interfaz rediseñada con nueva paleta de colores, tipografía y sistema de espaciado.',
+        },
+      },
+    ],
+  },
+  {
     version: '1.3.0',
     date: '2026-02-05T12:00:00',
     changes: [
