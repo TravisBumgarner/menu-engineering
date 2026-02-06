@@ -14,6 +14,40 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.4.0',
+    date: '2026-02-06T12:00:00',
+    changes: [
+      {
+        category: 'Improved',
+        description: {
+          en: 'Redesigned UI with new color palette, typography, and spacing system.',
+          es: 'Interfaz rediseñada con nueva paleta de colores, tipografía y sistema de espaciado.',
+        },
+      },
+      {
+        category: 'Improved',
+        description: {
+          en: 'Tables now fill the screen with pinned pagination that no longer jumps on page change.',
+          es: 'Las tablas ahora llenan la pantalla con paginación fija que ya no salta al cambiar de página.',
+        },
+      },
+      {
+        category: 'Improved',
+        description: {
+          en: 'Recipe and ingredient detail pages now display summary info in a card layout.',
+          es: 'Las páginas de detalle de recetas e ingredientes ahora muestran la información en formato de tarjeta.',
+        },
+      },
+      {
+        category: 'Improved',
+        description: {
+          en: 'Export PDF modal now always shows the full recipe list with search and selection.',
+          es: 'El modal de exportar PDF ahora siempre muestra la lista completa de recetas con búsqueda y selección.',
+        },
+      },
+    ],
+  },
+  {
     version: '1.3.0',
     date: '2026-02-05T12:00:00',
     changes: [
