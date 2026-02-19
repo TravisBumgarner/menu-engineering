@@ -92,9 +92,9 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
 
   const addCategoryMutation = useMutation({
     mutationFn: (title: string) => ipcMessenger.invoke(CHANNEL.DB.ADD_CATEGORY, { payload: { title } }),
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       if (result.success) {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CATEGORIES] })
+        await queryClient.refetchQueries({ queryKey: [QUERY_KEYS.CATEGORIES] })
         setFormData((prev) => ({ ...prev, categoryIds: [...(prev.categoryIds || []), result.categoryId] }))
         setNewCategoryTitle('')
       }

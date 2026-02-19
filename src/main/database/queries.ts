@@ -23,7 +23,7 @@ import {
 
 const addRecipe = async (recipeData: NewRecipeDTO & { photoSrc?: RecipeDTO['photoSrc'] }) => {
   const newId = uuidv4()
-  const { categoryIds, ...recipeFields } = recipeData
+  const { categoryIds, photo, ...recipeFields } = recipeData as NewRecipeDTO & { photoSrc?: string; photo?: unknown }
 
   await db
     .insert(recipeSchema)
@@ -257,7 +257,7 @@ const updateIngredient = async (id: string, ingredientData: Partial<NewIngredien
 }
 
 const updateRecipe = async (id: string, recipeData: Partial<RecipeDTO>) => {
-  const { categoryIds, ...recipeFields } = recipeData
+  const { categoryIds, photo, ...recipeFields } = recipeData as Partial<RecipeDTO> & { photo?: unknown }
 
   const result = await db.update(recipeSchema).set(recipeFields).where(eq(recipeSchema.id, id)).run()
 

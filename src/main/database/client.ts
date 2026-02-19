@@ -21,15 +21,13 @@ const sqlite = new BetterSqlite3(dbPath)
 // Create the Drizzle client
 export const db = drizzle(sqlite)
 
-// Run migrations automatically in production
-if (app.isPackaged) {
-  Logger.info('I do run...')
-  try {
-    // In production, migrations are bundled with the app
-    const migrationsFolder = path.join(process.resourcesPath, 'drizzle')
-    migrate(db, { migrationsFolder })
-    Logger.info('Database migrations applied successfully')
-  } catch (error) {
-    Logger.error('Failed to apply migrations:', error)
-  }
+// Run migrations automatically
+try {
+  const migrationsFolder = app.isPackaged
+    ? path.join(process.resourcesPath, 'drizzle')
+    : path.join(process.cwd(), 'drizzle')
+  migrate(db, { migrationsFolder })
+  Logger.info('Database migrations applied successfully')
+} catch (error) {
+  Logger.error('Failed to apply migrations:', error)
 }
