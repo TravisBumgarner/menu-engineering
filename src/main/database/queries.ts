@@ -1,6 +1,7 @@
 import { and, count, eq } from 'drizzle-orm'
 import log from 'electron-log/main'
 import type {
+  NewCategoryDTO,
   NewIngredientDTO,
   NewIngredientInRecipeDTO,
   NewRecipeDTO,
@@ -11,16 +12,27 @@ import type { AllUnits } from 'src/shared/units.types'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from './client'
 import { lower } from './functions'
-import { ingredientSchema, recipeIngredientSchema, recipeSchema, recipeSubRecipeSchema } from './schema'
+import {
+  categorySchema,
+  ingredientSchema,
+  recipeCategorySchema,
+  recipeIngredientSchema,
+  recipeSchema,
+  recipeSubRecipeSchema,
+} from './schema'
 
 const addRecipe = async (recipeData: NewRecipeDTO & { photoSrc?: RecipeDTO['photoSrc'] }) => {
-  // generate an id required by the schema, then insert
   const newId = uuidv4()
+  const { categoryIds, photo, ...recipeFields } = recipeData as NewRecipeDTO & { photoSrc?: string; photo?: unknown }
 
   await db
     .insert(recipeSchema)
-    .values({ id: newId, ...recipeData })
+    .values({ id: newId, ...recipeFields })
     .run()
+
+  if (categoryIds && categoryIds.length > 0) {
+    await setRecipeCategories(newId, categoryIds)
+  }
 
   return newId
 }
@@ -56,6 +68,14 @@ const getRecipes = async () => {
     .groupBy(recipeSchema.id)
     .all()
 
+  const allJunctionRows = await db.select().from(recipeCategorySchema).all()
+  const categoryMap = new Map<string, string[]>()
+  for (const row of allJunctionRows) {
+    const existing = categoryMap.get(row.recipeId) || []
+    existing.push(row.categoryId)
+    categoryMap.set(row.recipeId, existing)
+  }
+
   return Promise.all(
     rows.map(async (row) => {
       const costResult = await getRecipeCost(row.recipe.id)
@@ -63,6 +83,7 @@ const getRecipes = async () => {
 
       return {
         ...row.recipe,
+        categoryIds: categoryMap.get(row.recipe.id) || [],
         usedInRecipesCount: row.usedInRecipesCount,
         cost: costResult.success ? costResult.cost : null,
         hasZeroQuantity,
@@ -82,10 +103,17 @@ const getRecipe = async (id: string) => {
     .where(eq(recipeSubRecipeSchema.childId, id))
     .leftJoin(recipeSchema, eq(recipeSubRecipeSchema.parentId, recipeSchema.id))
 
+  const junctionRows = await db
+    .select()
+    .from(recipeCategorySchema)
+    .where(eq(recipeCategorySchema.recipeId, id))
+  const categoryIds = junctionRows.map((row) => row.categoryId)
+
   const costResult = await getRecipeCost(id)
 
   return {
     ...recipe[0],
+    categoryIds,
     usedInRecipes: usedInRecipes.map((row) => row.recipe).filter(Boolean),
     cost: costResult.success ? costResult.cost : -1,
   }
@@ -229,7 +257,13 @@ const updateIngredient = async (id: string, ingredientData: Partial<NewIngredien
 }
 
 const updateRecipe = async (id: string, recipeData: Partial<RecipeDTO>) => {
-  const result = await db.update(recipeSchema).set(recipeData).where(eq(recipeSchema.id, id)).run()
+  const { categoryIds, photo, ...recipeFields } = recipeData as Partial<RecipeDTO> & { photo?: unknown }
+
+  const result = await db.update(recipeSchema).set(recipeFields).where(eq(recipeSchema.id, id)).run()
+
+  if (categoryIds !== undefined) {
+    await setRecipeCategories(id, categoryIds)
+  }
 
   return result
 }
@@ -358,16 +392,19 @@ const getRecipesUsingIngredient = async (ingredientId: string) => {
 const deleteRecipe = async (recipeId: string) => {
   try {
     // Delete in order to maintain foreign key constraints
-    // 1. Delete all ingredient relationships for this recipe
+    // 1. Delete all category associations
+    await db.delete(recipeCategorySchema).where(eq(recipeCategorySchema.recipeId, recipeId)).run()
+
+    // 2. Delete all ingredient relationships for this recipe
     await db.delete(recipeIngredientSchema).where(eq(recipeIngredientSchema.parentId, recipeId)).run()
 
-    // 2. Delete all sub-recipe relationships where this recipe is the parent
+    // 3. Delete all sub-recipe relationships where this recipe is the parent
     await db.delete(recipeSubRecipeSchema).where(eq(recipeSubRecipeSchema.parentId, recipeId)).run()
 
-    // 3. Delete all sub-recipe relationships where this recipe is used as a sub-recipe
+    // 4. Delete all sub-recipe relationships where this recipe is used as a sub-recipe
     await db.delete(recipeSubRecipeSchema).where(eq(recipeSubRecipeSchema.childId, recipeId)).run()
 
-    // 4. Finally, delete the recipe itself
+    // 5. Finally, delete the recipe itself
     const result = await db.delete(recipeSchema).where(eq(recipeSchema.id, recipeId)).run()
 
     return result
@@ -545,6 +582,44 @@ const convertSubRecipeRelationQuantities = async (
   return convertedCount
 }
 
+const getCategories = async () => {
+  return db.select().from(categorySchema).all()
+}
+
+const addCategory = async (data: NewCategoryDTO) => {
+  const newId = uuidv4()
+  await db
+    .insert(categorySchema)
+    .values({ id: newId, ...data })
+    .run()
+  return newId
+}
+
+const updateCategory = async (id: string, data: Partial<NewCategoryDTO>) => {
+  const result = await db
+    .update(categorySchema)
+    .set({ ...data, updatedAt: new Date().toISOString() })
+    .where(eq(categorySchema.id, id))
+    .run()
+  return result
+}
+
+const deleteCategory = async (id: string) => {
+  await db.delete(recipeCategorySchema).where(eq(recipeCategorySchema.categoryId, id)).run()
+  const result = await db.delete(categorySchema).where(eq(categorySchema.id, id)).run()
+  return result
+}
+
+const setRecipeCategories = async (recipeId: string, categoryIds: string[]) => {
+  await db.delete(recipeCategorySchema).where(eq(recipeCategorySchema.recipeId, recipeId)).run()
+  for (const categoryId of categoryIds) {
+    await db
+      .insert(recipeCategorySchema)
+      .values({ id: uuidv4(), recipeId, categoryId })
+      .run()
+  }
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -574,4 +649,9 @@ export default {
   resetSubRecipeRelationQuantities,
   convertSubRecipeRelationQuantities,
   getSubRecipeRelationCount,
+  getCategories,
+  addCategory,
+  updateCategory,
+  deleteCategory,
+  setRecipeCategories,
 }

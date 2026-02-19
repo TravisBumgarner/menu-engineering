@@ -6,11 +6,14 @@ import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
+import { useQuery } from '@tanstack/react-query'
 import * as React from 'react'
+import { CHANNEL } from '../../../../shared/messages.types'
 import { RECIPE_STATUS, type RecipeDTO } from '../../../../shared/recipe.types'
-import { PAGINATION } from '../../../consts'
+import { PAGINATION, QUERY_KEYS } from '../../../consts'
 import { useLocalStorage } from '../../../hooks/useLocalStorage'
 import { useAppTranslation } from '../../../hooks/useTranslation'
+import ipcMessenger from '../../../ipcMessenger'
 import { MODAL_ID } from '../../../sharedComponents/Modal/Modal.consts'
 import { activeModalSignal } from '../../../signals'
 import { SPACING } from '../../../styles/consts'
@@ -45,11 +48,19 @@ const Table = ({
   recipes,
 }: {
   recipes: (RecipeDTO & {
+    categoryIds: string[]
     usedInRecipesCount: number
     hasZeroQuantity: boolean
   })[]
 }) => {
   const { t } = useAppTranslation()
+
+  const { data: categoriesData } = useQuery({
+    queryKey: [QUERY_KEYS.CATEGORIES],
+    queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_CATEGORIES, undefined),
+  })
+  const categories = categoriesData?.categories ?? []
+
   const [order, setOrder] = React.useState<'asc' | 'desc'>('desc')
   const [orderBy, setOrderBy] = React.useState<keyof RecipeDTO | 'usedInRecipesCount'>('createdAt')
   const [page, setPage] = React.useState(0)
@@ -65,6 +76,7 @@ const Table = ({
     showSubRecipes: true,
     showMainRecipes: true,
     searchQuery: '',
+    categoryId: null,
   })
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,7 +128,15 @@ const Table = ({
         recipeTypeMatch = isMainRecipe
       }
 
-      return searchMatch && statusMatch && menuItemsOnly && recipeTypeMatch
+      // Filter by category
+      let categoryMatch = true
+      if (filters.categoryId === 'uncategorized') {
+        categoryMatch = !recipe.categoryIds || recipe.categoryIds.length === 0
+      } else if (filters.categoryId) {
+        categoryMatch = recipe.categoryIds?.includes(filters.categoryId) ?? false
+      }
+
+      return searchMatch && statusMatch && menuItemsOnly && recipeTypeMatch && categoryMatch
     })
   }, [recipes, filters])
 
@@ -147,15 +167,37 @@ const Table = ({
 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Stack direction="row" justifyContent="space-between" alignContent="center" sx={{ paddingY: SPACING.XS.PX, flexShrink: 0 }}>
-        <Filters filters={filters} onFiltersChange={handleFiltersChange} />
-
-        <Box>
-          <Button size="small" onClick={handleOpenExportRecipesModal} variant="outlined">
-            Export PDF
+      {categories.length > 0 && (
+        <Box sx={{ display: 'flex', gap: SPACING.XXS.PX, flexWrap: 'wrap', pt: SPACING.XS.PX, flexShrink: 0 }}>
+          <Button
+            size="small"
+            variant={filters.categoryId === null ? 'contained' : 'outlined'}
+            onClick={() => handleFiltersChange({ ...filters, categoryId: null })}
+          >
+            {t('allCategories')}
+          </Button>
+          {categories.map((cat) => (
+            <Button
+              key={cat.id}
+              size="small"
+              variant={filters.categoryId === cat.id ? 'contained' : 'outlined'}
+              onClick={() => handleFiltersChange({ ...filters, categoryId: cat.id })}
+            >
+              {cat.title}
+            </Button>
+          ))}
+          <Button
+            size="small"
+            variant={filters.categoryId === 'uncategorized' ? 'contained' : 'outlined'}
+            onClick={() => handleFiltersChange({ ...filters, categoryId: 'uncategorized' })}
+          >
+            {t('uncategorized')}
           </Button>
         </Box>
-      </Stack>
+      )}
+      <Box sx={{ paddingY: SPACING.XS.PX, flexShrink: 0 }}>
+        <Filters filters={filters} onFiltersChange={handleFiltersChange} />
+      </Box>
       <TableContainer sx={{ boxShadow: 'none', flex: 1, overflow: 'auto' }}>
         <MuiTable sx={{ tableLayout: 'fixed' }} aria-labelledby="tableTitle" size="small">
           <Head order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
@@ -173,18 +215,22 @@ const Table = ({
           {t('addRecipe')}
         </Button>
       </Box>
-      <TablePagination
-        rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        size="small"
-        component="div"
-        count={filteredRecipes.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
-        sx={{ flexShrink: 0 }}
-      />
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ flexShrink: 0 }}>
+        <Button size="small" onClick={handleOpenExportRecipesModal} variant="outlined">
+          Export PDF
+        </Button>
+        <TablePagination
+          rowsPerPageOptions={PAGINATION.ROWS_PER_PAGE_OPTIONS}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          size="small"
+          component="div"
+          count={filteredRecipes.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          labelDisplayedRows={({ from, to, count }) => `${from}–${to} ${t('outOf')} ${count}`}
+        />
+      </Stack>
     </Box>
   )
 }

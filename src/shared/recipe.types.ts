@@ -8,12 +8,23 @@ export const RECIPE_STATUS = {
 
 export type RecipeStatus = keyof typeof RECIPE_STATUS
 
+export type NewCategoryDTO = {
+  title: string
+}
+
+export type CategoryDTO = NewCategoryDTO & {
+  id: string
+  createdAt: string
+  updatedAt: string
+}
+
 export type NewRecipeDTO = {
   title: string
   produces: number
   units: AllUnits
   status: RecipeStatus
   showInMenu: boolean
+  categoryIds?: string[]
 }
 
 export type RecipeDTO = NewRecipeDTO & {

@@ -6,13 +6,15 @@ import {
   FormControlLabel,
   IconButton,
   InputLabel,
+  ListItemText,
   MenuItem,
   Select,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import log from 'electron-log/renderer'
 import type React from 'react'
 import { useRef, useState } from 'react'
@@ -50,14 +52,34 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const { data: categoriesData } = useQuery({
+    queryKey: [QUERY_KEYS.CATEGORIES],
+    queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_CATEGORIES, undefined),
+  })
+
   const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>(() => ({
     title: '',
     produces: 0,
     units: getDefaultUnit(),
     status: RECIPE_STATUS.draft,
     showInMenu: false,
+    categoryIds: [],
     photo: undefined,
   }))
+
+  const [newCategoryTitle, setNewCategoryTitle] = useState('')
+  const [showAddCategory, setShowAddCategory] = useState(false)
+
+  const addCategoryMutation = useMutation({
+    mutationFn: (title: string) => ipcMessenger.invoke(CHANNEL.DB.ADD_CATEGORY, { payload: { title } }),
+    onSuccess: async (result) => {
+      if (result.success) {
+        await queryClient.refetchQueries({ queryKey: [QUERY_KEYS.CATEGORIES] })
+        setFormData((prev) => ({ ...prev, categoryIds: [...(prev.categoryIds || []), result.categoryId] }))
+        setNewCategoryTitle('')
+      }
+    },
+  })
 
   const handleClose = () => {
     activeModalSignal.value = null
@@ -245,6 +267,66 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
                   <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
                 </Select>
               </FormControl>
+              <Stack direction="row" spacing={SPACING.XS.PX} alignItems="center">
+                <FormControl size="small" fullWidth>
+                  <InputLabel>{t('category')}</InputLabel>
+                  <Select
+                    multiple
+                    value={formData.categoryIds || []}
+                    onChange={(e) => {
+                      const value = e.target.value as string[]
+                      setFormData((prev) => ({ ...prev, categoryIds: value }))
+                    }}
+                    label={t('category')}
+                    renderValue={(selected) => {
+                      const cats = categoriesData?.categories ?? []
+                      return selected.map((id) => cats.find((c) => c.id === id)?.title ?? id).join(', ')
+                    }}
+                  >
+                    {(categoriesData?.categories ?? []).map((cat) => (
+                      <MenuItem key={cat.id} value={cat.id}>
+                        <Checkbox size="small" checked={(formData.categoryIds || []).includes(cat.id)} />
+                        <ListItemText primary={cat.title} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Tooltip title={t('addCategory')}>
+                  <IconButton
+                    size="small"
+                    onClick={() => setShowAddCategory((prev) => !prev)}
+                  >
+                    <Icon name="edit" size={18} />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+              {showAddCategory && (
+                <Stack direction="row" spacing={SPACING.XS.PX}>
+                  <TextField
+                    size="small"
+                    placeholder={t('categoryName')}
+                    value={newCategoryTitle}
+                    onChange={(e) => setNewCategoryTitle(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        if (newCategoryTitle.trim()) addCategoryMutation.mutate(newCategoryTitle.trim())
+                      }
+                    }}
+                    sx={{ flex: 1 }}
+                    autoFocus
+                  />
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => addCategoryMutation.mutate(newCategoryTitle.trim())}
+                    disabled={!newCategoryTitle.trim() || addCategoryMutation.isPending}
+                    type="button"
+                  >
+                    {t('addCategory')}
+                  </Button>
+                </Stack>
+              )}
               <FormControlLabel
                 control={<Checkbox checked={formData.showInMenu} onChange={handleCheckboxChange('showInMenu')} />}
                 label={t('showInMenu')}

@@ -34,6 +34,11 @@ const RecipeDetail = () => {
     enabled: !!id,
   })
 
+  const { data: categoriesData } = useQuery({
+    queryKey: [QUERY_KEYS.CATEGORIES],
+    queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_CATEGORIES, undefined),
+  })
+
   useEffect(() => {
     if (data?.recipe) {
       addRecentItem(data.recipe.id, data.recipe.title, 'recipe')
@@ -162,6 +167,10 @@ const RecipeDetail = () => {
             <Typography variant="h5">{recipe.title}</Typography>
             <Chip label={t(recipe.status)} size="small" variant="outlined" />
             {recipe.showInMenu && <Chip label={t('showInMenu')} size="small" color="primary" variant="outlined" />}
+            {recipe.categoryIds?.map((catId) => {
+              const cat = categoriesData?.categories?.find((c) => c.id === catId)
+              return cat ? <Chip key={catId} label={cat.title} size="small" variant="outlined" /> : null
+            })}
           </Stack>
 
           <Stack direction="row" spacing={SPACING.LG.PX} sx={{ mb: SPACING.XXS.PX }}>

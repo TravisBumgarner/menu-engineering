@@ -8,6 +8,7 @@ import { LuApple, LuPartyPopper } from 'react-icons/lu'
 import {
   MdAdd,
   MdArrowBack,
+  MdCheck,
   MdClose,
   MdDeleteOutline,
   MdDownload,
@@ -24,6 +25,7 @@ import {
 export const iconMap = {
   edit: MdEdit,
   add: MdAdd,
+  check: MdCheck,
   checkbox: IoMdCheckbox,
   checkboxOutline: MdOutlineCheckBoxOutlineBlank,
   recipe: FaRegListAlt,

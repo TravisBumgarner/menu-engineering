@@ -14,6 +14,19 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '1.5.0',
+    date: '2026-02-19T12:00:00',
+    changes: [
+      {
+        category: 'New',
+        description: {
+          en: 'Recipes now support categories.',
+          es: 'Las recetas ahora admiten categorías.',
+        },
+      },
+    ],
+  },
+  {
     version: '1.4.0',
     date: '2026-02-06T12:00:00',
     changes: [

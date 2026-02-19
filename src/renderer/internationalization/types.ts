@@ -34,6 +34,7 @@ export type TranslationKeys =
   | 'searchIngredients'
   | 'subRecipes'
   | 'mainRecipes'
+  | 'allRecipes'
   | 'country'
   | 'weight'
   | 'volume'
@@ -222,3 +223,17 @@ export type TranslationKeys =
   // Ingredient Detail Page
   | 'backToIngredients'
   | 'viewIngredient'
+
+  // Categories
+  | 'categories'
+  | 'category'
+  | 'addCategory'
+  | 'editCategory'
+  | 'deleteCategory'
+  | 'categoryName'
+  | 'confirmDeleteCategory'
+  | 'deleteCategoryConfirmation'
+  | 'allCategories'
+  | 'uncategorized'
+  | 'errorAddingCategory'
+  | 'errorDeletingCategory'

@@ -369,6 +369,42 @@ typedIpcMain.handle(CHANNEL.DB.UPDATE_RECIPE_RELATION, async (_event, params) =>
   }
 })
 
+typedIpcMain.handle(CHANNEL.DB.GET_CATEGORIES, async () => {
+  return {
+    categories: await queries.getCategories(),
+  }
+})
+
+typedIpcMain.handle(CHANNEL.DB.ADD_CATEGORY, async (_event, params) => {
+  try {
+    const categoryId = await queries.addCategory(params.payload)
+    return { success: true, categoryId }
+  } catch (error) {
+    log.error('Error adding category:', error)
+    return { success: false, errorCode: ERROR_CODES.SOMETHING_WENT_WRONG }
+  }
+})
+
+typedIpcMain.handle(CHANNEL.DB.UPDATE_CATEGORY, async (_event, params) => {
+  try {
+    const result = await queries.updateCategory(params.id, params.payload)
+    return { success: !!result }
+  } catch (error) {
+    log.error('Error updating category:', error)
+    return { success: false }
+  }
+})
+
+typedIpcMain.handle(CHANNEL.DB.DELETE_CATEGORY, async (_event, params) => {
+  try {
+    const result = await queries.deleteCategory(params.id)
+    return { success: !!result }
+  } catch (error) {
+    log.error('Error deleting category:', error)
+    return { success: false }
+  }
+})
+
 import { app } from 'electron'
 import { savePhotoBytes } from '../utilities'
 
@@ -386,6 +422,7 @@ typedIpcMain.handle(CHANNEL.APP.EXPORT_ALL_DATA, async () => {
     // Get all data from the database
     const ingredients = await queries.getIngredients()
     const recipes = await queries.getRecipes()
+    const categories = await queries.getCategories()
     const photos = getAllPhotos()
 
     // Get all relations by fetching detailed data for each recipe
@@ -428,11 +465,18 @@ typedIpcMain.handle(CHANNEL.APP.EXPORT_ALL_DATA, async () => {
     const zip = new AdmZip()
 
     // Add data.json to ZIP
+    // Get recipe-category junction data
+    const { recipeCategorySchema: rcSchema } = await import('../database/schema.js')
+    const { db: exportDb } = await import('../database/client.js')
+    const recipeCategories = await exportDb.select().from(rcSchema).all()
+
     const data = {
       version: '1.0',
       ingredients: ingredients || [],
       recipes: recipes || [],
       relations,
+      categories: categories || [],
+      recipeCategories: recipeCategories || [],
     }
     zip.addFile('data.json', Buffer.from(JSON.stringify(data, null, 2), 'utf8'))
 
@@ -521,15 +565,16 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
 
     // This is a destructive operation - wipe all existing data first
     const { db } = await import('../database/client.js')
-    const { recipeSchema, ingredientSchema, recipeIngredientSchema, recipeSubRecipeSchema } = await import(
-      '../database/schema.js'
-    )
+    const { recipeSchema, ingredientSchema, recipeIngredientSchema, recipeSubRecipeSchema, categorySchema, recipeCategorySchema } =
+      await import('../database/schema.js')
 
     // Delete all records from all tables
+    await db.delete(recipeCategorySchema).run()
     await db.delete(recipeIngredientSchema).run()
     await db.delete(recipeSubRecipeSchema).run()
     await db.delete(recipeSchema).run()
     await db.delete(ingredientSchema).run()
+    await db.delete(categorySchema).run()
 
     // Delete all existing photos
     deleteAllPhotos()
@@ -541,12 +586,23 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
 
     // Insert new data
     const { ingredients, recipes, relations } = data
+    const categories = data.categories || []
+    const recipeCategories = data.recipeCategories || []
 
     // Keep track of old ID -> new ID mappings
     const ingredientIdMap = new Map<string, string>()
     const recipeIdMap = new Map<string, string>()
+    const categoryIdMap = new Map<string, string>()
 
-    // Insert ingredients first
+    // Insert categories first (recipes reference them)
+    for (const category of categories) {
+      const newCategoryId = await queries.addCategory({
+        title: category.title,
+      })
+      categoryIdMap.set(category.id, newCategoryId)
+    }
+
+    // Insert ingredients
     for (const ingredient of ingredients) {
       const newIngredientId = await queries.addIngredient({
         title: ingredient.title,
@@ -567,6 +623,21 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
         photoSrc: recipe.photoSrc,
       })
       recipeIdMap.set(recipe.id, newRecipeId)
+    }
+
+    // Insert recipe-category junction rows
+    const rcByRecipe = new Map<string, string[]>()
+    for (const rc of recipeCategories) {
+      const newRecipeId = recipeIdMap.get(rc.recipeId)
+      const newCategoryId = categoryIdMap.get(rc.categoryId)
+      if (newRecipeId && newCategoryId) {
+        const existing = rcByRecipe.get(newRecipeId) || []
+        existing.push(newCategoryId)
+        rcByRecipe.set(newRecipeId, existing)
+      }
+    }
+    for (const [newRecipeId, newCategoryIds] of rcByRecipe) {
+      await queries.setRecipeCategories(newRecipeId, newCategoryIds)
     }
 
     // Insert relations
@@ -622,16 +693,17 @@ typedIpcMain.handle(CHANNEL.APP.NUKE_DATABASE, async () => {
   try {
     // This is a destructive operation that clears all data from all tables
     const { db } = await import('../database/client.js')
-    const { recipeSchema, ingredientSchema, recipeIngredientSchema, recipeSubRecipeSchema } = await import(
-      '../database/schema.js'
-    )
+    const { recipeSchema, ingredientSchema, recipeIngredientSchema, recipeSubRecipeSchema, categorySchema, recipeCategorySchema } =
+      await import('../database/schema.js')
 
     // Delete all records from all tables
     // Order matters due to foreign key relationships: delete relations first, then main entities
+    await db.delete(recipeCategorySchema).run()
     await db.delete(recipeIngredientSchema).run()
     await db.delete(recipeSubRecipeSchema).run()
     await db.delete(recipeSchema).run()
     await db.delete(ingredientSchema).run()
+    await db.delete(categorySchema).run()
 
     // Delete all photos
     deleteAllPhotos()

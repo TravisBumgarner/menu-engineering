@@ -15,6 +15,13 @@
       "when": 1767725633138,
       "tag": "0001_omniscient_tigra",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1771532420531,
+      "tag": "0002_wandering_texas_twister",
+      "breakpoints": true
     }
   ]
 }
