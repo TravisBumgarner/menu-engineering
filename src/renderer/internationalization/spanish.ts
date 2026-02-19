@@ -235,7 +235,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
 
   // Categories
   categories: 'Categorías',
-  category: 'Categoría',
+  category: 'Categorías',
   addCategory: 'Agregar Categoría',
   editCategory: 'Editar Categoría',
   deleteCategory: 'Eliminar Categoría',

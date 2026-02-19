@@ -1,4 +1,4 @@
-import { Button, Chip, Stack } from '@mui/material'
+import { Button, Stack } from '@mui/material'
 import Box from '@mui/material/Box'
 import MuiTable from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
@@ -48,6 +48,7 @@ const Table = ({
   recipes,
 }: {
   recipes: (RecipeDTO & {
+    categoryIds: string[]
     usedInRecipesCount: number
     hasZeroQuantity: boolean
   })[]
@@ -130,9 +131,9 @@ const Table = ({
       // Filter by category
       let categoryMatch = true
       if (filters.categoryId === 'uncategorized') {
-        categoryMatch = !recipe.categoryId
+        categoryMatch = !recipe.categoryIds || recipe.categoryIds.length === 0
       } else if (filters.categoryId) {
-        categoryMatch = recipe.categoryId === filters.categoryId
+        categoryMatch = recipe.categoryIds?.includes(filters.categoryId) ?? false
       }
 
       return searchMatch && statusMatch && menuItemsOnly && recipeTypeMatch && categoryMatch
@@ -167,31 +168,31 @@ const Table = ({
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       {categories.length > 0 && (
-        <Box sx={{ display: 'flex', gap: SPACING.XS.PX, flexWrap: 'wrap', pt: SPACING.XS.PX, flexShrink: 0 }}>
-          <Chip
-            label={t('allCategories')}
+        <Box sx={{ display: 'flex', gap: SPACING.XXS.PX, flexWrap: 'wrap', pt: SPACING.XS.PX, flexShrink: 0 }}>
+          <Button
             size="small"
-            variant={filters.categoryId === null ? 'filled' : 'outlined'}
-            color={filters.categoryId === null ? 'primary' : 'default'}
+            variant={filters.categoryId === null ? 'contained' : 'outlined'}
             onClick={() => handleFiltersChange({ ...filters, categoryId: null })}
-          />
+          >
+            {t('allCategories')}
+          </Button>
           {categories.map((cat) => (
-            <Chip
+            <Button
               key={cat.id}
-              label={cat.title}
               size="small"
-              variant={filters.categoryId === cat.id ? 'filled' : 'outlined'}
-              color={filters.categoryId === cat.id ? 'primary' : 'default'}
+              variant={filters.categoryId === cat.id ? 'contained' : 'outlined'}
               onClick={() => handleFiltersChange({ ...filters, categoryId: cat.id })}
-            />
+            >
+              {cat.title}
+            </Button>
           ))}
-          <Chip
-            label={t('uncategorized')}
+          <Button
             size="small"
-            variant={filters.categoryId === 'uncategorized' ? 'filled' : 'outlined'}
-            color={filters.categoryId === 'uncategorized' ? 'primary' : 'default'}
+            variant={filters.categoryId === 'uncategorized' ? 'contained' : 'outlined'}
             onClick={() => handleFiltersChange({ ...filters, categoryId: 'uncategorized' })}
-          />
+          >
+            {t('uncategorized')}
+          </Button>
         </Box>
       )}
       <Box sx={{ paddingY: SPACING.XS.PX, flexShrink: 0 }}>

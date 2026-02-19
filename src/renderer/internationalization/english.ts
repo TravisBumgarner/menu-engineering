@@ -230,7 +230,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
 
   // Categories
   categories: 'Categories',
-  category: 'Category',
+  category: 'Categories',
   addCategory: 'Add Category',
   editCategory: 'Edit Category',
   deleteCategory: 'Delete Category',

@@ -25,7 +25,6 @@ export const recipeSchema = sqliteTable('recipes', {
   status: text('status', {
     enum: [RECIPE_STATUS.archived, RECIPE_STATUS.draft, RECIPE_STATUS.published],
   }).notNull(),
-  categoryId: text('category_id'),
   createdAt: text('created_at')
     .notNull()
     .$defaultFn(() => new Date().toISOString()),
@@ -80,4 +79,16 @@ export const recipeSubRecipeSchema = sqliteTable('recipe_sub_recipes', {
   units: text('units', {
     enum: Object.values(ALL_UNITS) as [AllUnits, ...AllUnits[]],
   }).notNull(),
+})
+
+export const recipeCategorySchema = sqliteTable('recipe_categories', {
+  id: text('id').primaryKey(),
+  recipeId: text('recipe_id').notNull(),
+  categoryId: text('category_id').notNull(),
+  createdAt: text('created_at')
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text('updated_at')
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
 })

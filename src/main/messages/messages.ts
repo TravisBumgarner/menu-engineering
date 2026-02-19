@@ -465,12 +465,18 @@ typedIpcMain.handle(CHANNEL.APP.EXPORT_ALL_DATA, async () => {
     const zip = new AdmZip()
 
     // Add data.json to ZIP
+    // Get recipe-category junction data
+    const { recipeCategorySchema: rcSchema } = await import('../database/schema.js')
+    const { db: exportDb } = await import('../database/client.js')
+    const recipeCategories = await exportDb.select().from(rcSchema).all()
+
     const data = {
       version: '1.0',
       ingredients: ingredients || [],
       recipes: recipes || [],
       relations,
       categories: categories || [],
+      recipeCategories: recipeCategories || [],
     }
     zip.addFile('data.json', Buffer.from(JSON.stringify(data, null, 2), 'utf8'))
 
@@ -559,10 +565,11 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
 
     // This is a destructive operation - wipe all existing data first
     const { db } = await import('../database/client.js')
-    const { recipeSchema, ingredientSchema, recipeIngredientSchema, recipeSubRecipeSchema, categorySchema } =
+    const { recipeSchema, ingredientSchema, recipeIngredientSchema, recipeSubRecipeSchema, categorySchema, recipeCategorySchema } =
       await import('../database/schema.js')
 
     // Delete all records from all tables
+    await db.delete(recipeCategorySchema).run()
     await db.delete(recipeIngredientSchema).run()
     await db.delete(recipeSubRecipeSchema).run()
     await db.delete(recipeSchema).run()
@@ -580,6 +587,7 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
     // Insert new data
     const { ingredients, recipes, relations } = data
     const categories = data.categories || [] // Handle old backups without categories
+    const recipeCategories = data.recipeCategories || [] // Handle old backups without junction table
 
     // Keep track of old ID -> new ID mappings
     const ingredientIdMap = new Map<string, string>()
@@ -606,7 +614,13 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
 
     // Insert recipes
     for (const recipe of recipes) {
-      const newCategoryId = recipe.categoryId ? categoryIdMap.get(recipe.categoryId) || null : null
+      // Handle old format: single categoryId on recipe
+      const legacyCategoryIds: string[] = []
+      if (recipe.categoryId) {
+        const mappedId = categoryIdMap.get(recipe.categoryId)
+        if (mappedId) legacyCategoryIds.push(mappedId)
+      }
+
       const newRecipeId = await queries.addRecipe({
         title: recipe.title,
         produces: recipe.produces,
@@ -614,9 +628,25 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
         status: recipe.status,
         showInMenu: recipe.showInMenu,
         photoSrc: recipe.photoSrc,
-        categoryId: newCategoryId,
+        categoryIds: legacyCategoryIds,
       })
       recipeIdMap.set(recipe.id, newRecipeId)
+    }
+
+    // Insert recipe-category junction rows (new format)
+    // Group by recipe to call setRecipeCategories once per recipe
+    const rcByRecipe = new Map<string, string[]>()
+    for (const rc of recipeCategories) {
+      const newRecipeId = recipeIdMap.get(rc.recipeId)
+      const newCategoryId = categoryIdMap.get(rc.categoryId)
+      if (newRecipeId && newCategoryId) {
+        const existing = rcByRecipe.get(newRecipeId) || []
+        existing.push(newCategoryId)
+        rcByRecipe.set(newRecipeId, existing)
+      }
+    }
+    for (const [newRecipeId, newCategoryIds] of rcByRecipe) {
+      await queries.setRecipeCategories(newRecipeId, newCategoryIds)
     }
 
     // Insert relations
@@ -672,11 +702,12 @@ typedIpcMain.handle(CHANNEL.APP.NUKE_DATABASE, async () => {
   try {
     // This is a destructive operation that clears all data from all tables
     const { db } = await import('../database/client.js')
-    const { recipeSchema, ingredientSchema, recipeIngredientSchema, recipeSubRecipeSchema, categorySchema } =
+    const { recipeSchema, ingredientSchema, recipeIngredientSchema, recipeSubRecipeSchema, categorySchema, recipeCategorySchema } =
       await import('../database/schema.js')
 
     // Delete all records from all tables
     // Order matters due to foreign key relationships: delete relations first, then main entities
+    await db.delete(recipeCategorySchema).run()
     await db.delete(recipeIngredientSchema).run()
     await db.delete(recipeSubRecipeSchema).run()
     await db.delete(recipeSchema).run()

@@ -24,7 +24,7 @@ export type NewRecipeDTO = {
   units: AllUnits
   status: RecipeStatus
   showInMenu: boolean
-  categoryId?: string | null
+  categoryIds?: string[]
 }
 
 export type RecipeDTO = NewRecipeDTO & {
