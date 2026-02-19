@@ -243,7 +243,6 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   confirmDeleteCategory: 'Confirmar Eliminar Categoría',
   deleteCategoryConfirmation:
     '¿Estás seguro de que quieres eliminar esta categoría? Las recetas que la usan quedarán sin categoría.',
-  noCategoryAssigned: 'Ninguna',
   allCategories: 'Todas',
   uncategorized: 'Sin categoría',
   errorAddingCategory: 'Error agregando categoría.',

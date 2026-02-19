@@ -233,7 +233,6 @@ export type TranslationKeys =
   | 'categoryName'
   | 'confirmDeleteCategory'
   | 'deleteCategoryConfirmation'
-  | 'noCategoryAssigned'
   | 'allCategories'
   | 'uncategorized'
   | 'errorAddingCategory'

@@ -586,8 +586,8 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
 
     // Insert new data
     const { ingredients, recipes, relations } = data
-    const categories = data.categories || [] // Handle old backups without categories
-    const recipeCategories = data.recipeCategories || [] // Handle old backups without junction table
+    const categories = data.categories || []
+    const recipeCategories = data.recipeCategories || []
 
     // Keep track of old ID -> new ID mappings
     const ingredientIdMap = new Map<string, string>()
@@ -614,13 +614,6 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
 
     // Insert recipes
     for (const recipe of recipes) {
-      // Handle old format: single categoryId on recipe
-      const legacyCategoryIds: string[] = []
-      if (recipe.categoryId) {
-        const mappedId = categoryIdMap.get(recipe.categoryId)
-        if (mappedId) legacyCategoryIds.push(mappedId)
-      }
-
       const newRecipeId = await queries.addRecipe({
         title: recipe.title,
         produces: recipe.produces,
@@ -628,13 +621,11 @@ typedIpcMain.handle(CHANNEL.APP.RESTORE_ALL_DATA, async (_event, params) => {
         status: recipe.status,
         showInMenu: recipe.showInMenu,
         photoSrc: recipe.photoSrc,
-        categoryIds: legacyCategoryIds,
       })
       recipeIdMap.set(recipe.id, newRecipeId)
     }
 
-    // Insert recipe-category junction rows (new format)
-    // Group by recipe to call setRecipeCategories once per recipe
+    // Insert recipe-category junction rows
     const rcByRecipe = new Map<string, string[]>()
     for (const rc of recipeCategories) {
       const newRecipeId = recipeIdMap.get(rc.recipeId)

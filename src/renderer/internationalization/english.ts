@@ -238,7 +238,6 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   confirmDeleteCategory: 'Confirm Delete Category',
   deleteCategoryConfirmation:
     'Are you sure you want to delete this category? Recipes using it will become uncategorized.',
-  noCategoryAssigned: 'None',
   allCategories: 'All',
   uncategorized: 'Uncategorized',
   errorAddingCategory: 'Error adding category.',
