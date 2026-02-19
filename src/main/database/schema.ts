@@ -2,6 +2,17 @@ import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { RECIPE_STATUS } from '../../shared/recipe.types'
 import { ALL_UNITS, type AllUnits } from '../../shared/units.types'
 
+export const categorySchema = sqliteTable('categories', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  createdAt: text('created_at')
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  updatedAt: text('updated_at')
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+})
+
 export const recipeSchema = sqliteTable('recipes', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),
@@ -14,6 +25,7 @@ export const recipeSchema = sqliteTable('recipes', {
   status: text('status', {
     enum: [RECIPE_STATUS.archived, RECIPE_STATUS.draft, RECIPE_STATUS.published],
   }).notNull(),
+  categoryId: text('category_id'),
   createdAt: text('created_at')
     .notNull()
     .$defaultFn(() => new Date().toISOString()),

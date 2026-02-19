@@ -26,6 +26,7 @@ export const QUERY_KEYS = {
   INGREDIENT: 'ingredient',
   AUTOCOMPLETE: 'autocomplete',
   PHOTO: 'photo',
+  CATEGORIES: 'categories',
 }
 
 export const PAGINATION = {

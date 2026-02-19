@@ -1,6 +1,7 @@
 import { and, count, eq } from 'drizzle-orm'
 import log from 'electron-log/main'
 import type {
+  NewCategoryDTO,
   NewIngredientDTO,
   NewIngredientInRecipeDTO,
   NewRecipeDTO,
@@ -11,7 +12,7 @@ import type { AllUnits } from 'src/shared/units.types'
 import { v4 as uuidv4 } from 'uuid'
 import { db } from './client'
 import { lower } from './functions'
-import { ingredientSchema, recipeIngredientSchema, recipeSchema, recipeSubRecipeSchema } from './schema'
+import { categorySchema, ingredientSchema, recipeIngredientSchema, recipeSchema, recipeSubRecipeSchema } from './schema'
 
 const addRecipe = async (recipeData: NewRecipeDTO & { photoSrc?: RecipeDTO['photoSrc'] }) => {
   // generate an id required by the schema, then insert
@@ -545,6 +546,35 @@ const convertSubRecipeRelationQuantities = async (
   return convertedCount
 }
 
+const getCategories = async () => {
+  return db.select().from(categorySchema).all()
+}
+
+const addCategory = async (data: NewCategoryDTO) => {
+  const newId = uuidv4()
+  await db
+    .insert(categorySchema)
+    .values({ id: newId, ...data })
+    .run()
+  return newId
+}
+
+const updateCategory = async (id: string, data: Partial<NewCategoryDTO>) => {
+  const result = await db
+    .update(categorySchema)
+    .set({ ...data, updatedAt: new Date().toISOString() })
+    .where(eq(categorySchema.id, id))
+    .run()
+  return result
+}
+
+const deleteCategory = async (id: string) => {
+  // Nullify categoryId on any recipes using this category
+  await db.update(recipeSchema).set({ categoryId: null }).where(eq(recipeSchema.categoryId, id)).run()
+  const result = await db.delete(categorySchema).where(eq(categorySchema.id, id)).run()
+  return result
+}
+
 export default {
   addRecipe,
   getRecipes,
@@ -574,4 +604,8 @@ export default {
   resetSubRecipeRelationQuantities,
   convertSubRecipeRelationQuantities,
   getSubRecipeRelationCount,
+  getCategories,
+  addCategory,
+  updateCategory,
+  deleteCategory,
 }

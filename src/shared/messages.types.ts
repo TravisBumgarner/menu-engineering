@@ -1,6 +1,8 @@
 import type { ErrorCode } from './errorCodes'
 import type {
+  CategoryDTO,
   IngredientDTO,
+  NewCategoryDTO,
   NewIngredientDTO,
   NewIngredientInRecipeDTO,
   NewRecipeDTO,
@@ -27,6 +29,10 @@ export const CHANNEL = {
     REMOVE_SUB_RECIPE_FROM_RECIPE: 'db:remove-sub-recipe-from-recipe',
     DELETE_INGREDIENT: 'db:delete-ingredient',
     DELETE_RECIPE: 'db:delete-recipe',
+    GET_CATEGORIES: 'db:get-categories',
+    ADD_CATEGORY: 'db:add-category',
+    UPDATE_CATEGORY: 'db:update-category',
+    DELETE_CATEGORY: 'db:delete-category',
   },
   APP: {
     GET_BACKUP_DIRECTORY: 'app:get-backup-directory',
@@ -175,6 +181,22 @@ export type Invokes = {
   [CHANNEL.FILES.GET_PHOTO]: {
     args: { fileName: string }
     result: { data: Uint8Array | null }
+  }
+  [CHANNEL.DB.GET_CATEGORIES]: {
+    args: undefined
+    result: { categories: Array<CategoryDTO> }
+  }
+  [CHANNEL.DB.ADD_CATEGORY]: {
+    args: { payload: NewCategoryDTO }
+    result: { success: true; categoryId: string } | { success: false; errorCode: ErrorCode }
+  }
+  [CHANNEL.DB.UPDATE_CATEGORY]: {
+    args: { id: string; payload: Partial<NewCategoryDTO> }
+    result: { success: boolean }
+  }
+  [CHANNEL.DB.DELETE_CATEGORY]: {
+    args: { id: string }
+    result: { success: boolean }
   }
   [CHANNEL.FILES.EXPORT_RECIPES_PDF]: {
     args: {

@@ -62,6 +62,7 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   filterToMenuItems: 'Only Menu Items',
   subRecipes: 'Sub Recipes',
   mainRecipes: 'Recipes',
+  allRecipes: 'All Recipes',
   noDetails: 'No Details',
   usedIn: 'Used In',
 
@@ -226,6 +227,22 @@ const EnglishTranslations: Record<TranslationKeys, string> = {
   // Ingredient Detail Page
   backToIngredients: 'Back to Ingredients',
   viewIngredient: 'View Ingredient',
+
+  // Categories
+  categories: 'Categories',
+  category: 'Category',
+  addCategory: 'Add Category',
+  editCategory: 'Edit Category',
+  deleteCategory: 'Delete Category',
+  categoryName: 'Category Name',
+  confirmDeleteCategory: 'Confirm Delete Category',
+  deleteCategoryConfirmation:
+    'Are you sure you want to delete this category? Recipes using it will become uncategorized.',
+  noCategoryAssigned: 'None',
+  allCategories: 'All',
+  uncategorized: 'Uncategorized',
+  errorAddingCategory: 'Error adding category.',
+  errorDeletingCategory: 'Error deleting category.',
 }
 
 export default EnglishTranslations

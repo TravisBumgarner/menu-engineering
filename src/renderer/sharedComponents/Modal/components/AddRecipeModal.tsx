@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import log from 'electron-log/renderer'
 import type React from 'react'
 import { useRef, useState } from 'react'
@@ -50,12 +50,18 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const { data: categoriesData } = useQuery({
+    queryKey: [QUERY_KEYS.CATEGORIES],
+    queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_CATEGORIES, undefined),
+  })
+
   const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>(() => ({
     title: '',
     produces: 0,
     units: getDefaultUnit(),
     status: RECIPE_STATUS.draft,
     showInMenu: false,
+    categoryId: '',
     photo: undefined,
   }))
 
@@ -243,6 +249,21 @@ const AddRecipeModal = (_props: AddRecipeModalProps) => {
                   <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
                   <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
                   <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl size="small" fullWidth>
+                <InputLabel>{t('category')}</InputLabel>
+                <Select
+                  value={formData.categoryId || ''}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, categoryId: e.target.value || null }))}
+                  label={t('category')}
+                >
+                  <MenuItem value="">{t('noCategoryAssigned')}</MenuItem>
+                  {(categoriesData?.categories ?? []).map((cat) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.title}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
               <FormControlLabel

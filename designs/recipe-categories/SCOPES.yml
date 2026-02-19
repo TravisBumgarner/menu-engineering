@@ -1,0 +1,206 @@
+project: Recipe Categories
+design_file: null  # Scoped from user requirements
+scoping_date: 2026-02-18
+
+milestones:
+  - number: 1
+    title: "1. Recipe Categories"
+    description: |
+      Add the ability to categorize recipes. Categories are managed in a new Settings tab,
+      assignable via dropdown when adding/editing recipes, and filterable on the Browse Recipes page.
+
+      A recipe has zero or one category (optional foreign key on recipes table).
+      Categories are simple entities with id and title.
+
+      Key touchpoints:
+      - New `categories` DB table + `categoryId` column on `recipes`
+      - CRUD IPC channels for categories
+      - New "Categories" tab in Settings modal
+      - Category dropdown in Add/Edit Recipe modals
+      - Category chip row + filter on Browse Recipes page
+      - Backup/restore updated to include categories
+    branch:
+      working: recipe-categories
+      base: main
+
+tasks:
+  - id: 1
+    milestone: 1
+    title: Add categories table and recipe categoryId column to database
+    description: |
+      Create the database layer for categories:
+
+      1. **New schema** in `src/main/database/schema.ts`:
+         - `categorySchema` table: `id` (text, PK), `title` (text, not null), `createdAt`, `updatedAt`
+         - Add `categoryId` column (text, nullable) to `recipeSchema`
+
+      2. **Generate migration**: Run `npx drizzle-kit generate` to produce the SQL migration file
+
+      3. **Shared types** in `src/shared/recipe.types.ts`:
+         - Add `CategoryDTO` type: `{ id: string; title: string; createdAt: string; updatedAt: string }`
+         - Add `NewCategoryDTO` type: `{ title: string }`
+         - Add optional `categoryId?: string` to `NewRecipeDTO`
+
+      4. **Query functions** in `src/main/database/queries.ts`:
+         - `getCategories()` — returns all categories ordered by title
+         - `addCategory(data: NewCategoryDTO)` — inserts, returns id
+         - `updateCategory(id, data: Partial<NewCategoryDTO>)` — updates title
+         - `deleteCategory(id)` — deletes category, sets `categoryId` to null on any recipes using it
+
+      5. **IPC channels** in `src/shared/messages.types.ts`:
+         - Add `GET_CATEGORIES`, `ADD_CATEGORY`, `UPDATE_CATEGORY`, `DELETE_CATEGORY` to `CHANNEL.DB`
+         - Add corresponding `Invokes` entries
+
+      6. **IPC handlers** in `src/main/messages/messages.ts`:
+         - Wire up the four new channels to query functions
+
+      7. **Query key** in `src/renderer/consts.ts`:
+         - Add `CATEGORIES: 'categories'` to `QUERY_KEYS`
+
+      8. **Translation keys** in types.ts, english.ts, spanish.ts:
+         - Add keys: `categories`, `category`, `addCategory`, `editCategory`, `deleteCategory`,
+           `categoryName`, `confirmDeleteCategory`, `deleteCategoryConfirmation`,
+           `noCategoryAssigned`, `allCategories`, `errorAddingCategory`, `errorDeletingCategory`
+    acceptance_criteria:
+      - `categorySchema` table exists with id, title, createdAt, updatedAt
+      - `recipeSchema` has nullable `categoryId` column
+      - Drizzle migration file is generated
+      - All four category CRUD query functions work correctly
+      - `deleteCategory` nullifies `categoryId` on affected recipes
+      - IPC channels are registered and invoke correctly from renderer
+      - `QUERY_KEYS.CATEGORIES` exists
+      - All translation keys added to both English and Spanish
+    depends_on: []
+    effort: 3
+    status: scoped
+
+  - id: 2
+    milestone: 1
+    title: Add Categories tab to Settings modal
+    description: |
+      Create a new "Categories" tab in the Settings modal for managing categories (CRUD).
+
+      1. **New component** `src/renderer/sharedComponents/Modal/components/SettingsModal/components/TabCategories.tsx`:
+         - Fetch categories via `useQuery([QUERY_KEYS.CATEGORIES], () => ipcMessenger.invoke(CHANNEL.DB.GET_CATEGORIES))`
+         - Display categories in a list (similar to how TabUnitPreferences displays items)
+         - Each row shows category title with Edit and Delete icon buttons
+         - "Add Category" button at the top or bottom
+         - **Add/Edit**: Inline text field that appears in the list, or a simple text field + confirm button
+         - **Delete**: Show a confirmation dialog (use existing confirm modal pattern or simple `confirm()`)
+         - Mutations invalidate `QUERY_KEYS.CATEGORIES` and `QUERY_KEYS.RECIPES` (since deleting a category affects recipes)
+
+      2. **Register tab** in `SettingsModal.tsx`:
+         - Add `<Tab label={t('categories')} />` as the first tab (index 0, shifting others +1)
+         - Add `{activeTab === 0 && <TabCategories />}` and renumber existing tabs
+    acceptance_criteria:
+      - "Categories" tab appears as the first tab in Settings modal
+      - Categories are listed with their titles
+      - User can add a new category with a title
+      - User can edit an existing category's title inline
+      - User can delete a category with confirmation
+      - List updates immediately after add/edit/delete
+    depends_on: [1]
+    effort: 2
+    status: scoped
+
+  - id: 3
+    milestone: 1
+    title: Add category selector to Add/Edit Recipe modals
+    description: |
+      Add a category dropdown to both recipe modals so users can assign a category when creating or editing a recipe.
+
+      1. **AddRecipeModal.tsx**:
+         - Fetch categories via `useQuery([QUERY_KEYS.CATEGORIES])`
+         - Add `categoryId` to form state (initialized to `''` / empty)
+         - Add a MUI `Select` in the right column (after status, before showInMenu checkbox)
+         - Options: empty/"None" option + all categories from the query
+         - Include the `categoryId` in the payload sent to `CHANNEL.DB.ADD_RECIPE`
+
+      2. **EditRecipeModal.tsx**:
+         - Same as above but initialize `categoryId` from `recipe.categoryId`
+         - Include `categoryId` in the update payload
+
+      3. **Update `NewRecipeDTO`** if not already done: ensure `categoryId?: string` is present
+         (should be done in task 1, but verify the Add/Edit modals correctly pass it through)
+
+      4. **Update handlers** in `messages.ts`: ensure `ADD_RECIPE` and `UPDATE_RECIPE` handlers
+         pass `categoryId` through to the query functions (they should already if using spread, but verify)
+    acceptance_criteria:
+      - Category dropdown appears in both Add and Edit Recipe modals
+      - Dropdown shows all existing categories plus a "None" option
+      - Selected category is saved when creating a recipe
+      - Selected category is saved when editing a recipe
+      - Edit modal pre-selects the recipe's current category
+    depends_on: [1]
+    effort: 2
+    status: scoped
+
+  - id: 4
+    milestone: 1
+    title: Add category filter row to Browse Recipes page
+    description: |
+      Add a row of category chip/buttons above the existing filters on the Browse Recipes page,
+      allowing users to filter recipes by category.
+
+      1. **Fetch categories** in `Table.tsx` (or `BrowseRecipes.tsx` and pass down):
+         - `useQuery([QUERY_KEYS.CATEGORIES])` to get the list of categories
+
+      2. **Add `categoryId` to `FilterOptions`** in `Filters.tsx`:
+         - Add `categoryId: string | null` (null = "All", or a specific category id)
+
+      3. **Category row component** — rendered above the existing `<Filters>` component in `Table.tsx`:
+         - A horizontal row of MUI `Chip` components (or small `Button` variants)
+         - First chip: "All" (selected when `categoryId` is null)
+         - One chip per category
+         - One chip: "Uncategorized" to filter recipes with no category
+         - Clicking a chip sets the `categoryId` filter
+         - Visually distinguish the selected chip (e.g., `variant="filled"` vs `variant="outlined"`)
+
+      4. **Apply filter** in `filteredRecipes` useMemo in `Table.tsx`:
+         - If `categoryId` is null, show all recipes
+         - If `categoryId` is `'uncategorized'`, show recipes where `categoryId` is null/undefined
+         - Otherwise, match `recipe.categoryId === filters.categoryId`
+
+      5. **Ensure `RecipeDTO` includes `categoryId`** in the GET_RECIPES response:
+         - The `getRecipes` query already selects `recipeSchema.*`, so `categoryId` should be included
+         - Add `categoryId?: string` to `RecipeDTO` type if not already there
+
+      6. **Translation keys**: Add `uncategorized` key to types.ts, english.ts, spanish.ts
+    acceptance_criteria:
+      - Category chips row appears above the existing filter controls
+      - "All" chip is selected by default showing all recipes
+      - Clicking a category chip filters to only recipes in that category
+      - "Uncategorized" chip filters to recipes with no category assigned
+      - Selected chip is visually distinguished from unselected chips
+      - Filter works correctly in combination with existing filters (status, search, recipe type, menu items)
+    depends_on: [1]
+    effort: 2
+    status: scoped
+
+  - id: 5
+    milestone: 1
+    title: Update backup and restore to include categories
+    description: |
+      The existing backup/restore system (`CHANNEL.APP.EXPORT_ALL_DATA` and `CHANNEL.APP.RESTORE_ALL_DATA`)
+      needs to include categories so they aren't lost during backup/restore cycles.
+
+      1. **Find the export handler** (likely in `messages.ts` or a dedicated file) and add categories
+         to the exported data shape
+
+      2. **Find the restore handler** and add logic to restore categories:
+         - Insert categories before recipes (since recipes reference categoryId)
+         - Handle the `categoryId` field on recipes during restore
+
+      3. **Update the `RESTORE_ALL_DATA` args type** in `messages.types.ts` to include
+         `categories: Array<CategoryDTO>` in the data shape
+
+      4. **Handle backwards compatibility**: Old backups won't have categories — treat missing
+         `categories` array as empty
+    acceptance_criteria:
+      - Exported backup includes all categories
+      - Exported backup includes categoryId on recipes
+      - Restore correctly recreates categories before recipes
+      - Restoring an old backup (without categories) works without errors
+    depends_on: [1]
+    effort: 2
+    status: scoped

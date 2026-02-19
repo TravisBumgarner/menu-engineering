@@ -4,6 +4,7 @@ import { useAppTranslation } from '../../../../hooks/useTranslation'
 import { SPACING } from '../../../../styles/consts'
 import type { MODAL_ID } from '../../Modal.consts'
 import DefaultModal from '../DefaultModal'
+import TabCategories from './components/TabCategories'
 import TabChangelog from './components/TabChangelog'
 import TabData from './components/TabData'
 import TabInternationalization from './components/TabInternationalization'
@@ -25,16 +26,18 @@ const SettingsModal = (_props: SettingsModalProps) => {
         onChange={(_e, newValue) => setActiveTab(newValue)}
         sx={{ borderBottom: 1, borderColor: 'divider', mb: SPACING.MEDIUM.PX }}
       >
+        <Tab label={t('categories')} />
         <Tab label={t('unitPreferences')} />
         <Tab label={t('internationalization')} />
         <Tab label={t('data')} />
         <Tab label={t('changelog')} />
       </Tabs>
 
-      {activeTab === 0 && <TabUnitPreferences />}
-      {activeTab === 1 && <TabInternationalization />}
-      {activeTab === 2 && <TabData />}
-      {activeTab === 3 && <TabChangelog />}
+      {activeTab === 0 && <TabCategories />}
+      {activeTab === 1 && <TabUnitPreferences />}
+      {activeTab === 2 && <TabInternationalization />}
+      {activeTab === 3 && <TabData />}
+      {activeTab === 4 && <TabChangelog />}
     </DefaultModal>
   )
 }

@@ -6,6 +6,10 @@ import {
   FormControlLabel,
   FormGroup,
   InputAdornment,
+  ListItemText,
+  MenuItem,
+  Select,
+  type SelectChangeEvent,
   type SxProps,
   TextField,
 } from '@mui/material'
@@ -21,6 +25,7 @@ export interface FilterOptions {
   showSubRecipes: boolean
   showMainRecipes: boolean
   searchQuery: string
+  categoryId: string | null // null = all, 'uncategorized' = no category, otherwise category id
 }
 
 interface FiltersProps {
@@ -28,18 +33,20 @@ interface FiltersProps {
   onFiltersChange: (filters: FilterOptions) => void
 }
 
+const STATUS_OPTIONS: RecipeStatus[] = [RECIPE_STATUS.draft, RECIPE_STATUS.published, RECIPE_STATUS.archived]
+
+type RecipeTypeValue = 'all' | 'sub' | 'main'
+
 const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
   const { t } = useAppTranslation()
 
-  const handleStatusChange =
-    (statusValue: RecipeStatus) => (_event: React.SyntheticEvent<Element, Event>, checked: boolean) => {
-      const newStatus = checked ? [...filters.status, statusValue] : filters.status.filter((s) => s !== statusValue)
-
-      onFiltersChange({
-        ...filters,
-        status: newStatus,
-      })
-    }
+  const handleStatusChange = (event: SelectChangeEvent<RecipeStatus[]>) => {
+    const value = event.target.value as RecipeStatus[]
+    onFiltersChange({
+      ...filters,
+      status: value,
+    })
+  }
 
   const handleShowInMenuChange = (_event: React.SyntheticEvent<Element, Event>, checked: boolean) => {
     onFiltersChange({
@@ -48,17 +55,21 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
     })
   }
 
-  const handleSubRecipesChange = (_event: React.SyntheticEvent<Element, Event>, checked: boolean) => {
-    onFiltersChange({
-      ...filters,
-      showSubRecipes: checked,
-    })
-  }
+  const recipeTypeValue: RecipeTypeValue =
+    filters.showSubRecipes && filters.showMainRecipes
+      ? 'all'
+      : filters.showSubRecipes
+        ? 'sub'
+        : filters.showMainRecipes
+          ? 'main'
+          : 'all'
 
-  const handleMainRecipesChange = (_event: React.SyntheticEvent<Element, Event>, checked: boolean) => {
+  const handleRecipeTypeChange = (event: SelectChangeEvent<RecipeTypeValue>) => {
+    const value = event.target.value as RecipeTypeValue
     onFiltersChange({
       ...filters,
-      showMainRecipes: checked,
+      showSubRecipes: value === 'all' || value === 'sub',
+      showMainRecipes: value === 'all' || value === 'main',
     })
   }
 
@@ -69,11 +80,21 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
     })
   }
 
+  const statusLabel = (status: RecipeStatus) => {
+    switch (status) {
+      case RECIPE_STATUS.draft:
+        return t('draft')
+      case RECIPE_STATUS.published:
+        return t('published')
+      case RECIPE_STATUS.archived:
+        return t('archived')
+    }
+  }
+
   return (
     <Box
       sx={{
         display: 'flex',
-        justifyContent: 'flex-end',
         alignItems: 'center',
         gap: SPACING.XS.PX,
       }}
@@ -96,36 +117,32 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
         }}
       />
 
-      <Divider orientation="vertical" flexItem />
+      <FormControl size="small" sx={{ minWidth: 140 }}>
+        <Select
+          multiple
+          value={filters.status}
+          onChange={handleStatusChange}
+          displayEmpty
+          renderValue={(selected) => {
+            if (selected.length === 0) return t('status')
+            return selected.map((s) => statusLabel(s)).join(', ')
+          }}
+        >
+          {STATUS_OPTIONS.map((status) => (
+            <MenuItem key={status} value={status}>
+              <Checkbox size="small" checked={filters.status.includes(status)} />
+              <ListItemText primary={statusLabel(status)} />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-      <FormControl size="small">
-        <FormGroup row>
-          <FormControlLabel
-            sx={formControlLabelSX}
-            onChange={handleStatusChange(RECIPE_STATUS.draft)}
-            control={<Checkbox sx={checkboxSX} size="small" checked={filters.status.includes(RECIPE_STATUS.draft)} />}
-            label={t('draft')}
-            slotProps={{ typography: { variant: 'body2' } }}
-          />
-          <FormControlLabel
-            sx={formControlLabelSX}
-            onChange={handleStatusChange(RECIPE_STATUS.published)}
-            control={
-              <Checkbox sx={checkboxSX} size="small" checked={filters.status.includes(RECIPE_STATUS.published)} />
-            }
-            label={t('published')}
-            slotProps={{ typography: { variant: 'body2' } }}
-          />
-          <FormControlLabel
-            sx={formControlLabelSX}
-            onChange={handleStatusChange(RECIPE_STATUS.archived)}
-            control={
-              <Checkbox sx={checkboxSX} size="small" checked={filters.status.includes(RECIPE_STATUS.archived)} />
-            }
-            label={t('archived')}
-            slotProps={{ typography: { variant: 'body2' } }}
-          />
-        </FormGroup>
+      <FormControl size="small" sx={{ minWidth: 140 }}>
+        <Select value={recipeTypeValue} onChange={handleRecipeTypeChange}>
+          <MenuItem value="all">{t('allRecipes')}</MenuItem>
+          <MenuItem value="sub">{t('subRecipes')}</MenuItem>
+          <MenuItem value="main">{t('mainRecipes')}</MenuItem>
+        </Select>
       </FormControl>
 
       <Divider orientation="vertical" flexItem />
@@ -137,28 +154,6 @@ const Filters: React.FC<FiltersProps> = ({ filters, onFiltersChange }) => {
             onChange={handleShowInMenuChange}
             control={<Checkbox sx={checkboxSX} size="small" checked={filters.filterToMenuItemsOnly} />}
             label={t('filterToMenuItems')}
-            slotProps={{ typography: { variant: 'body2' } }}
-          />
-        </FormGroup>
-      </FormControl>
-
-      <Divider orientation="vertical" flexItem />
-
-      <FormControl size="small">
-        <FormGroup row>
-          <FormControlLabel
-            sx={formControlLabelSX}
-            onChange={handleSubRecipesChange}
-            control={<Checkbox sx={checkboxSX} size="small" checked={filters.showSubRecipes} />}
-            label={t('subRecipes')}
-            slotProps={{ typography: { variant: 'body2' } }}
-          />
-
-          <FormControlLabel
-            sx={formControlLabelSX}
-            onChange={handleMainRecipesChange}
-            control={<Checkbox sx={checkboxSX} size="small" checked={filters.showMainRecipes} />}
-            label={t('mainRecipes')}
             slotProps={{ typography: { variant: 'body2' } }}
           />
         </FormGroup>

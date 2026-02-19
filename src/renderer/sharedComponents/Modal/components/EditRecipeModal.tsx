@@ -70,12 +70,18 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const originalUnit = recipe.units
 
+  const { data: categoriesData } = useQuery({
+    queryKey: [QUERY_KEYS.CATEGORIES],
+    queryFn: () => ipcMessenger.invoke(CHANNEL.DB.GET_CATEGORIES, undefined),
+  })
+
   const [formData, setFormData] = useState<NewRecipeDTO & NewPhotoUpload>({
     title: recipe.title,
     produces: recipe.produces,
     units: recipe.units,
     status: recipe.status,
     showInMenu: recipe.showInMenu,
+    categoryId: recipe.categoryId || '',
     photo: undefined,
   })
   const [removeExistingPhoto, setRemoveExistingPhoto] = useState(false)
@@ -377,6 +383,21 @@ const EditRecipeModal = ({ recipe }: EditRecipeModalProps) => {
                   <MenuItem value={RECIPE_STATUS.draft}>{t('draft')}</MenuItem>
                   <MenuItem value={RECIPE_STATUS.published}>{t('published')}</MenuItem>
                   <MenuItem value={RECIPE_STATUS.archived}>{t('archived')}</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl size="small" fullWidth>
+                <InputLabel>{t('category')}</InputLabel>
+                <Select
+                  value={formData.categoryId || ''}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, categoryId: e.target.value || null }))}
+                  label={t('category')}
+                >
+                  <MenuItem value="">{t('noCategoryAssigned')}</MenuItem>
+                  {(categoriesData?.categories ?? []).map((cat) => (
+                    <MenuItem key={cat.id} value={cat.id}>
+                      {cat.title}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
               <FormControlLabel

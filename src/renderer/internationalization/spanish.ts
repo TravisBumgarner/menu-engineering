@@ -70,6 +70,7 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   filterToMenuItems: 'Solo platos del menú',
   subRecipes: 'Sub Recetas',
   mainRecipes: 'Recetas',
+  allRecipes: 'Todas las Recetas',
   noDetails: 'Sin detalles',
   usedIn: 'Usado en',
   addToRecipe: 'Agregar componente',
@@ -231,6 +232,22 @@ const SpanishTranslations: Record<TranslationKeys, string> = {
   // Ingredient Detail Page
   backToIngredients: 'Volver a Ingredientes',
   viewIngredient: 'Ver Ingrediente',
+
+  // Categories
+  categories: 'Categorías',
+  category: 'Categoría',
+  addCategory: 'Agregar Categoría',
+  editCategory: 'Editar Categoría',
+  deleteCategory: 'Eliminar Categoría',
+  categoryName: 'Nombre de Categoría',
+  confirmDeleteCategory: 'Confirmar Eliminar Categoría',
+  deleteCategoryConfirmation:
+    '¿Estás seguro de que quieres eliminar esta categoría? Las recetas que la usan quedarán sin categoría.',
+  noCategoryAssigned: 'Ninguna',
+  allCategories: 'Todas',
+  uncategorized: 'Sin categoría',
+  errorAddingCategory: 'Error agregando categoría.',
+  errorDeletingCategory: 'Error eliminando categoría.',
 }
 
 export default SpanishTranslations
